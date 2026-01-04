@@ -29,7 +29,7 @@ describe('Test 336 SLT test #4', function () {
     )
    */
 		});
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		done();
 	});
 
@@ -43,7 +43,7 @@ describe('Test 336 SLT test #4', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [1, 1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1, 1]);
 
 		done();
 	});
@@ -59,7 +59,7 @@ describe('Test 336 SLT test #4', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [1, 1, 1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1, 1, 1]);
 
 		done();
 	});

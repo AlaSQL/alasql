@@ -16,7 +16,7 @@ describe('Test 39', function () {
 
 		it('Negative numbers', function (done) {
 			var res = db.exec('SELECT a,b,-1*a AS c FROM one  WHERE b < -15 ORDER BY a');
-			assert.deepEqual(res, [{a: -2, b: -20, c: 2}]);
+			assert.deepStrictEqual(res, [{a: -2, b: -20, c: 2}]);
 			done();
 		});
 	});

@@ -333,16 +333,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 						var r = {};
 						hs.forEach(function (h, idx) {
 							r[h] = a[idx];
-							// Please avoid === here
-							if (
-								!opt.raw &&
-								typeof r[h] !== 'undefined' &&
-								r[h].length !== 0 &&
-								r[h].trim() == +r[h]
-							) {
-								// jshint ignore:line
-								r[h] = +r[h];
-							}
+							// Keep as string - type conversion happens at INSERT time based on column definitions
 						});
 						rows.push(r);
 					}
@@ -350,33 +341,16 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 					var r = {};
 					hs.forEach(function (h, idx) {
 						r[h] = a[idx];
-						if (
-							!opt.raw &&
-							typeof r[h] !== 'undefined' &&
-							r[h].length !== 0 &&
-							r[h].trim() == +r[h]
-						) {
-							// jshint ignore:line
-							r[h] = +r[h];
-						}
+						// Keep as string - type conversion happens at INSERT time based on column definitions
 					});
 					rows.push(r);
 				}
 				n++;
 			} else {
 				var r = {};
-				// different bug here, if headers are not defined, the numerical values will not be parsed
+				// Keep as string - type conversion happens at INSERT time based on column definitions
 				a.forEach(function (v, idx) {
 					r[idx] = a[idx];
-					if (
-						!opt.raw &&
-						typeof r[idx] !== 'undefined' &&
-						r[idx].length !== 0 &&
-						r[idx].trim() == +r[idx]
-					) {
-						// jshint ignore:line
-						r[idx] = +r[idx];
-					}
 				});
 				rows.push(r);
 			}

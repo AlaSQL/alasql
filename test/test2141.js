@@ -27,7 +27,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 		// Note: SELECT COLUMN _ is used for primitive values to return the array itself
 		// rather than wrapping each value in an object
 		var res = alasql('SELECT COLUMN _ FROM UNNEST(?)', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5]);
 		done();
 	});
 
@@ -37,7 +37,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			{id: 3, value: 4},
 		];
 		var res = alasql('SELECT * FROM UNNEST(?)', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, value: 2},
 			{id: 3, value: 4},
 		]);
@@ -70,7 +70,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'a', id: 1, value: 2},
 			{name: 'a', id: 3, value: 4},
 			{name: 'b', id: 5, value: 6},
@@ -106,7 +106,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'a', id: 1, value: 2},
 			{name: 'a', id: 3, value: 4},
 			{name: 'b', id: undefined, value: undefined},
@@ -147,7 +147,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			[data, lookup]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'a', id: 1, value: 2, label: 'first'},
 			{name: 'a', id: 3, value: 4, label: 'third'},
 			{name: 'b', id: 1, value: 6, label: 'first'},
@@ -187,7 +187,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'a', id: 1, value: 2},
 			{name: 'a', id: 3, value: 4},
 			{name: 'b', id: 5, value: 6},
@@ -221,7 +221,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'a', id: 1, val: 2},
 			{name: 'a', id: 3, val: 4},
 			{name: 'b', id: 5, val: 6},
@@ -262,7 +262,7 @@ describe('Test 2141 - UNNEST function for flattening nested objects', function (
 			CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'a', id: 1, value: 2},
 			{name: 'a', id: 3, value: 4},
 			{name: 'b', id: 5, value: 6},

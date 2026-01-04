@@ -30,7 +30,7 @@ describe('Test 36', function () {
 		db.exec(sql);
 
 		var res = db.exec('SELECT * FROM test2');
-		assert.deepEqual([{a: 'Gamma'}], res);
+		assert.deepStrictEqual([{a: 'Gamma'}], res);
 
 		done();
 	});
@@ -41,7 +41,7 @@ describe('Test 36', function () {
 		db.exec(sql);
 
 		var res = db.exec('SELECT * FROM test3');
-		assert.deepEqual([{a: 'Alpha'}, {a: 'Gamma'}], res);
+		assert.deepStrictEqual([{a: 'Alpha'}, {a: 'Gamma'}], res);
 
 		done();
 	});

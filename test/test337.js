@@ -24,7 +24,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		});
 
 		//console.log(res);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
 		done();
 	});
 
@@ -36,7 +36,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		});
 
 		//console.log(res);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
 		done();
 	});
 
@@ -48,7 +48,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		});
 
 		//console.log(res);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
 		done();
 	});
 
@@ -58,7 +58,7 @@ describe('Test 337 SEARCH 8 queens', function () {
       SEARCH / WHERE(_ <= 2) ^ / WHERE(_ >= 7) FROM RANGE(1,8)
     */
 		});
-		assert.deepEqual(res, [7, 8, 7, 8]);
+		assert.deepStrictEqual(res, [7, 8, 7, 8]);
 		done();
 	});
 
@@ -68,7 +68,7 @@ describe('Test 337 SEARCH 8 queens', function () {
       SEARCH / WHERE(_ <= 2) AS @a ^ / WHERE(_ >= 7) AS @b RETURNS(@a AS a,@b AS b) FROM RANGE(1,8)
     */
 		});
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 7},
 			{a: 1, b: 8},
 			{a: 2, b: 7},
@@ -83,7 +83,7 @@ describe('Test 337 SEARCH 8 queens', function () {
       SEARCH / WHERE(_ <= 2) AS @a ^ / WHERE(_ >= 7) AS @b ROW(@a,@b) FROM RANGE(1,8)
     */
 		});
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[1, 7],
 			[1, 8],
 			[2, 7],
@@ -100,7 +100,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[1, 2],
 			[1, 2],
 			[1, 2],
@@ -121,7 +121,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [9, 9, 9, 9, 9, 9, 9, 9]);
+		assert.deepStrictEqual(res, [9, 9, 9, 9, 9, 9, 9, 9]);
 		done();
 	});
 
@@ -131,7 +131,7 @@ describe('Test 337 SEARCH 8 queens', function () {
       SEARCH repeat(/,0,0) FROM @[@[1,2],3]
 	  `);
 		//    console.log(res);
-		assert.deepEqual(res, [[[1, 2], 3]]);
+		assert.deepStrictEqual(res, [[[1, 2], 3]]);
 		done();
 	});
 
@@ -143,7 +143,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [[1, 2], 3]);
+		assert.deepStrictEqual(res, [[1, 2], 3]);
 		done();
 	});
 
@@ -151,7 +151,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		alasql.vars.b = [];
 		var res = alasql(`SEARCH repeat(/,2,2) FROM @[@[1,2],3]`);
 		//    console.log(res);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
@@ -161,7 +161,7 @@ describe('Test 337 SEARCH 8 queens', function () {
       SEARCH repeat(/,3,3) FROM @[@[1,2],3]
 	  `);
 		//    console.log(res);
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 		done();
 	});
 
@@ -173,7 +173,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [[[1, 2], 3], [1, 2], 3, 1, 2]);
+		assert.deepStrictEqual(res, [[[1, 2], 3], [1, 2], 3, 1, 2]);
 		done();
 	});
 
@@ -185,7 +185,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [0, 1, 1, 2, 2]);
+		assert.deepStrictEqual(res, [0, 1, 1, 2, 2]);
 		done();
 	});
 
@@ -198,7 +198,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [true, true, false]);
+		assert.deepStrictEqual(res, [true, true, false]);
 		done();
 	});
 
@@ -233,7 +233,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 		//   });
 		// console.log(res);
-		//    assert.deepEqual(res,1);
+		//    assert.deepStrictEqual(res,1);
 		done();
 	});
 
@@ -253,7 +253,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 			});
 			console.log(res);
-			assert.deepEqual(res, [1, 1, 2, 2]);
+			assert.deepStrictEqual(res, [1, 1, 2, 2]);
 			done();
 		});
 
@@ -273,7 +273,7 @@ describe('Test 337 SEARCH 8 queens', function () {
     */
 			});
 			console.log(res);
-			//    assert.deepEqual(res,1);
+			//    assert.deepStrictEqual(res,1);
 			done();
 		});
 

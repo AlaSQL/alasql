@@ -38,14 +38,14 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
-				a: null,
+				a: undefined,
 				b: 10,
-				c: null,
+				c: undefined,
 				c2: 1,
 				d: 5,
-				e: null,
+				e: undefined,
 				f: 13,
 			},
 		]);
@@ -56,7 +56,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 					  FROM ?`,
 			data
 		);
-		assert.deepEqual(res, [{a: null}]);
+		assert.deepStrictEqual(res, [{a: undefined}]);
 
 		var data = [[{a: 2}]];
 		res = alasql(
@@ -64,7 +64,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 					  FROM ?`,
 			data
 		);
-		assert.deepEqual(res, [{a: 2}]);
+		assert.deepStrictEqual(res, [{a: 2}]);
 	});
 
 	it('MAX/MIN/SUM with Round or Ceil function', function () {
@@ -81,7 +81,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				a: 5,
 				b: 33,
@@ -110,7 +110,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 				 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				c: new Date(2023, 6, 6, 0, 0, 0),
 				d: new Date(2023, 7, 7, 0, 0, 0),

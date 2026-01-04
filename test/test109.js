@@ -20,7 +20,7 @@ describe('Test 109 - DELETE', function () {
 
 		var res = db.exec('DELETE FROM test');
 
-		assert.deepEqual([], db.tables.test.data);
+		assert.deepStrictEqual([], db.tables.test.data);
 		done();
 	});
 

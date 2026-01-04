@@ -131,6 +131,9 @@ alasql.options = {
 
 	/** Whether GETDATE() and NOW() return dates as string. If false, then a Date object is returned */
 	dateAsString: true,
+
+	/** Automatically convert string values to numbers when reading from CSV files. Set to false to preserve string types */
+	csvStringToNumber: true,
 };
 
 //alasql.options.worker = false;

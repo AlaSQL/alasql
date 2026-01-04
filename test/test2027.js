@@ -30,7 +30,7 @@ describe('Test 2007 - SQL cache', function () {
 		}
 
 		assert.ok(selectCacheKey, 'Cache key for SELECT query should exist');
-		assert.deepEqual(alasql.databases['test'].sqlCache[selectCacheKey].query.data, []);
+		assert.deepStrictEqual(alasql.databases['test'].sqlCache[selectCacheKey].query.data, []);
 		assert.equal(res.length, 3);
 
 		// Delete all rows
@@ -38,7 +38,7 @@ describe('Test 2007 - SQL cache', function () {
 
 		// Assert that the cache is still empty for "data"
 		// Without the fix, the cache would still contain the data from the previous query even though all rows were deleted
-		assert.deepEqual(alasql.databases['test'].sqlCache[selectCacheKey].query.data, []);
+		assert.deepStrictEqual(alasql.databases['test'].sqlCache[selectCacheKey].query.data, []);
 
 		// Insert more rows
 		alasql('INSERT INTO osoby VALUES (4, "Jack"), (5, "Paul")');
@@ -47,7 +47,7 @@ describe('Test 2007 - SQL cache', function () {
 		var res2 = alasql('SELECT * FROM osoby');
 
 		// Cache should still be empty for "data"
-		assert.deepEqual(alasql.databases['test'].sqlCache[selectCacheKey].query.data, []);
+		assert.deepStrictEqual(alasql.databases['test'].sqlCache[selectCacheKey].query.data, []);
 		assert.equal(res2.length, 2);
 	});
 });

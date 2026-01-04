@@ -21,7 +21,8 @@ describe('Test 2070 - RECORDSET OF with wildcard and additional columns', functi
 			],
 		};
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 
@@ -40,7 +41,8 @@ describe('Test 2070 - RECORDSET OF with wildcard and additional columns', functi
 			],
 		};
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 
@@ -59,7 +61,8 @@ describe('Test 2070 - RECORDSET OF with wildcard and additional columns', functi
 			],
 		};
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 
@@ -78,7 +81,8 @@ describe('Test 2070 - RECORDSET OF with wildcard and additional columns', functi
 			],
 		};
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 
@@ -97,7 +101,8 @@ describe('Test 2070 - RECORDSET OF with wildcard and additional columns', functi
 			],
 		};
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 });

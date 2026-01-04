@@ -23,28 +23,28 @@ describe(`Test 1919 Load data from JSONL file`, function () {
 	];
 	it('1. Load JSONL', function (done) {
 		alasql('SELECT * FROM JSONL("' + __dirname + '/test1919")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			assert.deepStrictEqual(res, expectedResult);
 			done();
 		});
 	});
 
 	it('2. Load NDJSON', function (done) {
 		alasql('SELECT * FROM NDJSON("' + __dirname + '/test1919")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			assert.deepStrictEqual(res, expectedResult);
 			done();
 		});
 	});
 
 	it('3. Load NDJSON - will accept file with different  extension', function (done) {
 		alasql('SELECT * FROM NDJSON("' + __dirname + '/test1919.jsonl")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			assert.deepStrictEqual(res, expectedResult);
 			done();
 		});
 	});
 
 	it('4. Load JSONL - will accept file with different extension', function (done) {
 		alasql('SELECT * FROM JSONL("' + __dirname + '/test1919.ndjson")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			assert.deepStrictEqual(res, expectedResult);
 			done();
 		});
 	});

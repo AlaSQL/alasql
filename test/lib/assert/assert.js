@@ -242,7 +242,7 @@
 	};
 
 	// 7. The equivalence assertion tests a deep equality relation.
-	// assert.deepEqual(actual, expected, message_opt);
+	// assert.deepStrictEqual(actual, expected, message_opt);
 
 	assert.deepEqual = function deepEqual(actual, expected, message) {
 		if (!_deepEqual(actual, expected)) {

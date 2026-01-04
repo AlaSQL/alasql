@@ -30,23 +30,23 @@ describe('Test 387 - IN (SELECT) issue #469', function () {
 
 	it('3. SELECTs', function (done) {
 		var res = alasql('COLUMN OF SELECT 1 IN ()');
-		assert.deepEqual(res, [false]);
+		assert.deepStrictEqual(res, [false]);
 		var res = alasql('COLUMN OF SELECT 1 IN (1,2,3)');
-		assert.deepEqual(res, [true]);
+		assert.deepStrictEqual(res, [true]);
 		var res = alasql('COLUMN OF SELECT a IN (SELECT * FROM t1) FROM t2');
-		assert.deepEqual(res, [true, true, false]);
+		assert.deepStrictEqual(res, [true, true, false]);
 		done();
 	});
 
 	it('4. SELECT 1 IN ()', function (done) {
 		var res = alasql('SELECT 1 IN (SELECT * FROM t1)');
-		assert.deepEqual(res, [{'1 IN (SELECT * FROM t1)': true}]);
+		assert.deepStrictEqual(res, [{'1 IN (SELECT * FROM t1)': true}]);
 		done();
 	});
 
 	it('5. SELECT 1 IN () issue #407', function (done) {
 		var res = alasql('select 1 in (select 1) as x');
-		assert.deepEqual(res, [{x: true}]);
+		assert.deepStrictEqual(res, [{x: true}]);
 		done();
 	});
 

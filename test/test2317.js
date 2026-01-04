@@ -37,6 +37,6 @@ describe('Test 2317 - TypeScript type resolution via exports map', function () {
 	it('C) alasql import should work (runtime verification)', function () {
 		// Basic runtime check that alasql still works
 		var res = alasql('SELECT 1 as one');
-		assert.deepEqual(res, [{one: 1}]);
+		assert.deepStrictEqual(res, [{one: 1}]);
 	});
 });

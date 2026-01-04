@@ -21,7 +21,7 @@ describe('Test 142 INSTREAM', function () {
 
 		var res = alasql('SELECT * FROM ?', [srcfn]);
 		//		console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{i: 0, i2: 0},
 			{i: 1, i2: 2},
 			{i: 2, i2: 4},

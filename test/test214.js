@@ -14,8 +14,8 @@ describe('Test 214 Multiple same aggregators', function () {
             select row count(a),count(b) from one;\
             select row sum(a),sum(b) from one;'
 		);
-		assert.deepEqual(res.pop(), [10, 210]);
-		assert.deepEqual(res.pop(), [6, 6]);
+		assert.deepStrictEqual(res.pop(), [10, 210]);
+		assert.deepStrictEqual(res.pop(), [6, 6]);
 		done();
 	});
 
@@ -25,20 +25,20 @@ describe('Test 214 Multiple same aggregators', function () {
             select row sum(a),sum(a) from one;'
 		);
 		//        console.log(res);
-		assert.deepEqual(res.pop(), [10, 10]);
-		assert.deepEqual(res.pop(), [6, 6]);
+		assert.deepStrictEqual(res.pop(), [10, 10]);
+		assert.deepStrictEqual(res.pop(), [6, 6]);
 		done();
 	});
 
 	it('3. Test same aggregators', function (done) {
 		var res = alasql('select row count(a)+1,count(a) from one');
-		assert.deepEqual(res, [7, 6]);
+		assert.deepStrictEqual(res, [7, 6]);
 		done();
 	});
 
 	it('4. Test same aggregators', function (done) {
 		var res = alasql('select row count(a),count(a)+1 from one');
-		assert.deepEqual(res, [6, 7]);
+		assert.deepStrictEqual(res, [6, 7]);
 		done();
 	});
 });

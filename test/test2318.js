@@ -27,7 +27,7 @@ describe('Test 2318 - Update table with PK and direct data assignment', function
 		assert.equal(res, 1);
 
 		var data = alasql('select * from nopk order by id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, name: 'Charlie'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -42,7 +42,7 @@ describe('Test 2318 - Update table with PK and direct data assignment', function
 		assert.equal(res, 1);
 
 		var data = alasql('select * from withpk order by id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, name: 'Charlie'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -61,7 +61,7 @@ describe('Test 2318 - Update table with PK and direct data assignment', function
 		assert.equal(res, 1);
 
 		var data = alasql('select * from withpk2 order by id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, name: 'Charlie'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -79,7 +79,7 @@ describe('Test 2318 - Update table with PK and direct data assignment', function
 		assert.equal(res, 1);
 
 		var data = alasql('select * from composite order by id1, id2');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id1: 1, id2: 1, name: 'Charlie'},
 			{id1: 1, id2: 2, name: 'Bob'},
 		]);
@@ -100,7 +100,7 @@ describe('Test 2318 - Update table with PK and direct data assignment', function
 		assert.equal(res, 1);
 
 		var data = alasql('select * from withunique order by id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, email: 'alice@example.com', name: 'Charlie'},
 			{id: 2, email: 'bob@example.com', name: 'Bob'},
 		]);

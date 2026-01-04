@@ -35,7 +35,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 20, col2: 100, col3: 1000},
 			{col1: 20, col2: 200, col3: 2000},
 		];
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('Multiple CROSS JOINs with comma', function () {
@@ -52,7 +52,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col2: 200, col3: 2000, col1: 10, col0: 1},
 			{col2: 200, col3: 2000, col1: 20, col0: 2},
 		];
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('CROSS JOIN with USING clause (SQLite compatibility)', function () {
@@ -64,7 +64,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 10, col2: 100, col0: 1},
 			{col1: 20, col2: 200, col0: 2},
 		];
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('CROSS JOIN with ON clause (SQLite compatibility)', function () {
@@ -74,7 +74,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 10, col2: 100, col0: 1},
 			{col1: 20, col2: 200, col0: 2},
 		];
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('CROSS JOIN without ON/USING should be cartesian product', function () {
@@ -87,7 +87,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 10, col2: 200, col0: 1},
 			{col1: 20, col2: 200, col0: 2},
 		];
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('Complex mixed join syntax', function () {
@@ -105,6 +105,6 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 10, col2: 200, col0: 1},
 			{col1: 20, col2: 200, col0: 2},
 		];
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 });

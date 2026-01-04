@@ -16,15 +16,15 @@ describe('Test 297 INSERT,DELETE,UDPATE with subqueries', function () {
 
 	it.skip('2. DELETE', function (done) {
 		var res = alasql('DELETE FROM one WHERE a = (SELECT MAX(a) FROM one)');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		done();
 	});
 
 	it.skip('3. UPDATE', function (done) {
 		var res = alasql('UPDATE one SET b = 100 WHERE a = (SELECT MAX(a) FROM one)');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 2, b: 100},
 		]);
@@ -33,10 +33,10 @@ describe('Test 297 INSERT,DELETE,UDPATE with subqueries', function () {
 
 	it.skip('4. INSERT', function (done) {
 		var res = alasql('INSERT INTO one VALUES (5,(SELECT MAX(b) FROM one)+1)');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		var res = alasql('SELECT * FROM one');
 		//    console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 2, b: 100},
 			{a: 5, b: 101},

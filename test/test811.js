@@ -27,7 +27,7 @@ describe('Test 811 - String / Number objects', function () {
 
 		var expected = [{median: 5.5}];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 

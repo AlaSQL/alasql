@@ -453,3 +453,32 @@ IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) 
 		};
 	};
 };
+
+/**
+ * Commit transaction for IndexedDB
+ * Note: IndexedDB operations are auto-committed per operation
+ * This method provides API compatibility
+ */
+IDB.commit = function (databaseid, cb) {
+	// IndexedDB auto-commits each operation's transaction
+	// No additional action needed
+	return cb ? cb(1) : 1;
+};
+
+/**
+ * Begin transaction - alias to commit for IndexedDB
+ * Similar to LOCALSTORAGE pattern
+ */
+IDB.begin = IDB.commit;
+
+/**
+ * Rollback transaction for IndexedDB
+ * Note: IndexedDB operations are auto-committed per operation
+ * Manual rollback not supported - operations cannot be undone
+ */
+IDB.rollback = function (databaseid, cb) {
+	// IndexedDB auto-commits each operation
+	// Cannot rollback already-committed operations
+	// This provides API compatibility only
+	return cb ? cb(1) : 1;
+};

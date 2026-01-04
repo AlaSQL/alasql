@@ -28,7 +28,7 @@ describe('Test 151 - localStorage Engine', function () {
 			],
 		]);
 		var res = alasql('SELECT * FROM ls151.one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},

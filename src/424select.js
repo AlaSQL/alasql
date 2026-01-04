@@ -10,6 +10,9 @@
 // 	return sources;
 // };
 
+// Regular expression to match aggregate functions that require expression compilation
+var re_aggrWithExpression = /^(SUM|MAX|MIN|FIRST|LAST|AVG|ARRAY|REDUCE|TOTAL)$/;
+
 function compileSelectStar(query, aliases, joinstar) {
 	var sp = '',
 		ss = [],
@@ -335,55 +338,44 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				}
 			}
 		} else if (col instanceof yy.AggrValue) {
-			if (!self.group) {
-				//				self.group=[new yy.Column({columnid:'q',as:'q'	})];
-				self.group = [''];
-			}
-			if (!col.as) {
-				col.as = escapeq(col.toString());
+			// Set alias if not provided
+			if (!col.as) col.as = escapeq(col.toString());
+
+			// Check if this aggregate has an OVER clause (window function)
+			if (col.over) {
+				// Track window aggregate for post-processing
+				query.windowaggrs.push({
+					as: col.as,
+					aggregatorid: col.aggregatorid,
+					expression: col.expression,
+					partitionColumns: col.over.partition
+						? col.over.partition.map(function (p) {
+								return p.columnid || p.toString();
+							})
+						: [],
+				});
+			} else {
+				// Regular aggregate - trigger GROUP BY
+				if (!self.group) self.group = [''];
+
+				if (re_aggrWithExpression.test(col.aggregatorid)) {
+					ss.push(
+						"'" +
+							escapeq(col.as) +
+							"':" +
+							n2u(col.expression.toJS('p', query.defaultTableid, query.defcols))
+					);
+				} else if (col.aggregatorid === 'COUNT') {
+					ss.push("'" + escapeq(col.as) + "':1");
+				}
 			}
 
-			if (
-				col.aggregatorid === 'SUM' ||
-				col.aggregatorid === 'MAX' ||
-				col.aggregatorid === 'MIN' ||
-				col.aggregatorid === 'FIRST' ||
-				col.aggregatorid === 'LAST' ||
-				col.aggregatorid === 'AVG' ||
-				col.aggregatorid === 'ARRAY' ||
-				col.aggregatorid === 'REDUCE' ||
-				col.aggregatorid === 'TOTAL'
-			) {
-				ss.push(
-					"'" +
-						escapeq(col.as) +
-						"':" +
-						n2u(col.expression.toJS('p', query.defaultTableid, query.defcols))
-				);
-			} else if (col.aggregatorid === 'COUNT') {
-				ss.push("'" + escapeq(col.as) + "':1");
-				// Nothing
-			}
-			// todo: confirm that no default action must be implemented
-
-			//			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
-
+			// Add column definition for both window and regular aggregates
 			var coldef = {
 				columnid: col.as || col.columnid || col.toString(),
-				//							dbtypeid:tcol.dbtypeid,
-				//							dbsize:tcol.dbsize,
-				//							dbpecision:tcol.dbprecision,
-				//							dbenum: tcol.dbenum,
 			};
-			//						console.log(2);
 			query.columns.push(coldef);
 			query.xcolumns[coldef.columnid] = coldef;
-
-			//			else if (col.aggregatorid == 'MAX') {
-			//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
-			//			} else if (col.aggregatorid == 'MIN') {
-			//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
-			//			}
 		} else {
 			//			console.log(203,col.as,col.columnid,col.toString());
 			// Check if this is an arrow expression and we're outputting to OBJECT

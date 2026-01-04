@@ -19,7 +19,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			GROUP BY Phase, Step WITH ROLLUP',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: 'Phase 1', Step: 'Step 1', Val: 5},
@@ -38,7 +38,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			[testData]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: null, Step: 'Step 1', Val: 30},
@@ -59,7 +59,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			HAVING SUM(Val) > 20',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: 'Phase 2', Step: null, Val: 65},
@@ -75,7 +75,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			GROUP BY ROLLUP(Phase,Step)',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: 'Phase 1', Step: 'Step 1', Val: 5},
@@ -94,7 +94,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			[testData]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: null, Step: 'Step 1', Val: 30},
@@ -115,7 +115,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			GROUP BY Phase WITH ROLLUP',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Val: 90},
 			{Phase: 'Phase 1', Val: 25},
 			{Phase: 'Phase 2', Val: 65},
@@ -129,7 +129,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			GROUP BY Phase WITH CUBE',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Val: 90},
 			{Phase: 'Phase 1', Val: 25},
 			{Phase: 'Phase 2', Val: 65},
@@ -193,7 +193,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			GROUP BY Phase WITH ROLLUP',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Cnt: 4},
 			{Phase: 'Phase 1', Cnt: 2},
 			{Phase: 'Phase 2', Cnt: 2},
@@ -221,7 +221,7 @@ describe('Test 292-B - MySQL-like WITH ROLLUP/CUBE syntax', function () {
 			GROUP BY Phase, Step WITH ROLLUP',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 25},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: 'Phase 1', Step: 'Step 1', Val: 5},

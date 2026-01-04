@@ -24,7 +24,7 @@ describe('Test 333 Check for NULLs', function () {
       INSERT INTO test VALUES ("Ben"),("Jim"),("Simon"),(NULL),(NULL),("Ye"),(""),(""),("Dave"),("");
     */
 		});
-		assert.deepEqual(res.length, 2);
+		assert.deepStrictEqual(res.length, 2);
 		done();
 	});
 
@@ -76,7 +76,7 @@ describe('Test 333 Check for NULLs', function () {
     */
 		});
 		/// console.log(res);
-		//    assert.deepEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
+		//    assert.deepStrictEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
 
 		// Expected results
 		// LEN Count: 3

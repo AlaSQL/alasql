@@ -50,7 +50,7 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		var res4 = alasql('SEARCH DISTINCT(/) FROM ?', [data]);
 
 		// Results should be the same
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res2,
 			res4,
 			'SELECT DISTINCT * and SEARCH DISTINCT(/) should produce same results'

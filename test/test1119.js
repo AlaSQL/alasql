@@ -149,7 +149,7 @@ describe('Test 1119 - Trigger callback parameter', function () {
 
 		// Verify that the data was NOT actually inserted because it was an INSTEAD OF trigger
 		const res = alasql('SELECT * FROM five');
-		assert.deepEqual(res, [], 'Data should not have been inserted with INSTEAD OF trigger');
+		assert.deepStrictEqual(res, [], 'Data should not have been inserted with INSTEAD OF trigger');
 
 		delete alasql.fn.onchangeInsteadInsert;
 	});

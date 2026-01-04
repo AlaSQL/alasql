@@ -24,13 +24,13 @@ describe('Test 402 a NOT NULL', function () {
 
 	it('3. IS NOT NULL', function (done) {
 		var res = alasql('SELECT * FROM one WHERE b IS NOT NULL');
-		assert.deepEqual(res, [{a: 100, b: 1}]);
+		assert.deepStrictEqual(res, [{a: 100, b: 1}]);
 		done();
 	});
 
 	it('4. NOT NULL', function (done) {
 		var res = alasql('SELECT * FROM one WHERE b NOT NULL');
-		assert.deepEqual(res, [{a: 100, b: 1}]);
+		assert.deepStrictEqual(res, [{a: 100, b: 1}]);
 		done();
 	});
 

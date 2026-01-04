@@ -23,7 +23,7 @@ describe('Test 334 WITH CTE', function () {
       INSERT INTO grocery VALUES ("Apples",10,10),("Melons",15,20),("Cucumbers",40,50);
     */
 		});
-		assert.deepEqual(res, [1, 3]);
+		assert.deepStrictEqual(res, [1, 3]);
 		done();
 	});
 
@@ -49,7 +49,7 @@ describe('Test 334 WITH CTE', function () {
 
     */
 		});
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{tax: '0%', name: 'Apples', price: 10, quantity: 10, 'Total price': 100},
 			{tax: '3%', name: 'Melons', price: 15, quantity: 20, 'Total price': 300},
 			{

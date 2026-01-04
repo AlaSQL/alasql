@@ -68,7 +68,7 @@ describe('Test 380 - PIVOT', function () {
 		pivot (AVG(IncomeAmount) for IncomeDay)'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				VendorId: 'SPIKE',
 				FRI: 200,
@@ -109,40 +109,39 @@ describe('Test 380 - PIVOT', function () {
 		PIVOT (AVG(IncomeAmount) FOR IncomeDay IN ([MON],[TUE]))'
 		);
 
-		assert.deepEqual(
-			res,
+		var expected = {
+			data: [
+				{VendorId: 'SPIKE', MON: 600, TUE: 150},
+				{VendorId: 'JOHNS', MON: 300, TUE: 600},
+				{VendorId: 'FREDS', TUE: 350, MON: 500},
+			],
+			columns: [
+				{
+					columnid: 'VendorId',
+					dbtypeid: 'NVARCHAR',
+					dbsize: 10,
+					dbprecision: undefined,
+					dbenum: undefined,
+				},
+				{
+					columnid: 'MON',
+					dbtypeid: 'INT',
+					dbsize: undefined,
+					dbprecision: undefined,
+					dbenum: undefined,
+				},
+				{
+					columnid: 'TUE',
+					dbtypeid: 'INT',
+					dbsize: undefined,
+					dbprecision: undefined,
+					dbenum: undefined,
+				},
+			],
+		};
 
-			{
-				data: [
-					{VendorId: 'SPIKE', MON: 600, TUE: 150},
-					{VendorId: 'JOHNS', MON: 300, TUE: 600},
-					{VendorId: 'FREDS', TUE: 350, MON: 500},
-				],
-				columns: [
-					{
-						columnid: 'VendorId',
-						dbtypeid: 'NVARCHAR',
-						dbsize: 10,
-						dbprecision: undefined,
-						dbenum: undefined,
-					},
-					{
-						columnid: 'MON',
-						dbtypeid: 'INT',
-						dbsize: undefined,
-						dbprecision: undefined,
-						dbenum: undefined,
-					},
-					{
-						columnid: 'TUE',
-						dbtypeid: 'INT',
-						dbsize: undefined,
-						dbprecision: undefined,
-						dbenum: undefined,
-					},
-				],
-			}
-		);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 
@@ -156,7 +155,7 @@ describe('Test 380 - PIVOT', function () {
 		*/
 		});
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				VendorId: 'SPIKE',
 				FRI: 300,

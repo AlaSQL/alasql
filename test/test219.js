@@ -18,13 +18,13 @@ describe('Test 219 CREATE VIEW', function () {
 	it('2. RUN FROM VIEW', function (done) {
 		var res = alasql('SELECT * FROM myview');
 		//    	console.log(res);
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 3}]);
 		done();
 	});
 	it('3. RUN FROM JOIN VIEW', function (done) {
 		var res = alasql('SELECT one.a as a1, myview.a as a2 FROM one JOIN myview ON one.a = myview.a');
 		//    	console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a1: 1, a2: 1},
 			{a1: 2, a2: 2},
 			{a1: 3, a2: 3},
@@ -36,7 +36,7 @@ describe('Test 219 CREATE VIEW', function () {
 		alasql('INSERT INTO one VALUES (4,"four")');
 		var res = alasql('SELECT * FROM myview');
 		//    	console.log(res);
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
 		done();
 	});
 

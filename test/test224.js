@@ -15,7 +15,7 @@ describe('Test 224 Mix JavaScript and SQL', function () {
 	it('2. JavaScript Expression', function (done) {
 		var data = [{a: 1}, {a: 2}];
 		var res = alasql('SELECT COLUMN ``p.one.a`` AS aa FROM ? one', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 

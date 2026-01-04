@@ -29,7 +29,7 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 		alasql('INSERT INTO tab4 SELECT * FROM tab3');
 
 		var res = alasql('SELECT * FROM tab3');
-		assert.deepEqual(res, [[3]]);
+		assert.deepStrictEqual(res, [[3]]);
 
 		done();
 	});
@@ -47,7 +47,7 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 			});
 
 			var res = alasql('SELECT * FROM tab3');
-			assert.deepEqual(res, [[3]]);
+			assert.deepStrictEqual(res, [[3]]);
 
 			done();
 		});

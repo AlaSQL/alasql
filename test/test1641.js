@@ -33,8 +33,8 @@ if (typeof exports != 'object') {
 					return alasql.promise(['SELECT * from mytable1', 'SELECT * from mytable2']);
 				})
 				.then(function ([data1, data2]) {
-					assert.deepEqual(data1, [{myid: '1', myname: 'Mr. One'}]);
-					assert.deepEqual(data2, [{myid: '2', myname: 'Mr. Two'}]);
+					assert.deepStrictEqual(data1, [{myid: '1', myname: 'Mr. One'}]);
+					assert.deepStrictEqual(data2, [{myid: '2', myname: 'Mr. Two'}]);
 					done();
 				});
 		});

@@ -17,7 +17,7 @@ describe('Test 234 Complex test', function () {
 	it('2. Throw error', function (done) {
 		alasql('source "' + __dirname + '/test234.sql"', [], function (res) {
 			//          console.log(res);
-			assert.deepEqual(res.pop(), [
+			assert.deepStrictEqual(res.pop(), [
 				{FirstName: 'John', LastName: 'Johnson'},
 				{FirstName: 'Larry', LastName: 'Larrison'},
 			]);

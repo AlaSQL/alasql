@@ -63,7 +63,7 @@ describe('Test 381 - PIVOT', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				name: 'Robert',
 				'Preferred Stock': 35,

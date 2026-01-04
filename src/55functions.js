@@ -283,8 +283,20 @@ stdfn.CONCAT_WS = function () {
 // Aggregator for joining strings
 alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 	if (stage === 1) {
+		// Initialize: skip null values
+		if (v === null || v === undefined) {
+			return null;
+		}
 		return '' + v;
 	} else if (stage === 2) {
+		// Accumulate: skip null values
+		if (v === null || v === undefined) {
+			return s;
+		}
+		// If accumulator is null/undefined, start with current value
+		if (s === null || s === undefined) {
+			return '' + v;
+		}
 		s += ',' + v;
 		return s;
 	}

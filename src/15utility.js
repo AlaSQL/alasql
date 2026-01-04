@@ -1347,5 +1347,64 @@ var getXLSX = function () {
 	return XLSX;
 };
 
+/**
+ * Type converter regex patterns
+ */
+var reTypeConverter = {
+	str: /string|char$|text/i,
+	int: /^int|int$/i,
+	num: /float|double|real|^num|decimal|money/i,
+	bool: /^bool/i,
+	date: /^date|^time/i,
+};
+
+/**
+ * Convert a value to the appropriate type based on column definition
+ * @param {*} value - The value to convert
+ * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
+ * @return {*} The converted value
+ */
+utils.typeConverter = function (value, dbtypeid) {
+	// If value is null or undefined, return as is
+	if (value === null || value === undefined) {
+		return value;
+	}
+
+	// If no type specified, try to auto-convert if it looks like a number
+	if (!dbtypeid) {
+		if (alasql.options.csvStringToNumber && typeof value === 'string' && value.length > 0) {
+			if (value == +value) {
+				return +value;
+			}
+		}
+		return value;
+	}
+
+	// Check type using regex patterns
+	if (reTypeConverter.str.test(dbtypeid)) {
+		return String(value);
+	}
+	if (reTypeConverter.int.test(dbtypeid)) {
+		var intVal = parseInt(value, 10);
+		return isNaN(intVal) ? value : intVal;
+	}
+	if (reTypeConverter.num.test(dbtypeid)) {
+		var numVal = parseFloat(value);
+		return isNaN(numVal) ? value : numVal;
+	}
+	if (reTypeConverter.bool.test(dbtypeid)) {
+		if (typeof value === 'string') {
+			return /^(true|1|yes)$/i.test(value);
+		}
+		return Boolean(value);
+	}
+	if (reTypeConverter.date.test(dbtypeid)) {
+		return value instanceof Date ? value : new Date(value);
+	}
+
+	// Unknown type, return as is
+	return value;
+};
+
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();

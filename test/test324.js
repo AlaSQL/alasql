@@ -14,17 +14,17 @@ describe('Test 324 Roads samples', function () {
 	it('2. OBJECT_ID()', function (done) {
 		alasql('CREATE TABLE dbo.Employees(id INT, name STRING)');
 		alasql('INSERT INTO dbo.Employees VALUES (1,"Tomas"),(2,"Lisa")');
-		assert.deepEqual(alasql('SELECT * FROM dbo.Employees'), [
+		assert.deepStrictEqual(alasql('SELECT * FROM dbo.Employees'), [
 			{id: 1, name: 'Tomas'},
 			{id: 2, name: 'Lisa'},
 		]);
-		assert.deepEqual(alasql('SELECT VALUE OBJECT_ID("dbo.Employees")'), 'test324a.Employees');
+		assert.deepStrictEqual(alasql('SELECT VALUE OBJECT_ID("dbo.Employees")'), 'test324a.Employees');
 		var res = alasql(
 			'IF OBJECT_ID("dbo.Employees") IS NOT NULL\
       DROP TABLE dbo.Employees;'
 		);
 		assert(!alasql.databases.dbo.tables.Employees);
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		done();
 	});
 
@@ -65,7 +65,7 @@ describe('Test 324 Roads samples', function () {
   */
 		});
 		assert(res == 2);
-		assert.deepEqual(alasql('SELECT * FROM dbo.Employees'), [
+		assert.deepStrictEqual(alasql('SELECT * FROM dbo.Employees'), [
 			{empid: 1, mgrid: undefined, empname: 'David', salary: 10000},
 			{empid: 2, mgrid: 1, empname: 'Eitan', salary: 7000},
 		]);

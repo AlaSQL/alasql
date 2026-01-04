@@ -28,7 +28,7 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 
 		// Check that primary key is set on the table
 		assert(table1.pk, 'Table should have pk property');
-		assert.deepEqual(table1.pk.columns, ['Column1']);
+		assert.deepStrictEqual(table1.pk.columns, ['Column1']);
 
 		// Check that Column1 is marked with primarykey property
 		assert(table1.xcolumns.Column1.primarykey, 'Column1 should have primarykey property set');

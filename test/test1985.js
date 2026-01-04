@@ -20,7 +20,7 @@ describe('Test 1985 - SELECT field on joined tables gives unexpected undefined',
 		);
 
 		// Should have all fields
-		assert.deepEqual(expected, [
+		assert.deepStrictEqual(expected, [
 			{
 				UserId: '1',
 				UserName: 'User',
@@ -43,7 +43,7 @@ describe('Test 1985 - SELECT field on joined tables gives unexpected undefined',
 		);
 
 		// Both fields should be defined
-		assert.deepEqual(result, [
+		assert.deepStrictEqual(result, [
 			{
 				UserName: 'User',
 				Text: 'Order text',
@@ -65,7 +65,7 @@ describe('Test 1985 - SELECT field on joined tables gives unexpected undefined',
 		);
 
 		// Text field should be defined
-		assert.deepEqual(result, [
+		assert.deepStrictEqual(result, [
 			{
 				Text: 'Order text',
 			},
@@ -86,7 +86,7 @@ describe('Test 1985 - SELECT field on joined tables gives unexpected undefined',
 		);
 
 		// Both fields should be defined
-		assert.deepEqual(result, [
+		assert.deepStrictEqual(result, [
 			{
 				UserName: 'User',
 				Text: 'Order text',

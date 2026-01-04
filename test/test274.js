@@ -16,7 +16,7 @@ describe('Test 274 Count and other bugs', function () {
 		var res = alasql('SELECT RECORDSET COUNT(*) FROM RANGE(1,10)');
 		/// console.log(res);
 		//    var colres = _.pluck(res.columns,'columnid');
-		//    assert.deepEqual(colres, ["a","b"]);
+		//    assert.deepStrictEqual(colres, ["a","b"]);
 		alasql.options.modifier = undefined;
 		done();
 	});

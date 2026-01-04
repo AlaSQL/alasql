@@ -18,7 +18,7 @@ describe('Test ' + test + ' - select * with alias colname', function () {
 			{a: 2, b: 1, c: 1},
 		];
 		var res = alasql(`SELECT *, COUNT(a) as d FROM ? GROUP BY a`, [data]);
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('Join with simple subquery', function () {
@@ -36,6 +36,6 @@ describe('Test ' + test + ' - select * with alias colname', function () {
 			{a: 2, b: 1, c: 2},
 		];
 		var res = alasql(`SELECT *, COUNT(a) as d FROM ? GROUP BY a`, [data]);
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 });

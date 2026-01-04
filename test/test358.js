@@ -38,9 +38,9 @@ describe('Test 358 DROP TABLE for nultiple tables', function () {
   */
 		});
 
-		assert.deepEqual(res, 2);
-		assert.deepEqual(alasql.databases.test358.tables.users, undefined);
-		assert.deepEqual(alasql.databases.test358.tables.hobbies, undefined);
+		assert.deepStrictEqual(res, 2);
+		assert.deepStrictEqual(alasql.databases.test358.tables.users, undefined);
+		assert.deepStrictEqual(alasql.databases.test358.tables.hobbies, undefined);
 
 		done();
 	});
@@ -52,8 +52,8 @@ describe('Test 358 DROP TABLE for nultiple tables', function () {
   */
 		});
 
-		assert.deepEqual(res, 1);
-		assert.deepEqual(alasql.databases.test358.tables, {});
+		assert.deepStrictEqual(res, 1);
+		assert.deepStrictEqual(alasql.databases.test358.tables, {});
 
 		done();
 	});

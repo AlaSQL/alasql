@@ -42,7 +42,7 @@ describe('Test 335 WITH RECURSIVE CTE', function () {
       ,(23,  N'Mary', N'Gibson', N'Marketing Specialist', 4, 16);
     */
 		});
-		assert.deepEqual(res, [1, 9]);
+		assert.deepStrictEqual(res, [1, 9]);
 		done();
 	});
 

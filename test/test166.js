@@ -19,10 +19,10 @@ if (typeof exports === 'object' && false) {
 			res = alasql(
 				'create table test166.one (a int,b int); insert into test166.one values (1,10),(2,20),(3,30),(4,40)'
 			);
-			assert.deepEqual(res, [1, 4]);
+			assert.deepStrictEqual(res, [1, 4]);
 
 			res = alasql('select column b from test166(select * from one where a > 2)');
-			assert.deepEqual(res, [30, 40]);
+			assert.deepStrictEqual(res, [30, 40]);
 
 			// TODO - finish the test
 			done();
@@ -30,13 +30,13 @@ if (typeof exports === 'object' && false) {
 
 		it('2. Cached sql-statements', function (done) {
 			var res = alasql('select a from cache(select * from test166.one where a > 2)');
-			assert.deepEqual(res, [3, 4]);
+			assert.deepStrictEqual(res, [3, 4]);
 
 			res = alasql('insert into test166.one values (5,50),(6,60)');
 			assert(res == 2);
 
 			res = alasql('select b from cache(select * from test166.one where a > 2)');
-			assert.deepEqual(res, [30, 40]);
+			assert.deepStrictEqual(res, [30, 40]);
 
 			// TODO - finish the test
 			done();
@@ -47,13 +47,13 @@ if (typeof exports === 'object' && false) {
 			var res = alasql('cache table test166a.one to test166.one');
 
 			var res = alasql('select a from cache(select * from test166.one where a > 2)');
-			assert.deepEqual(res, [3, 4]);
+			assert.deepStrictEqual(res, [3, 4]);
 
 			res = alasql('insert into test166.one values (5,50),(6,60)');
 			assert(res == 2);
 
 			res = alasql('select b from cache(select * from test166.one where a > 2)');
-			assert.deepEqual(res, [30, 40]);
+			assert.deepStrictEqual(res, [30, 40]);
 
 			// TODO - finish the test
 			done();

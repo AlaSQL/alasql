@@ -24,8 +24,8 @@ if (typeof exports === 'object') {
 
 		var res = alasql('SELECT * FROM dates');
 
-		assert.deepEqual(res[0].date, now);
-		assert.deepEqual(res[1].date, unixepoch);
+		assert.deepStrictEqual(res[0].date, now);
+		assert.deepStrictEqual(res[1].date, unixepoch);
 
 		done();
 	});

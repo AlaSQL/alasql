@@ -17,7 +17,7 @@ describe('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				sum_a: 64068780547762148n,
 				max_a: 45875651254783254n,
@@ -41,13 +41,35 @@ describe('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				sum_a: 9147483647334442n,
 				max_a: 9147483647334432n,
-				min_a: 1n,
+				min_a: 1,
 				avg_a: 1829496729466888n,
 				total_a: 9147483647334442n,
+			},
+		]);
+
+		var data = [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 10}];
+
+		var res = alasql(
+			`SELECT SUM(a) AS sum_a,
+					MAX(a) AS max_a,
+					MIN(a) AS min_a,
+					AVG(a) AS avg_a,
+					TOTAL(a) AS total_a
+			 FROM ?`,
+			[data]
+		);
+
+		assert.deepStrictEqual(res, [
+			{
+				sum_a: 20,
+				max_a: 10,
+				min_a: 1,
+				avg_a: 4,
+				total_a: 20,
 			},
 		]);
 	});
@@ -65,7 +87,7 @@ describe('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				sum_a: -18193129292978874n,
 				max_a: -9045645645644442n,
@@ -92,7 +114,7 @@ describe('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				sum_a: BigInt('1111111110111111111011111111100'),
 				max_a: BigInt('987654321098765432109876543210'),
@@ -116,7 +138,7 @@ describe('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				sum_a: 0n,
 				max_a: 12345678901234567890n,

@@ -27,7 +27,7 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		assert.equal(res, 2);
 
 		res = alasql('SELECT * FROM content ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'Alice'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -44,10 +44,10 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		assert.equal(res, 2);
 
 		res = alasql('SELECT content FROM test_table ORDER BY id');
-		assert.deepEqual(res, [{content: 'Some content'}, {content: 'More content'}]);
+		assert.deepStrictEqual(res, [{content: 'Some content'}, {content: 'More content'}]);
 
 		res = alasql('SELECT id, content FROM test_table WHERE content = "Some content"');
-		assert.deepEqual(res, [{id: 1, content: 'Some content'}]);
+		assert.deepStrictEqual(res, [{id: 1, content: 'Some content'}]);
 
 		res = alasql('DROP TABLE test_table');
 		assert.equal(res, 1);
@@ -61,10 +61,10 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		assert.equal(res, 2);
 
 		res = alasql('SELECT content FROM content ORDER BY id');
-		assert.deepEqual(res, [{content: 'Test'}, {content: 'Data'}]);
+		assert.deepStrictEqual(res, [{content: 'Test'}, {content: 'Data'}]);
 
 		res = alasql('SELECT content.content FROM content WHERE id = 1');
-		assert.deepEqual(res, [{content: 'Test'}]);
+		assert.deepStrictEqual(res, [{content: 'Test'}]);
 
 		res = alasql('DROP TABLE content');
 		assert.equal(res, 1);
@@ -106,7 +106,7 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		assert.equal(res, 2);
 
 		res = alasql('SELECT text AS content FROM data ORDER BY id');
-		assert.deepEqual(res, [{content: 'Hello'}, {content: 'World'}]);
+		assert.deepStrictEqual(res, [{content: 'Hello'}, {content: 'World'}]);
 
 		res = alasql('DROP TABLE data');
 		assert.equal(res, 1);
@@ -128,7 +128,7 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		res = alasql(
 			'SELECT content.text, other.data FROM content JOIN other ON content.id = other.id ORDER BY content.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{text: 'A', data: 'X'},
 			{text: 'B', data: 'Y'},
 		]);
@@ -152,7 +152,7 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		res = alasql(
 			'SELECT content, SUM(amount) as sum_amount FROM content GROUP BY content ORDER BY content'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{content: 'Type A', sum_amount: 30},
 			{content: 'Type B', sum_amount: 15},
 		]);
@@ -172,13 +172,13 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		assert.equal(res, 1);
 
 		res = alasql('SELECT * FROM content WHERE id = 1');
-		assert.deepEqual(res, [{id: 1, content: 'New'}]);
+		assert.deepStrictEqual(res, [{id: 1, content: 'New'}]);
 
 		res = alasql('DELETE FROM content WHERE content = "Data"');
 		assert.equal(res, 1);
 
 		res = alasql('SELECT COUNT(*) as cnt FROM content');
-		assert.deepEqual(res, [{cnt: 1}]);
+		assert.deepStrictEqual(res, [{cnt: 1}]);
 
 		res = alasql('DROP TABLE content');
 		assert.equal(res, 1);
@@ -194,7 +194,7 @@ describe('Test 2239 - Limit the impact of using the keyword: CONTENT', function 
 		res = alasql(
 			'SELECT * FROM content WHERE amount > (SELECT AVG(amount) FROM content) ORDER BY id'
 		);
-		assert.deepEqual(res, [{id: 2, amount: 200}]);
+		assert.deepStrictEqual(res, [{id: 2, amount: 200}]);
 
 		res = alasql('DROP TABLE content');
 		assert.equal(res, 1);

@@ -186,6 +186,7 @@ yy.Select = class Select {
 		// For ROWNUM()
 		query.rownums = [];
 		query.grouprownums = [];
+		query.windowaggrs = []; // For window aggregate functions (COUNT/MAX/MIN/SUM/AVG with OVER)
 
 		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
 		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
@@ -300,12 +301,19 @@ yy.Select = class Select {
 									cb
 								);`;
 				} else {
-					// Into AlaSQL tables
-					query.intofns = `alasql
-							.databases[${JSON.stringify(this.into.databaseid || databaseid)}]
-							.tables[${JSON.stringify(this.into.tableid)}]
-							.data.push(r);
-						`;
+					// Into AlaSQL tables - convert types based on column definitions
+					var dbid = this.into.databaseid || databaseid;
+					var tblid = this.into.tableid;
+					query.intofns = `
+						var db = alasql.databases[${JSON.stringify(dbid)}];
+						var table = db.tables[${JSON.stringify(tblid)}];
+						var converted = {};
+						for (var key in r) {
+							var colDef = table.xcolumns && table.xcolumns[key];
+							converted[key] = alasql.utils.typeConverter(r[key], colDef ? colDef.dbtypeid : null);
+						}
+						table.data.push(converted);
+					`;
 				}
 			} else if (this.into instanceof yy.VarValue) {
 				//
@@ -427,6 +435,76 @@ yy.Select = class Select {
 
 							res[i][config.as] = rowNum;
 							prevValues = currentValues;
+						}
+					}
+				}
+
+				// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
+				if (query.windowaggrs && query.windowaggrs.length > 0) {
+					for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
+						var config = query.windowaggrs[j];
+						var partitions = {};
+
+						// Group rows by partition
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							var partitionKey =
+								config.partitionColumns && config.partitionColumns.length > 0
+									? config.partitionColumns
+											.map(function (col) {
+												return res[i][col];
+											})
+											.join('|')
+									: '__all__';
+
+							if (!partitions[partitionKey]) partitions[partitionKey] = [];
+							partitions[partitionKey].push(i);
+						}
+
+						// Calculate and assign aggregate for each partition
+						for (var partitionKey in partitions) {
+							var rowIndices = partitions[partitionKey];
+							var values = [];
+							var colId = config.expression && config.expression.columnid;
+
+							// Collect values from partition rows
+							if (config.aggregatorid !== 'COUNT' || (colId && colId !== '*')) {
+								for (var k = 0; k < rowIndices.length; k++) {
+									var val = res[rowIndices[k]][colId];
+									if (val != null) values.push(val);
+								}
+							}
+
+							// Calculate aggregate
+							var aggregateValue;
+							switch (config.aggregatorid) {
+								case 'COUNT':
+									aggregateValue = colId && colId !== '*' ? values.length : rowIndices.length;
+									break;
+								case 'SUM':
+									aggregateValue = values.reduce(function (sum, v) {
+										return sum + v;
+									}, 0);
+									break;
+								case 'AVG':
+									aggregateValue =
+										values.length > 0
+											? values.reduce(function (sum, v) {
+													return sum + v;
+												}, 0) / values.length
+											: null;
+									break;
+								case 'MAX':
+									aggregateValue = values.length > 0 ? Math.max.apply(null, values) : null;
+									break;
+								case 'MIN':
+									aggregateValue = values.length > 0 ? Math.min.apply(null, values) : null;
+									break;
+							}
+
+							// Assign aggregate value to all rows in partition
+							for (var k = 0; k < rowIndices.length; k++) {
+								res[rowIndices[k]][config.as] = aggregateValue;
+							}
 						}
 					}
 				}

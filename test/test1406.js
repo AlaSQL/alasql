@@ -30,7 +30,7 @@ describe('Test 1406 - PRIMARY KEY constraint on INSERT...SELECT', function () {
 		assert.equal(res, 2);
 
 		var data = alasql('SELECT * FROM cities ORDER BY city');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{city: 'Atlanta', population: 447841},
 			{city: 'Redmond', population: 57530},
 		]);
@@ -51,7 +51,7 @@ describe('Test 1406 - PRIMARY KEY constraint on INSERT...SELECT', function () {
 	it('D) Verify no duplicate was inserted', function () {
 		var data = alasql('SELECT * FROM cities ORDER BY city');
 		assert.equal(data.length, 2);
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{city: 'Atlanta', population: 447841},
 			{city: 'Redmond', population: 57530},
 		]);

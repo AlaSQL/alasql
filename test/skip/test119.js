@@ -16,7 +16,7 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function () {
 		}, Error);
 
 		var res = alasql.value('select count(*) from one');
-		assert.deepEqual(res, 3);
+		assert.deepStrictEqual(res, 3);
 
 		done();
 	});
@@ -31,7 +31,7 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function () {
 		}, Error);
 
 		var res = alasql.value('select count(*) from two');
-		assert.deepEqual(res, 3);
+		assert.deepStrictEqual(res, 3);
 
 		done();
 	});
@@ -44,7 +44,7 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function () {
 		}, Error);
 
 		var res = alasql.value('select count(*) from three');
-		assert.deepEqual(res, 4);
+		assert.deepStrictEqual(res, 4);
 
 		done();
 	});
@@ -59,7 +59,7 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function () {
 		}, Error);
 
 		var res = alasql.value('select count(*) from three');
-		assert.deepEqual(res, 4);
+		assert.deepStrictEqual(res, 4);
 
 		done();
 	});

@@ -22,7 +22,7 @@ describe.skip('Test 429', function () {
 		alasql("INSERT INTO ls429.one VALUES ('b')");
 		alasql("DELETE FROM ls429.one WHERE str = 'a'");
 		var res = alasql('SELECT * FROM ls429.one');
-		assert.deepEqual(res, [{str: 'b'}]);
+		assert.deepStrictEqual(res, [{str: 'b'}]);
 		done();
 	});
 });

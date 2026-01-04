@@ -41,7 +41,7 @@ describe('Test 1384 - REGEXP with MySQL word boundaries', function () {
 		assert.equal(res.length, 2, 'Should match exactly two words');
 
 		var matched = res.map(r => r.word).sort();
-		assert.deepEqual(matched, ['Berlin,rid', 'rid'], 'Should match only complete word rid');
+		assert.deepStrictEqual(matched, ['Berlin,rid', 'rid'], 'Should match only complete word rid');
 	});
 
 	it('C) Test REGEXP_LIKE with word boundaries', function () {

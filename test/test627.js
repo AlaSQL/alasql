@@ -23,7 +23,7 @@ describe('Test 627 - cast float for SUM, AVG when pivot', function () {
 			[data()]
 		);
 		//console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				productLine: 'Trains',
 				Series1February: 5151,

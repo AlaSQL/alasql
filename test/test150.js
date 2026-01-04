@@ -67,7 +67,7 @@ describe('Test 150 - localStorage Engine', function () {
 		alasql('insert into test150a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 		var res = alasql('select * into test150.one from test150a.one');
 		//		console.log(alasql.databases.test150.tables);
-		assert.deepEqual(alasql.databases.test150.tables.one.data, [
+		assert.deepStrictEqual(alasql.databases.test150.tables.one.data, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},
@@ -75,7 +75,7 @@ describe('Test 150 - localStorage Engine', function () {
 
 		var res = alasql('select * from test150.one');
 		//		console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},

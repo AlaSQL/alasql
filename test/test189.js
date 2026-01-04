@@ -27,7 +27,7 @@ if (typeof exports == 'object') {
 	        	SELECT * FROM one',
 						[],
 						function (res) {
-							assert.deepEqual(res.pop(), data);
+							assert.deepStrictEqual(res.pop(), data);
 							alasql('DROP DATABASE test189');
 							done();
 						}

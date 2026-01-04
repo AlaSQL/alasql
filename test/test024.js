@@ -24,9 +24,9 @@ describe('Test 24', function () {
 		done();
 		return;
 		var res = db.exec('SELECT COLUMN a FROM test1 WHERE a IN (SELECT a FROM test2)');
-		assert.deepEqual([2, 3], res);
+		assert.deepStrictEqual([2, 3], res);
 		var res = db.queryArray('SELECT a FROM test1 WHERE a NOT IN (SELECT a FROM test2)');
-		assert.deepEqual([1, 4, 5, 6], res);
+		assert.deepStrictEqual([1, 4, 5, 6], res);
 
 		alasql('drop database test24');
 		done();

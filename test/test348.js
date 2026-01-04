@@ -45,7 +45,7 @@ describe('Test 347 Undescores in names Issue #245', function () {
         students_a
     */
 		});
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{_id: 1, na_me: 'John Doe'},
 			{_id: 2, na_me: 'Larry Loe'},
 		]);

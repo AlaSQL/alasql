@@ -17,7 +17,7 @@ describe('Test' + test + 'Newline characters in like', function () {
 		var res = alasql('SELECT b FROM ? WHERE b LIKE "t%"', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [{b: 'THI\n\rRD'}]);
+		assert.deepStrictEqual(res, [{b: 'THI\n\rRD'}]);
 		done();
 	});
 
@@ -33,7 +33,12 @@ describe('Test' + test + 'Newline characters in like', function () {
 		var res = alasql('SELECT b FROM ? WHERE b LIKE "%T%"', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [{b: 'second\n\ritem'}, {b: 'THIRD'}, {b: '\n\rFifth'}, {b: 'Six\nth'}]);
+		assert.deepStrictEqual(res, [
+			{b: 'second\n\ritem'},
+			{b: 'THIRD'},
+			{b: '\n\rFifth'},
+			{b: 'Six\nth'},
+		]);
 		done();
 	});
 
@@ -47,7 +52,7 @@ describe('Test' + test + 'Newline characters in like', function () {
 		var res = alasql('SELECT b FROM ? WHERE b LIKE "0%"', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [{b: 0}, {b: '0ne'}]);
+		assert.deepStrictEqual(res, [{b: 0}, {b: '0ne'}]);
 		done();
 	});
 });

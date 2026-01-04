@@ -18,7 +18,7 @@ describe('Test 243 AVG bug', function () {
 			'SELECT COUNT(*) as all_rows, COUNT(a) as a, COUNT(b) as b, COUNT(c) as c FROM ?',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				all_rows: 5,
 				a: 3,
@@ -32,7 +32,7 @@ describe('Test 243 AVG bug', function () {
 	it('2. Does not count null when using GROUP BY', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: undefined}, {a: null}];
 		var res = alasql('SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 3, c: 3},
 			{a: 2, b: 2, c: 2},
 			{a: 3, b: 1, c: 1},
@@ -105,7 +105,7 @@ describe('Test 243 AVG bug', function () {
 
 		var res = alasql('SELECT person, avg(sold) FROM ? GROUP BY person', [arr]);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{person: 1, 'AVG(sold)': 12.5},
 			{person: 2, 'AVG(sold)': 10},
 			{person: 3, 'AVG(sold)': 40},

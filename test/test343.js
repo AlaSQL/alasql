@@ -13,27 +13,27 @@ describe('Test 343 Use params for $variables', function () {
 
 	it('2. Simple get undefined', function (done) {
 		var res = alasql('=$a');
-		assert.deepEqual(res, undefined);
+		assert.deepStrictEqual(res, undefined);
 		done();
 	});
 
 	it('3. Simple get from empty param {}', function (done) {
 		var res = alasql('=$a', {});
-		assert.deepEqual(res, undefined);
+		assert.deepStrictEqual(res, undefined);
 		done();
 	});
 
 	it('4. Simple get from empty param {}', function (done) {
 		var params = {a: 123};
 		var res = alasql('=$a', params);
-		assert.deepEqual(res, 123);
+		assert.deepStrictEqual(res, 123);
 		done();
 	});
 
 	it('5. Simple set to param', function (done) {
 		var params = {a: 123};
 		var res = alasql('SET $a = $a + 100', params);
-		assert.deepEqual(params.a, 223);
+		assert.deepStrictEqual(params.a, 223);
 		done();
 	});
 
@@ -41,7 +41,7 @@ describe('Test 343 Use params for $variables', function () {
 		var params = {};
 		params.data = [{v: 1}, {v: 2}, {v: 3}];
 		var res = alasql('SELECT * INTO $arr FROM $data', params);
-		assert.deepEqual(params.arr, [{v: 1}, {v: 2}, {v: 3}]);
+		assert.deepStrictEqual(params.arr, [{v: 1}, {v: 2}, {v: 3}]);
 		done();
 	});
 
@@ -49,7 +49,7 @@ describe('Test 343 Use params for $variables', function () {
 		var params = {};
 		params.data = [{v: 1}, {v: 2}, {v: 3}];
 		var res = alasql('SEARCH /v INTO $vres FROM $data', params);
-		assert.deepEqual(params.vres, [1, 2, 3]);
+		assert.deepStrictEqual(params.vres, [1, 2, 3]);
 		done();
 	});
 

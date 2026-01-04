@@ -21,7 +21,7 @@ describe('Test 136-B - INSERT INTO table SET column = value', function () {
 		assert.equal(res, 1);
 
 		var data = alasql('SELECT * FROM users');
-		assert.deepEqual(data, [{id: 1, name: 'John'}]);
+		assert.deepStrictEqual(data, [{id: 1, name: 'John'}]);
 	});
 
 	it('B) INSERT SET with multiple columns', function () {
@@ -32,7 +32,7 @@ describe('Test 136-B - INSERT INTO table SET column = value', function () {
 		assert.equal(res, 1);
 
 		var data = alasql('SELECT * FROM products');
-		assert.deepEqual(data, [{id: 1, name: 'Widget', price: 19.99, inStock: true}]);
+		assert.deepStrictEqual(data, [{id: 1, name: 'Widget', price: 19.99, inStock: true}]);
 	});
 
 	it('C) INSERT SET with expressions', function () {
@@ -41,7 +41,7 @@ describe('Test 136-B - INSERT INTO table SET column = value', function () {
 		assert.equal(res, 1);
 
 		var data = alasql('SELECT * FROM calculations');
-		assert.deepEqual(data, [{id: 1, result: 5}]);
+		assert.deepStrictEqual(data, [{id: 1, result: 5}]);
 	});
 
 	it('D) Multiple INSERT SET statements', function () {
@@ -51,7 +51,7 @@ describe('Test 136-B - INSERT INTO table SET column = value', function () {
 		alasql('INSERT INTO items SET id = 3, itemValue = "third"');
 
 		var data = alasql('SELECT * FROM items ORDER BY id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, itemValue: 'first'},
 			{id: 2, itemValue: 'second'},
 			{id: 3, itemValue: 'third'},
@@ -66,6 +66,6 @@ describe('Test 136-B - INSERT INTO table SET column = value', function () {
 
 		var data = alasql('SELECT * FROM withDefaults');
 		// Explicit SET values should override defaults
-		assert.deepEqual(data, [{id: 1, status: 'inactive', quantity: 0}]);
+		assert.deepStrictEqual(data, [{id: 1, status: 'inactive', quantity: 0}]);
 	});
 });

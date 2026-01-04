@@ -19,7 +19,7 @@ describe('Test 1185 - Table names starting with numbers', function () {
 		alasql('CREATE TABLE `50ks` (id INT, name STRING)');
 		alasql('INSERT INTO `50ks` VALUES (1, "test")');
 		var res = alasql('SELECT * FROM `50ks`');
-		assert.deepEqual(res, [{id: 1, name: 'test'}]);
+		assert.deepStrictEqual(res, [{id: 1, name: 'test'}]);
 	});
 
 	it('B) Table name starting with number without backticks', function () {
@@ -27,7 +27,7 @@ describe('Test 1185 - Table names starting with numbers', function () {
 		alasql('INSERT INTO `50k` VALUES (2, "test2")');
 		// This should work without backticks after the fix
 		var res = alasql('SELECT * FROM 50k');
-		assert.deepEqual(res, [{id: 2, name: 'test2'}]);
+		assert.deepStrictEqual(res, [{id: 2, name: 'test2'}]);
 	});
 
 	it('C) Table name with schema prefix starting with number', function () {
@@ -39,7 +39,7 @@ describe('Test 1185 - Table names starting with numbers', function () {
 		alasql('INSERT INTO `50k` VALUES (3, "test3")');
 		// Query with schema.table notation where table starts with number
 		var res = alasql('SELECT * FROM csv.50k');
-		assert.deepEqual(res, [{id: 3, name: 'test3'}]);
+		assert.deepStrictEqual(res, [{id: 3, name: 'test3'}]);
 		// Cleanup
 		alasql('USE test1185');
 		alasql('DROP DATABASE csv');

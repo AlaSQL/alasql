@@ -21,7 +21,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 			'SELECT eventStart FROM $0 INTERSECT SELECT eventStart FROM $0 ORDER BY eventStart',
 			[data]
 		);
-		assert.deepEqual(res, [{eventStart: 1}, {eventStart: 10}, {eventStart: 100}]);
+		assert.deepStrictEqual(res, [{eventStart: 1}, {eventStart: 10}, {eventStart: 100}]);
 	});
 
 	it('B) EXCEPT with ORDER BY on column', function () {
@@ -30,7 +30,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 			'SELECT eventStart FROM $0 WHERE eventStart < 100 EXCEPT SELECT eventStart FROM $0 WHERE eventStart > 50 ORDER BY eventStart',
 			[data]
 		);
-		assert.deepEqual(res, [{eventStart: 1}, {eventStart: 10}]);
+		assert.deepStrictEqual(res, [{eventStart: 1}, {eventStart: 10}]);
 	});
 
 	it('C) INTERSECT with SELECT * and ORDER BY', function () {
@@ -39,7 +39,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 		var res = alasql(
 			'SELECT * FROM Persons INTERSECT SELECT * FROM Persons WHERE eventStart BETWEEN 1000000 AND 1000100 OR eventEnd BETWEEN 1000000 AND 1000100 ORDER BY eventStart'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{eventStart: 1000000, eventEnd: 1000100},
 			{eventStart: 1000050, eventEnd: 1000150},
 		]);
@@ -52,7 +52,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 		var res = alasql(
 			'SELECT * FROM Persons EXCEPT SELECT * FROM Persons WHERE eventStart > 1000100 ORDER BY eventStart'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{eventStart: 1000000, eventEnd: 1000100},
 			{eventStart: 1000050, eventEnd: 1000150},
 		]);
@@ -70,7 +70,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 		);
 		// Should return rows where BOTH conditions are true (INTERSECT) and ordered by eventStart
 		// The INTERSECT of all rows with filtered rows should give us the filtered rows
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{eventStart: 1000000, eventEnd: 1000100},
 			{eventStart: 1000050, eventEnd: 1000150},
 		]);
@@ -83,6 +83,6 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 			'SELECT eventStart FROM $0 INTERSECT SELECT eventStart FROM $0 ORDER BY eventStart DESC',
 			[data]
 		);
-		assert.deepEqual(res, [{eventStart: 100}, {eventStart: 10}, {eventStart: 1}]);
+		assert.deepStrictEqual(res, [{eventStart: 100}, {eventStart: 10}, {eventStart: 1}]);
 	});
 });

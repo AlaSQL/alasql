@@ -41,7 +41,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [1, 2, 3, 4]);
+		assert.deepStrictEqual(res.sort(), [1, 2, 3, 4]);
 		done();
 	});
 
@@ -54,7 +54,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [1, 1, 2, 2, 3, 4]);
+		assert.deepStrictEqual(res.sort(), [1, 1, 2, 2, 3, 4]);
 		done();
 	});
 
@@ -67,7 +67,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [3]);
+		assert.deepStrictEqual(res.sort(), [3]);
 		done();
 	});
 	it('6. INTERSECT', function (done) {
@@ -79,7 +79,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [1, 2]);
+		assert.deepStrictEqual(res.sort(), [1, 2]);
 		done();
 	});
 
@@ -92,7 +92,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [1, 2]);
+		assert.deepStrictEqual(res.sort(), [1, 2]);
 		done();
 	});
 
@@ -107,7 +107,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [1, 2, 3, 4, 5]);
+		assert.deepStrictEqual(res.sort(), [1, 2, 3, 4, 5]);
 		done();
 	});
 
@@ -122,7 +122,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		// console.log(res);
-		assert.deepEqual(res.sort(), [1, 2, 3, 4]);
+		assert.deepStrictEqual(res.sort(), [1, 2, 3, 4]);
 		done();
 	});
 
@@ -137,7 +137,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		// console.log(res);
-		assert.deepEqual(res.sort(), [3]);
+		assert.deepStrictEqual(res.sort(), [3]);
 		done();
 	});
 
@@ -152,7 +152,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		// console.log(res);
-		assert.deepEqual(res.sort(), [1, 2, 3]);
+		assert.deepStrictEqual(res.sort(), [1, 2, 3]);
 		done();
 	});
 
@@ -167,7 +167,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		// console.log(res);
-		assert.deepEqual(res.sort(), [1, 2]);
+		assert.deepStrictEqual(res.sort(), [1, 2]);
 		done();
 	});
 
@@ -182,7 +182,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), [3]);
+		assert.deepStrictEqual(res.sort(), [3]);
 		done();
 	});
 
@@ -197,7 +197,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res.sort(), []);
+		assert.deepStrictEqual(res.sort(), []);
 		done();
 	});
 

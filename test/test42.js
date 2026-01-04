@@ -17,7 +17,7 @@ describe('Test 42 - NULL values in INTO SQL()', function () {
 			'INSERT INTO test_table(a,b,c,d) VALUES (2,NULL,4,NULL);\n' +
 			"INSERT INTO test_table(a,b,c,d) VALUES (NULL,'value',NULL,NULL);\n";
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('2. Should handle undefined values as NULL', () => {
@@ -31,7 +31,7 @@ describe('Test 42 - NULL values in INTO SQL()', function () {
 			"INSERT INTO test_table(a,b) VALUES (1,'test');\n" +
 			'INSERT INTO test_table(a,b) VALUES (2,NULL);\n';
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('3. Should handle mixed NULL, undefined, and empty strings', () => {
@@ -40,6 +40,6 @@ describe('Test 42 - NULL values in INTO SQL()', function () {
 
 		var expected = "INSERT INTO test_table(a,b,c,d) VALUES (1,'',NULL,NULL);\n";
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 });

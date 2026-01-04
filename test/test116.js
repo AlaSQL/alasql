@@ -56,7 +56,7 @@ describe('Test 116', function () {
 		assert(Object.keys(alasql.databases.test116.sqlCache).length == 2);
 
 		var res = alasql('select column a from one order by a');
-		assert.deepEqual(res, [10, 20, 30]);
+		assert.deepStrictEqual(res, [10, 20, 30]);
 		alasql.databases.test116.resetSqlCache();
 		assert(Object.keys(alasql.databases.test116.sqlCache).length == 0);
 

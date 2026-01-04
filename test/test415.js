@@ -28,7 +28,7 @@ describe('Test ' + test + ' Aggregators', function () {
 		//    console.log(res1);
 
 		var res = alasql('SELECT median(a) AS medparam FROM ?', [data]);
-		assert.deepEqual(res, [{medparam: 5000}]);
+		assert.deepStrictEqual(res, [{medparam: 5000}]);
 
 		done();
 	});
@@ -36,7 +36,7 @@ describe('Test ' + test + ' Aggregators', function () {
 	it('2. Test', function () {
 		var data = [{a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT MEDIAN(a), STDEV(a), SQRT(VAR(a)) FROM ?', [data]);
-		assert.deepEqual(res, [{'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1}]);
+		assert.deepStrictEqual(res, [{'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1}]);
 	});
 
 	it('3. Test', function (done) {
@@ -52,7 +52,7 @@ describe('Test ' + test + ' Aggregators', function () {
 		);
 		//console.log(res);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				ct: 4,
 				minDate: new Date('01.01.2015'),
@@ -79,7 +79,7 @@ describe('Test ' + test + ' Aggregators', function () {
 			'SELECT count(1) AS ct, min(_date) AS minDate, max(_date) AS maxDate, MEDIAN(_date) AS medDate, min(selectedChem) AS minparam, max(selectedChem) AS maxparam, AVG(selectedChem) AS avgparam, MEDIAN(selectedChem) AS medparam, STDEV(selectedChem) AS sdevparam FROM ? WHERE selectedChem is not null AND selectedChem != -9999 ORDER BY _date',
 			[resultSet]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				ct: 3,
 				minDate: new Date('01.01.2015'),
@@ -97,21 +97,21 @@ describe('Test ' + test + ' Aggregators', function () {
 	it('4. Quatiles', function () {
 		var data = [{a: 2}, {a: 3}, {a: 4}, {a: 5}, {a: 6}, {a: 7}, {a: 8}, {a: 8}, {a: 10}, {a: 10}];
 		var res = alasql('SELECT QUART(a), QUART2(a), QUART3(a) FROM ?', [data]);
-		assert.deepEqual(res, [{'QUART(a)': 4, 'QUART2(a)': 7, 'QUART3(a)': 10}]);
+		assert.deepStrictEqual(res, [{'QUART(a)': 4, 'QUART2(a)': 7, 'QUART3(a)': 10}]);
 	});
 
 	it('5. GREATEST/LEAST', function () {
 		var res = alasql(
 			'SELECT LEAST(3, 12, 34, 8, 25) AS numL, GREATEST(3, 12, 34, 8, 25) AS numG, LEAST("w3", "mmco", "a") AS strL, GREATEST("w3", "mmco", "a") AS strG'
 		);
-		assert.deepEqual(res, [{numL: 3, numG: 34, strL: 'a', strG: 'w3'}]);
+		assert.deepStrictEqual(res, [{numL: 3, numG: 34, strL: 'a', strG: 'w3'}]);
 
 		var data = [
 			{a: 1, b: 4},
 			{a: 5, b: 3},
 		];
 		res = alasql('SELECT GREATEST(a, b) AS g, LEAST(a, b) AS l FROM ?', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{g: 4, l: 1},
 			{g: 5, l: 3},
 		]);

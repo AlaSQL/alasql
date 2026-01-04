@@ -31,7 +31,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{RecordNum: 2, TABLE_NAME: 'Table2', BC: 'BC2'},
 			{RecordNum: 3, TABLE_NAME: 'Table3', BC: 'BC3'},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		// Clean up
 		alasql('DROP DATABASE test_insert_db');
@@ -60,7 +60,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{RecordNum: 1, TABLE_NAME: 'Table1', BC: 'BC1'},
 			{RecordNum: 2, TABLE_NAME: 'Table2', BC: 'BC2'},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		// Clean up
 		alasql('DROP TABLE BCPartners');
@@ -86,7 +86,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{id: 1, name: 'Item1', status: 'Active'},
 			{id: 2, name: 'Item2', status: 'Active'},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		alasql('DROP TABLE TestDefaults');
 	});
@@ -109,7 +109,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{id: 1, val: ''},
 			{id: 2, val: ''},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		alasql('DROP TABLE TestEmpty');
 	});
@@ -132,7 +132,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{id: 1, name: 'A', timestamp: '2025'},
 			{id: 2, name: 'B', timestamp: '2025'},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		alasql('DROP TABLE Source');
 		alasql('DROP TABLE TargetTable');
@@ -159,7 +159,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{a: 2, b: 'B_default', c: 'C2', d: 'D2'},
 			{a: 3, b: 'B3', c: 'C_default', d: 'D3'},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		alasql('DROP TABLE MixedTest');
 	});
@@ -182,7 +182,7 @@ describe('Test 1484 - INSERT FROM parameter with defaults', function () {
 			{id: 1, val: undefined},
 			{id: 2, val: null},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 
 		alasql('DROP TABLE UndefinedTest');
 	});

@@ -31,7 +31,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			alasql('insert into one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 			//    console.log(6);
 			var res = alasql('select * from one');
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
@@ -42,7 +42,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			//    var res = alasql('BEGIN TRANSACTION');
 			alasql('insert into one VALUES (4,"Sochi"), (5, "Vancouver")');
 			var res = alasql('select * from one');
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
@@ -58,7 +58,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			var res = alasql('select * from one');
 			//    console.log(9);
 			//      console.log(res);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},

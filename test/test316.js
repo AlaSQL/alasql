@@ -10,7 +10,7 @@ describe('Test 316 UNION ALL', function () {
 		var data = [{a: 10}, {a: 100}, {a: 10}, {a: 100}, {a: 10}];
 
 		var res = alasql('SEARCH DISTINCT(/ a) FROM ?', [data]);
-		assert.deepEqual(res, [10, 100]);
+		assert.deepStrictEqual(res, [10, 100]);
 
 		done();
 	});
@@ -19,17 +19,17 @@ describe('Test 316 UNION ALL', function () {
 		var data = [{a: 10}, {b: 100}, {a: 5}];
 
 		var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY() FROM ?', [data]);
-		assert.deepEqual(res, [5, 10, 100]);
+		assert.deepStrictEqual(res, [5, 10, 100]);
 
 		var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY() FROM ?', [data]);
 		//    console.log(res);
-		assert.deepEqual(res, [5, 10, 100]);
+		assert.deepStrictEqual(res, [5, 10, 100]);
 
 		var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY(ASC) FROM ?', [data]);
-		assert.deepEqual(res, [5, 10, 100]);
+		assert.deepStrictEqual(res, [5, 10, 100]);
 
 		var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY(DESC) FROM ?', [data]);
-		assert.deepEqual(res, [100, 10, 5]);
+		assert.deepStrictEqual(res, [100, 10, 5]);
 
 		done();
 	});

@@ -75,6 +75,14 @@ yy.Insert.prototype.compile = function (databaseid) {
 		throw "Table '" + tableid + "' could not be found";
 	}
 
+	// Helper function to create error message for value/column count mismatch
+	var createValueCountMismatchError = function (valueCount, columnCount, columnType) {
+		return (
+			`The number of values (${valueCount}) does not match the number of ${columnType} (${columnCount}). ` +
+			'If using a subquery, use INSERT INTO ... SELECT instead of INSERT INTO ... VALUES (SELECT ...)'
+		);
+	};
+
 	// Check, if this dirty flag is required
 	var s = '';
 	var sw = '';
@@ -109,6 +117,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			//			s += '';
 			if (self.columns) {
+				// Validate that we have the right number of values for the columns
+				if (values.length !== self.columns.length) {
+					throw new Error(
+						createValueCountMismatchError(values.length, self.columns.length, 'columns')
+					);
+				}
 				self.columns.forEach(function (col, idx) {
 					//console.log(db.tables, tableid, table);
 					//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
@@ -143,6 +157,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 				//console.log(111, table.columns);
 				//console.log(74,table);
 				if (Array.isArray(values) && table.columns && table.columns.length > 0) {
+					// Validate that we have the right number of values for the table columns
+					if (values.length !== table.columns.length) {
+						throw new Error(
+							createValueCountMismatchError(values.length, table.columns.length, 'table columns')
+						);
+					}
 					table.columns.forEach(function (col, idx) {
 						var q = "'" + col.columnid + "':";
 						//						var val = values[idx].toJS();

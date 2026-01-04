@@ -17,7 +17,7 @@ describe('Test 308 sub SEARCH', function () {
 			{a: 2, b: 20},
 		];
 		var res = alasql('SET @q = (SEARCH / b FROM ?)', [data]);
-		assert.deepEqual(alasql.vars.q, [10, 20]);
+		assert.deepStrictEqual(alasql.vars.q, [10, 20]);
 		done();
 	});
 
@@ -28,37 +28,37 @@ describe('Test 308 sub SEARCH', function () {
 			{a: 2, b: 30},
 		];
 		var res = alasql('SEARCH SUM(/b) FROM ?', [data]);
-		assert.deepEqual(res, [60]);
+		assert.deepStrictEqual(res, [60]);
 		var res = alasql('SEARCH AVG(/b) FROM ?', [data]);
-		assert.deepEqual(res, [20]);
+		assert.deepStrictEqual(res, [20]);
 		var res = alasql('SEARCH ARRAY(/b) FROM ?', [data]);
-		assert.deepEqual(res, [[10, 20, 30]]);
+		assert.deepStrictEqual(res, [[10, 20, 30]]);
 		var res = alasql('SEARCH ARRAY(/b) @(LEN(_))FROM ?', [data]);
-		assert.deepEqual(res, [3]);
+		assert.deepStrictEqual(res, [3]);
 		var res = alasql('SEARCH COUNT(/b) FROM ?', [data]);
-		assert.deepEqual(res, [3]);
+		assert.deepStrictEqual(res, [3]);
 		var res = alasql('SEARCH MIN(/b) FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 		var res = alasql('SEARCH MAX(/b) FROM ?', [data]);
-		assert.deepEqual(res, [30]);
+		assert.deepStrictEqual(res, [30]);
 		var res = alasql('SEARCH FIRST(/b) FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 		var res = alasql('SEARCH LAST(/b) FROM ?', [data]);
-		assert.deepEqual(res, [30]);
+		assert.deepStrictEqual(res, [30]);
 		done();
 	});
 
 	it.skip('4. SUM with nested selector', function (done) {
 		var data = [{a: 1, b: {c: 100}}, {a: 2}, {a: 2, b: {c: 300}}];
 		var res = alasql('SEARCH SUM(/b c) FROM ?', [data]);
-		assert.deepEqual(res, [400]);
+		assert.deepStrictEqual(res, [400]);
 		done();
 	});
 
 	it.skip('5. Complex SUM with tree selector', function (done) {
 		var data = [{a: 1, b: {c: 100}}, {c: 200}, {a: 2, b: {d: [{c: 300}]}}];
 		var res = alasql('SEARCH SUM((/)*c) FROM ?', [data]);
-		assert.deepEqual(res, [600]);
+		assert.deepStrictEqual(res, [600]);
 		done();
 	});
 
@@ -77,19 +77,19 @@ describe('Test 308 sub SEARCH', function () {
 	it.skip('7. SUM over graph', function (done) {
 		var res = alasql('SEARCH SUM(/ "Olga" (>>)+ age)');
 		//    console.log(res);
-		assert.deepEqual(res, [58]);
+		assert.deepStrictEqual(res, [58]);
 		done();
 	});
 	it.skip('8. SUM over graph', function (done) {
 		var res = alasql('SEARCH / "Olga" SUM((>>)+ age)');
 		//    console.log(res);
-		assert.deepEqual(res, [58]);
+		assert.deepStrictEqual(res, [58]);
 		done();
 	});
 	it.skip('9. SUM over graph', function (done) {
 		var res = alasql('SEARCH COUNT(/ "Olga" (>>)+ age)');
 		//    console.log(res);
-		assert.deepEqual(res, [2]);
+		assert.deepStrictEqual(res, [2]);
 		done();
 	});
 	it.skip('10. SUM over graph', function (done) {
@@ -99,7 +99,7 @@ describe('Test 308 sub SEARCH', function () {
       WHERE(@age > 50) \
       @person RETURNS(name,@age AS age)'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'Olga', age: 58},
 			{name: 'Helen', age: 67},
 		]);
@@ -112,10 +112,10 @@ describe('Test 308 sub SEARCH', function () {
       WHERE(@n > 1) \
       @(@person->name)'
 		);
-		assert.deepEqual(res, ['Olga', 'Helen']);
+		assert.deepStrictEqual(res, ['Olga', 'Helen']);
 
 		//   console.log(res);
-		//    assert.deepEqual(res, [58]);
+		//    assert.deepStrictEqual(res, [58]);
 
 		done();
 	});

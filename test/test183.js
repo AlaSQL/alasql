@@ -41,7 +41,7 @@ describe('Test 183 - [] column', function () {
 				arr,
 			]);
 			/// console.log(max,max1,max2);
-			//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
+			//      assert.deepStrictEqual(res,[1,2,3,4,5,6,7,8,9,10]);
 			done();
 		});
 	}
@@ -57,15 +57,15 @@ describe('Test 183 - [] column', function () {
 /// console.log(res);
 */
 		var res = alasql('SELECT COLUMN SUM(_) FROM ? GROUP BY _', [[1, 2, 3, 1]]);
-		assert.deepEqual(res, [2, 2, 3]);
+		assert.deepStrictEqual(res, [2, 2, 3]);
 		//        console.log(1,res);
 
 		var res = alasql('SELECT COLUMN LEN(_) FROM ?', [['aaa', 'aabbb', 'sssd']]);
-		assert.deepEqual(res, [3, 5, 4]);
+		assert.deepStrictEqual(res, [3, 5, 4]);
 		//        console.log(res);
 
 		var res = alasql('SELECT _, LEN(_) FROM ?', ['aaa\naabbb\nsssd']);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{_: 'aaa', 'LEN(_)': 3},
 			{_: 'aabbb', 'LEN(_)': 5},
 			{_: 'sssd', 'LEN(_)': 4},

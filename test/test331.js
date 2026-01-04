@@ -68,7 +68,7 @@ describe('Test 331 SLT#1 - test', function () {
   */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[131, 1, 133],
 			[182, 1, 183],
 		]);
@@ -104,7 +104,7 @@ describe('Test 331 SLT#1 - test', function () {
        ORDER BY 1,2
   */
 		});
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[-1, 222],
 			[-1, 222],
 			[1, 333],
@@ -150,7 +150,7 @@ SELECT a+b*2,
    */
 		});
 
-		assert.deepEqual(res, [[317, 108, 107, -1, 333]]);
+		assert.deepStrictEqual(res, [[317, 108, 107, -1, 333]]);
 
 		done();
 	});

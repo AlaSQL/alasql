@@ -44,7 +44,7 @@ describe('Test 281 UNIQUE Columns (for Meteor-Postgres)', function () {
 
 	it('7. Test', function (done) {
 		var res = alasql('SELECT * FROM usersTable');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 2, name: 'Kate'},
 			{id: 4, name: 'Andrey'},
 		]);
@@ -60,7 +60,7 @@ describe('Test 281 UNIQUE Columns (for Meteor-Postgres)', function () {
 
 	it('9. Test', function (done) {
 		var res = alasql('SELECT * FROM usersTable');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 2, name: 'Kate'},
 			{id: 4, name: 'Andrey'},
 		]);

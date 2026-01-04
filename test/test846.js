@@ -31,14 +31,14 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: null, b: 9, c: null, c2: 1, d: 5, e: null, f: 11}]);
+		assert.deepStrictEqual(res, [{a: null, b: 9, c: undefined, c2: 1, d: 5, e: undefined, f: 11}]);
 		var data = [
 			{
 				a: null,
 				b: 9,
 				c: new Date('12.12.2022'),
 				c2: 1,
-				d: null,
+				d: undefined,
 				e: 'XYZ1',
 				f: new Number(2),
 			},
@@ -64,14 +64,14 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				a: new Date('12.12.2022'),
 				b: 9,
 				c: new Date('01.01.2023'),
 				c2: 1,
 				d: 5,
-				e: null,
+				e: undefined,
 				f: 11,
 			},
 		]);
@@ -102,7 +102,7 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: null, b: 1, c: null, c2: 1, d: 5, e: null, f: 2}]);
+		assert.deepStrictEqual(res, [{a: null, b: 1, c: undefined, c2: 1, d: 5, e: undefined, f: 2}]);
 		var data = [
 			{
 				a: null,
@@ -135,14 +135,14 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				a: new Date('12.12.2022'),
 				b: 1,
-				c: null,
+				c: undefined,
 				c2: new Date('11.12.2022'),
 				d: 5,
-				e: null,
+				e: undefined,
 				f: 2,
 			},
 		]);
@@ -173,63 +173,65 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: null, b: 10, c: null, c2: 1, d: 5, e: null, f: 13}]);
+		assert.deepStrictEqual(res, [
+			{a: undefined, b: 10, c: undefined, c2: 1, d: 5, e: undefined, f: 13},
+		]);
 
 		var data = [[{a: null}]];
 		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
-		assert.deepEqual(res, [{a: null}]);
+		assert.deepStrictEqual(res, [{a: undefined}]);
 
 		var data = [[{a: 2}]];
 		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
-		assert.deepEqual(res, [{a: 2}]);
+		assert.deepStrictEqual(res, [{a: 2}]);
 	});
 
 	it('SUM zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select sum(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('MIN zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select min(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('MAX zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select max(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('AVG zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select avg(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('SUM zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select sum(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('MIN zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select min(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('MAX zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select max(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 
 	it('AVG zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select avg(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 	it('TOTAL dealing with non-numeric values', function () {
 		var data = [
@@ -270,13 +272,13 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: 0, b: 10, c: 1, c2: 1, d: 5, e: 0, f: 13, g: -1, h: 1}]);
+		assert.deepStrictEqual(res, [{a: 0, b: 10, c: 1, c2: 1, d: 5, e: 0, f: 13, g: -1, h: 1}]);
 	});
 
 	it('TOTAL of nothing is zero', function () {
 		data = [{ProductId: 10, price: 50}];
 		res = alasql(`SELECT TOTAL(price) AS p FROM ? WHERE ProductId = 5`, [data]);
-		assert.deepEqual(res, [{p: 0}]);
+		assert.deepStrictEqual(res, [{p: 0}]);
 	});
 
 	it('TOTAL of two rows based on select', function () {
@@ -286,18 +288,18 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			{ProductId: 123, price: 123},
 		];
 		res = alasql(`SELECT TOTAL(price) AS p FROM ? WHERE ProductId = 100`, [data]);
-		assert.deepEqual(res, [{p: 1100}]);
+		assert.deepStrictEqual(res, [{p: 1100}]);
 	});
 
 	it('TOTAL of single row', function () {
 		var data = [[{a: 2}]];
 		res = alasql(`SELECT TOTAL(a) AS a FROM ?`, data);
-		assert.deepEqual(res, [{a: 2}]);
+		assert.deepStrictEqual(res, [{a: 2}]);
 	});
 
 	it('TOTAL of zero is zero', function () {
 		var data = [{v: 0}];
 		res = alasql(`select TOTAL(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		assert.deepStrictEqual(res, [{v: 0}]);
 	});
 });

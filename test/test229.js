@@ -44,7 +44,7 @@ describe('Test 229 Calculating simple running totals', function () {
                       ORDER BY a.id;'
 		);
 		//      console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, value: 1, c: 1},
 			{id: 2, value: 2, c: 3},
 			{id: 3, value: 4, c: 7},
@@ -74,7 +74,7 @@ describe('Test 229 Calculating simple running totals', function () {
                     GROUP BY a.id, a.[value] \
                     ORDER BY a.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, value: 1, c: 1},
 			{id: 2, value: 2, c: 3},
 			{id: 3, value: 4, c: 7},
@@ -105,7 +105,7 @@ describe('Test 229 Calculating simple running totals', function () {
     ORDER BY a.id;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, value: 1, runningtotal: 1},
 			{id: 4, value: 7, runningtotal: 8},
 			{id: 5, value: 9, runningtotal: 17},
@@ -130,7 +130,7 @@ ORDER BY a.id;'
 		);
 		//console.log(res);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, value: 1, runningtotal: 1},
 			{id: 4, value: 7, runningtotal: 8},
 			{id: 5, value: 9, runningtotal: 17},
@@ -152,7 +152,7 @@ FROM   RunTotalTestData a \
 ORDER BY [value]%2, a.id;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{even: 0, id: 2, value: 2, c: 2},
 			{even: 0, id: 3, value: 4, c: 6},
 			{even: 0, id: 6, value: 12, c: 18},
@@ -187,7 +187,7 @@ ORDER BY [value]%2, a.id;'
                     ORDER BY [value]%2, id;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{even: 0, id: 2, value: 2, c: 2},
 			{even: 0, id: 3, value: 4, c: 6},
 			{even: 0, id: 6, value: 12, c: 18},

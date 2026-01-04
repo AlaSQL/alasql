@@ -49,7 +49,7 @@ select top 3 b.col from b order by b.col desc;
 		});
 
 		// console.log(res);
-		//    assert.deepEqual(res,1);
+		//    assert.deepStrictEqual(res,1);
 		done();
 	});
 
@@ -68,7 +68,7 @@ select col from cte_for_b;
 		});
 
 		// console.log(res);
-		//    assert.deepEqual(res,1);
+		//    assert.deepStrictEqual(res,1);
 		done();
 	});
 
@@ -83,7 +83,7 @@ drop table b;
     */
 		});
 		//  console.log(res);
-		assert.deepEqual(res, [1, 1]);
+		assert.deepStrictEqual(res, [1, 1]);
 		done();
 	});
 

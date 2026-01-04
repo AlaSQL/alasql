@@ -115,7 +115,7 @@ describe('Test 294 TestDatabase', function () {
 	});
 	it('3. Check quantities', function (done) {
 		var res = alasql('SELECT VALUE COUNT(*) FROM odetails');
-		assert.deepEqual(res, 10);
+		assert.deepStrictEqual(res, 10);
 		done();
 	});
 

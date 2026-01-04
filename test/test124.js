@@ -14,7 +14,7 @@ describe('Test 124 - column AS alias syntax', function () {
 
 		var res = alasql('select one.a q, two.b AS w from one join two using b');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{q: 1, w: 1},
 			{q: 2, w: 2},
 			{q: 6, w: 6},

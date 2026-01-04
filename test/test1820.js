@@ -12,7 +12,7 @@ describe('Test 1820 - SELECT query (a AS b, b AS c)', function () {
 
 		var res = alasql('SELECT a as b, b as c FROM ? GROUP BY a,b', [[item1, item2]]);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				b: 1,
 				c: 'hello',

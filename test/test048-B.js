@@ -19,8 +19,8 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('create table users (id int, name string, age int)');
 		var res = alasql('INSERT INTO users VALUES (1, "John", 30), (2, "Jane", 25) OUTPUT INSERTED.*');
 		assert.equal(res.length, 2);
-		assert.deepEqual(res[0], {id: 1, name: 'John', age: 30});
-		assert.deepEqual(res[1], {id: 2, name: 'Jane', age: 25});
+		assert.deepStrictEqual(res[0], {id: 1, name: 'John', age: 30});
+		assert.deepStrictEqual(res[1], {id: 2, name: 'Jane', age: 25});
 	});
 
 	it('B) INSERT with OUTPUT clause - specific columns', function () {
@@ -29,8 +29,8 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 			'INSERT INTO products VALUES (1, "Widget", 9.99), (2, "Gadget", 19.99) OUTPUT INSERTED.id, INSERTED.name'
 		);
 		assert.equal(res.length, 2);
-		assert.deepEqual(res[0], {id: 1, name: 'Widget'});
-		assert.deepEqual(res[1], {id: 2, name: 'Gadget'});
+		assert.deepStrictEqual(res[0], {id: 1, name: 'Widget'});
+		assert.deepStrictEqual(res[1], {id: 2, name: 'Gadget'});
 	});
 
 	it('C) DELETE with OUTPUT clause - basic', function () {
@@ -38,12 +38,12 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('INSERT INTO orders VALUES (1, "Alice", 100), (2, "Bob", 200), (3, "Charlie", 150)');
 		var res = alasql('DELETE FROM orders WHERE amount > 120 OUTPUT DELETED.*');
 		assert.equal(res.length, 2);
-		assert.deepEqual(res[0], {id: 2, customer: 'Bob', amount: 200});
-		assert.deepEqual(res[1], {id: 3, customer: 'Charlie', amount: 150});
+		assert.deepStrictEqual(res[0], {id: 2, customer: 'Bob', amount: 200});
+		assert.deepStrictEqual(res[1], {id: 3, customer: 'Charlie', amount: 150});
 		// Verify remaining data
 		var remaining = alasql('SELECT * FROM orders');
 		assert.equal(remaining.length, 1);
-		assert.deepEqual(remaining[0], {id: 1, customer: 'Alice', amount: 100});
+		assert.deepStrictEqual(remaining[0], {id: 1, customer: 'Alice', amount: 100});
 	});
 
 	it('D) DELETE with OUTPUT clause - specific columns', function () {
@@ -53,7 +53,7 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 			'DELETE FROM inventory WHERE quantity < 7 OUTPUT DELETED.item, DELETED.quantity'
 		);
 		assert.equal(res.length, 1);
-		assert.deepEqual(res[0], {item: 'Banana', quantity: 5});
+		assert.deepStrictEqual(res[0], {item: 'Banana', quantity: 5});
 	});
 
 	it('E) UPDATE with OUTPUT clause - INSERTED columns', function () {
@@ -77,7 +77,7 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('INSERT INTO stock VALUES (1, "AAPL", 150), (2, "GOOGL", 2800)');
 		var res = alasql('UPDATE stock SET price = 160 WHERE symbol = "AAPL" OUTPUT DELETED.price');
 		assert.equal(res.length, 1);
-		assert.deepEqual(res[0], {price: 150});
+		assert.deepStrictEqual(res[0], {price: 150});
 	});
 
 	it('G) UPDATE with OUTPUT clause - both INSERTED and DELETED', function () {

@@ -67,7 +67,7 @@ describe('373. Use functions in group by', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{'MONTH(fecha_Venta)': 10, Sales: 12500},
 			{'MONTH(fecha_Venta)': 9, Sales: 25000},
 		]);
@@ -82,7 +82,7 @@ describe('373. Use functions in group by', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{mes: 10, Sales: 12500},
 			{mes: 9, Sales: 25000},
 		]);

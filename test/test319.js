@@ -21,15 +21,15 @@ describe('Test 319 PATH in GRAPH', function () {
 		//    console.log(3,res);
 
 		var res = alasql('SEARCH @p1 > name');
-		assert.deepEqual(res, ['is older than']);
+		assert.deepStrictEqual(res, ['is older than']);
 		//    console.log(res);
 
 		var res = alasql('SEARCH @p1 PATH(=@p2) EDGE name');
 		//    console.log(res);
-		assert.deepEqual(res, ['is older than']);
+		assert.deepStrictEqual(res, ['is older than']);
 
 		var res = alasql('SEARCH @p1 PATH(WHERE(age=40)) EDGE name');
-		assert.deepEqual(res, ['is older than']);
+		assert.deepStrictEqual(res, ['is older than']);
 		done();
 	});
 

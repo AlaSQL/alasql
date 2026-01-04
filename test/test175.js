@@ -27,7 +27,7 @@ describe('Test 175 - JOIN USING TEST', function () {
 			FROM ? AS COLORS JOIN ? AS FRUITS ON COLORS.[0] = FRUITS.[0]',
 			[data.COLORS, data.FRUITS]
 		);
-		assert.deepEqual(data.NEW_FRUITS, [
+		assert.deepStrictEqual(data.NEW_FRUITS, [
 			[1, 'red', 'apple'],
 			[2, 'yellow', 'banana'],
 			[3, 'orange', 'orange'],
@@ -55,7 +55,7 @@ describe('Test 175 - JOIN USING TEST', function () {
 			[data.COLORS, data.FRUITS]
 		);
 		//		console.log(data.NEW_FRUITS);
-		assert.deepEqual(data.NEW_FRUITS, [
+		assert.deepStrictEqual(data.NEW_FRUITS, [
 			[1, 'red', 'apple'],
 			[2, 'yellow', 'banana'],
 			[3, 'orange', 'orange'],
