@@ -46,26 +46,17 @@ describe('Test 236 MERGE', function () {
 	});
 
 	it('2. Merge', function (done) {
-		// SQL is embedded in a multiline comment within a function
-		var sqlFunc = function () {
-			/*
-
-        MERGE [Target] AS T
-        USING [Source] AS S
-        ON (T.EmployeeID = S.EmployeeID) 
-        WHEN NOT MATCHED BY TARGET AND S.EmployeeName LIKE 'S%' 
-            THEN INSERT(EmployeeID, EmployeeName) VALUES(S.EmployeeID, S.EmployeeName)
-        WHEN MATCHED 
-            THEN UPDATE SET T.EmployeeName = S.EmployeeName
-        WHEN NOT MATCHED BY SOURCE AND T.EmployeeName LIKE 'S%'
-            THEN DELETE
-
-    */
-		};
-		
-		// Extract SQL from the function's comment block
-		var funcStr = sqlFunc.toString();
-		var sql = funcStr.substring(funcStr.indexOf('/*') + 2, funcStr.lastIndexOf('*/')).trim();
+		var sql = `
+			MERGE [Target] AS T
+			USING [Source] AS S
+			ON (T.EmployeeID = S.EmployeeID) 
+			WHEN NOT MATCHED BY TARGET AND S.EmployeeName LIKE 'S%' 
+				THEN INSERT(EmployeeID, EmployeeName) VALUES(S.EmployeeID, S.EmployeeName)
+			WHEN MATCHED 
+				THEN UPDATE SET T.EmployeeName = S.EmployeeName
+			WHEN NOT MATCHED BY SOURCE AND T.EmployeeName LIKE 'S%'
+				THEN DELETE
+		`;
 		
 		// Execute the MERGE
 		var res = alasql(sql);
