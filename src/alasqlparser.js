@@ -192,7 +192,7 @@ break;
 case 85:
  this.$ = {unpivot:{tocolumnid:$$[$0-8], forcolumnid:$$[$0-6], inlist:$$[$0-3], as:$$[$0]}}; 
 break;
-case 87: case 88: case 96: case 157: case 199: case 200: case 204: case 205: case 245: case 258: case 259: case 284: case 299: case 300: case 301: case 302: case 303: case 304: case 305: case 306: case 307: case 308: case 309: case 310: case 311: case 312: case 315: case 316: case 332: case 333: case 334: case 335: case 336: case 337: case 350: case 396: case 462: case 463: case 464: case 465: case 466: case 467: case 545: case 578: case 582: case 584: case 659: case 660: case 661: case 662: case 663: case 664: case 669: case 671: case 672: case 681: case 700: case 701: case 766: case 781: case 782: case 784: case 785: case 791: case 792:
+case 87: case 88: case 96: case 157: case 199: case 200: case 204: case 205: case 245: case 284: case 299: case 300: case 301: case 302: case 303: case 304: case 305: case 306: case 307: case 308: case 309: case 310: case 311: case 312: case 315: case 316: case 332: case 333: case 334: case 335: case 336: case 337: case 350: case 396: case 462: case 463: case 464: case 465: case 466: case 467: case 545: case 578: case 582: case 584: case 659: case 660: case 661: case 662: case 663: case 664: case 669: case 671: case 672: case 681: case 700: case 701: case 766: case 781: case 782: case 784: case 785: case 791: case 792:
  this.$ = $$[$0]; 
 break;
 case 89: case 94: case 774: case 798:
@@ -634,89 +634,83 @@ case 249:
 			this.$ = {};
 			this.$[$$[$0-1].op] = $$[$0];
 			if($$[$0-1].corresponding) this.$.corresponding = true;
-			// Handle queries for the nested SELECT in UNION
-			// The UnionableSelect has collected its queries, restore saved queries for outer SELECT
-			if(yy.savedQueriesForUnion && yy.savedQueriesForUnion.length > 0) {
-				var savedQueries = yy.savedQueriesForUnion.pop();
-				// Current yy.queries belongs to nested SELECT, save it
-				if(yy.queries && yy.queries.length > 0) {
-					$$[$0].queries = yy.queries;
-				}
-				// Restore outer SELECT's queries
-				yy.queries = savedQueries;
-			}
 		
 break;
 case 250:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			// Save and reset queries for nested SELECT using stack pattern
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'union'}; 
 		
 break;
 case 251:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'unionall'}; 
 		
 break;
 case 252:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'except'}; 
 		
 break;
 case 253:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'intersect'}; 
 		
 break;
 case 254:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'union', corresponding: true}; 
 		
 break;
 case 255:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'unionall', corresponding: true}; 
 		
 break;
 case 256:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'except', corresponding: true}; 
 		
 break;
 case 257:
  
-			// Save current queries for outer SELECT before parsing nested SELECT
-			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
-			yy.savedQueriesForUnion.push(yy.queries || []);
-			yy.queries = []; // Reset for nested SELECT
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
 			this.$ = {op: 'intersect', corresponding: true}; 
+		
+break;
+case 258: case 259:
+
+			// Restore parent queries from stack and assign current queries to nested SELECT
+			if(yy.queriesStack && yy.queriesStack.length > 0) {
+				if(yy.queries && yy.queries.length > 0) {
+					$$[$0].queries = yy.queries;
+				}
+				yy.queries = yy.queriesStack.pop();
+			}
+			this.$ = $$[$0];
 		
 break;
 case 261:
