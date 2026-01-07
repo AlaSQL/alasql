@@ -45,13 +45,16 @@ LIMIT 3)
 
 		var res = alasql(sql);
 
-		// Expected: 6 rows (3 from first + 3 from second with LIMIT)
-		assert.equal(res.length, 6, 'Should return 6 rows');
-
-		// Check that we got results from both queries
-		var names = res.map(r => r.subcategoryname);
-		assert(names.includes('Socks'), 'Should include Socks from first SELECT');
-		assert(names.includes('Accessories'), 'Should include Accessories from second SELECT');
+		// Expected: 6 rows (3 from first + 3 from second with LIMIT 3)
+		var expected = [
+			{subcategoryname: 'Components', sales: 2000.75},
+			{subcategoryname: 'Socks', sales: 9556.37},
+			{subcategoryname: 'Helmets', sales: 3000},
+			{subcategoryname: 'Accessories', sales: 800.1},
+			{subcategoryname: 'Bikes', sales: 1000.5},
+			{subcategoryname: 'Gloves', sales: 1200.5}
+		];
+		assert.deepStrictEqual(res, expected, 'Should return correct rows with ORDER BY/LIMIT on second SELECT');
 
 		alasql('DROP TABLE temptable');
 	});
@@ -74,16 +77,171 @@ LIMIT 2)
 
 		var res = alasql(sql);
 
-		// Expected: 7 rows (5 from first + 2 from second with LIMIT)
-		assert.equal(res.length, 7, 'Should return 7 rows');
-
-		// Check that LIMIT worked on second SELECT
-		var values = res.map(r => r.val).sort((a, b) => a - b);
-		assert(values.includes(1), 'Should include 1 from first SELECT');
-		assert(values.includes(6), 'Should include 6 from second SELECT');
-		assert(values.includes(7), 'Should include 7 from second SELECT');
-		assert(!values.includes(8), 'Should NOT include 8 (LIMIT 2 on second)');
+		// Expected: 7 rows (5 from first + 2 from second with LIMIT, UNION removes duplicates)
+		// Note: UNION doesn't guarantee order, so we sort the result for comparison
+		res.sort((a, b) => a.val - b.val);
+		var expected = [
+			{val: 1},
+			{val: 2},
+			{val: 3},
+			{val: 4},
+			{val: 5},
+			{val: 6},
+			{val: 7}
+		];
+		assert.deepStrictEqual(res, expected, 'Should return correct rows with UNION and LIMIT on second SELECT');
 
 		alasql('DROP TABLE test2');
+	});
+
+	it('C) Both SELECTs parenthesized with ORDER BY/LIMIT', function () {
+		// Test with both branches having parentheses
+		alasql('CREATE TABLE test3 (id INT, name STRING)');
+		alasql("INSERT INTO test3 VALUES (1,'Alice'),(2,'Bob'),(3,'Charlie'),(4,'David'),(5,'Eve')");
+
+		var sql = `
+(SELECT id, name FROM test3 ORDER BY id DESC LIMIT 2)
+UNION ALL
+(SELECT id, name FROM test3 ORDER BY id ASC LIMIT 2)
+`;
+
+		var res = alasql(sql);
+
+		var expected = [
+			{id: 5, name: 'Eve'},
+			{id: 4, name: 'David'},
+			{id: 1, name: 'Alice'},
+			{id: 2, name: 'Bob'}
+		];
+		assert.deepStrictEqual(res, expected, 'Both parenthesized SELECTs with ORDER BY/LIMIT');
+
+		alasql('DROP TABLE test3');
+	});
+
+	it('D) Parenthesized SELECT with ORDER BY DESC and LIMIT in UNION', function () {
+		// Test ORDER BY DESC
+		alasql('CREATE TABLE test4 (num INT)');
+		alasql('INSERT INTO test4 VALUES (10),(20),(30),(40),(50)');
+
+		var sql = `
+SELECT num FROM test4 WHERE num <= 30
+UNION ALL
+(SELECT num FROM test4 WHERE num > 30 ORDER BY num DESC LIMIT 1)
+`;
+
+		var res = alasql(sql);
+
+		var expected = [
+			{num: 10},
+			{num: 20},
+			{num: 30},
+			{num: 50}
+		];
+		assert.deepStrictEqual(res, expected, 'Parenthesized SELECT with ORDER BY DESC');
+
+		alasql('DROP TABLE test4');
+	});
+
+	it('E) UNION ALL with ORDER BY on both branches', function () {
+		// Test UNION ALL with ORDER BY on both first and second SELECT
+		alasql('CREATE TABLE test5 (letter STRING)');
+		alasql("INSERT INTO test5 VALUES ('a'),('b'),('c'),('d'),('e'),('f')");
+
+		var sql = `
+SELECT letter FROM test5 WHERE letter < 'c'
+UNION ALL
+(SELECT letter FROM test5 WHERE letter >= 'c' ORDER BY letter DESC LIMIT 2)
+`;
+
+		var res = alasql(sql);
+
+		var expected = [
+			{letter: 'a'},
+			{letter: 'b'},
+			{letter: 'f'},
+			{letter: 'e'}
+		];
+		assert.deepStrictEqual(res, expected, 'UNION ALL with ORDER BY DESC and LIMIT on second branch');
+
+		alasql('DROP TABLE test5');
+	});
+
+	it('F) EXCEPT with parenthesized ORDER BY/LIMIT', function () {
+		// Test EXCEPT operation with parentheses
+		alasql('CREATE TABLE test6a (num INT)');
+		alasql('CREATE TABLE test6b (num INT)');
+		alasql('INSERT INTO test6a VALUES (1),(2),(3),(4),(5)');
+		alasql('INSERT INTO test6b VALUES (3),(4)');
+
+		var sql = `
+SELECT num FROM test6a
+EXCEPT
+(SELECT num FROM test6b ORDER BY num ASC LIMIT 1)
+`;
+
+		var res = alasql(sql);
+
+		var expected = [
+			{num: 1},
+			{num: 2},
+			{num: 4},
+			{num: 5}
+		];
+		assert.deepStrictEqual(res, expected, 'EXCEPT with parenthesized ORDER BY/LIMIT');
+
+		alasql('DROP TABLE test6a');
+		alasql('DROP TABLE test6b');
+	});
+
+	it('G) INTERSECT with parenthesized ORDER BY/LIMIT', function () {
+		// Test INTERSECT operation with parentheses
+		alasql('CREATE TABLE test7a (num INT)');
+		alasql('CREATE TABLE test7b (num INT)');
+		alasql('INSERT INTO test7a VALUES (1),(2),(3),(4),(5)');
+		alasql('INSERT INTO test7b VALUES (3),(4),(5),(6)');
+
+		var sql = `
+(SELECT num FROM test7a WHERE num >= 3 ORDER BY num ASC LIMIT 2)
+INTERSECT
+SELECT num FROM test7b
+`;
+
+		var res = alasql(sql);
+
+		var expected = [
+			{num: 3},
+			{num: 4}
+		];
+		assert.deepStrictEqual(res, expected, 'INTERSECT with parenthesized ORDER BY/LIMIT');
+
+		alasql('DROP TABLE test7a');
+		alasql('DROP TABLE test7b');
+	});
+
+	it('H) ORDER BY after UNION applies to entire result (backwards compatibility)', function () {
+		// Test that ORDER BY after UNION still applies to the entire result
+		alasql('CREATE TABLE test8 (val INT)');
+		alasql('INSERT INTO test8 VALUES (30),(10),(20)');
+
+		var sql = `
+SELECT val FROM test8
+UNION ALL
+(SELECT val + 100 AS val FROM test8 ORDER BY val DESC LIMIT 2)
+ORDER BY val ASC
+`;
+
+		var res = alasql(sql);
+
+		// ORDER BY val ASC should apply to the combined result
+		var expected = [
+			{val: 10},
+			{val: 20},
+			{val: 30},
+			{val: 130},
+			{val: 120}
+		];
+		assert.deepStrictEqual(res, expected, 'ORDER BY after UNION applies to entire result');
+
+		alasql('DROP TABLE test8');
 	});
 });
