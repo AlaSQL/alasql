@@ -327,7 +327,7 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 		};
 
 		alasql('CREATE TABLE param_data (x NUMBER, y NUMBER)');
-		
+
 		// Test with parameterized INSERT
 		alasql('INSERT INTO param_data VALUES (?, ?)', [1, 3]);
 		alasql('INSERT INTO param_data VALUES (?, ?)', [2, 5]);
