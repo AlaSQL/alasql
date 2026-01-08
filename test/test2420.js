@@ -75,9 +75,7 @@ describe(`Test ${testId} - UNION ALL with subquery in NOT IN clause`, function (
 		let d = [{d: 1}, {d: 2}, {d: 3}];
 		alasql('create table test6');
 		alasql('select * into test6 from ?', [d]);
-		let res = alasql(
-			'select d from test6 where d <= 2 intersect select d from test6 where d >= 2'
-		);
+		let res = alasql('select d from test6 where d <= 2 intersect select d from test6 where d >= 2');
 		// Intersection should give d=2
 		assert.deepStrictEqual(res, [{d: 2}]);
 		alasql('drop table test6');
@@ -101,7 +99,10 @@ describe(`Test ${testId} - UNION ALL with subquery in NOT IN clause`, function (
 		let res = alasql(
 			'select d, (select 1) as x from test8 union all select d, (select 2) as x from test8'
 		);
-		assert.deepStrictEqual(res, [{d: 1, x: 1}, {d: 1, x: 2}]);
+		assert.deepStrictEqual(res, [
+			{d: 1, x: 1},
+			{d: 1, x: 2},
+		]);
 		alasql('drop table test8');
 	});
 
@@ -161,13 +162,19 @@ describe(`Test ${testId} - UNION ALL with subquery in NOT IN clause`, function (
 	});
 
 	it('N) Multiple columns with subqueries in UNION ALL', function () {
-		let d = [{a: 1, b: 2}, {a: 3, b: 4}];
+		let d = [
+			{a: 1, b: 2},
+			{a: 3, b: 4},
+		];
 		alasql('create table test14');
 		alasql('select * into test14 from ?', [d]);
 		let res = alasql(
 			'select a, b from test14 where a in (select 1) union all select a, b from test14 where b in (select 4)'
 		);
-		assert.deepStrictEqual(res, [{a: 1, b: 2}, {a: 3, b: 4}]);
+		assert.deepStrictEqual(res, [
+			{a: 1, b: 2},
+			{a: 3, b: 4},
+		]);
 		alasql('drop table test14');
 	});
 
@@ -193,7 +200,10 @@ describe(`Test ${testId} - UNION ALL with subquery in NOT IN clause`, function (
 		let res = alasql(
 			'select a, b from test16a where a in (select 1) union all corresponding select b, a from test16b where a in (select 4)'
 		);
-		assert.deepStrictEqual(res, [{a: 1, b: 2}, {a: 4, b: 3}]);
+		assert.deepStrictEqual(res, [
+			{a: 1, b: 2},
+			{a: 4, b: 3},
+		]);
 		alasql('drop table test16a');
 		alasql('drop table test16b');
 	});
