@@ -79,7 +79,7 @@ SELECT ASCII('X'); -- 88 - Uppercase X
 SELECT ASCII('Y'); -- 89 - Uppercase Y
 SELECT ASCII('Z'); -- 90 - Uppercase Z
 SELECT ASCII('['); -- 91 - Opening bracket
--- SELECT ASCII('\\'); -- 92 - Backslash
+SELECT ASCII('\\'); -- 92 - Backslash
 SELECT ASCII(']'); -- 93 - Closing bracket
 SELECT ASCII('^'); -- 94 - Caret - circumflex
 SELECT ASCII('_'); -- 95 - Underscore

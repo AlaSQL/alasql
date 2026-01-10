@@ -1581,9 +1581,9 @@ LogicValue
 
 StringValue
 	: STRING
-		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
+		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,String.fromCharCode(92))}); }
 	| NSTRING
-		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
+		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,String.fromCharCode(92))}); }
 	;
 
 NullValue
@@ -3528,6 +3528,11 @@ NonReserved
 	|ZONE
 	;
 %%
+
+// Pre-compiled regex patterns for string escape sequences (performance optimization)
+var reEscapedQuote = /(\\')/g;
+var reDoubleQuote = /('')/g;
+var reEscapedBackslash = /(\\\\)/g;
 
 // from https://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
 // JSON.stringify([].slice.call(document.querySelectorAll('tr')).filter(x => x.children.length == 5 && x.children[2].innerText == 'reserved').map(x => x.children[0].innerText))
