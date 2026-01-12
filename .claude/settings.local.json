@@ -6,7 +6,8 @@
 			"Bash(git add:*)",
 			"Bash(git commit:*)",
 			"Bash(yarn format)",
-			"Bash(yarn test:*)"
+			"Bash(yarn test:*)",
+			"Bash(git ls-tree:*)"
 		]
 	}
 }
