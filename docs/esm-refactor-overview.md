@@ -210,7 +210,7 @@ git checkout -b esm
 - [x] `git tag esm-step3e-complete` created
 
 ### [Step 4: Cleanup](./esm-step4.md)
-- [ ] `src/alasql.js` imports from modules, not from dist
+- [x] `src/alasql.js` imports from modules, not from dist
 - [ ] `src/legacy/` deleted
 - [ ] `build.sh` deleted
 - [ ] Old lint configs deleted

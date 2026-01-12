@@ -1,9 +1,31 @@
 // src/alasql.js
-// ESM entry point
-// Initially minimal, grows as we extract from legacy/
+// ESM entry point - imports from extracted modules
 
-// Import parser (CommonJS, default import)
+// Import parser
 import alasqlparser from './alasqlparser.js';
+
+// Import utils
+import {clone, cloneDeep, hash, extend, escapeq, cutbom} from './utils/index.js';
+
+// Import database module
+import {registerDatabaseModule} from './database/index.js';
+
+// Import aggregators
+import {registerAggregators} from './aggregators/index.js';
+
+// Import standard functions
+import {registerStandardFunctions} from './stdfn/index.js';
+
+// Import query
+import {Query} from './query/index.js';
+
+// Import statements
+import {Select, registerSelect} from './statements/Select.js';
+import {Insert, registerInsert} from './statements/Insert.js';
+import {Update, registerUpdate} from './statements/Update.js';
+import {Delete, registerDelete} from './statements/Delete.js';
+import {CreateTable, ColumnDef, registerCreateTable} from './statements/CreateTable.js';
+import {DropTable, TruncateTable, registerDropTable} from './statements/DropTable.js';
 
 const parser = alasqlparser.parser || alasqlparser;
 
@@ -24,6 +46,13 @@ alasql.stdfn = {};
 alasql.from = {};
 alasql.into = {};
 alasql.external = {};
+alasql.engines = {};
+
+// Attach utils
+alasql.utils = {clone, cloneDeep, hash, extend, escapeq, cutbom};
+
+// Attach Query class
+alasql.Query = Query;
 
 // .use() API for plugins
 alasql.use = function (...plugins) {
@@ -37,15 +66,28 @@ alasql.use = function (...plugins) {
 			if (plugin.into) Object.assign(alasql.into, plugin.into);
 			if (plugin.xlsx) alasql.external.xlsx = plugin.xlsx;
 			if (plugin.fs) alasql.external.fs = plugin.fs;
+			if (plugin.filesaver) alasql.external.filesaver = plugin.filesaver;
 		}
 	}
 	return alasql;
 };
 
-// TODO: exec, parse, compile will be added as we extract
+// Register all extracted modules
+registerDatabaseModule(alasql);
+registerAggregators(alasql);
+registerStandardFunctions(alasql);
+registerSelect(alasql);
+registerInsert(alasql);
+registerUpdate(alasql);
+registerDelete(alasql);
+registerCreateTable(alasql);
+registerDropTable(alasql);
+
+// exec placeholder - full implementation remains in legacy until full migration
 alasql.exec = function (sql, params, cb) {
-	// Placeholder - implement in Step 3
-	throw new Error('Not yet implemented - extract from legacy/');
+	// This is a placeholder - the actual exec is provided by the legacy dist
+	// During Step 4 cleanup, this will be replaced with the full implementation
+	throw new Error('ESM alasql.exec not yet implemented - use dist/alasql.fs.js for now');
 };
 
 export default alasql;

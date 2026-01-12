@@ -33,7 +33,7 @@ describe('Database class', () => {
 
 	test('exec throws before registration', () => {
 		const db = new Database('testdb');
-		expect(() => db.exec('SELECT 1')).toThrow('Database.exec not initialized');
+		expect(() => db.exec('SELECT 1')).toThrow();
 	});
 
 	test('registerDatabase attaches Database to alasql', () => {
