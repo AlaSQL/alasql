@@ -217,7 +217,7 @@ git checkout -b esm
 - [x] `bun test` passes (all tests)
 - [x] `bun run build` creates dist files
 - [x] `npm pack --dry-run` shows correct files
-- [ ] `git tag esm-step4-complete` created
+- [x] `git tag esm-step4-complete` created
 
 ### [Step 5: Release](./esm-step5.md)
 - [ ] TypeScript types updated for `.use()` API
