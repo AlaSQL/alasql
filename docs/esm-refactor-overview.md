@@ -213,7 +213,7 @@ git checkout -b esm
 - [x] `src/alasql.js` imports from modules, not from dist
 - [x] `src/legacy/` deleted
 - [x] `build.sh` deleted
-- [ ] Old lint configs deleted
+- [x] Old lint configs deleted
 - [ ] `bun test` passes (all tests)
 - [ ] `bun run build` creates dist files
 - [ ] `npm pack --dry-run` shows correct files
