@@ -156,7 +156,7 @@ git checkout -b esm
 - [x] `./build.sh` still works
 - [x] `yarn test` still passes (existing Mocha tests)
 - [x] `bun test test/` passes
-- [ ] `git tag esm-step1-complete` created
+- [x] `git tag esm-step1-complete` created
 
 ### [Step 2: Isolation](./esm-step2.md)
 - [ ] `src/legacy/` contains all numbered files
