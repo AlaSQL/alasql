@@ -150,6 +150,33 @@ declare module 'alasql' {
 		autoval(tablename: string, colname: string, getNext: boolean): unknown;
 	}
 
+	/**
+	 * Plugin function that receives the alasql instance
+	 */
+	type AlaSQLPlugin = (alasql: AlaSQL) => void;
+
+	/**
+	 * Plugin configuration object for .use() API
+	 */
+	interface AlaSQLPluginConfig {
+		aggr?: userAggregatorLookUp;
+		stdfn?: userDefinedFunctionLookUp;
+		from?: userFromFunctionLookUp;
+		into?: {[x: string]: unknown};
+		xlsx?: typeof xlsx;
+		fs?: unknown;
+		filesaver?: unknown;
+	}
+
+	/**
+	 * External libraries container
+	 */
+	interface AlaSQLExternal {
+		xlsx?: typeof xlsx;
+		fs?: unknown;
+		filesaver?: unknown;
+	}
+
 	interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
@@ -157,8 +184,11 @@ declare module 'alasql' {
 		parse(sql: string): AlaSQLAST;
 		promise<T = unknown>(sql: string, params?: any): Promise<T>;
 		fn: userDefinedFunctionLookUp;
+		stdfn: userDefinedFunctionLookUp;
 		from: userFromFunctionLookUp;
+		into: {[x: string]: unknown};
 		aggr: userAggregatorLookUp;
+		external: AlaSQLExternal;
 		autoval(tablename: string, colname: string, getNext?: boolean): number;
 		yy: {};
 		setXLSX(xlsxlib: typeof xlsx): void;
@@ -173,6 +203,28 @@ declare module 'alasql' {
 		 * @memberof AlaSQL
 		 */
 		databases: databaseLookUp;
+
+		/**
+		 * Register plugins with AlaSQL. Plugins can be functions or config objects.
+		 * Returns alasql for chaining.
+		 *
+		 * @example
+		 * // Function plugin
+		 * alasql.use((a) => { a.stdfn.MYFUNC = (x) => x * 2; });
+		 *
+		 * @example
+		 * // Config object plugin
+		 * alasql.use({ xlsx: XLSX, stdfn: { MYFUNC: (x) => x * 2 } });
+		 *
+		 * @example
+		 * // Chainable
+		 * alasql.use(plugin1).use(plugin2);
+		 *
+		 * @param {...(AlaSQLPlugin | AlaSQLPluginConfig)} plugins - Plugins to register
+		 * @returns {AlaSQL} The alasql instance for chaining
+		 * @memberof AlaSQL
+		 */
+		use(...plugins: Array<AlaSQLPlugin | AlaSQLPluginConfig>): AlaSQL;
 
 		/**
 		 * Equivalent to alasql('USE '+databaseid). This will change the current

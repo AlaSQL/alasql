@@ -220,7 +220,7 @@ git checkout -b esm
 - [x] `git tag esm-step4-complete` created
 
 ### [Step 5: Release](./esm-step5.md)
-- [ ] TypeScript types updated for `.use()` API
+- [x] TypeScript types updated for `.use()` API
 - [ ] README.md updated with new examples
 - [ ] MIGRATION.md created
 - [ ] CHANGELOG.md updated

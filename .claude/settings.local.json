@@ -21,7 +21,8 @@
 			"Bash(grep:*)",
 			"Bash(git -C /Users/mwulff/git/alasql tag esm-step3e-complete)",
 			"Bash(git -C /Users/mwulff/git/alasql tag -l 'esm-step3e*')",
-			"Bash(npm pack:*)"
+			"Bash(npm pack:*)",
+			"Bash(npx tsc:*)"
 		]
 	}
 }
