@@ -162,7 +162,7 @@ git checkout -b esm
 - [x] `src/legacy/` contains all numbered files
 - [x] `build.sh` renamed to `build.sh.disabled`
 - [x] `src/alasql.js` ESM entry created (skeleton)
-- [ ] `.use()` API implemented
+- [x] `.use()` API implemented
 - [ ] Empty target directories created (`src/utils/`, etc.)
 - [ ] `bun test test/esm-entry.test.js` passes
 - [ ] `git tag esm-step2-complete` created
