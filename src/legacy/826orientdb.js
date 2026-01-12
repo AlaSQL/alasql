@@ -1,2 +1,0 @@
-if (alasql.options.orientdb) {
-}

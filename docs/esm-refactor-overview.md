@@ -211,7 +211,7 @@ git checkout -b esm
 
 ### [Step 4: Cleanup](./esm-step4.md)
 - [x] `src/alasql.js` imports from modules, not from dist
-- [ ] `src/legacy/` deleted
+- [x] `src/legacy/` deleted
 - [ ] `build.sh` deleted
 - [ ] Old lint configs deleted
 - [ ] `bun test` passes (all tests)
