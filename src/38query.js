@@ -181,10 +181,12 @@ function queryfn3(query) {
 	// apply ORDER BY and LIMIT to the first SELECT before combining.
 	// This handles the pattern: SELECT ... ORDER BY ... LIMIT ... UNION ALL SELECT ... ORDER BY ... LIMIT ...
 	// We only do this if the UNION branch also has ORDER BY/LIMIT (pattern 2), not if ORDER BY is at the end (pattern 1).
-	var unionBranchHasOrder = ['unionallfn', 'unionfn', 'exceptfn', 'intersectfn'].some(function(fnName) {
-		var fn = query[fnName];
-		return fn && fn.query && (fn.query.orderfn || fn.query.limit);
-	});
+	var unionBranchHasOrder = ['unionallfn', 'unionfn', 'exceptfn', 'intersectfn'].some(
+		function (fnName) {
+			var fn = query[fnName];
+			return fn && fn.query && (fn.query.orderfn || fn.query.limit);
+		}
+	);
 
 	if (unionBranchHasOrder && (query.orderfn || query.limit)) {
 		// Apply ordering to first SELECT's data
