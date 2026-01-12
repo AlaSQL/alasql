@@ -3,7 +3,7 @@ active: true
 iteration: 1
 max_iterations: 200
 completion_promise: null
-started_at: "2026-01-12T14:26:01Z"
+started_at: "2026-01-12T14:29:20Z"
 ---
 
 
@@ -34,7 +34,7 @@ Strict per-iteration workflow - follow this order exactly:
 8. When you are confident this single task is finished:
    - Update **only that one line** in docs/esm-refactor-overview.md to mark it as done
    - git add .
-   - git commit -m "完成: (short description of the task just finished)"
+   - git commit -m "..." # Very short description of the task just finished
    - Output exactly this on a new line: <DONE>
 9. If the task is not yet finished, do **not** commit and do **not** output <DONE> - just keep working
 

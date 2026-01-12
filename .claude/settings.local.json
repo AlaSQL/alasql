@@ -5,7 +5,8 @@
 			"Bash(node -e:*)",
 			"Bash(git add:*)",
 			"Bash(git commit:*)",
-			"Bash(yarn format)"
+			"Bash(yarn format)",
+			"Bash(yarn test:*)"
 		]
 	}
 }
