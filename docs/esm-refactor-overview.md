@@ -142,7 +142,7 @@ git checkout -b esm
 ## Master Checklist
 
 ### [Step 0: Prerequisites](./esm-step0.md)
-- [ ] Current `./build.sh` works
+- [x] Current `./build.sh` works
 - [ ] Current `yarn test` passes
 - [ ] Reviewed `feature/rollup` branch for patterns
 - [ ] Understand which files depend on which

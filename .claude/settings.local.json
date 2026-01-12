@@ -1,0 +1,11 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(./build.sh:*)",
+			"Bash(node -e:*)",
+			"Bash(git add:*)",
+			"Bash(git commit:*)",
+			"Bash(yarn format)"
+		]
+	}
+}
