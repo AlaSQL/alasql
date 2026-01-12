@@ -2,6 +2,38 @@
 
 Please see https://github.com/AlaSQL/alasql/releases for more info...
 
+## 5.0.0 (2025-01-13)
+
+### Breaking Changes
+
+- **ESM First:** Package is now ESM by default. CommonJS users should use `alasql/dist/alasql.fs.js`
+- **XLSX Plugin:** Requires explicit opt-in via `.use()` API
+- **Plugin Architecture:** External libraries now registered via `.use({xlsx: XLSX})`
+
+### Added
+
+- `.use()` API for plugin registration and chaining
+- TypeScript types for `.use()` API (`AlaSQLPlugin`, `AlaSQLPluginConfig`)
+- Bun-based build system and test runner
+- Modular ESM source structure under `src/`
+- MIGRATION.md upgrade guide
+
+### Changed
+
+- Source code restructured from concatenated files to ESM modules
+- Build system changed from shell script concatenation to Bun
+- Test infrastructure updated to support both Mocha and Bun tests
+
+### Removed
+
+- `build.sh` concatenation build system
+- `src/legacy/` numbered source files (replaced by modular structure)
+- Old lint configurations
+
+### Migration
+
+See [MIGRATION.md](./MIGRATION.md) for upgrade instructions from v4 to v5.
+
 ## 0.7.1 (2021-03-05)
 
 - Bump: Update lodash dependency

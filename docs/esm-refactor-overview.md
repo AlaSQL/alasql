@@ -223,7 +223,7 @@ git checkout -b esm
 - [x] TypeScript types updated for `.use()` API
 - [x] README.md updated with new examples
 - [x] MIGRATION.md created
-- [ ] CHANGELOG.md updated
+- [x] CHANGELOG.md updated
 - [ ] Tests pass in fresh environment
 - [ ] npm publish successful
 - [ ] GitHub tag created
