@@ -214,7 +214,7 @@ git checkout -b esm
 - [x] `src/legacy/` deleted
 - [x] `build.sh` deleted
 - [x] Old lint configs deleted
-- [ ] `bun test` passes (all tests)
+- [x] `bun test` passes (all tests)
 - [ ] `bun run build` creates dist files
 - [ ] `npm pack --dry-run` shows correct files
 - [ ] `git tag esm-step4-complete` created
