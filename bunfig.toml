@@ -1,0 +1,5 @@
+[test]
+coveragePathIgnorePatterns = ["modules/**", "test_legacy/**", "src/legacy/**"]
+
+[install]
+peer = false
