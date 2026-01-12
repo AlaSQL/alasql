@@ -181,7 +181,7 @@ git checkout -b esm
 - [x] `src/database/Database.js` created with `registerDatabase`
 - [x] `src/database/Table.js` created with `registerTable`
 - [x] `src/database/View.js` created with `registerView`
-- [ ] `src/database/index.js` barrel export
+- [x] `src/database/index.js` barrel export
 - [ ] Unit tests for each class
 - [ ] Integration test passes
 - [ ] `git tag esm-step3b-complete` created
