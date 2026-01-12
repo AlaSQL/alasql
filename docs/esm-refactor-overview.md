@@ -145,7 +145,7 @@ git checkout -b esm
 - [x] Current `./build.sh` works
 - [x] Current `yarn test` passes
 - [x] Reviewed `feature/rollup` branch for patterns
-- [ ] Understand which files depend on which
+- [x] Understand which files depend on which
 - [ ] `git tag esm-step0-complete` created
 
 ### [Step 1: Tooling](./esm-step1.md)
