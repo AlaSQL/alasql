@@ -183,7 +183,7 @@ git checkout -b esm
 - [x] `src/database/View.js` created with `registerView`
 - [x] `src/database/index.js` barrel export
 - [x] Unit tests for each class
-- [ ] Integration test passes
+- [x] Integration test passes
 - [ ] `git tag esm-step3b-complete` created
 
 ### [Step 3c: Extract Aggregators](./esm-step3c.md)
