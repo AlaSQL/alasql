@@ -168,7 +168,7 @@ git checkout -b esm
 - [x] `git tag esm-step2-complete` created
 
 ### [Step 3a: Extract Utils](./esm-step3a.md)
-- [ ] `src/utils/clone.js` extracted and tested
+- [x] `src/utils/clone.js` extracted and tested
 - [ ] `src/utils/hash.js` extracted and tested
 - [ ] `src/utils/extend.js` extracted and tested
 - [ ] `src/utils/escapeq.js` extracted and tested
