@@ -216,7 +216,7 @@ git checkout -b esm
 - [x] Old lint configs deleted
 - [x] `bun test` passes (all tests)
 - [x] `bun run build` creates dist files
-- [ ] `npm pack --dry-run` shows correct files
+- [x] `npm pack --dry-run` shows correct files
 - [ ] `git tag esm-step4-complete` created
 
 ### [Step 5: Release](./esm-step5.md)
