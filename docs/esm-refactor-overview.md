@@ -165,7 +165,7 @@ git checkout -b esm
 - [x] `.use()` API implemented
 - [x] Empty target directories created (`src/utils/`, etc.)
 - [x] `bun test test/esm-entry.test.js` passes
-- [ ] `git tag esm-step2-complete` created
+- [x] `git tag esm-step2-complete` created
 
 ### [Step 3a: Extract Utils](./esm-step3a.md)
 - [ ] `src/utils/clone.js` extracted and tested
