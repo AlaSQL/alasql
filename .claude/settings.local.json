@@ -9,7 +9,8 @@
 			"Bash(yarn test:*)",
 			"Bash(git ls-tree:*)",
 			"Bash(ls:*)",
-			"Bash(bun:*)"
+			"Bash(bun:*)",
+			"Bash(npx prettier:*)"
 		]
 	}
 }
