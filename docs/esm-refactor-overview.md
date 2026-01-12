@@ -196,7 +196,7 @@ git checkout -b esm
 ### [Step 3d: Extract Statements](./esm-step3d.md)
 - [x] Query class extracted
 - [x] SELECT statement extracted and tested
-- [ ] INSERT statement extracted and tested
+- [x] INSERT statement extracted and tested
 - [ ] UPDATE statement extracted and tested
 - [ ] DELETE statement extracted and tested
 - [ ] CREATE/DROP TABLE extracted and tested
