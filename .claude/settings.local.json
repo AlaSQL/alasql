@@ -8,7 +8,8 @@
 			"Bash(yarn format)",
 			"Bash(yarn test:*)",
 			"Bash(git ls-tree:*)",
-			"Bash(ls:*)"
+			"Bash(ls:*)",
+			"Bash(bun:*)"
 		]
 	}
 }

@@ -149,7 +149,7 @@ git checkout -b esm
 - [x] `git tag esm-step0-complete` created
 
 ### [Step 1: Tooling](./esm-step1.md)
-- [ ] Bun installed (`bun --version` works)
+- [x] Bun installed (`bun --version` works)
 - [ ] `bunfig.toml` created
 - [ ] `biome.json` created  
 - [ ] `test/` directory created with smoke test
