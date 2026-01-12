@@ -188,7 +188,7 @@ git checkout -b esm
 
 ### [Step 3c: Extract Aggregators](./esm-step3c.md)
 - [x] All aggregators extracted to `src/aggregators/`
-- [ ] `src/aggregators/index.js` with `registerAggregators()`
+- [x] `src/aggregators/index.js` with `registerAggregators()`
 - [ ] Aggregator tests pass
 - [ ] Standard functions extracted to `src/stdfn/` (optional)
 - [ ] `git tag esm-step3c-complete` created
