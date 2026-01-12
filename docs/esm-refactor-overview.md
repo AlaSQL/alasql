@@ -222,7 +222,7 @@ git checkout -b esm
 ### [Step 5: Release](./esm-step5.md)
 - [x] TypeScript types updated for `.use()` API
 - [x] README.md updated with new examples
-- [ ] MIGRATION.md created
+- [x] MIGRATION.md created
 - [ ] CHANGELOG.md updated
 - [ ] Tests pass in fresh environment
 - [ ] npm publish successful
