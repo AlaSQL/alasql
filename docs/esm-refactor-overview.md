@@ -207,7 +207,7 @@ git checkout -b esm
 - [x] All plugins extracted to `src/plugins/`
 - [x] Each plugin uses dependency injection pattern
 - [x] Plugin tests pass (with mocks where needed)
-- [ ] `git tag esm-step3e-complete` created
+- [x] `git tag esm-step3e-complete` created
 
 ### [Step 4: Cleanup](./esm-step4.md)
 - [ ] `src/alasql.js` imports from modules, not from dist
