@@ -1,0 +1,23 @@
+{
+	"formatter": {
+		"indentStyle": "tab",
+		"lineWidth": 100
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single",
+			"trailingCommas": "es5"
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"correctness": {"recommended": true},
+			"suspicious": {"recommended": true}
+		}
+	},
+	"files": {
+		"include": ["src/**/*.js"],
+		"ignore": ["dist/**", "src/legacy/**", "test_legacy/**", "node_modules/**"]
+	}
+}
