@@ -201,7 +201,7 @@ git checkout -b esm
 - [x] DELETE statement extracted and tested
 - [x] CREATE/DROP TABLE extracted and tested
 - [x] All statement tests pass
-- [ ] `git tag esm-step3d-complete` created
+- [x] `git tag esm-step3d-complete` created
 
 ### [Step 3e: Extract Plugins](./esm-step3e.md)
 - [ ] All plugins extracted to `src/plugins/`
