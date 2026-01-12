@@ -122,6 +122,47 @@ For the browsers: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
 
 ## Getting started
 
+### ESM Import (Recommended)
+
+```js
+import alasql from 'alasql';
+
+const data = [
+	{name: 'Alice', age: 30},
+	{name: 'Bob', age: 25},
+];
+
+const result = alasql('SELECT * FROM ? WHERE age > 26', [data]);
+// [{ name: 'Alice', age: 30 }]
+```
+
+### Using Plugins with `.use()`
+
+Plugins and external libraries are registered with the `.use()` API:
+
+```js
+import alasql from 'alasql';
+import * as XLSX from 'xlsx';
+
+// Register the XLSX library
+alasql.use({xlsx: XLSX});
+
+// Now you can use XLSX functions
+const data = alasql('SELECT * FROM XLSX("mydata.xlsx")');
+alasql('SELECT * INTO XLSX("output.xlsx") FROM ?', [data]);
+```
+
+The `.use()` API also accepts functions for custom extensions:
+
+```js
+// Add custom functions
+alasql.use(a => {
+	a.fn.DOUBLE = x => x * 2;
+});
+
+alasql('SELECT DOUBLE(5)'); // Returns 10
+```
+
 See the ["Getting started" section of the wiki](https://github.com/alasql/alasql/wiki/Getting%20started)
 
 More advanced topics are covered in other wiki sections like ["Data manipulation"](https://github.com/alasql/alasql/wiki/Data-manipulation) and in questions on [Stack Overflow](http://stackoverflow.com/questions/tagged/alasql)
