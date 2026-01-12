@@ -199,7 +199,7 @@ git checkout -b esm
 - [x] INSERT statement extracted and tested
 - [x] UPDATE statement extracted and tested
 - [x] DELETE statement extracted and tested
-- [ ] CREATE/DROP TABLE extracted and tested
+- [x] CREATE/DROP TABLE extracted and tested
 - [ ] All statement tests pass
 - [ ] `git tag esm-step3d-complete` created
 
