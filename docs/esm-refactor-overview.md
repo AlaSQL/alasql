@@ -180,7 +180,7 @@ git checkout -b esm
 ### [Step 3b: Extract Database](./esm-step3b.md)
 - [x] `src/database/Database.js` created with `registerDatabase`
 - [x] `src/database/Table.js` created with `registerTable`
-- [ ] `src/database/View.js` created with `registerView`
+- [x] `src/database/View.js` created with `registerView`
 - [ ] `src/database/index.js` barrel export
 - [ ] Unit tests for each class
 - [ ] Integration test passes
