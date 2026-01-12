@@ -160,7 +160,7 @@ git checkout -b esm
 
 ### [Step 2: Isolation](./esm-step2.md)
 - [x] `src/legacy/` contains all numbered files
-- [ ] `build.sh` renamed to `build.sh.disabled`
+- [x] `build.sh` renamed to `build.sh.disabled`
 - [ ] `src/alasql.js` ESM entry created (skeleton)
 - [ ] `.use()` API implemented
 - [ ] Empty target directories created (`src/utils/`, etc.)
