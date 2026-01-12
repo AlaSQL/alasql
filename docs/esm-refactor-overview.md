@@ -206,7 +206,7 @@ git checkout -b esm
 ### [Step 3e: Extract Plugins](./esm-step3e.md)
 - [x] All plugins extracted to `src/plugins/`
 - [x] Each plugin uses dependency injection pattern
-- [ ] Plugin tests pass (with mocks where needed)
+- [x] Plugin tests pass (with mocks where needed)
 - [ ] `git tag esm-step3e-complete` created
 
 ### [Step 4: Cleanup](./esm-step4.md)
