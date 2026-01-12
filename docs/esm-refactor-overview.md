@@ -225,7 +225,7 @@ git checkout -b esm
 - [x] MIGRATION.md created
 - [x] CHANGELOG.md updated
 - [x] Tests pass in fresh environment
-- [ ] npm publish successful
+- [x] npm publish successful
 - [ ] GitHub tag created
 - [ ] Documentation updated
 ```
