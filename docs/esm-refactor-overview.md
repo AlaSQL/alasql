@@ -154,7 +154,7 @@ git checkout -b esm
 - [x] `biome.json` created
 - [x] `test/` directory created with smoke test
 - [x] `./build.sh` still works
-- [ ] `yarn test` still passes (existing Mocha tests)
+- [x] `yarn test` still passes (existing Mocha tests)
 - [ ] `bun test test/` passes
 - [ ] `git tag esm-step1-complete` created
 
