@@ -174,7 +174,7 @@ git checkout -b esm
 - [x] `src/utils/escapeq.js` extracted and tested
 - [x] `src/utils/cutbom.js` extracted and tested
 - [x] `src/utils/index.js` barrel export created
-- [ ] `bun test test/utils/` all pass
+- [x] `bun test test/utils/` all pass
 - [ ] `git tag esm-step3a-complete` created
 
 ### [Step 3b: Extract Database](./esm-step3b.md)
