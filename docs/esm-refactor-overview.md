@@ -146,7 +146,7 @@ git checkout -b esm
 - [x] Current `yarn test` passes
 - [x] Reviewed `feature/rollup` branch for patterns
 - [x] Understand which files depend on which
-- [ ] `git tag esm-step0-complete` created
+- [x] `git tag esm-step0-complete` created
 
 ### [Step 1: Tooling](./esm-step1.md)
 - [ ] Bun installed (`bun --version` works)
