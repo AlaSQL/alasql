@@ -151,8 +151,8 @@ git checkout -b esm
 ### [Step 1: Tooling](./esm-step1.md)
 - [x] Bun installed (`bun --version` works)
 - [x] `bunfig.toml` created
-- [x] `biome.json` created  
-- [ ] `test/` directory created with smoke test
+- [x] `biome.json` created
+- [x] `test/` directory created with smoke test
 - [ ] `./build.sh` still works
 - [ ] `yarn test` still passes (existing Mocha tests)
 - [ ] `bun test test/` passes
