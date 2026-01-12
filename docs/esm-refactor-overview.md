@@ -175,7 +175,7 @@ git checkout -b esm
 - [x] `src/utils/cutbom.js` extracted and tested
 - [x] `src/utils/index.js` barrel export created
 - [x] `bun test test/utils/` all pass
-- [ ] `git tag esm-step3a-complete` created
+- [x] `git tag esm-step3a-complete` created
 
 ### [Step 3b: Extract Database](./esm-step3b.md)
 - [ ] `src/database/Database.js` created with `registerDatabase`
