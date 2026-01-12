@@ -170,7 +170,7 @@ git checkout -b esm
 ### [Step 3a: Extract Utils](./esm-step3a.md)
 - [x] `src/utils/clone.js` extracted and tested
 - [x] `src/utils/hash.js` extracted and tested
-- [ ] `src/utils/extend.js` extracted and tested
+- [x] `src/utils/extend.js` extracted and tested
 - [ ] `src/utils/escapeq.js` extracted and tested
 - [ ] `src/utils/cutbom.js` extracted and tested
 - [ ] `src/utils/index.js` barrel export created
