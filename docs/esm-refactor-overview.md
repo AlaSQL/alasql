@@ -164,7 +164,7 @@ git checkout -b esm
 - [x] `src/alasql.js` ESM entry created (skeleton)
 - [x] `.use()` API implemented
 - [x] Empty target directories created (`src/utils/`, etc.)
-- [ ] `bun test test/esm-entry.test.js` passes
+- [x] `bun test test/esm-entry.test.js` passes
 - [ ] `git tag esm-step2-complete` created
 
 ### [Step 3a: Extract Utils](./esm-step3a.md)
