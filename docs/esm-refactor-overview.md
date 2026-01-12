@@ -184,7 +184,7 @@ git checkout -b esm
 - [x] `src/database/index.js` barrel export
 - [x] Unit tests for each class
 - [x] Integration test passes
-- [ ] `git tag esm-step3b-complete` created
+- [x] `git tag esm-step3b-complete` created
 
 ### [Step 3c: Extract Aggregators](./esm-step3c.md)
 - [ ] All aggregators extracted to `src/aggregators/`
