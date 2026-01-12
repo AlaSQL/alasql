@@ -178,7 +178,7 @@ git checkout -b esm
 - [x] `git tag esm-step3a-complete` created
 
 ### [Step 3b: Extract Database](./esm-step3b.md)
-- [ ] `src/database/Database.js` created with `registerDatabase`
+- [x] `src/database/Database.js` created with `registerDatabase`
 - [ ] `src/database/Table.js` created with `registerTable`
 - [ ] `src/database/View.js` created with `registerView`
 - [ ] `src/database/index.js` barrel export
