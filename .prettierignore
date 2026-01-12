@@ -1,14 +1,6 @@
-src/10start.js
-
-src/98finish.js
-
-src/99worker-finish.js
-
-src/99worker-start.js
+src/legacy/
 
 src/alasqlparser.js
-
-src/97saveas.js
 
 modules/
 

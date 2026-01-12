@@ -159,7 +159,7 @@ git checkout -b esm
 - [x] `git tag esm-step1-complete` created
 
 ### [Step 2: Isolation](./esm-step2.md)
-- [ ] `src/legacy/` contains all numbered files
+- [x] `src/legacy/` contains all numbered files
 - [ ] `build.sh` renamed to `build.sh.disabled`
 - [ ] `src/alasql.js` ESM entry created (skeleton)
 - [ ] `.use()` API implemented
