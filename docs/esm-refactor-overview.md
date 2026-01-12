@@ -191,7 +191,7 @@ git checkout -b esm
 - [x] `src/aggregators/index.js` with `registerAggregators()`
 - [x] Aggregator tests pass
 - [x] Standard functions extracted to `src/stdfn/` (optional)
-- [ ] `git tag esm-step3c-complete` created
+- [x] `git tag esm-step3c-complete` created
 
 ### [Step 3d: Extract Statements](./esm-step3d.md)
 - [ ] Query class extracted
