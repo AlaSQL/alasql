@@ -12,7 +12,8 @@
 			"Bash(bun:*)",
 			"Bash(npx prettier:*)",
 			"Bash(git -C /Users/mwulff/git/alasql add:*)",
-			"Bash(git -C /Users/mwulff/git/alasql commit -m \"$\\(cat <<''EOF''\nExtract UPDATE statement with tests \\(6 passing\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+			"Bash(git -C /Users/mwulff/git/alasql commit -m \"$\\(cat <<''EOF''\nExtract UPDATE statement with tests \\(6 passing\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+			"Bash(git -C /Users/mwulff/git/alasql commit -m \"$\\(cat <<''EOF''\nExtract DELETE statement with tests \\(6 passing\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
 		]
 	}
 }
