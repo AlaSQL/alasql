@@ -155,7 +155,7 @@ git checkout -b esm
 - [x] `test/` directory created with smoke test
 - [x] `./build.sh` still works
 - [x] `yarn test` still passes (existing Mocha tests)
-- [ ] `bun test test/` passes
+- [x] `bun test test/` passes
 - [ ] `git tag esm-step1-complete` created
 
 ### [Step 2: Isolation](./esm-step2.md)
