@@ -250,6 +250,18 @@ stdlib.ROW_NUMBER = function () {
 stdlib.GROUP_ROW_NUMBER = function () {
 	return '1';
 };
+stdlib.LEAD = function () {
+	return 'undefined';
+};
+stdlib.LAG = function () {
+	return 'undefined';
+};
+stdlib.FIRST_VALUE = function () {
+	return 'undefined';
+};
+stdlib.LAST_VALUE = function () {
+	return 'undefined';
+};
 
 stdlib.SQRT = function (s) {
 	return 'Math.sqrt(' + s + ')';

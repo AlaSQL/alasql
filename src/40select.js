@@ -187,6 +187,7 @@ yy.Select = class Select {
 		query.rownums = [];
 		query.grouprownums = [];
 		query.windowaggrs = []; // For window aggregate functions (COUNT/MAX/MIN/SUM/AVG with OVER)
+		query.windowfns = []; // For positional window functions (LEAD/LAG/FIRST_VALUE/LAST_VALUE)
 
 		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
 		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
@@ -504,6 +505,83 @@ yy.Select = class Select {
 							// Assign aggregate value to all rows in partition
 							for (var k = 0; k < rowIndices.length; k++) {
 								res[rowIndices[k]][config.as] = aggregateValue;
+							}
+						}
+					}
+				}
+
+				// Handle positional window functions - LEAD/LAG/FIRST_VALUE/LAST_VALUE
+				if (query.windowfns && query.windowfns.length > 0) {
+					for (var j = 0, jlen = query.windowfns.length; j < jlen; j++) {
+						var wfConfig = query.windowfns[j];
+						var partitions = {};
+
+						// Group rows by partition key
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							var partitionKey =
+								wfConfig.partitionColumns && wfConfig.partitionColumns.length > 0
+									? wfConfig.partitionColumns
+											.map(function (col) {
+												return res[i][col];
+											})
+											.join('|')
+									: '__all__';
+
+							if (!partitions[partitionKey]) partitions[partitionKey] = [];
+							partitions[partitionKey].push(i);
+						}
+
+						// Process each partition
+						for (var partitionKey in partitions) {
+							var rowIndices = partitions[partitionKey];
+
+							// Sort row indices within partition by ORDER BY columns
+							if (wfConfig.orderColumns && wfConfig.orderColumns.length > 0) {
+								rowIndices.sort(function (a, b) {
+									for (var oi = 0; oi < wfConfig.orderColumns.length; oi++) {
+										var ocol = wfConfig.orderColumns[oi];
+										var va = res[a][ocol.columnid];
+										var vb = res[b][ocol.columnid];
+										if (va == null && vb == null) continue;
+										if (va == null) return ocol.direction === 'ASC' ? -1 : 1;
+										if (vb == null) return ocol.direction === 'ASC' ? 1 : -1;
+										if (va < vb) return ocol.direction === 'ASC' ? -1 : 1;
+										if (va > vb) return ocol.direction === 'ASC' ? 1 : -1;
+									}
+									return 0;
+								});
+							}
+
+							// Compute values for each row in the partition
+							for (var k = 0; k < rowIndices.length; k++) {
+								var idx = rowIndices[k];
+								var colId = wfConfig.expressionColumnId;
+								var value;
+
+								switch (wfConfig.funcid) {
+									case 'LEAD':
+										var leadIdx = k + wfConfig.offset;
+										value =
+											leadIdx < rowIndices.length
+												? res[rowIndices[leadIdx]][colId]
+												: wfConfig.defaultValue;
+										break;
+									case 'LAG':
+										var lagIdx = k - wfConfig.offset;
+										value =
+											lagIdx >= 0
+												? res[rowIndices[lagIdx]][colId]
+												: wfConfig.defaultValue;
+										break;
+									case 'FIRST_VALUE':
+										value = res[rowIndices[0]][colId];
+										break;
+									case 'LAST_VALUE':
+										value = res[rowIndices[rowIndices.length - 1]][colId];
+										break;
+								}
+
+								res[idx][wfConfig.as] = value;
 							}
 						}
 					}
