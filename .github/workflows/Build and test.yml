@@ -152,7 +152,7 @@ jobs:
 
       - name: Get changed files
         id: detect-changes
-        uses: tj-actions/changed-files@v47.0.4
+        uses: tj-actions/changed-files@v47.0.5
         with:
           files: src/alasqlparser.jison
 
