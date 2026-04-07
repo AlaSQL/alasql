@@ -80,7 +80,7 @@
 		"uglify-js": "3.19.3"
 	},
 	"resolutions": {
-		"got": "14",
+		"got": "15",
 		"axios": "^1.13.2",
 		"json5": "2",
 		"underscore": "1",
