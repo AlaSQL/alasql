@@ -87,14 +87,14 @@
 		"glob-parent": "6",
 		"decode-uri-component": "0.4",
 		"semver": "7",
-		"follow-redirects": "^1.15.11",
+		"follow-redirects": "^1.16.0",
 		"js-yaml": "4",
 		"glob": "^13.0.0",
 		"rimraf": "^6.1.2"
 	},
 	"overrides": {
 		"axios": "^1.13.2",
-		"follow-redirects": "^1.15.11",
+		"follow-redirects": "^1.16.0",
 		"glob": "^13.0.0",
 		"rimraf": "^6.1.2"
 	},
