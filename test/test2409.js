@@ -187,10 +187,9 @@ describe('Test 2409 - LEAD/LAG/FIRST_VALUE/LAST_VALUE Window Functions', functio
 			{id: 2, val: null},
 			{id: 3, val: 30},
 		];
-		var res = alasql(
-			'SELECT id, val, LAG(val) OVER (ORDER BY id) AS prev_val FROM ? ORDER BY id',
-			[dataWithNulls]
-		);
+		var res = alasql('SELECT id, val, LAG(val) OVER (ORDER BY id) AS prev_val FROM ? ORDER BY id', [
+			dataWithNulls,
+		]);
 		assert.strictEqual(res[0].prev_val, null);
 		assert.strictEqual(res[1].prev_val, 10);
 		assert.strictEqual(res[2].prev_val, null); // null from the data row

@@ -574,19 +574,12 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			// Detect positional window functions: LEAD, LAG, FIRST_VALUE, LAST_VALUE
 			if (col.funcid) {
 				var fid = col.funcid.toUpperCase();
-				if (
-					fid === 'LEAD' ||
-					fid === 'LAG' ||
-					fid === 'FIRST_VALUE' ||
-					fid === 'LAST_VALUE'
-				) {
+				if (fid === 'LEAD' || fid === 'LAG' || fid === 'FIRST_VALUE' || fid === 'LAST_VALUE') {
 					var wfConfig = {
 						funcid: fid,
 						as: col.as,
-						expressionColumnId:
-							col.args && col.args[0] ? col.args[0].columnid : null,
-						offset:
-							col.args && col.args[1] ? col.args[1].value : 1,
+						expressionColumnId: col.args && col.args[0] ? col.args[0].columnid : null,
+						offset: col.args && col.args[1] ? col.args[1].value : 1,
 						defaultValue:
 							col.args && col.args[2]
 								? col.args[2].value != null

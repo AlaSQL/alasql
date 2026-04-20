@@ -568,10 +568,7 @@ yy.Select = class Select {
 										break;
 									case 'LAG':
 										var lagIdx = k - wfConfig.offset;
-										value =
-											lagIdx >= 0
-												? res[rowIndices[lagIdx]][colId]
-												: wfConfig.defaultValue;
+										value = lagIdx >= 0 ? res[rowIndices[lagIdx]][colId] : wfConfig.defaultValue;
 										break;
 									case 'FIRST_VALUE':
 										value = res[rowIndices[0]][colId];
