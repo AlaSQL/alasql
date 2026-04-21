@@ -3,8 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 85 - Mongo-like queries', function () {
+describe.skip('Test 85 - Mongo-like queries', function () {
 	//	it.skip('localStorage', function(done){
+	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

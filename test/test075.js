@@ -3,8 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 75 - NULL, IS NULL', function () {
+describe.skip('Test 75 - NULL, IS NULL', function () {
 	//	it.skip('localStorage', function(done){
+	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

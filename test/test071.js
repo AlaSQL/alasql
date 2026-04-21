@@ -3,8 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 71 - WebWorker', function () {
+describe.skip('Test 71 - WebWorker', function () {
 	//	it.skip('localStorage', function(done){
+	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

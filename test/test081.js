@@ -3,8 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 81 - Hierarchies', function () {
+describe.skip('Test 81 - Hierarchies', function () {
 	//	it.skip('localStorage', function(done){
+	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

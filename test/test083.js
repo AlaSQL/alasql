@@ -3,8 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 83 - MDX SELECT', function () {
+describe.skip('Test 83 - MDX SELECT', function () {
 	//	it.skip('localStorage', function(done){
+	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

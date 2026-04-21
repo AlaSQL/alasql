@@ -7,7 +7,8 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 173 - SELECT Short Syntax', function () {
+describe.skip('Test 173 - SELECT Short Syntax', function () {
+	it.todo('tests not yet implemented');
 	if (false) {
 		it('1. FROM without select', function (done) {
 			var data = [{a: 1}, {a: 2}, {a: 3}];

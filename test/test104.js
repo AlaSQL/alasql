@@ -3,7 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 104 - RANDOM() and RECURSIVE', function () {
+describe.skip('Test 104 - RANDOM() and RECURSIVE', function () {
+	it.todo('tests not yet implemented');
 	/*
 
 DROP TABLE IF EXISTS ttbl;

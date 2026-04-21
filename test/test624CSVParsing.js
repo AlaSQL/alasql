@@ -17,7 +17,8 @@ describe('Test PromiseExec', function () {
 				//no-op, expect exception
 			})
 			.catch(function (e) {
-				assert.ok(e != null, 'Expected exception');
+				// alasql rejects with error-like objects (name==='Error') rather than Error instances
+				assert.ok(e instanceof Error || (e != null && e.name === 'Error'), 'Expected Error');
 			});
 	});
 	it('B) csvload with valid data, expect array length 1', function () {
@@ -37,7 +38,8 @@ describe('Test PromiseExec', function () {
 				//no-op, expect exception
 			})
 			.catch(function (e) {
-				assert.ok(e != null, 'Expected exception');
+				// alasql rejects with error-like objects (name==='Error') rather than Error instances
+				assert.ok(e instanceof Error || (e != null && e.name === 'Error'), 'Expected Error');
 			});
 	});
 	it('D) csvload with bad URL, expect some kind of response', function () {

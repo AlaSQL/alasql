@@ -3,4 +3,6 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 105 - Synchronization over browsers and Node.js', function () {});
+describe.skip('Test 105 - Synchronization over browsers and Node.js', function () {
+	it.todo('tests not yet implemented');
+});
