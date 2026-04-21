@@ -570,46 +570,6 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			if (col.funcid && col.funcid.toUpperCase() === 'GROUP_ROW_NUMBER') {
 				query.grouprownums.push({as: col.as, columnIndex: 0}); // Track which column to use for grouping
 			}
-
-			// Detect positional window functions: LEAD, LAG, FIRST_VALUE, LAST_VALUE
-			if (col.funcid) {
-				var fid = col.funcid.toUpperCase();
-				if (fid === 'LEAD' || fid === 'LAG' || fid === 'FIRST_VALUE' || fid === 'LAST_VALUE') {
-					var wfConfig = {
-						funcid: fid,
-						as: col.as,
-						expressionColumnId: col.args && col.args[0] ? col.args[0].columnid : null,
-						offset: col.args && col.args[1] ? col.args[1].value : 1,
-						defaultValue:
-							col.args && col.args[2]
-								? col.args[2].value != null
-									? col.args[2].value
-									: col.args[2].op === '-' && col.args[2].right
-										? -col.args[2].right.value
-										: null
-								: null,
-						partitionColumns:
-							col.over && col.over.partition
-								? col.over.partition.map(function (p) {
-										return p.columnid || p.toString();
-									})
-								: [],
-						orderColumns:
-							col.over && col.over.order
-								? col.over.order.map(function (o) {
-										return {
-											columnid:
-												o.expression && o.expression.columnid
-													? o.expression.columnid
-													: o.columnid || o.toString(),
-											direction: o.direction || 'ASC',
-										};
-									})
-								: [],
-					};
-					query.windowfns.push(wfConfig);
-				}
-			}
 			//				console.log("colas:",colas);
 			// }
 		} else {

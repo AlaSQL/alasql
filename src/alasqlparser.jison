@@ -1544,8 +1544,11 @@ FuncValue
 		{
 			var funcid = $1;
 			var exprlist = $4;
-			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
+			var fidU = funcid.toUpperCase();
+			if(exprlist.length > 1 && (fidU == 'MIN' || fidU == 'MAX')) {
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
+			} else if(fidU == 'LEAD' || fidU == 'LAG' || fidU == 'FIRST_VALUE' || fidU == 'LAST_VALUE') {
+				$$ = new yy.PositionalWindowFunc({funcid: fidU, args: exprlist, over: $6});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
                       funcid: funcid, expression: exprlist[0], args: exprlist, distinct:($3=='DISTINCT'), over: $6 });
