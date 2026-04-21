@@ -17,11 +17,14 @@ describe('Test 1645', function () {
 	it('Throws error when callback for user function error', done => {
 		try {
 			alasql('SELECT medain(8)');
+			throw new Error('Expected exception not thrown');
 		} catch (e) {
-			done();
+			if (e.message === 'Expected exception not thrown') {
+				done(e);
+			} else {
+				done();
+			}
 		}
-
-		throw 'error';
 	});
 
 	it('Catches error when promise for user function error', done => {

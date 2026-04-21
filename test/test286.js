@@ -74,8 +74,6 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 	});
 
 	it('2. Fill tables with data', () => {
-		this.timeout(100000);
-
 		var K = 10; // Number of runs
 		var P = 20; // Number of records coefficient
 
