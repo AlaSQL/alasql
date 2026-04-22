@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+test.todo('Test 93 - COUNT (NON NULL) & COUNT DISTINCT');
 describe.skip('Test 93 - COUNT (NON NULL) & COUNT DISTINCT', function () {
-	it.todo('tests not yet implemented');
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

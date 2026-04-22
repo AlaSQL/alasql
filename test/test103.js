@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+test.todo('Test 103 - FORMAT');
 describe.skip('Test 103 - FORMAT', function () {
 	//	it.skip('localStorage', function(done){
-	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+test.todo('Test 98 - UNIQUE');
 describe.skip('Test 98 - UNIQUE', function () {
 	//	it.skip('localStorage', function(done){
-	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });

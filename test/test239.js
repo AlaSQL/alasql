@@ -13,8 +13,8 @@ if (typeof exports === 'object') {
 	});
 }
 
+test.todo('Test 239 AUTOCOMMIT OFF test');
 describe.skip('Test 239 AUTOCOMMIT OFF test', function () {
-	it.todo('tests not yet implemented');
 	if (false) {
 		it('1. Create database', function (done) {
 			alasql('SET AUTOCOMMIT OFF');

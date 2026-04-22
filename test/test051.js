@@ -4,7 +4,6 @@ if (typeof exports === 'object') {
 }
 
 describe.skip('Test 51 - Foreign Keys)', function () {
-	it.todo('tests not yet implemented');
 	describe('FOREIGN KEYS with one component and PRIMARY KEY', function () {
 		it('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
 			alasql('DROP TABLE IF EXISTS persons');

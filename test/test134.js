@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
+test.todo('Test 134 SELECT FROM');
 describe.skip('Test 134 SELECT FROM', function () {
-	it.todo('tests not yet implemented');
 	if (false) {
 		it('1. Load data from CSV and TAB', function (done) {
 			alasql('CREATE DATABASE test134; USE test134');

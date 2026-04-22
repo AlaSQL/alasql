@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+test.todo('Test 101 - Oracle, MySQL, MSSQL, SQLite, Postgress mode');
 describe.skip('Test 101 - Oracle, MySQL, MSSQL, SQLite, Postgress mode', function () {
 	//	it.skip('localStorage', function(done){
-	it.todo('tests not yet implemented');
 	//		done();
 	//	});
 });
