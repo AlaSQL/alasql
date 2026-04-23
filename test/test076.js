@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 76 - Phone Gap');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 76 - Phone Gap', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();

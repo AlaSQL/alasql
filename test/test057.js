@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 57 - Params and Subqueries in JOIN');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 57 - Params and Subqueries in JOIN', function () {
 	/*if (false) {
 		var data1 = [{a: 1}, {a: 2}];

@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 77 - Apache Cordova');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 77 - Apache Cordova', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();

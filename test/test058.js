@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 58 - Indices');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 58 - Indices', function () {
 	/*	it('SELECT - CREATE INDEX "', function(done){
 		var test1 = [{a:1},{a:2},{a:3},{a:4}];

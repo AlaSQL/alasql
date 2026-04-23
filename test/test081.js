@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 81 - Hierarchies');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 81 - Hierarchies', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();

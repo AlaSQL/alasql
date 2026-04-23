@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 93 - COUNT (NON NULL) & COUNT DISTINCT');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 93 - COUNT (NON NULL) & COUNT DISTINCT', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();

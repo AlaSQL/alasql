@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 70 - Streams processing');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 70 - Streams processing', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();

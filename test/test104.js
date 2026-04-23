@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 104 - RANDOM() and RECURSIVE');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 104 - RANDOM() and RECURSIVE', function () {
 	/*
 

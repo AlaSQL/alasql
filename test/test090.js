@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 91 - Binary Operators: *, /, %, +, -, <<, >>, &, ^, |, ||');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 91 - Binary Operators: *, /, %, +, -, <<, >>, &, ^, |, ||', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();

@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.todo('Test 67 - IndexedDB integration');
+test.skip('ignore', () => {
+	expect(true).toBe(true);
+});
 describe.skip('Test 67 - IndexedDB integration', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
