@@ -7,9 +7,6 @@ if (typeof exports === 'object') {
 
 //if(typeof exports == 'object') {
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
 if (false) {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage('./test159.json', {
@@ -17,7 +14,7 @@ if (false) {
 		ws: '',
 	});
 
-	describe.skip('Test 160 - load text file, csv, tab, and other functions', function () {
+	describe('Test 160 - load text file, csv, tab, and other functions', function () {
 		it('1. Text file', function (done) {
 			alasql(
 				"select column * from txt('test160.txt') where [0] like 'M%' order by [0]",

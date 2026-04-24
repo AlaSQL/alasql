@@ -3,10 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
-describe.skip('Test 85 - Mongo-like queries', function () {
+describe('Test 85 - Mongo-like queries', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

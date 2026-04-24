@@ -3,10 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
-describe.skip('Test 75 - NULL, IS NULL', function () {
+describe('Test 75 - NULL, IS NULL', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

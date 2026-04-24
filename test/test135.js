@@ -5,9 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-test.todo('Test 135 a la NoSQL');
 if (false) {
-	describe.skip('Test 135 a la NoSQL', function () {
+	describe('Test 135 a la NoSQL', function () {
 		var test135;
 		it('1. Insert NoSQL', function (done) {
 			var test135 = alasql.create('test135');

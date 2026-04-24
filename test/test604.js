@@ -19,7 +19,6 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 	});
 
 	it('* Create database', function (done) {
-		this.timeout(5000);
 		alasql('SET AUTOCOMMIT OFF');
 		assert(!alasql.options.autocommit);
 		alasql

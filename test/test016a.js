@@ -3,11 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
 if (false) {
-	describe.skip('Test 16b', function () {
+	describe('Test 16b', function () {
 		it('Grouping', function (done) {
 			alasql('create database test16;use test16');
 

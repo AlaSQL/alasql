@@ -9,22 +9,24 @@ if (typeof exports === 'object') {
  This sample beased on SQLLOGICTEST
 */
 
-(typeof exports !== 'object' ? describe : describe.skip)('Test 405. IndexDB problem (issue #512)', function () {
-	it('1. Parse SQL', function (done) {
-		//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
-		alasql(
-			'CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;\
+if (typeof exports !== 'object') {
+	describe('Test 405. IndexDB problem (issue #512)', function () {
+		it('1. Parse SQL', function (done) {
+			//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
+			alasql(
+				'CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;\
         ATTACH INDEXEDDB DATABASE geo; \
         USE geo; \
         DROP TABLE IF EXISTS cities; \
         CREATE TABLE cities;\
       ',
-			[],
-			function () {
-				done();
-			}
-		);
-	});
+				[],
+				function () {
+					done();
+				}
+			);
+		});
 
-	// done();
-});
+		// done();
+	});
+}

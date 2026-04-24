@@ -3,10 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
-describe.skip('Test 88 - AngularJS ng-alasql', function () {
+describe('Test 88 - AngularJS ng-alasql', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

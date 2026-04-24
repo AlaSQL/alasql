@@ -10,19 +10,21 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe.skip('Test 167 - database in database', function () {
-	it('1. Temporary tables', function (done) {
-		var res = alasql('insert into #city values {city:"Oslo"}, {city:"Helsinki"}');
-		assert.deepStrictEqual(alasql.temp.city, [{city: 'Oslo'}, {city: 'Helsinki'}]);
+if (typeof exports === 'object' && false) {
+	describe('Test 167 - database in database', function () {
+		it('1. Temporary tables', function (done) {
+			var res = alasql('insert into #city values {city:"Oslo"}, {city:"Helsinki"}');
+			assert.deepStrictEqual(alasql.temp.city, [{city: 'Oslo'}, {city: 'Helsinki'}]);
 
-		var res = alasql('select * from #city where city like "Os%"');
-		assert.deepStrictEqual(res, [{city: 'Oslo'}]);
+			var res = alasql('select * from #city where city like "Os%"');
+			assert.deepStrictEqual(res, [{city: 'Oslo'}]);
 
-		var res = alasql('select * into #sweden_capital from #city where city like "Os%"');
-		assert.equal(res, 1);
-		assert.deepStrictEqual(alasql.templ.sweden_capital, [{city: 'Oslo'}]);
+			var res = alasql('select * into #sweden_capital from #city where city like "Os%"');
+			assert.equal(res, 1);
+			assert.deepStrictEqual(alasql.templ.sweden_capital, [{city: 'Oslo'}]);
 
-		// TODO - finish the test
-		done();
+			// TODO - finish the test
+			done();
+		});
 	});
-});
+}

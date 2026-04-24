@@ -3,10 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
-describe.skip('Test 101 - Oracle, MySQL, MSSQL, SQLite, Postgress mode', function () {
+describe('Test 101 - Oracle, MySQL, MSSQL, SQLite, Postgress mode', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

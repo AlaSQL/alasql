@@ -6,7 +6,6 @@ if (typeof exports === 'object') {
 }
 
 //if(typeof exports != 'object') {
-test.todo('Test 186 - Linq Syntax (disabled)');
 if (false) {
 	describe('Test 186 - Linq Syntax', function () {
 		it('1. empty alasql()', function (done) {

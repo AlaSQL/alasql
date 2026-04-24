@@ -3,10 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-test.skip('ignore', () => {
-	expect(true).toBe(true);
-});
-describe.skip('Test 74 - Natural Join', function () {
+describe('Test 74 - Natural Join', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});
