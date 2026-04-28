@@ -20,8 +20,7 @@ describe('Test 354 PIVOT', function () {
 			'create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int)'
 		);
 
-		alasql(function () {
-			/*
+		alasql(`
     insert into DailyIncome values ('SPIKE', 'FRI', 100);
     insert into DailyIncome values ('SPIKE', 'MON', 300);
     insert into DailyIncome values ('FREDS', 'SUN', 400);
@@ -51,31 +50,26 @@ describe('Test 354 PIVOT', function () {
     insert into DailyIncome values ('FREDS', 'THU', 800);
     insert into DailyIncome values ('JOHNS', 'TUE', 600);
 
-  */
-		});
+  `);
 
 		done();
 	});
 
 	it('3. Pivot Query', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay)
-  */
-		});
+  `);
 
 		done();
 	});
 
 	it('3. Pivot Query', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay 
       in ([MON],[TUE],[WED],[THU],[FRI],[SAT],[SUN])) as AvgIncomePerDay
-  */
-		});
+  `);
 
 		done();
 	});

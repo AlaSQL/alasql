@@ -12,8 +12,7 @@ describe('Test 325 IDENTITY', function () {
 	});
 
 	it('2. CREATE TABLE with multiple constraints', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     IF OBJECT_ID('dbo.Messages') IS NOT NULL DROP TABLE dbo.Messages;
     CREATE TABLE dbo.Messages
     (
@@ -29,8 +28,7 @@ describe('Test 325 IDENTITY', function () {
       CONSTRAINT CHK_Messages_status
         CHECK (status IN('new', 'open', 'done'))
     );
-  */
-		});
+  `);
 		done();
 	});
 

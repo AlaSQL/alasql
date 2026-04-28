@@ -10,10 +10,10 @@ if (typeof exports === 'object') {
 	var now = new Date();
 	var unixepoch = new Date(0);
 
-	this.beforeAll(() => {
+	before(() => {
 		unlink('test/test815.xlsx', () => {});
 	});
-	this.afterAll(() => {
+	after(() => {
 		unlink('test/test815.xlsx', () => {});
 	});
 

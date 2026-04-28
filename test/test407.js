@@ -18,8 +18,7 @@ describe('Test 407 - TWO JOINS', function () {
 	});
 
 	it('0.2. Create table', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE one (id NVARCHAR(3));
       CREATE TABLE two (id NVARCHAR(3));
       CREATE TABLE three (id NVARCHAR(3));
@@ -27,8 +26,7 @@ describe('Test 407 - TWO JOINS', function () {
       INSERT INTO one VALUES ('A'),('AB'),('AC'),('ABC');
       INSERT INTO two VALUES ('B'),('AB'),('BC'),('ABC');
       INSERT INTO three VALUES ('C'),('BC'),('AC'),('ABC');
-    */
-		});
+    `);
 		done();
 	});
 

@@ -12,8 +12,7 @@ describe('Test 358 DROP TABLE for nultiple tables', function () {
 	});
 
 	it('2. Prepare Data', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
 
       CREATE TABLE users( id int, name char(16) ) ; 
       INSERT INTO users VALUES (1,'John'),(2,'Lewis'),(3,'Muhammad'); 
@@ -25,18 +24,15 @@ describe('Test 358 DROP TABLE for nultiple tables', function () {
       VALUES (1,2),(1,3),(1,6),(2,1),(2,5),(2,6),(3,2),(3,5),(3,6),(1,2),(1,3),(1,6),(2,1), 
       (2,5),(2,6),(3,2),(3,5),(3,6),(1,2),(1,3),(1,6),(2,1),(2,5),(2,6),(3,2),(3,5),(3,6); 
 
-  */
-		});
+  `);
 
 		done();
 	});
 
 	it('3. DROP TABLE', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     DROP TABLE users, hobbies;
-  */
-		});
+  `);
 
 		assert.deepStrictEqual(res, 2);
 		assert.deepStrictEqual(alasql.databases.test358.tables.users, undefined);
@@ -46,11 +42,9 @@ describe('Test 358 DROP TABLE for nultiple tables', function () {
 	});
 
 	it('4. DROP TABLE IF EXISTS', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       DROP TABLE IF EXISTS users, hobbies, users_hobbies;
-  */
-		});
+  `);
 
 		assert.deepStrictEqual(res, 1);
 		assert.deepStrictEqual(alasql.databases.test358.tables, {});

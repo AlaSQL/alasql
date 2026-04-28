@@ -21,15 +21,13 @@ describe('Test 359 UNPIVOT', function () {
     Emp3 int, Emp4 int, Emp5 int);'
 		);
 
-		alasql(function () {
-			/*
+		alasql(`
     INSERT INTO pvt VALUES (1,4,3,5,4,4);
     INSERT INTO pvt VALUES (2,4,1,5,5,5);
     INSERT INTO pvt VALUES (3,4,3,5,4,4);
     INSERT INTO pvt VALUES (4,4,2,5,5,4);
     INSERT INTO pvt VALUES (5,5,1,5,5,5);
-  */
-		});
+  `);
 
 		done();
 	});
@@ -46,16 +44,14 @@ describe('Test 359 UNPIVOT', function () {
 		//   )AS unpvt;
 		// });
 
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     SELECT VendorID, Emp1, Emp2, Emp3, Emp4, Emp5
        FROM pvt
     UNPIVOT
        (Orders FOR Employee IN 
           (Emp1, Emp2, Emp3, Emp4, Emp5)
     )AS unpvt;
-  */
-		});
+  `);
 
 		assert.deepStrictEqual(
 			res,

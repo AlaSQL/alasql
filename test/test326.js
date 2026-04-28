@@ -12,8 +12,7 @@ describe('Test 326 FOREIGN KEYS', function () {
 	});
 
 	it('2. CREATE TABLES City', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE dbo.Cities
       (
         cityid  CHAR(3)     NOT NULL PRIMARY KEY,
@@ -21,14 +20,12 @@ describe('Test 326 FOREIGN KEYS', function () {
         region  VARCHAR(30) NULL,
         country VARCHAR(30) NOT NULL
       );
-    */
-		});
+    `);
 		done();
 	});
 
 	it('3. INSERT VALUES INTO City', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       INSERT INTO dbo.Cities(cityid, city, region, country) VALUES
         ('ATL', 'Atlanta', 'GA', 'USA'),
         ('ORD', 'Chicago', 'IL', 'USA'),
@@ -43,14 +40,12 @@ describe('Test 326 FOREIGN KEYS', function () {
         ('SFO', 'San Francisco', 'CA', 'USA'),
         ('ANC', 'Anchorage', 'AK', 'USA'),
         ('FAI', 'Fairbanks', 'AK', 'USA');
-    */
-		});
+    `);
 		done();
 	});
 
 	it('4. CREATE TABLE Roads', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE dbo.Roads
       (
         city1       CHAR(3) NOT NULL REFERENCES dbo.Cities,
@@ -60,14 +55,12 @@ describe('Test 326 FOREIGN KEYS', function () {
         CHECK(city1 < city2),
         CHECK(distance > 0)
       );
-    */
-		});
+    `);
 		done();
 	});
 
 	it('5. INSERT VALUES INTO Roads', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       INSERT INTO dbo.Roads(city1, city2, distance) VALUES
         ('ANC', 'FAI',  359),
         ('ATL', 'ORD',  715),
@@ -91,8 +84,7 @@ describe('Test 326 FOREIGN KEYS', function () {
         ('MSP', 'ORD',  410),
         ('MSP', 'SEA', 2015),
         ('SEA', 'SFO',  815);
-      */
-		});
+      `);
 		done();
 	});
 

@@ -17,8 +17,7 @@ describe('Test 336 SLT test #4', function () {
 	});
 
 	it('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     CREATE TABLE t1(
       a1 INTEGER,
       b1 INTEGER,
@@ -27,21 +26,18 @@ describe('Test 336 SLT test #4', function () {
       e1 INTEGER,
       x1 VARCHAR(30)
     )
-   */
-		});
+   `);
 		assert.deepStrictEqual(res, 1);
 		done();
 	});
 
 	it('3. INSERT some data', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       INSERT INTO t1 VALUES(382,414,67,992,483,'table tn1 row 1');
       INSERT INTO t1 VALUES(231,468,97,414,795,'table tn1 row 2');
       INSERT INTO t1 VALUES(810,355,805,274,858,'table tn1 row 3');
       INSERT INTO t1 VALUES(536,956,417,418,381,'table tn1 row 4');
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [1, 1, 1, 1]);
 
@@ -49,15 +45,13 @@ describe('Test 336 SLT test #4', function () {
 	});
 
 	it('3. CREATE INDEX', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       CREATE INDEX t1i0 ON t1(a1,b1,c1,d1,e1,x1);
       CREATE INDEX t1i1 ON t1(b1,c1,d1,e1,x1);
       CREATE INDEX t1i2 ON t1(c1,d1,e1,x1);
       CREATE INDEX t1i3 ON t1(d1,e1,x1);
       CREATE INDEX t1i4 ON t1(e1,x1);
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [1, 1, 1, 1, 1]);
 

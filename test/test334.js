@@ -17,19 +17,16 @@ describe('Test 334 WITH CTE', function () {
 	});
 
 	it('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       CREATE TABLE grocery (name STRING, price MONEY, quantity INT);
       INSERT INTO grocery VALUES ("Apples",10,10),("Melons",15,20),("Cucumbers",40,50);
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [1, 3]);
 		done();
 	});
 
 	it('3. WITH SELECT', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
  With Totals as
  (
@@ -47,8 +44,7 @@ describe('Test 334 WITH CTE', function () {
  from
    Totals
 
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [
 			{tax: '0%', name: 'Apples', price: 10, quantity: 10, 'Total price': 100},
 			{tax: '3%', name: 'Melons', price: 15, quantity: 20, 'Total price': 300},

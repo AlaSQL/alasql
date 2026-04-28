@@ -13,19 +13,16 @@ describe('Test 356 PIVOT', function () {
 
 	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
 	it('2. Prepare Data', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       create table test
       (
         username varchar(10),
         subject varchar(10),
         score int
       )
-  */
-		});
+  `);
 
-		alasql(function () {
-			/*
+		alasql(`
     insert into test values
       ('Nick', 'Chinese', 80),
       ('Nick', 'Math', 90),
@@ -35,19 +32,16 @@ describe('Test 356 PIVOT', function () {
       ('Kent', 'Math', 90),
       ('Kent', 'English', 70),
       ('Kent', 'Biology', 85)
-  */
-		});
+  `);
 
 		done();
 	});
 
 	it('3. Simple PIVOT by subject', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT * FROM test
       PIVOT (AVG(score) FOR subject IN (Chinese, Math, English, Biology))
-    */
-		});
+    `);
 
 		// Should have one row per username
 		assert.equal(res.length, 2);
