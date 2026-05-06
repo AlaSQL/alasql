@@ -24,7 +24,7 @@
 	"scripts": {
 		"test": "sh build.sh && yarn test-only",
 		"test-ci": "(yarn test-format-all || 1) && yarn test-only && yarn install-g && alasql 'select 1 as Succes'",
-		"test-only": "bun test --preload ./test/bun-setup.js ./test/test[0-9]*.js ./test/test-*.js",
+		"test-only": "bun test --dots --preload ./test/bun-setup.js ./test/test[0-9]*.js ./test/test-*.js",
 		"test-browser": "node test/browserTestRunner.js 7387",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
