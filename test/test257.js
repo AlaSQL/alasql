@@ -8,7 +8,6 @@ if (typeof exports === 'object') {
 if (typeof exports != 'undefined') {
 	describe('Test 257 INTO XLS()', function () {
 		it('1. INTO XLS()', function (done) {
-
 			var data = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},

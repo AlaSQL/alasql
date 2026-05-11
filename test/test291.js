@@ -19,7 +19,6 @@ describe('Test 291 - Promises:', function () {
 	});
 
 	it('.promise all', function (done) {
-
 		alasql
 			.promise(['SELECT VALUE 1'])
 			.then(function (res) {
@@ -33,7 +32,6 @@ describe('Test 291 - Promises:', function () {
 	});
 
 	it('.promise .catch exception', function (done) {
-
 		alasql.promise('SELECT * FROM tableThatDoesNotExists').catch(function (err) {
 			assert(err instanceof Error);
 			done();
@@ -41,7 +39,6 @@ describe('Test 291 - Promises:', function () {
 	});
 
 	it('.promise all .catch exception', function (done) {
-
 		alasql.promise(['SELECT * FROM tableThatDoesNotExists']).catch(function (err) {
 			assert(err instanceof Error);
 			done();

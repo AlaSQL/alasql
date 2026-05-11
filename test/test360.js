@@ -565,7 +565,8 @@ describe('Test 360 AGGR function', function () {
 	];
 
 	it('2. Prepare Data without GROUP BY', function (done) {
-		var res = alasql(`
+		var res = alasql(
+			`
 
 SELECT
     report_date, srv_class_name,
@@ -579,7 +580,9 @@ SELECT
 
 FROM ?
 
-  `, [data]);
+  `,
+			[data]
+		);
 
 		// console.log(res);
 
@@ -587,7 +590,8 @@ FROM ?
 	});
 
 	it('3. Prepare Data with GROUP BY', function (done) {
-		var res = alasql(`
+		var res = alasql(
+			`
 
     SELECT
         SUM(CAST(mails_200er AS float)) AS [Anzahl 200er],
@@ -596,7 +600,9 @@ FROM ?
     FROM ?
     GROUP BY report_date
 
-  `, [data]);
+  `,
+			[data]
+		);
 
 		// console.log(res);
 
