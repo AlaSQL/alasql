@@ -105,6 +105,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
         with:
           name: dist
@@ -171,6 +174,10 @@ jobs:
         uses: tj-actions/changed-files@v47.0.5
         with:
           files: src/alasqlparser.jison
+
+      - name: Setup Bun
+        if: steps.detect-changes.outputs.any_changed == 'true'
+        uses: oven-sh/setup-bun@v2
 
       - name: Build from src
         # This step only runs if the jison file changed

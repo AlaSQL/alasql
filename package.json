@@ -62,7 +62,6 @@
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
-		"bun": ">=1.0.0",
 		"cmdmix": "2.2.2",
 		"dom-storage": "2.1.0",
 		"esbuild": "0.28.0",
