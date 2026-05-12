@@ -256,8 +256,8 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
-	// Determine once whether to auto-convert: not raw mode and not SELECT INTO
-	const shouldAutoConvert = !opt.raw && !query?.intofns;
+	// Determine once whether to auto-convert: not raw mode, not SELECT INTO, and csvStringToNumber option is set
+	const shouldAutoConvert = !opt.raw && !query?.intofns && alasql.options.csvStringToNumber;
 
 	function potentialAutoConvert(val) {
 		if (shouldAutoConvert && val !== undefined && val.length !== 0 && val == +val) {

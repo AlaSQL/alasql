@@ -16,13 +16,15 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('drop database test' + test);
 	});
 
-	it('A) CSV parser always keeps values as strings', function () {
+	it('A) CSV parser keeps values as strings when csvStringToNumber=false', function () {
+		alasql.options.csvStringToNumber = false;
 		var csvData = '"117.20";"500"\n"88.33";"600"';
 		var res = alasql('SELECT * FROM CSV(?, {separator:";", headers:false})', [csvData]);
 		assert.deepEqual(res, [
 			{0: '117.20', 1: '500'},
 			{0: '88.33', 1: '600'},
 		]);
+		alasql.options.csvStringToNumber = true; // Restore default
 	});
 
 	it('B) STRING type - preserves string values', function () {
@@ -170,10 +172,12 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('DROP TABLE test_tsv');
 	});
 
-	it('Q) Direct SELECT from CSV without INSERT returns strings', function () {
+	it('Q) Direct SELECT from CSV without INSERT returns strings when csvStringToNumber=false', function () {
+		alasql.options.csvStringToNumber = false;
 		var csvData = '"id";"name"\n"117.20";"test"';
 		var res = alasql('SELECT * FROM CSV(?, {separator:";"})', [csvData]);
 		assert.deepEqual(res, [{id: '117.20', name: 'test'}]);
+		alasql.options.csvStringToNumber = true; // Restore default
 	});
 
 	it('R) Unquoted CSV data - preserves strings when column is STRING', function () {
