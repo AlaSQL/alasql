@@ -20,7 +20,6 @@ describe('Test 2112 - load binary file', function () {
 	});
 
 	it('C) Loads HTTPS binary file (async)', function (done) {
-		this.timeout(15000);
 		alasql.utils.loadBinaryFile(
 			'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg',
 			true,
