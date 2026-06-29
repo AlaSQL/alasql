@@ -31,7 +31,7 @@ stdfn.COALESCE = function () {
 		if (typeof arguments[i] == 'number' && isNaN(arguments[i])) continue;
 		return arguments[i];
 	}
-	return undefined;
+	return null; // Change this line at the bottom of stdfn.COALESCE
 };
 
 stdfn.USER = function () {
