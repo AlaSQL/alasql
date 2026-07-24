@@ -639,7 +639,11 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 			//			// s += ';';
 			//			console.log(col);//,col.toJS('g',''));
 
-			s += n2u(col.toJS('g', '')) + ';';
+			if (col instanceof yy.Column) {
+				s += n2u(col.toJS('(this.groupSources.get(g) || g)', query.defaultTableid)) + ';';
+			} else {
+				s += n2u(col.toJS('g', '')) + ';';
+			}
 			/*/*
 			s += 'g[\''+col.nick+'\'];';
 
@@ -703,7 +707,8 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			var key = (col.tableid || '') + '\t' + col.columnid;
 			groupCol = groupColMap[key];
 		}
-		var isInGroup = groupCol !== null || query.ingroup.indexOf(col.nick) > -1;
+		var isInGroup =
+			(groupCol !== null && groupCol !== undefined) || query.ingroup.indexOf(col.nick) > -1;
 		if (isInGroup) {
 			// For columns in GROUP BY, use the GROUP BY column's nick if available
 			var groupNick = (groupCol && groupCol.nick) || col.nick;
