@@ -115,10 +115,10 @@ yy.Select = class Select {
 					.join(', ');
 		}
 		if (this.limit) {
-			s += ' LIMIT ' + this.limit.value;
+			s += ' LIMIT ' + this.limit.toString();
 		}
 		if (this.offset) {
-			s += ' OFFSET ' + this.offset.value;
+			s += ' OFFSET ' + this.offset.toString();
 		}
 		if (this.union) {
 			s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
@@ -246,9 +246,17 @@ yy.Select = class Select {
 		if (this.top) {
 			query.limit = this.top.value;
 		} else if (this.limit) {
-			query.limit = this.limit.value;
+			if (this.limit instanceof yy.ParamValue) {
+				query.limitParam = this.limit.param;
+			} else {
+				query.limit = this.limit.value;
+			}
 			if (this.offset) {
-				query.offset = this.offset.value;
+				if (this.offset instanceof yy.ParamValue) {
+					query.offsetParam = this.offset.param;
+				} else {
+					query.offset = this.offset.value;
+				}
 			}
 		}
 
@@ -381,6 +389,12 @@ yy.Select = class Select {
 		// Now, compile all togeather into one function with query object in scope
 		var statement = function (params, cb, oldscope) {
 			query.params = params;
+			if (typeof query.limitParam !== 'undefined') {
+				query.limit = params ? params[query.limitParam] : undefined;
+			}
+			if (typeof query.offsetParam !== 'undefined') {
+				query.offset = params ? params[query.offsetParam] : undefined;
+			}
 			// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
 			// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
 			// the (data, err) standard is maintained here.

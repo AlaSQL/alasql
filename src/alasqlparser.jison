@@ -1261,7 +1261,7 @@ OrderExpression
 
 LimitClause
 	: { $$ = undefined; }
-	| LIMIT NumValue OffsetClause
+	| LIMIT (NumValue|ParamValue) OffsetClause
 		{ $$ = {limit:$2}; yy.extend($$, $3); }
 	| OFFSET NumValue ROWS? FETCH NEXT? NumValue ROWS? ONLY?
 		{ $$ = {limit:$6,offset:$2}; }
@@ -1269,7 +1269,7 @@ LimitClause
 
 OffsetClause
 	: { $$ = undefined; }
-	| OFFSET NumValue
+	| OFFSET (NumValue|ParamValue)
 		{ $$ = {offset:$2}; }
 	;
 
