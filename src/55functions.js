@@ -389,6 +389,57 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	}
 };
 
+alasql.aggr.mode = alasql.aggr.MODE = function (v, s, stage) {
+	if (stage === 2) {
+		if (v !== undefined && v !== null) {
+			s.push(v);
+		}
+		return s;
+	}
+
+	if (stage === 1) {
+		if (v === undefined || v === null) {
+			return [];
+		}
+		return [v];
+	}
+
+	if (!s.length) {
+		return undefined;
+	}
+
+	let counts = new Map();
+	let maxCount = 0;
+
+	for (let i = 0; i < s.length; i++) {
+		let val = s[i];
+		let count = (counts.get(val) || 0) + 1;
+		counts.set(val, count);
+		if (count > maxCount) {
+			maxCount = count;
+		}
+	}
+
+	let candidates = [];
+	for (let [val, count] of counts.entries()) {
+		if (count === maxCount) {
+			candidates.push(val);
+		}
+	}
+
+	if (candidates.length === 1) {
+		return candidates[0];
+	}
+
+	candidates.sort((a, b) => {
+		if (a < b) return -1;
+		if (a > b) return 1;
+		return 0;
+	});
+
+	return candidates[0];
+};
+
 alasql.aggr.QUART = function (v, s, stage, nth) {
 	//Quartile (first quartile per default or input param)
 	if (stage === 2) {
