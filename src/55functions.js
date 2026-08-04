@@ -186,8 +186,24 @@ stdlib.SUBSTRING =
 	stdlib.SUBSTR =
 	stdlib.MID =
 		function (a, b, c) {
-			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+			if (arguments.length == 2)
+				return und(
+					a,
+					'(__alasql_tmp=(' +
+						b +
+						'),__alasql_tmp==0?"":(__alasql_tmp<0?(y.length+__alasql_tmp<0?"":y.substr(y.length+__alasql_tmp)):y.substr(__alasql_tmp-1)))'
+				);
+			else if (arguments.length == 3)
+				return und(
+					a,
+					'(__alasql_tmp=(' +
+						b +
+						'),__alasql_tmp==0?"":(__alasql_tmp<0?(y.length+__alasql_tmp<0?"":y.substr(y.length+__alasql_tmp,' +
+						c +
+						')):y.substr(__alasql_tmp-1,' +
+						c +
+						')))'
+				);
 		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
