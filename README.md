@@ -481,7 +481,7 @@ var b = browserify("./main.js").bundle();
 
 #### Vue
 
-For some frameworks (lige Vue) alasql cant access XLSX by it self. We recommend handling it by including AlaSQL the following way:
+For some frameworks (like Vue) alasql can't access XLSX by it self. We recommend handling it by including AlaSQL the following way:
 
 ```import alasql from 'alasql';
 import XLSX from 'xlsx';
