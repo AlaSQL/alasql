@@ -15,7 +15,7 @@
 
 # AlaSQL
 
-<h2 align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
+<h2 align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" style="max-width:80%"/></a>
 </h2>
 
 AlaSQL - _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - is an open source SQL database for JavaScript with a strong focus on query speed and data source flexibility for both relational data and schemaless data. It works in the web browser, Node.js, and mobile apps.
