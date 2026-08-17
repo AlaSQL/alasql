@@ -593,6 +593,16 @@ yy.Select = class Select {
 			}
 			return nq;
 		});
+
+		// Subquery indices (queriesidx) are assigned against the statement-level
+		// queries list, so a subquery that references another subquery
+		// (e.g. a scalar subquery nested inside a subquery's WHERE clause)
+		// needs access to the same compiled list
+		query.queriesfn.forEach(function (nq) {
+			if (!nq.query.queriesfn) {
+				nq.query.queriesfn = query.queriesfn;
+			}
+		});
 	}
 };
 
