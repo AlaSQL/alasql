@@ -28,15 +28,15 @@ describe(`Test ${testId} - SELECT ALL support`, function () {
 		alasql('insert into t2 values (1),(1),(2)');
 		var resAll = alasql('SELECT ALL * FROM t2');
 		var resDistinct = alasql('SELECT DISTINCT * FROM t2');
-		assert(resAll.length === 3, 'SELECT ALL should return 3 rows');
-		assert(resDistinct.length === 2, 'SELECT DISTINCT should return 2 rows');
+		assert.deepStrictEqual(resAll, [{a: 1}, {a: 1}, {a: 2}]);
+		assert.deepStrictEqual(resDistinct, [{a: 1}, {a: 2}]);
 		alasql('drop table t2');
 	});
 
 	it('C) SELECT ALL with CROSS JOIN', function () {
 		alasql('create table tab1;create table tab2');
 		var res = alasql('SELECT ALL * FROM tab1 cor0 CROSS JOIN tab1, tab2 AS cor1');
-		assert(Array.isArray(res));
+		assert.deepStrictEqual(res, []);
 		alasql('drop table tab1;drop table tab2');
 	});
 });
