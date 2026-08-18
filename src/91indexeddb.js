@@ -225,9 +225,26 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 		throw err;
 	}
 
+	// Get primary key information from the table definition
+	const table = alasql.databases[databaseid].tables[tableid];
+	const pkColumns = table && table.pk && table.pk.columns;
+
+	// Build object store options
+	let storeOptions;
+	if (pkColumns && pkColumns.length === 1) {
+		// Single-column primary key: use keyPath
+		storeOptions = {keyPath: pkColumns[0]};
+	} else if (pkColumns && pkColumns.length > 1) {
+		// Composite primary key: use array keyPath
+		storeOptions = {keyPath: pkColumns};
+	} else {
+		// No primary key: use auto-increment
+		storeOptions = {autoIncrement: true};
+	}
+
 	const request = indexedDB.open(ixdbid, found.version + 1);
 	request.onupgradeneeded = function (event) {
-		request.result.createObjectStore(tableid, {autoIncrement: true});
+		request.result.createObjectStore(tableid, storeOptions);
 	};
 	request.onsuccess = function (event) {
 		request.result.close();
@@ -350,8 +367,23 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		var ixdb = request.result;
 		var tx = ixdb.transaction([tableid], 'readwrite');
 		var tb = tx.objectStore(tableid);
+		var errorHandled = false;
 		for (var i = 0, ilen = value.length; i < ilen; i++) {
-			tb.add(value[i]);
+			var addRequest = tb.add(value[i]);
+			addRequest.onerror = function (evt) {
+				// Handle duplicate key errors
+				if (!errorHandled && evt.target.error && evt.target.error.name === 'ConstraintError') {
+					errorHandled = true;
+					evt.preventDefault();
+					evt.stopPropagation();
+					tx.abort();
+					ixdb.close();
+					var err = new Error(
+						'Cannot insert record, because it already exists in primary key index'
+					);
+					if (cb) cb(null, err);
+				}
+			};
 		}
 		tx.oncomplete = function () {
 			ixdb.close();
