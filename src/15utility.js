@@ -935,6 +935,18 @@ var arrayIntersectDeep = (utils.arrayIntersectDeep = function (a, b) {
 });
 
 /**
+  SUBSTRING with MySQL semantics for a non-positive start: a start of 0 returns
+  '', a negative start counts from the end of the string, and a start that
+  reaches before the string start returns ''. `len` is optional.
+  */
+var substr = (utils.substr = function substr(str, start, len) {
+	if (start == 0) return '';
+	var from = start < 0 ? str.length + start : start - 1;
+	if (from < 0) return '';
+	return len === undefined ? str.substr(from) : str.substr(from, len);
+});
+
+/**
   Deep clone objects
   */
 var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
