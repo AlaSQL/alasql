@@ -344,10 +344,10 @@ combined-stream@^1.0.8:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^6.0.0:
-  version "6.2.1"
-  resolved "https://registry.npmjs.org/commander/-/commander-6.2.1.tgz"
-  integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+commander@^15.0.0:
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-15.0.0.tgz#96f3961f12adac1799ef3fbd8bc61d40572d1b11"
+  integrity sha512-z67u4ZhzCL/Tydu1lJARtEZYWbWaN7oYLHbsuzocr6y4N6WZAagG3RQ4FW61V1/0+jImpj293XfrcYnd1qxtPg==
 
 cross-fetch@4.1.0:
   version "4.1.0"
@@ -595,12 +595,12 @@ get-stream@^9.0.1:
     "@sec-ant/readable-stream" "^0.4.1"
     is-stream "^4.0.1"
 
-git-branch-is@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.npmjs.org/git-branch-is/-/git-branch-is-4.0.0.tgz"
-  integrity sha512-isA1/lMHEaorz2JpcqmSZMnS1EerfMqQdawJ2eebU2MVUI8QWiab0iYrBbs4zaAEPVCPVGYXOGGZVeQFSjCGzg==
+git-branch-is@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/git-branch-is/-/git-branch-is-5.0.0.tgz#5d7a06661286acd153bed3d8216f903155a3f8ea"
+  integrity sha512-c4E2Gs4zha5ia8woo/xvWH/mFmGotDMBcAUPhSTMjsD2bC92TON4AwH9c45yWCVxbz+3NtjQngk7uKznll5uOw==
   dependencies:
-    commander "^6.0.0"
+    commander "^15.0.0"
 
 glob-parent@6, glob-parent@^5.1.2:
   version "6.0.2"
