@@ -390,54 +390,50 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 };
 
 alasql.aggr.mode = alasql.aggr.MODE = function (v, s, stage) {
+	if (stage === 1) {
+		if (v == null) {
+			return {counts: new Map(), maxCount: 0};
+		}
+		return {counts: new Map([[v, 1]]), maxCount: 1};
+	}
+
 	if (stage === 2) {
-		if (v !== undefined && v !== null) {
-			s.push(v);
+		if (!s || !s.counts) {
+			s = {counts: new Map(), maxCount: 0};
+		}
+		if (v == null) {
+			return s;
+		}
+		const count = (s.counts.get(v) || 0) + 1;
+		s.counts.set(v, count);
+		if (count > s.maxCount) {
+			s.maxCount = count;
 		}
 		return s;
 	}
 
-	if (stage === 1) {
-		if (v === undefined || v === null) {
-			return [];
+	if (stage === 3) {
+		if (!s || s.maxCount === 0) {
+			return undefined;
 		}
-		return [v];
-	}
 
-	if (!s.length) {
-		return undefined;
-	}
+		let result;
+		let hasResult = false;
 
-	let counts = new Map();
-	let maxCount = 0;
-
-	for (let i = 0; i < s.length; i++) {
-		let val = s[i];
-		let count = (counts.get(val) || 0) + 1;
-		counts.set(val, count);
-		if (count > maxCount) {
-			maxCount = count;
+		for (const [value, count] of s.counts) {
+			if (count !== s.maxCount) {
+				continue;
+			}
+			if (!hasResult || value < result) {
+				result = value;
+				hasResult = true;
+			}
 		}
+
+		return result;
 	}
 
-	let candidates = [];
-	for (let [val, count] of counts.entries()) {
-		if (count === maxCount) {
-			candidates.push(val);
-		}
-	}
-
-	if (candidates.length === 1) {
-		return candidates[0];
-	}
-
-	candidates.sort((a, b) => {
-		if (a < b) return -1;
-		if (a > b) return 1;
-		return 0;
-	});
-
-	return candidates[0];
+	return undefined;
 };
 
 alasql.aggr.QUART = function (v, s, stage, nth) {
