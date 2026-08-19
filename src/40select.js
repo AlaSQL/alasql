@@ -139,15 +139,15 @@ yy.Select = class Select {
 	 Select statement in expression
 	 */
 	toJS(context) {
-		var outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
-		var s =
+		let outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
+		let s =
 			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
 			'](this.params,null,' +
 			outerContext +
 			'))[0]';
 
-		//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
+		//	let s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 		return s;
 	}
 
