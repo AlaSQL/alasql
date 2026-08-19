@@ -36,6 +36,7 @@ yy.Select.prototype.compileGroup = function (query) {
 		var tableid = '';
 	}
 	var defcols = query.defcols;
+	query.groupSources = new WeakMap();
 	var allgroup = [[]];
 	if (this.group) {
 		allgroup = decartes(this.group, query);
@@ -181,7 +182,7 @@ yy.Select.prototype.compileGroup = function (query) {
 			})
 			.join('');
 
-		s += '}' + aft + ',g));' + aft2 + '} else {';
+		s += '}' + aft + ',g));this.groupSources.set(g,Object.assign({},p));' + aft2 + '} else {';
 		s += query.selectGroup
 			.map(function (col) {
 				var colas = col.nick;
