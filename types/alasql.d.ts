@@ -84,24 +84,16 @@ declare module 'alasql' {
 		right: ExpressionNode;
 	}
 
-	type ExpressionNode =
-		| AlaSQLExpression
-		| Op
-		| Column
-		| ParamValue
-		| NumValue
-		| StringValue
-		| LogicValue
-		| UniOp;
+	type ExpressionNode = Op | Column | ParamValue | NumValue | StringValue | LogicValue | UniOp;
 
-	interface Expression extends AlaSQLExpression {
+	interface ExpressionWrapper extends AlaSQLExpression {
 		expression: ExpressionNode;
 		reduced?: boolean;
 	}
 
 	interface Statement {
 		compile(databaseid: string): AlaSQLStatement;
-		where?: Expression;
+		where?: ExpressionWrapper;
 		[key: string]: unknown;
 	}
 
