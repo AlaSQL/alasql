@@ -40,8 +40,10 @@ export function compileToJS(sql, databaseid) {
 		const orderfn = ${orderfnStr};
 		const removeKeys = ${JSON.stringify(query.removeKeys || [])};
 		const distinct = ${JSON.stringify(query.distinct)};
-		const limit = ${JSON.stringify(query.limit)};
-		const offset = ${JSON.stringify(query.offset)};
+		const fixedLimit = ${JSON.stringify(query.limit)};
+		const fixedOffset = ${JSON.stringify(query.offset)};
+		const limitParam = ${JSON.stringify(query.limitParam)};
+		const offsetParam = ${JSON.stringify(query.offsetParam)};
 		const alias = ${alias};
 		
 		// Get data from source (either params or database table)
@@ -58,6 +60,8 @@ export function compileToJS(sql, databaseid) {
 		}
 		
 		// Execute query
+		const limit = typeof limitParam !== 'undefined' ? (params ? params[limitParam] : undefined) : fixedLimit;
+		const offset = typeof offsetParam !== 'undefined' ? (params ? params[offsetParam] : undefined) : fixedOffset;
 		let result = [];
 		for (let i = 0; i < data.length; i++) {
 			const p = {};

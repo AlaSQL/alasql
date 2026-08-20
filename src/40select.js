@@ -31,7 +31,7 @@ yy.Select = class Select {
 			s += 'DISTINCT ';
 		}
 		if (this.top) {
-			s += 'TOP ' + this.top.value + ' ';
+			s += 'TOP ' + this.top.toString() + ' ';
 			if (this.percent) {
 				s += 'PERCENT ';
 			}
@@ -245,7 +245,11 @@ yy.Select = class Select {
 
 		// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 		if (this.top) {
-			query.limit = this.top.value;
+			if (this.top instanceof yy.ParamValue) {
+				query.limitParam = this.top.param;
+			} else {
+				query.limit = this.top.value;
+			}
 		} else if (this.limit) {
 			if (this.limit instanceof yy.ParamValue) {
 				query.limitParam = this.limit.param;
