@@ -6,6 +6,44 @@
 
 var SQLITE = (alasql.engines.SQLITE = function () {});
 
+function getSqlJs(cb) {
+	var sqljs = SQLITE.sqljs;
+	var sqljsPromise = SQLITE.sqljsPromise;
+
+	if (sqljs && sqljs.Database) {
+		cb(sqljs);
+		return;
+	}
+
+	if (typeof SQL !== 'undefined' && SQL && SQL.Database) {
+		SQLITE.sqljs = sqljs = SQL;
+		cb(sqljs);
+		return;
+	}
+
+	var initSqlJs =
+		(typeof SQL !== 'undefined' && typeof SQL === 'function' && SQL) ||
+		alasql.utils.global.initSqlJs;
+
+	if (!initSqlJs) {
+		throw new Error('SQL.js library is not loaded');
+	}
+
+	if (!sqljsPromise) {
+		var initResult = initSqlJs();
+		SQLITE.sqljsPromise = sqljsPromise =
+			initResult && typeof initResult.then === 'function'
+				? initResult
+				: Promise.resolve(initResult);
+		SQLITE.sqljsPromise = sqljsPromise = sqljsPromise.then(function (SQL) {
+			SQLITE.sqljs = sqljs = SQL;
+			return SQL;
+		});
+	}
+
+	sqljsPromise.then(cb);
+}
+
 SQLITE.createDatabase = function (wdbid, args, ifnotexists, dbid, cb) {
 	throw new Error('Connot create SQLITE database in memory. Attach it.');
 };
@@ -30,26 +68,28 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 			value,
 			true,
 			function (data) {
-				var db = new alasql.Database(dbid || sqldbid);
-				db.engineid = 'SQLITE';
-				db.sqldbid = sqldbid;
-				var sqldb = (db.sqldb = new SQL.Database(data));
-				db.tables = [];
-				var tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
+				getSqlJs(function (SQL) {
+					var db = new alasql.Database(dbid || sqldbid);
+					db.engineid = 'SQLITE';
+					db.sqldbid = sqldbid;
+					var sqldb = (db.sqldb = new SQL.Database(data));
+					db.tables = [];
+					var tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
 
-				tables.forEach(function (tbl) {
-					db.tables[tbl[1]] = {};
-					var columns = (db.tables[tbl[1]].columns = []);
-					var ast = alasql.parse(tbl[4]);
-					var coldefs = ast.statements[0].columns;
-					if (coldefs && coldefs.length > 0) {
-						coldefs.forEach(function (cd) {
-							columns.push(cd);
-						});
-					}
+					tables.forEach(function (tbl) {
+						db.tables[tbl[1]] = {};
+						var columns = (db.tables[tbl[1]].columns = []);
+						var ast = alasql.parse(tbl[4]);
+						var coldefs = ast.statements[0].columns;
+						if (coldefs && coldefs.length > 0) {
+							coldefs.forEach(function (cd) {
+								columns.push(cd);
+							});
+						}
+					});
+
+					cb(1);
 				});
-
-				cb(1);
 			},
 			function (err) {
 				throw new Error('Cannot open SQLite database file "' + args[0].value + '"');
