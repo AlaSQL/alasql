@@ -100,4 +100,70 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 
 		assert.deepStrictEqual(res, [1, 1, [{name: 'Ada'}]]);
 	});
+
+	it('rejects when async sql.js initialization fails', async function () {
+		delete global.SQL;
+		global.initSqlJs = function () {
+			return Promise.reject(new Error('sql.js init failed'));
+		};
+
+		await assert.rejects(function () {
+			return alasql(['ATTACH SQLITE DATABASE inscriptions("mydb.sqlite3")']);
+		}, /sql\.js init failed/);
+	});
+
+	it('retries sql.js initialization after a failure', async function () {
+		delete global.SQL;
+		var shouldFail = true;
+		global.initSqlJs = function () {
+			if (shouldFail) {
+				return Promise.reject(new Error('sql.js init failed'));
+			}
+			return Promise.resolve({Database: FakeSqlDatabase});
+		};
+
+		await assert.rejects(function () {
+			return alasql(['ATTACH SQLITE DATABASE inscriptions("mydb.sqlite3")']);
+		}, /sql\.js init failed/);
+
+		shouldFail = false;
+
+		const res = await alasql([
+			'ATTACH SQLITE DATABASE inscriptions("mydb.sqlite3")',
+			'USE inscriptions',
+			'SELECT * FROM signatures',
+		]);
+
+		assert.deepStrictEqual(res, [1, 1, [{name: 'Ada'}]]);
+	});
+
+	it('rejects invalid async sql.js module shapes', async function () {
+		delete global.SQL;
+		global.initSqlJs = function () {
+			return Promise.resolve({});
+		};
+
+		await assert.rejects(function () {
+			return alasql(['ATTACH SQLITE DATABASE inscriptions("mydb.sqlite3")']);
+		}, /did not expose a Database constructor/);
+	});
+
+	it('rejects when the SQLite file cannot be loaded', async function () {
+		alasql.utils.loadBinaryFile = function (path, runAsync, success, error) {
+			setTimeout(function () {
+				error(new Error('load failed'));
+			}, 0);
+		};
+
+		await assert.rejects(
+			function () {
+				return alasql(['ATTACH SQLITE DATABASE inscriptions("mydb.sqlite3")']);
+			},
+			function (err) {
+				assert.match(err.message, /Cannot open SQLite database file "mydb\.sqlite3"/);
+				assert.strictEqual(err.cause.message, 'load failed');
+				return true;
+			}
+		);
+	});
 });
