@@ -918,10 +918,10 @@ powershell-utils@^0.1.0:
   resolved "https://registry.npmjs.org/powershell-utils/-/powershell-utils-0.1.0.tgz"
   integrity sha512-dM0jVuXJPsDN6DvRpea484tCUaMiXWjuCn++HGTqUWzGDjv5tZkEZldAJ/UMlqRYGFrD/etByo4/xOuC/snX2A==
 
-prettier@3.8.3:
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.8.3.tgz#560f2de55bf01b4c0503bc629d5df99b9a1d09b0"
-  integrity sha512-7igPTM53cGHMW8xWuVTydi2KO233VFiTNyF5hLJqpilHfmn8C8gPf+PS7dUT64YcXFbiMGZxS9pCSxL/Dxm/Jw==
+prettier@3.9.4:
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.9.4.tgz#a9c477cf1614376bd1f6bbc593d8c0d414bcec87"
+  integrity sha512-yWG/o/4oJfo036EKAfK6ACAoDOfHeRHx4tuxkfBZiauURiaSmYwlpOr5LQqKtIkRD2z1PLteme2WoxEnj4tHTg==
 
 proxy-from-env@^2.1.0:
   version "2.1.0"
