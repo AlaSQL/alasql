@@ -39,8 +39,75 @@ declare module 'alasql' {
 		<T = unknown>(params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 	}
 
+	type AlaSQLDefaultColumns = {[columnName: string]: string};
+
+	/**
+	 * Base parsed expression node.
+	 * Node shapes below are part of the public parser AST surface and follow semver.
+	 */
+	interface AlaSQLExpression {
+		toJS(context: string, tableid: string | number, defcols: AlaSQLDefaultColumns | null): string;
+	}
+
+	interface Op extends AlaSQLExpression {
+		left: ExpressionNode;
+		op: string;
+		right?: ExpressionNode;
+		right1?: ExpressionNode;
+		right2?: ExpressionNode;
+	}
+
+	interface Column extends AlaSQLExpression {
+		columnid: string;
+		tableid?: string;
+		databaseid?: string;
+	}
+
+	interface ParamValue extends AlaSQLExpression {
+		param: string | number;
+	}
+
+	interface NumValue extends AlaSQLExpression {
+		value: number;
+	}
+
+	interface StringValue extends AlaSQLExpression {
+		value: string;
+	}
+
+	interface LogicValue extends AlaSQLExpression {
+		value: boolean;
+	}
+
+	interface UniOp extends AlaSQLExpression {
+		op: string | null;
+		right: ExpressionNode;
+	}
+
+	type ExpressionNode =
+		| AlaSQLExpression
+		| Op
+		| Column
+		| ParamValue
+		| NumValue
+		| StringValue
+		| LogicValue
+		| UniOp;
+
+	interface Expression extends AlaSQLExpression {
+		expression: ExpressionNode;
+		reduced?: boolean;
+	}
+
+	interface Statement {
+		compile(databaseid: string): AlaSQLStatement;
+		where?: Expression;
+		[key: string]: unknown;
+	}
+
 	// abstract Syntax Tree
 	interface AlaSQLAST {
+		statements: Statement[];
 		compile(databaseid: string): AlaSQLStatement;
 	}
 
