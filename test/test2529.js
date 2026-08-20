@@ -42,6 +42,9 @@ describe(`Test ${testId} - parameters in TOP and FETCH`, function () {
 		assert.deepStrictEqual(topStmt([1]), [{a: 1}]);
 		assert.deepStrictEqual(topStmt([2]), [{a: 1}, {a: 2}]);
 
+		var namedTopStmt = alasql.compile('SELECT TOP $lim a FROM one ORDER BY a ASC');
+		assert.deepStrictEqual(namedTopStmt({lim: 3}), [{a: 1}, {a: 2}, {a: 3}]);
+
 		var fetchStmt = alasql.compile(
 			'SELECT a FROM one ORDER BY a ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY'
 		);
