@@ -734,7 +734,24 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 				// Use Object.keys to get column names and access by index
 				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 			} else if (v instanceof yy.Column && query.groupColumns[v.columnid]) {
-				s += "r['" + key + "']=r['" + v.columnid + "'];";
+				var groupColumn = groupColMap[(v.tableid || '') + '\t' + v.columnid];
+				if (groupColumn) {
+					s +=
+						"r['" +
+						key +
+						"']=('" +
+						v.columnid +
+						"' in r)?r['" +
+						v.columnid +
+						"']:g['" +
+						groupColumn.nick +
+						"'];";
+				} else {
+					s += "r['" + key + "']=r['" + v.columnid + "'];";
+				}
+			} else if (v instanceof yy.Column && groupColMap[(v.tableid || '') + '\t' + v.columnid]) {
+				s +=
+					"r['" + key + "']=g['" + groupColMap[(v.tableid || '') + '\t' + v.columnid].nick + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('g', '') + ';';
 			}
