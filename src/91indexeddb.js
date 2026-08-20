@@ -350,6 +350,25 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		var ixdb = request.result;
 		var tx = ixdb.transaction([tableid], 'readwrite');
 		var tb = tx.objectStore(tableid);
+		// Apply AUTOINCREMENT / IDENTITY values before inserting
+		if (table && table.identities) {
+			for (var columnid in table.identities) {
+				var ident = table.identities[columnid];
+				for (var i = 0; i < value.length; i++) {
+					var userProvided =
+						typeof value[i][columnid] !== 'undefined' && value[i][columnid] !== null;
+					if (!userProvided) {
+						value[i][columnid] = ident.value;
+					}
+					// Advance counter: if the inserted value is >= current, sync counter past it
+					if (userProvided && +value[i][columnid] >= ident.value) {
+						ident.value = +value[i][columnid] + ident.step;
+					} else {
+						ident.value += ident.step;
+					}
+				}
+			}
+		}
 		for (var i = 0, ilen = value.length; i < ilen; i++) {
 			tb.add(value[i]);
 		}
