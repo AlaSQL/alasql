@@ -135,9 +135,11 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 		});
 
 		await assert.rejects(attachDatabase, /sql\.js init failed/);
+		assert.strictEqual(attempt, 1);
 
 		const res = await attachUseAndSelect();
 
+		assert.strictEqual(attempt, 2);
 		assert.deepStrictEqual(res, [1, 1, [{name: 'Ada'}]]);
 	});
 
