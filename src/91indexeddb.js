@@ -350,8 +350,8 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		var ixdb = request.result;
 		var tx = ixdb.transaction([tableid], 'readwrite');
 		var tb = tx.objectStore(tableid);
-		// Apply AUTOINCREMENT / IDENTITY values before inserting
-		if (table && table.identities) {
+		// Apply AUTOINCREMENT / IDENTITY values before inserting (only when table has identity columns)
+		if (table && table.identities && Object.keys(table.identities).length > 0) {
 			for (var columnid in table.identities) {
 				var ident = table.identities[columnid];
 				for (var i = 0; i < value.length; i++) {
