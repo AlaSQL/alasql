@@ -32,6 +32,9 @@ describe(`Test ${testId} - parser AST surface`, function () {
 		};
 
 		assert.strictEqual(parsed.paramWhere.left.tableid, undefined);
+		assert.strictEqual(parsed.numWhere.left.tableid, undefined);
+		assert.strictEqual(parsed.strWhere.left.tableid, undefined);
+		assert.strictEqual(parsed.boolWhere.left.tableid, undefined);
 		assert.strictEqual(parsed.uniWhere.left.right.tableid, undefined);
 
 		const actual = JSON.parse(JSON.stringify(parsed));
