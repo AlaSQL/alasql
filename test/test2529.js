@@ -1,6 +1,7 @@
 if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
+	var {compileToJS} = require('../dist/precompile');
 }
 
 let testId = '2529';
@@ -50,5 +51,21 @@ describe(`Test ${testId} - parameters in TOP and FETCH`, function () {
 		);
 		assert.deepStrictEqual(fetchStmt([0, 2]), [{a: 1}, {a: 2}]);
 		assert.deepStrictEqual(fetchStmt([2, 2]), [{a: 3}, {a: 4}]);
+	});
+
+	it('D) compileToJS preserves parameterized TOP, FETCH, and TOP PERCENT', function () {
+		var topJs = compileToJS('SELECT TOP ? a FROM one ORDER BY a ASC');
+		var topFn = new Function('return ' + topJs)().bind(alasql);
+		assert.deepStrictEqual(topFn([2]), [{a: 1}, {a: 2}]);
+
+		var fetchJs = compileToJS(
+			'SELECT a FROM one ORDER BY a ASC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY'
+		);
+		var fetchFn = new Function('return ' + fetchJs)().bind(alasql);
+		assert.deepStrictEqual(fetchFn([1, 2]), [{a: 2}, {a: 3}]);
+
+		var percentJs = compileToJS('SELECT TOP ? PERCENT a FROM one ORDER BY a ASC');
+		var percentFn = new Function('return ' + percentJs)().bind(alasql);
+		assert.deepStrictEqual(percentFn([50]), [{a: 1}, {a: 2}]);
 	});
 });
