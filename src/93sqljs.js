@@ -7,9 +7,9 @@
 var SQLITE = (alasql.engines.SQLITE = function () {});
 
 function getSqlJs(cb, errorcb) {
-	var sqljs = SQLITE.sqljs;
-	var sqljsPromise = SQLITE.sqljsPromise;
-	var globalSQL = alasql.utils.global.SQL;
+	let sqljs = SQLITE.sqljs;
+	let sqljsPromise = SQLITE.sqljsPromise;
+	const globalSQL = alasql.utils.global.SQL;
 
 	if (sqljs && sqljs.Database) {
 		cb(sqljs);
@@ -22,10 +22,10 @@ function getSqlJs(cb, errorcb) {
 		return;
 	}
 
-	var initSqlJs = (typeof globalSQL === 'function' && globalSQL) || alasql.utils.global.initSqlJs;
+	const initSqlJs = (typeof globalSQL === 'function' && globalSQL) || alasql.utils.global.initSqlJs;
 
 	if (!initSqlJs) {
-		var err = new Error('SQL.js library is not loaded');
+		const err = new Error('SQL.js library is not loaded');
 		if (errorcb) {
 			errorcb(err);
 			return;
@@ -34,8 +34,8 @@ function getSqlJs(cb, errorcb) {
 	}
 
 	if (!sqljsPromise) {
-		var initResult = initSqlJs();
-		var initPromise =
+		const initResult = initSqlJs();
+		const initPromise =
 			initResult && typeof initResult.then === 'function'
 				? initResult
 				: Promise.resolve(initResult);
@@ -72,10 +72,11 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 	}
 
 	if ((args[0] && args[0] instanceof yy.StringValue) || args[0] instanceof yy.ParamValue) {
+		let value;
 		if (args[0] instanceof yy.StringValue) {
-			var value = args[0].value;
+			value = args[0].value;
 		} else if (args[0] instanceof yy.ParamValue) {
-			var value = params[args[0].param];
+			value = params[args[0].param];
 		}
 		alasql.utils.loadBinaryFile(
 			value,
@@ -83,18 +84,18 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 			function (data) {
 				getSqlJs(
 					function (SQL) {
-						let db = new alasql.Database(dbid || sqldbid);
+						const db = new alasql.Database(dbid || sqldbid);
 						db.engineid = 'SQLITE';
 						db.sqldbid = sqldbid;
-						var sqldb = (db.sqldb = new SQL.Database(data));
+						const sqldb = (db.sqldb = new SQL.Database(data));
 						db.tables = [];
-						var tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
+						const tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
 
 						tables.forEach(function (tbl) {
 							db.tables[tbl[1]] = {};
-							var columns = (db.tables[tbl[1]].columns = []);
-							var ast = alasql.parse(tbl[4]);
-							var coldefs = ast.statements[0].columns;
+							const columns = (db.tables[tbl[1]].columns = []);
+							const ast = alasql.parse(tbl[4]);
+							const coldefs = ast.statements[0].columns;
 							if (coldefs && coldefs.length > 0) {
 								coldefs.forEach(function (cd) {
 									columns.push(cd);
@@ -110,7 +111,7 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 				);
 			},
 			function (err) {
-				var fileError = new Error('Cannot open SQLite database file "' + args[0].value + '"');
+				const fileError = new Error('Cannot open SQLite database file "' + args[0].value + '"');
 				fileError.cause = err;
 				cb(null, fileError);
 			}
