@@ -684,6 +684,18 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var self = this;
 	var s = query.selectgfns;
+	var hasOrderColumns =
+		this.orderColumns &&
+		this.orderColumns.length > 0 &&
+		!this.union &&
+		!this.unionall &&
+		!this.except &&
+		!this.intersect;
+	var needsOrderColumnMaps =
+		hasOrderColumns &&
+		this.orderColumns.some(function (col) {
+			return col instanceof yy.Column;
+		});
 
 	// Create a lookup map for GROUP BY columns to optimize performance
 	var groupColMap = {};
@@ -694,27 +706,31 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			var key = (gp.tableid || '') + '\t' + gp.columnid;
 			groupColMap[key] = gp;
 		});
-		self.columns.forEach(function (col) {
-			if (col instanceof yy.Column) {
-				var key = (col.tableid || '') + '\t' + col.columnid;
-				if (groupColMap[key]) {
-					if (!col.as) {
-						groupProjectedColumnMap[key] = col.columnid;
-					} else if (!groupProjectedColumnMap[key]) {
-						groupProjectedColumnMap[key] = col.as;
+		if (needsOrderColumnMaps) {
+			self.columns.forEach(function (col) {
+				if (col instanceof yy.Column) {
+					var key = (col.tableid || '') + '\t' + col.columnid;
+					if (groupColMap[key]) {
+						if (!col.as) {
+							groupProjectedColumnMap[key] = col.columnid;
+						} else if (!groupProjectedColumnMap[key]) {
+							groupProjectedColumnMap[key] = col.as;
+						}
 					}
+				}
+			});
+		}
+	}
+	if (needsOrderColumnMaps) {
+		self.columns.forEach(function (col) {
+			if (!(col instanceof yy.Column && col.columnid === '*')) {
+				var projectedSelectKey = col.as || (col instanceof yy.Column ? col.columnid : col.nick);
+				if (projectedSelectKey) {
+					projectedSelectColumnMap[projectedSelectKey] = true;
 				}
 			}
 		});
 	}
-	self.columns.forEach(function (col) {
-		if (!(col instanceof yy.Column && col.columnid === '*')) {
-			var projectedSelectKey = col.as || (col instanceof yy.Column ? col.columnid : col.nick);
-			if (projectedSelectKey) {
-				projectedSelectColumnMap[projectedSelectKey] = true;
-			}
-		}
-	});
 
 	self.columns.forEach(function (col) {
 		//			 console.log(col);
@@ -739,14 +755,7 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 	});
 
 	// Only add order keys if there's no union operation (otherwise they'll be added later)
-	if (
-		this.orderColumns &&
-		this.orderColumns.length > 0 &&
-		!this.union &&
-		!this.unionall &&
-		!this.except &&
-		!this.intersect
-	) {
+	if (hasOrderColumns) {
 		this.orderColumns.forEach(function (v, idx) {
 			//			console.log(411,v);
 			var key = '$$$' + idx;
