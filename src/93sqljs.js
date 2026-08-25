@@ -83,7 +83,7 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 			function (data) {
 				getSqlJs(
 					function (SQL) {
-						var db = new alasql.Database(dbid || sqldbid);
+						let db = new alasql.Database(dbid || sqldbid);
 						db.engineid = 'SQLITE';
 						db.sqldbid = sqldbid;
 						var sqldb = (db.sqldb = new SQL.Database(data));
