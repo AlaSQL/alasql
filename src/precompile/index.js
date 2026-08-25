@@ -102,6 +102,10 @@ export function compileToJS(sql, databaseid) {
 			start = start < 0 ? 0 : start;
 			const end = percent ? (((result.length * limit) / 100) | 0) + start : (limit | 0) + start;
 			result = result.slice(start, end);
+		} else if (offset) {
+			let start = offset | 0 || 0;
+			start = start < 0 ? 0 : start;
+			result = result.slice(start);
 		}
 		
 		if (cb) cb(result);
