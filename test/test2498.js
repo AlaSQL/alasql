@@ -23,7 +23,7 @@ describe(`Test ${testId} - parser AST surface`, function () {
 	});
 
 	it('B) preserves stable expression node shapes used by parser consumers', function () {
-		const actual = {
+		const parsed = {
 			paramWhere: alasql.parse('SELECT 1 FROM ? WHERE x < $y').statements[0].where.expression,
 			numWhere: alasql.parse('SELECT 1 FROM ? WHERE x < 10').statements[0].where.expression,
 			strWhere: alasql.parse("SELECT 1 FROM ? WHERE x = 'abc'").statements[0].where.expression,
@@ -31,54 +31,22 @@ describe(`Test ${testId} - parser AST surface`, function () {
 			uniWhere: alasql.parse('SELECT 1 FROM ? WHERE -x < 0').statements[0].where.expression,
 		};
 
-		const normalized = {
-			paramWhere: {
-				left: {
-					columnid: actual.paramWhere.left.columnid,
-					tableid: actual.paramWhere.left.tableid,
-				},
-				op: actual.paramWhere.op,
-				right: {param: actual.paramWhere.right.param},
-			},
-			numWhere: {
-				left: {columnid: actual.numWhere.left.columnid, tableid: actual.numWhere.left.tableid},
-				op: actual.numWhere.op,
-				right: {value: actual.numWhere.right.value},
-			},
-			strWhere: {
-				left: {columnid: actual.strWhere.left.columnid, tableid: actual.strWhere.left.tableid},
-				op: actual.strWhere.op,
-				right: {value: actual.strWhere.right.value},
-			},
-			boolWhere: {
-				left: {columnid: actual.boolWhere.left.columnid, tableid: actual.boolWhere.left.tableid},
-				op: actual.boolWhere.op,
-				right: {value: actual.boolWhere.right.value},
-			},
-			uniWhere: {
-				left: {
-					op: actual.uniWhere.left.op,
-					right: {
-						columnid: actual.uniWhere.left.right.columnid,
-						tableid: actual.uniWhere.left.right.tableid,
-					},
-				},
-				op: actual.uniWhere.op,
-				right: {value: actual.uniWhere.right.value},
-			},
-		};
+		assert.strictEqual(parsed.paramWhere.left.tableid, undefined);
+		assert.strictEqual(parsed.uniWhere.left.right.tableid, undefined);
+
+		const actual = JSON.parse(JSON.stringify(parsed));
 		const expected = {
-			paramWhere: {left: {columnid: 'x', tableid: undefined}, op: '<', right: {param: 'y'}},
-			numWhere: {left: {columnid: 'x', tableid: undefined}, op: '<', right: {value: 10}},
-			strWhere: {left: {columnid: 'x', tableid: undefined}, op: '=', right: {value: 'abc'}},
-			boolWhere: {left: {columnid: 'x', tableid: undefined}, op: '=', right: {value: true}},
+			paramWhere: {left: {columnid: 'x'}, op: '<', right: {param: 'y'}},
+			numWhere: {left: {columnid: 'x'}, op: '<', right: {value: 10}},
+			strWhere: {left: {columnid: 'x'}, op: '=', right: {value: 'abc'}},
+			boolWhere: {left: {columnid: 'x'}, op: '=', right: {value: true}},
 			uniWhere: {
-				left: {op: '-', right: {columnid: 'x', tableid: undefined}},
+				left: {op: '-', right: {columnid: 'x'}},
 				op: '<',
 				right: {value: 0},
 			},
 		};
 
-		assert.deepStrictEqual(normalized, expected);
+		assert.deepStrictEqual(actual, expected);
 	});
 });
