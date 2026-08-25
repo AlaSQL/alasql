@@ -709,8 +709,10 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 	}
 	self.columns.forEach(function (col) {
 		if (!(col instanceof yy.Column && col.columnid === '*')) {
-			projectedSelectColumnMap[col.as || (col instanceof yy.Column ? col.columnid : col.nick)] =
-				true;
+			var projectedSelectKey = col.as || (col instanceof yy.Column ? col.columnid : col.nick);
+			if (projectedSelectKey) {
+				projectedSelectColumnMap[projectedSelectKey] = true;
+			}
 		}
 	});
 
