@@ -82,6 +82,7 @@ yy.Update.prototype.compile = function (databaseid) {
 
 	var statement = function (params, cb) {
 		var db = alasql.databases[databaseid];
+		self.params = params;
 
 		//		console.log(db.engineid);
 		//		console.log(db.engineid && alasql.engines[db.engineid].updateTable);
