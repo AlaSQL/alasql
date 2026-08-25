@@ -4,7 +4,6 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', function () {
-	var hostGlobals = alasql.utils.global;
 	var originalLoadBinaryFile;
 	var originalSQL;
 	var originalInitSqlJs;
@@ -44,34 +43,8 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 		alasql.engines.SQLITE.sqljsPromise = null;
 	}
 
-	function restoreGlobal(name, value) {
-		if (typeof value === 'undefined') {
-			delete hostGlobals[name];
-		} else {
-			hostGlobals[name] = value;
-		}
-	}
-
-	function mockSqliteFileLoad() {
-		alasql.utils.loadBinaryFile = function (path, runAsync, success) {
-			setTimeout(function () {
-				success('fake sqlite data');
-			}, 0);
-		};
-	}
-
-	function resolveFakeSqlJsModule() {
+	function createFakeSqlJsModule() {
 		return Promise.resolve({Database: FakeSqlDatabase});
-	}
-
-	function useAsyncSqlGlobal() {
-		hostGlobals.SQL = resolveFakeSqlJsModule;
-		delete hostGlobals.initSqlJs;
-	}
-
-	function useBrowserStyleInitSqlJs(initSqlJs) {
-		delete hostGlobals.SQL;
-		hostGlobals.initSqlJs = initSqlJs;
 	}
 
 	function attachDatabase() {
@@ -88,17 +61,35 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 
 	beforeEach(function () {
 		originalLoadBinaryFile = alasql.utils.loadBinaryFile;
-		originalSQL = hostGlobals.SQL;
-		originalInitSqlJs = hostGlobals.initSqlJs;
+		originalSQL = alasql.utils.global.SQL;
+		originalInitSqlJs = alasql.utils.global.initSqlJs;
 		resetSqliteEngineState();
-		mockSqliteFileLoad();
-		useAsyncSqlGlobal();
+
+		alasql.utils.loadBinaryFile = function (path, runAsync, success) {
+			setTimeout(function () {
+				success('fake sqlite data');
+			}, 0);
+		};
+
+		alasql.utils.global.SQL = createFakeSqlJsModule;
+		delete alasql.utils.global.initSqlJs;
 	});
 
 	afterEach(function () {
 		alasql.utils.loadBinaryFile = originalLoadBinaryFile;
-		restoreGlobal('SQL', originalSQL);
-		restoreGlobal('initSqlJs', originalInitSqlJs);
+
+		if (typeof originalSQL === 'undefined') {
+			delete alasql.utils.global.SQL;
+		} else {
+			alasql.utils.global.SQL = originalSQL;
+		}
+
+		if (typeof originalInitSqlJs === 'undefined') {
+			delete alasql.utils.global.initSqlJs;
+		} else {
+			alasql.utils.global.initSqlJs = originalInitSqlJs;
+		}
+
 		resetSqliteEngineState();
 	});
 
@@ -109,7 +100,8 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 	});
 
 	it('supports initSqlJs globals used by browser builds', async function () {
-		useBrowserStyleInitSqlJs(resolveFakeSqlJsModule);
+		delete alasql.utils.global.SQL;
+		alasql.utils.global.initSqlJs = createFakeSqlJsModule;
 
 		const res = await attachUseAndSelect();
 
@@ -117,22 +109,24 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 	});
 
 	it('rejects when async sql.js initialization fails', async function () {
-		useBrowserStyleInitSqlJs(function () {
+		delete alasql.utils.global.SQL;
+		alasql.utils.global.initSqlJs = function () {
 			return Promise.reject(new Error('sql.js init failed'));
-		});
+		};
 
 		await assert.rejects(attachDatabase, /sql\.js init failed/);
 	});
 
 	it('retries sql.js initialization after a failure', async function () {
 		var attempt = 0;
-		useBrowserStyleInitSqlJs(function () {
+		delete alasql.utils.global.SQL;
+		alasql.utils.global.initSqlJs = function () {
 			attempt += 1;
 			if (attempt === 1) {
 				return Promise.reject(new Error('sql.js init failed'));
 			}
-			return resolveFakeSqlJsModule();
-		});
+			return createFakeSqlJsModule();
+		};
 
 		await assert.rejects(attachDatabase, /sql\.js init failed/);
 		assert.strictEqual(attempt, 1);
@@ -144,9 +138,10 @@ describe('Test 1284 - ATTACH SQLITE DATABASE with async sql.js initialization', 
 	});
 
 	it('rejects invalid async sql.js module shapes', async function () {
-		useBrowserStyleInitSqlJs(function () {
+		delete alasql.utils.global.SQL;
+		alasql.utils.global.initSqlJs = function () {
 			return Promise.resolve({});
-		});
+		};
 
 		await assert.rejects(attachDatabase, /did not expose a Database constructor/);
 	});
