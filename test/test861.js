@@ -23,7 +23,10 @@ if (typeof exports != 'object') {
 
 			const res = await sql('SELECT * FROM autoinctab');
 
-			assert.deepStrictEqual(res, [{aid: 1, aname: 'bar1'}, {aid: 2, aname: 'bar2'}]);
+			assert.deepStrictEqual(res, [
+				{aid: 1, aname: 'bar1'},
+				{aid: 2, aname: 'bar2'},
+			]);
 
 			await sql('DROP INDEXEDDB DATABASE test861');
 		});
@@ -44,7 +47,10 @@ if (typeof exports != 'object') {
 
 			const res = await sql('SELECT * FROM autoinctab2');
 
-			assert.deepStrictEqual(res, [{aid: 1, aname: 'row1'}, {aid: 2, aname: 'row2'}]);
+			assert.deepStrictEqual(res, [
+				{aid: 1, aname: 'row1'},
+				{aid: 2, aname: 'row2'},
+			]);
 
 			await sql('DROP INDEXEDDB DATABASE test861b');
 		});
