@@ -639,7 +639,11 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 			//			// s += ';';
 			//			console.log(col);//,col.toJS('g',''));
 
-			s += n2u(col.toJS('g', '')) + ';';
+			if (col instanceof yy.Column) {
+				s += n2u(col.toJS('(this.groupSources.get(g) || g)', query.defaultTableid)) + ';';
+			} else {
+				s += n2u(col.toJS('g', '')) + ';';
+			}
 			/*/*
 			s += 'g[\''+col.nick+'\'];';
 
@@ -680,13 +684,51 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var self = this;
 	var s = query.selectgfns;
+	var hasOrderColumns =
+		this.orderColumns &&
+		this.orderColumns.length > 0 &&
+		!this.union &&
+		!this.unionall &&
+		!this.except &&
+		!this.intersect;
+	var needsOrderColumnMaps =
+		hasOrderColumns &&
+		this.orderColumns.some(function (col) {
+			return col instanceof yy.Column;
+		});
 
 	// Create a lookup map for GROUP BY columns to optimize performance
 	var groupColMap = {};
+	var groupProjectedColumnMap = {};
+	var projectedSelectColumnMap = {};
 	if (self.group) {
 		self.group.forEach(function (gp) {
 			var key = (gp.tableid || '') + '\t' + gp.columnid;
 			groupColMap[key] = gp;
+		});
+		if (needsOrderColumnMaps) {
+			self.columns.forEach(function (col) {
+				if (col instanceof yy.Column) {
+					var key = (col.tableid || '') + '\t' + col.columnid;
+					if (groupColMap[key]) {
+						if (!col.as) {
+							groupProjectedColumnMap[key] = col.columnid;
+						} else if (!groupProjectedColumnMap[key]) {
+							groupProjectedColumnMap[key] = col.as;
+						}
+					}
+				}
+			});
+		}
+	}
+	if (needsOrderColumnMaps) {
+		self.columns.forEach(function (col) {
+			if (!(col instanceof yy.Column && col.columnid === '*')) {
+				var projectedSelectKey = col.as || (col instanceof yy.Column ? col.columnid : col.nick);
+				if (projectedSelectKey) {
+					projectedSelectColumnMap[projectedSelectKey] = true;
+				}
+			}
 		});
 	}
 
@@ -703,7 +745,8 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			var key = (col.tableid || '') + '\t' + col.columnid;
 			groupCol = groupColMap[key];
 		}
-		var isInGroup = groupCol !== null || query.ingroup.indexOf(col.nick) > -1;
+		var isInGroup =
+			(groupCol !== null && groupCol !== undefined) || query.ingroup.indexOf(col.nick) > -1;
 		if (isInGroup) {
 			// For columns in GROUP BY, use the GROUP BY column's nick if available
 			var groupNick = (groupCol && groupCol.nick) || col.nick;
@@ -712,24 +755,22 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 	});
 
 	// Only add order keys if there's no union operation (otherwise they'll be added later)
-	if (
-		this.orderColumns &&
-		this.orderColumns.length > 0 &&
-		!this.union &&
-		!this.unionall &&
-		!this.except &&
-		!this.intersect
-	) {
+	if (hasOrderColumns) {
 		this.orderColumns.forEach(function (v, idx) {
 			//			console.log(411,v);
 			var key = '$$$' + idx;
+			var groupKey = (v.tableid || '') + '\t' + v.columnid;
 			//			console.log(427,v,query.groupColumns,query.xgroupColumns);
 			// Handle positional column reference (for SELECT * with ORDER BY numeric)
 			if (v._useColumnIndex !== undefined) {
 				// Use Object.keys to get column names and access by index
 				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
-			} else if (v instanceof yy.Column && query.groupColumns[v.columnid]) {
+			} else if (v instanceof yy.Column && groupProjectedColumnMap[groupKey]) {
+				s += "r['" + key + "']=r['" + groupProjectedColumnMap[groupKey] + "'];";
+			} else if (v instanceof yy.Column && projectedSelectColumnMap[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
+			} else if (v instanceof yy.Column && groupColMap[groupKey]) {
+				s += "r['" + key + "']=g['" + groupColMap[groupKey].nick + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('g', '') + ';';
 			}

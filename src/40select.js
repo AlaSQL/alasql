@@ -31,7 +31,7 @@ yy.Select = class Select {
 			s += 'DISTINCT ';
 		}
 		if (this.top) {
-			s += 'TOP ' + this.top.value + ' ';
+			s += 'TOP ' + this.top.toString() + ' ';
 			if (this.percent) {
 				s += 'PERCENT ';
 			}
@@ -115,10 +115,10 @@ yy.Select = class Select {
 					.join(', ');
 		}
 		if (this.limit) {
-			s += ' LIMIT ' + this.limit.value;
+			s += ' LIMIT ' + this.limit.toString();
 		}
 		if (this.offset) {
-			s += ' OFFSET ' + this.offset.value;
+			s += ' OFFSET ' + this.offset.toString();
 		}
 		if (this.union) {
 			s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
@@ -139,14 +139,15 @@ yy.Select = class Select {
 	 Select statement in expression
 	 */
 	toJS(context) {
-		var s =
+		let outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
+		let s =
 			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
 			'](this.params,null,' +
-			context +
+			outerContext +
 			'))[0]';
 
-		//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
+		//	let s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 		return s;
 	}
 
@@ -244,11 +245,23 @@ yy.Select = class Select {
 
 		// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 		if (this.top) {
-			query.limit = this.top.value;
+			if (this.top instanceof yy.ParamValue) {
+				query.limitParam = this.top.param;
+			} else {
+				query.limit = this.top.value;
+			}
 		} else if (this.limit) {
-			query.limit = this.limit.value;
+			if (this.limit instanceof yy.ParamValue) {
+				query.limitParam = this.limit.param;
+			} else {
+				query.limit = this.limit.value;
+			}
 			if (this.offset) {
-				query.offset = this.offset.value;
+				if (this.offset instanceof yy.ParamValue) {
+					query.offsetParam = this.offset.param;
+				} else {
+					query.offset = this.offset.value;
+				}
 			}
 		}
 
@@ -381,6 +394,12 @@ yy.Select = class Select {
 		// Now, compile all togeather into one function with query object in scope
 		var statement = function (params, cb, oldscope) {
 			query.params = params;
+			if (typeof query.limitParam !== 'undefined') {
+				query.limit = params ? params[query.limitParam] : undefined;
+			}
+			if (typeof query.offsetParam !== 'undefined') {
+				query.offset = params ? params[query.offsetParam] : undefined;
+			}
 			// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
 			// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
 			// the (data, err) standard is maintained here.
@@ -592,6 +611,16 @@ yy.Select = class Select {
 				});
 			}
 			return nq;
+		});
+
+		// Subquery indices (queriesidx) are assigned against the statement-level
+		// queries list, so a subquery that references another subquery
+		// (e.g. a scalar subquery nested inside a subquery's WHERE clause)
+		// needs access to the same compiled list
+		query.queriesfn.forEach(function (nq) {
+			if (!nq.query.queriesfn) {
+				nq.query.queriesfn = query.queriesfn;
+			}
 		});
 	}
 };

@@ -92,9 +92,18 @@ yy.Select.prototype.compileFrom = function (query) {
 			if (typeof source.subquery.query.modifier === 'undefined') {
 				source.subquery.query.modifier = 'RECORDSET';
 			}
-			source.columns = source.subquery.query.columns;
+			// If the subquery could not resolve all its columns at compile time
+			// (e.g. SELECT * over parameter data), its columns list is incomplete,
+			// so leave the columns unknown and let SELECT * expand from the data
+			source.columns = source.subquery.query.dirtyColumns ? [] : source.subquery.query.columns;
 
 			source.datafn = (query, params, cb, idx, alasql) => {
+				// Subqueries parsed inside this FROM subselect (e.g. a scalar
+				// subquery in its column list) are hoisted to the statement-level
+				// queries list, so share the compiled list with the subselect
+				if (!source.subquery.query.queriesfn && query.queriesfn) {
+					source.subquery.query.queriesfn = query.queriesfn;
+				}
 				let res;
 				source.subquery(query.params, data => {
 					res = data.data;

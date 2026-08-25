@@ -6,7 +6,6 @@ if (typeof exports === 'object') {
 }
 
 describe('Test CLI - Command Line Interface)', function () {
-	console.log(__dirname);
 	const cliPath = path.join(__dirname, '..', 'bin', 'alasql-cli.js');
 	const testSqlFile = path.join(__dirname, 'temp-test.sql');
 	const testWithTxtFile = path.join(__dirname, 'test2149-with-txt.sql');

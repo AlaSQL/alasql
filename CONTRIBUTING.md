@@ -1,6 +1,6 @@
 # How to Contribute to AlaSQL
 
-Thank you very much for your interest! AlaSQL has a lot of thing to be improved, and your help is very appreciated! 
+Thank you very much for your interest! AlaSQL has a lot of things to be improved, and your help is very appreciated! 
 
 For you to submit a pull request: 
 
@@ -15,7 +15,7 @@ For you to submit a pull request:
 - Run `yarn test` to verify only the new test fails
 - Implement your contributions in `src/`
 - Run `yarn test` and verify all tests are OK
-- Format the souce with `yarn format`
+- Format the source with `yarn format`
 - Commit changes to git and push to your forked repo
 - Click "Create Pull-request" when looking at your forked repo on Github
 
