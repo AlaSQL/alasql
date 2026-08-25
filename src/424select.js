@@ -697,15 +697,20 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 		self.columns.forEach(function (col) {
 			if (col instanceof yy.Column) {
 				var key = (col.tableid || '') + '\t' + col.columnid;
-				if (groupColMap[key] && (!groupProjectedColumnMap[key] || !col.as)) {
-					groupProjectedColumnMap[key] = col.as || col.columnid;
+				if (groupColMap[key]) {
+					if (!col.as) {
+						groupProjectedColumnMap[key] = col.columnid;
+					} else if (!groupProjectedColumnMap[key]) {
+						groupProjectedColumnMap[key] = col.as;
+					}
 				}
 			}
 		});
 	}
 	self.columns.forEach(function (col) {
 		if (!(col instanceof yy.Column && col.columnid === '*')) {
-			projectedSelectColumnMap[col.as || col.nick] = true;
+			projectedSelectColumnMap[col.as || (col instanceof yy.Column ? col.columnid : col.nick)] =
+				true;
 		}
 	});
 
