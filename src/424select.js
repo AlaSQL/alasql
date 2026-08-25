@@ -687,12 +687,27 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 
 	// Create a lookup map for GROUP BY columns to optimize performance
 	var groupColMap = {};
+	var groupProjectedColumnMap = {};
+	var projectedSelectColumnMap = {};
 	if (self.group) {
 		self.group.forEach(function (gp) {
 			var key = (gp.tableid || '') + '\t' + gp.columnid;
 			groupColMap[key] = gp;
 		});
+		self.columns.forEach(function (col) {
+			if (col instanceof yy.Column) {
+				var key = (col.tableid || '') + '\t' + col.columnid;
+				if (groupColMap[key] && (!groupProjectedColumnMap[key] || !col.as)) {
+					groupProjectedColumnMap[key] = col.as || col.columnid;
+				}
+			}
+		});
 	}
+	self.columns.forEach(function (col) {
+		if (!(col instanceof yy.Column && col.columnid === '*')) {
+			projectedSelectColumnMap[col.as || col.nick] = true;
+		}
+	});
 
 	self.columns.forEach(function (col) {
 		//			 console.log(col);
@@ -728,30 +743,18 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 		this.orderColumns.forEach(function (v, idx) {
 			//			console.log(411,v);
 			var key = '$$$' + idx;
+			var groupKey = (v.tableid || '') + '\t' + v.columnid;
 			//			console.log(427,v,query.groupColumns,query.xgroupColumns);
 			// Handle positional column reference (for SELECT * with ORDER BY numeric)
 			if (v._useColumnIndex !== undefined) {
 				// Use Object.keys to get column names and access by index
 				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
-			} else if (v instanceof yy.Column && query.groupColumns[v.columnid]) {
-				var groupColumn = groupColMap[(v.tableid || '') + '\t' + v.columnid];
-				if (groupColumn) {
-					s +=
-						"r['" +
-						key +
-						"']=('" +
-						v.columnid +
-						"' in r)?r['" +
-						v.columnid +
-						"']:g['" +
-						groupColumn.nick +
-						"'];";
-				} else {
-					s += "r['" + key + "']=r['" + v.columnid + "'];";
-				}
-			} else if (v instanceof yy.Column && groupColMap[(v.tableid || '') + '\t' + v.columnid]) {
-				s +=
-					"r['" + key + "']=g['" + groupColMap[(v.tableid || '') + '\t' + v.columnid].nick + "'];";
+			} else if (v instanceof yy.Column && groupProjectedColumnMap[groupKey]) {
+				s += "r['" + key + "']=r['" + groupProjectedColumnMap[groupKey] + "'];";
+			} else if (v instanceof yy.Column && projectedSelectColumnMap[v.columnid]) {
+				s += "r['" + key + "']=r['" + v.columnid + "'];";
+			} else if (v instanceof yy.Column && groupColMap[groupKey]) {
+				s += "r['" + key + "']=g['" + groupColMap[groupKey].nick + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('g', '') + ';';
 			}
