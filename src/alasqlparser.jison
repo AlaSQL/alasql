@@ -849,9 +849,9 @@ SelectModifier
 	;
 
 TopClause
-	: TOP NumValue PERCENT?
+	: TOP (NumValue|ParamValue) PERCENT?
 		{ $$ = {top: $2, percent:(typeof $3 != 'undefined'?true:undefined)}; }
-	| TOP LPAR NumValue RPAR
+	| TOP LPAR (NumValue|ParamValue) RPAR
 		{ $$ = {top: $3}; }
 	| { $$ = undefined; }
 	;
@@ -1263,7 +1263,7 @@ LimitClause
 	: { $$ = undefined; }
 	| LIMIT (NumValue|ParamValue) OffsetClause
 		{ $$ = {limit:$2}; yy.extend($$, $3); }
-	| OFFSET NumValue ROWS? FETCH NEXT? NumValue ROWS? ONLY?
+	| OFFSET (NumValue|ParamValue) ROWS? FETCH NEXT? (NumValue|ParamValue) ROWS? ONLY?
 		{ $$ = {limit:$6,offset:$2}; }
 	;
 
