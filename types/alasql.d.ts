@@ -4,11 +4,11 @@ declare module 'alasql' {
 	import * as xlsx from 'xlsx';
 
 	// Callback with error-first convention and optional data
-	interface AlaSQLCallback<T = unknown> {
+	export interface AlaSQLCallback<T = unknown> {
 		(err: Error | null, data?: T): void;
 	}
 
-	interface AlaSQLOptions {
+	export interface AlaSQLOptions {
 		errorlog: boolean;
 		valueof: boolean;
 		dropifnotexists: boolean; // drop database in any case
@@ -35,21 +35,21 @@ declare module 'alasql' {
 	}
 
 	// compiled Statement
-	interface AlaSQLStatement {
+	export interface AlaSQLStatement {
 		<T = unknown>(params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 	}
 
-	type AlaSQLDefaultColumns = {[columnName: string]: string};
+	export type AlaSQLDefaultColumns = {[columnName: string]: string};
 
 	/**
 	 * Base parsed expression node.
 	 * Node shapes below are part of the public parser AST surface and follow semver.
 	 */
-	interface AlaSQLExpression {
+	export interface AlaSQLExpression {
 		toJS(context: string, tableid: string | number, defcols: AlaSQLDefaultColumns | null): string;
 	}
 
-	interface Op extends AlaSQLExpression {
+	export interface Op extends AlaSQLExpression {
 		left: ExpressionNode;
 		op: string;
 		right?: ExpressionNode;
@@ -57,71 +57,78 @@ declare module 'alasql' {
 		right2?: ExpressionNode;
 	}
 
-	interface Column extends AlaSQLExpression {
+	export interface Column extends AlaSQLExpression {
 		columnid: string;
 		tableid?: string;
 		databaseid?: string;
 	}
 
-	interface ParamValue extends AlaSQLExpression {
+	export interface ParamValue extends AlaSQLExpression {
 		param: string | number;
 	}
 
-	interface NumValue extends AlaSQLExpression {
+	export interface NumValue extends AlaSQLExpression {
 		value: number;
 	}
 
-	interface StringValue extends AlaSQLExpression {
+	export interface StringValue extends AlaSQLExpression {
 		value: string;
 	}
 
-	interface LogicValue extends AlaSQLExpression {
+	export interface LogicValue extends AlaSQLExpression {
 		value: boolean;
 	}
 
-	interface UniOp extends AlaSQLExpression {
+	export interface UniOp extends AlaSQLExpression {
 		op: string | null;
 		right: ExpressionNode;
 	}
 
-	type ExpressionNode = Op | Column | ParamValue | NumValue | StringValue | LogicValue | UniOp;
+	export type ExpressionNode =
+		| Op
+		| Column
+		| ParamValue
+		| NumValue
+		| StringValue
+		| LogicValue
+		| UniOp;
 
-	interface ExpressionWrapper extends AlaSQLExpression {
+	export interface ExpressionWrapper extends AlaSQLExpression {
 		expression: ExpressionNode;
 		reduced?: boolean;
 	}
 
-	interface Statement {
+	export interface Statement {
 		compile(databaseid: string): AlaSQLStatement;
 		where?: ExpressionWrapper;
 		[key: string]: unknown;
 	}
 
 	// abstract Syntax Tree
-	interface AlaSQLAST {
+	export interface AlaSQLAST {
 		statements: Statement[];
 		compile(databaseid: string): AlaSQLStatement;
 	}
 
 	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
-	interface userDefinedFunction {
+	export interface userDefinedFunction {
 		(...x: unknown[]): unknown;
 	}
 
-	interface userDefinedFunctionLookUp {
+	export interface userDefinedFunctionLookUp {
 		[x: string]: userDefinedFunction;
 	}
 
 	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
-	interface userAggregator {
+	export interface userAggregator {
 		(value: unknown, accumulator: unknown, stage: number): unknown;
 	}
 
-	interface userAggregatorLookUp {
+	export interface userAggregatorLookUp {
 		[x: string]: userAggregator;
 	}
 
-	interface userFromFunction {
+	export interface userFromFunction {
 		(
 			dataReference: unknown,
 			options: unknown,
@@ -131,7 +138,7 @@ declare module 'alasql' {
 		): void;
 	}
 
-	interface userFromFunctionLookUp {
+	export interface userFromFunctionLookUp {
 		[x: string]: userFromFunction;
 	}
 
@@ -140,7 +147,7 @@ declare module 'alasql' {
 	 *
 	 * @interface database
 	 */
-	interface database {
+	export interface database {
 		/**
 		 * The database ID.
 		 *
@@ -163,7 +170,7 @@ declare module 'alasql' {
 	 *
 	 * @interface table
 	 */
-	interface table {
+	export interface table {
 		/**
 		 * The array of data stored in the table which can be queried
 		 *
@@ -178,7 +185,7 @@ declare module 'alasql' {
 	 *
 	 * @interface databaseLookUp
 	 */
-	interface databaseLookUp {
+	export interface databaseLookUp {
 		[databaseName: string]: database;
 	}
 
@@ -187,11 +194,11 @@ declare module 'alasql' {
 	 *
 	 * @interface tableLookUp
 	 */
-	interface tableLookUp {
+	export interface tableLookUp {
 		[tableName: string]: table;
 	}
 
-	interface Database {
+	export interface Database {
 		new (databaseid?: string): Database;
 		databaseid: string;
 		dbversion: number;
@@ -209,7 +216,7 @@ declare module 'alasql' {
 		autoval(tablename: string, colname: string, getNext: boolean): unknown;
 	}
 
-	interface AlaSQL {
+	export interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
 		<T = unknown>(sql: string, params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
