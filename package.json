@@ -82,7 +82,7 @@
 		"json5": "2",
 		"underscore": "1",
 		"glob-parent": "6",
-		"decode-uri-component": "0.4",
+		"decode-uri-component": "0.5",
 		"semver": "7",
 		"follow-redirects": "^1.16.0",
 		"js-yaml": "4",
