@@ -7,13 +7,23 @@ function doJoin(query, scope, h) {
 	if (h >= query.sources.length) {
 		// Todo: check if this runs once too many
 		// Then apply where and select
-		if (query.wherefn(scope, query.params, alasql)) {
-			// If there is a GROUP BY then pipe to grouping function
-			if (query.groupfn) {
-				query.groupfn(scope, query.params, alasql);
-			} else {
-				query.data.push(query.selectfn(scope, query.params, alasql));
+		var params = query.params;
+		if (query.letfn) {
+			params = query.letfn(scope, params, alasql);
+		}
+		var originalParams = query.params;
+		query.params = params;
+		try {
+			if (query.wherefn(scope, query.params, alasql)) {
+				// If there is a GROUP BY then pipe to grouping function
+				if (query.groupfn) {
+					query.groupfn(scope, query.params, alasql);
+				} else {
+					query.data.push(query.selectfn(scope, query.params, alasql));
+				}
 			}
+		} finally {
+			query.params = originalParams;
 		}
 	} else if (query.sources[h].applyselect) {
 		var source = query.sources[h];
