@@ -178,6 +178,26 @@ FS.loadTableData = function (databaseid, tableid) {
 	db.tables[tableid].data = db.data[tableid];
 };
 
+/**
+ * Store full table schema and data (used by ALTER TABLE).
+ */
+FS.storeTable = function (databaseid, tableid) {
+	var db = alasql.databases[databaseid];
+	var table = db.tables[tableid];
+	if (!db.data.tables) {
+		db.data.tables = {};
+	}
+	// Prefer live in-memory rows; fall back to already-stored rows to avoid wiping
+	var data = Array.isArray(table.data) ? table.data : db.data[tableid] || [];
+	db.data.tables[tableid] = {
+		columns: table.columns,
+		defaultfns: table.defaultfns,
+		onupdatefns: table.onupdatefns,
+	};
+	db.data[tableid] = data;
+	FS.updateFile(databaseid);
+};
+
 FS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	db.data[tableid] = db.tables[tableid].data;
