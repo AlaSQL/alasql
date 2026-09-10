@@ -123,5 +123,30 @@ describe('Test 1107 - ALTER TABLE ADD COLUMN', function () {
 			var res = alasql('SELECT * FROM test WHERE language = 4');
 			assert.deepStrictEqual(res, [{language: 4, hello: 'Hello!', aaa: 'xxxx'}]);
 		});
+
+		it('3. ADD COLUMN after UPDATE does not wipe existing rows', function () {
+			// UPDATE with autocommit clears in-memory table.data via saveTableData();
+			// ALTER must reload data before persisting the new schema.
+			alasql('DROP TABLE IF EXISTS t');
+			alasql('CREATE TABLE t (a INT)');
+			alasql('INSERT INTO t VALUES (1),(2),(3)');
+			alasql('UPDATE t SET a = a + 1');
+			assert.equal(alasql('ALTER TABLE t ADD COLUMN b STRING'), 1);
+
+			var res = alasql('SELECT * FROM t ORDER BY a');
+			assert.deepStrictEqual(res, [
+				{a: 2, b: undefined},
+				{a: 3, b: undefined},
+				{a: 4, b: undefined},
+			]);
+
+			var cols = alasql('SHOW COLUMNS FROM t');
+			assert.deepStrictEqual(
+				cols.map(function (c) {
+					return c.columnid;
+				}),
+				['a', 'b']
+			);
+		});
 	});
 });

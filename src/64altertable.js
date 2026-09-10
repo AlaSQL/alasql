@@ -19,31 +19,61 @@ yy.AlterTable.prototype.toString = function () {
 
 /**
  * Load a table object for ALTER, restoring from the storage engine when needed.
- * With engines like LOCALSTORAGE + autocommit, db.tables[tableid] may only be a stub.
+ * With engines like LOCALSTORAGE + autocommit, db.tables[tableid] may only be a stub,
+ * or schema may remain in memory while table.data was cleared after saveTableData().
  */
 function getTableForAlter(db, databaseid, tableid) {
 	var table = db.tables[tableid];
-	if (
-		db.engineid &&
-		alasql.engines[db.engineid] &&
-		(!table || table === true || !Array.isArray(table.columns))
-	) {
-		var engine = alasql.engines[db.engineid];
+	var engine = db.engineid && alasql.engines[db.engineid] ? alasql.engines[db.engineid] : null;
+	var needsRestore =
+		!table || table === true || !Array.isArray(table.columns) || !Array.isArray(table.data);
+
+	if (engine && needsRestore) {
 		if (typeof engine.restoreTable === 'function') {
+			// LOCALSTORAGE: restore full schema + data from storage
 			table = engine.restoreTable(databaseid, tableid);
-		} else if (typeof engine.loadTableData === 'function' && table && table.columns) {
+		} else if (typeof engine.loadTableData === 'function') {
+			// FILESTORAGE and similar: ensure a real Table and load row data
+			if (!table || table === true || !Array.isArray(table.columns)) {
+				var stored =
+					db.data && db.data.tables && db.data.tables[tableid] ? db.data.tables[tableid] : null;
+				if (!stored || !Array.isArray(stored.columns)) {
+					throw new Error('Table "' + tableid + '" could not be found');
+				}
+				table = db.tables[tableid] = new alasql.Table({
+					columns: stored.columns.slice(),
+					defaultfns: stored.defaultfns,
+					onupdatefns: stored.onupdatefns,
+				});
+				table.indexColumns();
+			}
 			engine.loadTableData(databaseid, tableid);
 			table = db.tables[tableid];
 		}
 	}
+
 	if (!table || table === true || !Array.isArray(table.columns)) {
 		throw new Error('Table "' + tableid + '" could not be found');
 	}
 	if (!table.xcolumns) {
-		table.indexColumns();
+		if (typeof table.indexColumns === 'function') {
+			table.indexColumns();
+		} else {
+			// Plain schema object without Table methods
+			table.xcolumns = {};
+			table.columns.forEach(function (col) {
+				table.xcolumns[col.columnid] = col;
+			});
+		}
 	}
 	if (!Array.isArray(table.data)) {
-		table.data = [];
+		// Prefer loading over silently treating as empty (would wipe storage on persist)
+		if (engine && typeof engine.loadTableData === 'function') {
+			engine.loadTableData(databaseid, tableid);
+		}
+		if (!Array.isArray(table.data)) {
+			table.data = [];
+		}
 	}
 	return table;
 }
@@ -59,7 +89,7 @@ function persistTableAfterAlter(db, databaseid, tableid) {
 	if (typeof engine.storeTable === 'function') {
 		engine.storeTable(databaseid, tableid);
 	} else if (typeof engine.commit === 'function') {
-		// Fallback for engines that only expose commit (e.g. older FILESTORAGE)
+		// Fallback for engines that only expose commit
 		engine.commit(databaseid);
 	}
 }
