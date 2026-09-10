@@ -570,6 +570,24 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			if (col.funcid && col.funcid.toUpperCase() === 'GROUP_ROW_NUMBER') {
 				query.grouprownums.push({as: col.as, columnIndex: 0}); // Track which column to use for grouping
 			}
+
+			// Track window offset functions for post-processing
+			if (col.funcid && col.over) {
+				var fn = col.funcid.toUpperCase();
+				if (fn === 'LEAD' || fn === 'LAG' || fn === 'FIRST_VALUE' || fn === 'LAST_VALUE') {
+					if (!query.windowFuncs) query.windowFuncs = [];
+					query.windowFuncs.push({
+						as: col.as,
+						funcid: fn,
+						args: col.args || [],
+						partitionColumns: col.over.partition
+							? col.over.partition.map(function (p) {
+									return p.columnid || p.toString();
+								})
+							: [],
+					});
+				}
+			}
 			//				console.log("colas:",colas);
 			// }
 		} else {

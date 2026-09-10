@@ -458,6 +458,65 @@ yy.Select = class Select {
 					}
 				}
 
+				// Window offset functions: LEAD/LAG/FIRST_VALUE/LAST_VALUE
+				// Scans results linearly to compute values based on relative row positions
+				if (query.windowFuncs && query.windowFuncs.length > 0) {
+					for (var j = 0; j < query.windowFuncs.length; j++) {
+						var wf = query.windowFuncs[j];
+						var partCols = wf.partitionColumns || [];
+						var exprCol = wf.args[0] && wf.args[0].columnid;
+
+						// Parse offset and default value arguments (handles negative literals like -1)
+						var getArg = function (a) {
+							if (!a) return undefined;
+							if (a.value !== undefined) return a.value;
+							if (a.op === '-' && a.right && a.right.value !== undefined) return -a.right.value;
+							return undefined;
+						};
+						var offset = getArg(wf.args[1]);
+						if (offset === undefined) offset = 1;
+						var defVal = getArg(wf.args[2]);
+						if (defVal === undefined) defVal = null;
+
+						// Track partition boundaries as we scan
+						var prevPart = null;
+						var partStart = 0;
+
+						// Scan rows, processing each partition when boundaries change
+						for (var i = 0; i <= res.length; i++) {
+							var currPart =
+								i < res.length && partCols.length > 0
+									? partCols
+											.map(function (c) {
+												return res[i][c];
+											})
+											.join('|')
+									: null;
+
+							// When partition ends, compute window function for all rows in partition
+							if (i === res.length || (prevPart !== null && currPart !== prevPart)) {
+								for (var k = partStart; k < i; k++) {
+									var targetIdx;
+									if (wf.funcid === 'LEAD') {
+										targetIdx = k + offset;
+										res[k][wf.as] = targetIdx < i && exprCol ? res[targetIdx][exprCol] : defVal;
+									} else if (wf.funcid === 'LAG') {
+										targetIdx = k - offset;
+										res[k][wf.as] =
+											targetIdx >= partStart && exprCol ? res[targetIdx][exprCol] : defVal;
+									} else if (wf.funcid === 'FIRST_VALUE') {
+										res[k][wf.as] = exprCol ? res[partStart][exprCol] : null;
+									} else if (wf.funcid === 'LAST_VALUE') {
+										res[k][wf.as] = exprCol ? res[i - 1][exprCol] : null;
+									}
+								}
+								partStart = i;
+							}
+							prevPart = currPart;
+						}
+					}
+				}
+
 				// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
 				if (query.windowaggrs && query.windowaggrs.length > 0) {
 					for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
