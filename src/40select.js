@@ -12,6 +12,10 @@
 
 /* global yy */
 
+function formatLetExpression(assignment) {
+	return assignment.method + assignment.variable + ' = ' + assignment.expression.toString();
+}
+
 yy.Select = class Select {
 	constructor(params) {
 		Object.assign(this, params);
@@ -91,15 +95,7 @@ yy.Select = class Select {
 				.join('');
 		}
 		if (this.let && this.let.length > 0) {
-			s +=
-				' LET ' +
-				this.let
-					.map(function (assignment) {
-						return (
-							assignment.method + assignment.variable + ' = ' + assignment.expression.toString()
-						);
-					})
-					.join(', ');
+			s += ' LET ' + this.let.map(formatLetExpression).join(', ');
 		}
 		if (this.where) {
 			s += ' WHERE ' + this.where.toString();
@@ -641,29 +637,14 @@ yy.Select = class Select {
 	compileLet(query) {
 		if (!this.let || this.let.length === 0) return;
 
-		const lets = this.let
-			.map(assignment => {
-				const target =
-					assignment.method === '@'
-						? `alasql.vars[${JSON.stringify(assignment.variable)}]`
-						: `params[${JSON.stringify(assignment.variable)}]`;
-				return `${target}=${assignment.expression.toJS('p', query.defaultTableid, query.defcols)};`;
-			})
-			.join('');
-
-		query.letfn = new Function(
-			'p,params,alasql',
-			`var y;
-			if(Array.isArray(params)) {
-				params = Object.assign([], params);
-			} else if(params && typeof params === 'object') {
-				params = Object.assign({}, params);
-			} else {
-				params = {};
-			}
-			${lets}
-			return params;`
-		);
+		query.lets = this.let.map(assignment => ({
+			method: assignment.method,
+			variable: assignment.variable,
+			valuefn: new Function(
+				'p,params,alasql',
+				'var y;return ' + assignment.expression.toJS('p', query.defaultTableid, query.defcols)
+			),
+		}));
 	}
 };
 
