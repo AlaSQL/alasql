@@ -945,8 +945,11 @@ case 367:
 
 			var funcid = $$[$0-5];
 			var exprlist = $$[$0-2];
-			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
+			var fidU = funcid.toUpperCase();
+			if(exprlist.length > 1 && (fidU == 'MIN' || fidU == 'MAX')) {
 					this.$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $$[$0]});
+			} else if(fidU == 'LEAD' || fidU == 'LAG' || fidU == 'FIRST_VALUE' || fidU == 'LAST_VALUE') {
+				this.$ = new yy.PositionalWindowFunc({funcid: fidU, args: exprlist, over: $$[$0]});
 			} else if(alasql.aggr[$$[$0-5]]) {
 		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE',
                       funcid: funcid, expression: exprlist[0], args: exprlist, distinct:($$[$0-3]=='DISTINCT'), over: $$[$0] });
