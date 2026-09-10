@@ -12,6 +12,10 @@
 
 /* global yy */
 
+function formatLetExpression(assignment) {
+	return assignment.method + assignment.variable + ' = ' + assignment.expression.toString();
+}
+
 yy.Select = class Select {
 	constructor(params) {
 		Object.assign(this, params);
@@ -89,6 +93,9 @@ yy.Select = class Select {
 					return ss;
 				})
 				.join('');
+		}
+		if (this.let && this.let.length > 0) {
+			s += ' LET ' + this.let.map(formatLetExpression).join(', ');
 		}
 		if (this.where) {
 			s += ' WHERE ' + this.where.toString();
@@ -182,6 +189,9 @@ yy.Select = class Select {
 		if (this.joins) {
 			this.compileJoins(query);
 		}
+
+		// 2.5 Compile LET clause
+		this.compileLet(query);
 
 		// todo?: 3. Compile SELECT clause
 		// For ROWNUM()
@@ -622,6 +632,19 @@ yy.Select = class Select {
 				nq.query.queriesfn = query.queriesfn;
 			}
 		});
+	}
+
+	compileLet(query) {
+		if (!this.let || this.let.length === 0) return;
+
+		query.lets = this.let.map(assignment => ({
+			method: assignment.method,
+			variable: assignment.variable,
+			valuefn: new Function(
+				'p,params,alasql',
+				'var y;return ' + assignment.expression.toJS('p', query.defaultTableid, query.defcols)
+			),
+		}));
 	}
 };
 
