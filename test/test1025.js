@@ -49,4 +49,20 @@ describe(`Test ${testId} - nested scalar subqueries`, function () {
 		var res = alasql('SELECT (SELECT (SELECT 1 AS c) AS b) AS a, 2 AS x');
 		assert.deepStrictEqual(res, [{a: 1, x: 2}]);
 	});
+
+	it('H) Nested scalar subquery inside IN', function () {
+		alasql('CREATE TABLE one (a INT)');
+		alasql('INSERT INTO one VALUES (1), (2), (3)');
+		var res = alasql('SELECT * FROM one WHERE a IN (SELECT (SELECT 2))');
+		assert.deepStrictEqual(res, [{a: 2}]);
+		alasql('DROP TABLE one');
+	});
+
+	it('I) Deeply nested scalar subquery inside IN', function () {
+		alasql('CREATE TABLE two (a INT)');
+		alasql('INSERT INTO two VALUES (1), (2), (3)');
+		var res = alasql('SELECT * FROM two WHERE a IN (SELECT (SELECT (SELECT 2)))');
+		assert.deepStrictEqual(res, [{a: 2}]);
+		alasql('DROP TABLE two');
+	});
 });
