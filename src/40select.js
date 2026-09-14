@@ -650,18 +650,41 @@ function modify(query, res) {
 	// If dirtyColumns is true, we need to merge columns from data with existing columns
 	// This happens when SELECT * is used with dynamic data sources (like parameters)
 	if (query.dirtyColumns && res.length > 0) {
-		var allcol = {};
-		// First, scan the data to find all column names
-		for (var i = Math.min(res.length, alasql.options.columnlookup || 10) - 1; 0 <= i; i--) {
-			for (var key in res[i]) {
-				allcol[key] = true;
+		// Use Object.keys from the first complete row to preserve column order
+		// For sparse data (OUTER JOINs), find the row with the most keys
+		var maxKeys = Object.keys(res[0]);
+		var maxKeyCount = maxKeys.length;
+		var allcolSet = {};
+		var maxRows = Math.min(res.length, alasql.options.columnlookup || 10);
+
+		for (var i = 0; i < maxRows; i++) {
+			var rowKeys = Object.keys(res[i]);
+			if (rowKeys.length > maxKeyCount) {
+				maxKeyCount = rowKeys.length;
+				maxKeys = rowKeys;
+			}
+			// Collect all keys from this row (reuse rowKeys we already have)
+			for (var j = 0; j < rowKeys.length; j++) {
+				allcolSet[rowKeys[j]] = true;
 			}
 		}
 
-		// Create columns from data
-		var dataColumns = Object.keys(allcol).map(function (columnid) {
-			return {columnid: columnid};
-		});
+		// Build columns array: start with maxKeys, then add any missing keys
+		var dataColumns = [];
+		var addedKeys = {};
+
+		// Add keys from the row with most columns first (preserves natural order)
+		for (var k = 0; k < maxKeys.length; k++) {
+			dataColumns.push({columnid: maxKeys[k]});
+			addedKeys[maxKeys[k]] = true;
+		}
+
+		// Add any remaining keys not in maxKeys
+		for (var key in allcolSet) {
+			if (!addedKeys[key]) {
+				dataColumns.push({columnid: key});
+			}
+		}
 
 		// If we don't have any columns yet, just use the data columns
 		if (!columns || columns.length === 0) {

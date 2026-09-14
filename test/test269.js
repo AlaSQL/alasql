@@ -25,12 +25,12 @@ describe('Test 269 options', function () {
 		{b: 40, c: 400},
 	];
 
-	it.skip('1. Create database', function (done) {
+	it('1. Create database', function (done) {
 		alasql('CREATE DATABASE test269; USE test269');
 		done();
 	});
 
-	it.skip('2. by default', function (done) {
+	it('2. by default', function (done) {
 		alasql.options.modifier = undefined;
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepStrictEqual(res, [
@@ -43,7 +43,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('3. VALUE', function (done) {
+	it('3. VALUE', function (done) {
 		alasql.options.modifier = 'VALUE';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepStrictEqual(res, 1);
@@ -51,7 +51,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('4. ROW', function (done) {
+	it('4. ROW', function (done) {
 		alasql.options.modifier = 'ROW';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepStrictEqual(res, [1, 10, 100]);
@@ -59,7 +59,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('5. COLUMN', function (done) {
+	it('5. COLUMN', function (done) {
 		alasql.options.modifier = 'COLUMN';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepStrictEqual(res, [1, 2, 3, undefined]);
@@ -67,7 +67,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('6. MATRIX', function (done) {
+	it('6. MATRIX', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		//console.log(res);
@@ -82,7 +82,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('6a. MATRIX', function (done) {
+	it('6a. MATRIX', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		//    alasql.options.modifier = 'RECORDSET';
 		var res = alasql(
@@ -102,7 +102,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('7. RECORDSET', function (done) {
+	it('7. RECORDSET', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		//console.log(res);
@@ -119,7 +119,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('8. INDEX', function (done) {
+	it('8. INDEX', function (done) {
 		alasql.options.modifier = 'INDEX';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepStrictEqual(res, {1: 10, 2: 20, 3: 30, undefined: 40});
@@ -127,7 +127,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('9. TEXTSTRING', function (done) {
+	it('9. TEXTSTRING', function (done) {
 		alasql.options.modifier = 'TEXTSTRING';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepStrictEqual(res, '1\n2\n3\n');
@@ -135,7 +135,7 @@ describe('Test 269 options', function () {
 		done();
 	});
 
-	it.skip('99. Drop phase', function (done) {
+	it('99. Drop phase', function (done) {
 		delete alasql.options.modifier;
 		alasql('DROP DATABASE test269');
 		done();
