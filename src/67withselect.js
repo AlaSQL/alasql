@@ -152,40 +152,52 @@ function mapColumnsToNames(data, sourceColumns, targetColumns) {
 
 yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
+
 	// Create temporary tables
 	var savedTables = [];
 	self.withs.forEach(function (w) {
 		savedTables.push(alasql.databases[databaseid].tables[w.name]);
-
-		if (w.recursive) {
-			// Execute recursive CTE
-			executeRecursiveCTE(w, databaseid, params);
-		} else {
-			// Non-recursive CTE - original behavior
-			var tb = (alasql.databases[databaseid].tables[w.name] = new Table({
-				tableid: w.name,
-			}));
-			tb.data = w.select.execute(databaseid, params);
-			if (w.columns) {
-				tb.data = renameColumns(tb.data, w.columns);
-			}
-		}
 	});
 
-	var res = 1;
-	res = this.select.execute(databaseid, params, function (data) {
-		// Clear temporary tables
-		//		setTimeout(function(){
+	function clearTemporaryTables(data) {
 		self.withs.forEach(function (w, idx) {
 			if (savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx];
 			else delete alasql.databases[databaseid].tables[w.name];
 		});
-		//		},0);
 
 		if (cb) data = cb(data);
 		return data;
-	});
-	return res;
+	}
+
+	function runWith(idx) {
+		if (idx >= self.withs.length) {
+			return self.select.execute(databaseid, params, clearTemporaryTables);
+		}
+
+		var w = self.withs[idx];
+
+		if (w.recursive) {
+			// Execute recursive CTE
+			executeRecursiveCTE(w, databaseid, params);
+			return runWith(idx + 1);
+		}
+
+		// Non-recursive CTE - create the temporary table
+		var tb = (alasql.databases[databaseid].tables[w.name] = new Table({
+			tableid: w.name,
+		}));
+
+		// The CTE query may load its source asynchronously (for example CSV from
+		// file), so populate the table when the subquery is done and only then
+		// continue with the rest of the statement. Synchronous queries finish
+		// during the call above.
+		w.select.execute(databaseid, params, function (data) {
+			tb.data = w.columns ? renameColumns(data, w.columns) : data;
+			return runWith(idx + 1);
+		});
+	}
+
+	return runWith(0);
 };
 
 /*/*
