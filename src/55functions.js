@@ -572,6 +572,22 @@ stdfn.REPLACE = function (target, pattern, replacement) {
 		.join(String(replacement ?? ''));
 };
 
+stdfn.LEFT = function (value, length) {
+	if (value == null || length == null) return null;
+	var s = String(value);
+	var n = Math.trunc(+length) || 0;
+	if (n <= 0) return '';
+	return s.slice(0, n);
+};
+
+stdfn.RIGHT = function (value, length) {
+	if (value == null || length == null) return null;
+	var s = String(value);
+	var n = Math.trunc(+length) || 0;
+	if (n <= 0) return '';
+	return s.slice(-n);
+};
+
 // This array is required for fast GUID generation
 var lut = [];
 for (var i = 0; i < 256; i++) {
