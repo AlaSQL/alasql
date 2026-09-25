@@ -1569,8 +1569,10 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
 	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
-	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
+	| TIMESTAMPDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| TIMESTAMPDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value: $3.substr(1,$3.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}),$5,$7]}) }
 	| INTERVAL Expression Literal
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
