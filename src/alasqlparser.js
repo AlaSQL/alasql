@@ -971,13 +971,13 @@ case 372:
  this.$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$$[$0-5]}),$$[$0-3],$$[$0-1]]}) 
 break;
 case 373:
- this.$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
+ this.$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value: $$[$0-5].substr(1,$$[$0-5].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}),$$[$0-3],$$[$0-1]]}) 
 break;
 case 374:
  this.$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$$[$0-5]}),$$[$0-3],$$[$0-1]]}) 
 break;
 case 375:
- this.$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
+ this.$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value: $$[$0-5].substr(1,$$[$0-5].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}),$$[$0-3],$$[$0-1]]}) 
 break;
 case 376:
  this.$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$$[$0-5]}),$$[$0-3],$$[$0-1]]}) 
