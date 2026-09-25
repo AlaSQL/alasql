@@ -168,7 +168,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 						//						var val = values[idx].toJS();
 
 						if (['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(col.dbtypeid) >= 0) {
-							q += '+' + values[idx].toJS();
+							q += '(x=' + values[idx].toJS() + ',x==undefined?undefined:+x)';
 						} else if (alasql.fn[col.dbtypeid]) {
 							q += '(new ' + col.dbtypeid + '(';
 							q += values[idx].toJS();
