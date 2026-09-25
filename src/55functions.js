@@ -200,8 +200,13 @@ stdfn.REGEXP_LIKE = function (a, b, c) {
 };
 
 // Here we uses undefined instead of null
-stdlib.ISNULL = stdlib.NULLIF = function (a, b) {
+stdlib.NULLIF = function (a, b) {
 	return '(' + a + '==' + b + '?undefined:' + a + ')';
+};
+// Returns the second argument when the first one is NULL or undefined, otherwise the first argument.
+// https://learn.microsoft.com/en-us/sql/t-sql/functions/isnull-transact-sql
+stdlib.ISNULL = function (a, b) {
+	return `((typeof ${a} === "undefined" || ${a} === null) ? ${b} : ${a})`;
 };
 
 stdlib.POWER = function (a, b) {
