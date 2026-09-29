@@ -85,7 +85,7 @@
 		"decode-uri-component": "0.5",
 		"semver": "7",
 		"follow-redirects": "^1.16.0",
-		"js-yaml": "4",
+		"js-yaml": "5",
 		"glob": "^13.0.0",
 		"rimraf": "^6.1.2"
 	},
