@@ -178,7 +178,7 @@ stdlib.MIN = stdlib.LEAST = function () {
 	return (
 		'[' +
 		Array.prototype.join.call(arguments, ',') +
-		'].reduce(function (a, b) { return a < b ? a : b; })'
+		'].reduce(function (a, b) { ' + 'if(a==null) return b; ' + 'if(b==null) return a; ' + ' return new Date(a).getTime() < new Date(b).getTime() ? a : b; })'
 	);
 };
 
