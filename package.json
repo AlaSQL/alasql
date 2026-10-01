@@ -55,7 +55,7 @@
 	},
 	"dependencies": {
 		"cross-fetch": "4.1.0",
-		"yargs": "16"
+		"yargs": "18"
 	},
 	"optionalDependencies": {
 		"react-native-fs": "^2.20.0"
