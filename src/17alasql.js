@@ -261,10 +261,11 @@ function cleanupCache(statement) {
 	if (!alasql.options.cache) {
 		return;
 	}
-	// cleanup the table data to prevent storing this information in the SQL cache
-	if (statement && statement.query && statement.query.data) {
-		statement.query.data = [];
-	}
+	// NOTE: Do NOT mutate statement.query.data on the cached statement object.
+	// The compiled statement is shared across concurrent executions via sqlCache.
+	// Mutating it here clears data that another concurrent Promise.all call
+	// may still be reading, causing empty results with no error thrown.
+	// See: https://github.com/AlaSQL/alasql/issues/1953
 }
 
 /**
@@ -284,7 +285,9 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		let statement = db.sqlCache[hh];
 		// If database structure was not changed since last time return cache
 		if (statement && db.dbversion === statement.dbversion) {
-			var res = statement(params, cb);
+			// Clone params to prevent concurrent executions from sharing
+			// the same params reference when called via Promise.all
+			var res = statement(Array.isArray(params) ? params.slice() : Object.assign({}, params), cb);
 			cleanupCache(statement);
 			return res;
 		}
