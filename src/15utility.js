@@ -1196,6 +1196,10 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
  */
 var patternCache = {};
 var like = (utils.like = function (pattern, value, escape = '') {
+	if (escape === '\\\\') {
+		escape = '\\';
+	}
+
 	if (!patternCache[pattern]) {
 		var regexStr = '^'; // Start regex pattern to match from the beginning.
 		var i = 0; // Index for traversing the pattern string.
