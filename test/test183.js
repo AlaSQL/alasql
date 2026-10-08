@@ -24,7 +24,7 @@ describe('Test 183 - [] column', function () {
 			var value,
 				n,
 				len = arr.length;
-			for (var i = len; --i >= 0; ) {
+			for (var i = len; --i >= 0;) {
 				value = arr[i];
 				n = group[value] = 1 - -(group[value] | 0);
 				if (n > max) {
