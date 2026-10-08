@@ -135,6 +135,7 @@ DATABASE(S)?									return 'DATABASE'
 'FALSE'											return 'FALSE'
 'FETCH'											return 'FETCH'
 'FIRST'											return 'FIRST'
+'FIRST_VALUE'\s*/'('							return 'FIRST_VALUE'
 'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
@@ -165,7 +166,10 @@ DATABASE(S)?									return 'DATABASE'
 'ITERATE'										return 'ITERATE'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
+'LAG'\s*/'('									return 'LAG'
 'LAST'											return 'LAST'
+'LAST_VALUE'\s*/'('								return 'LAST_VALUE'
+'LEAD'\s*/'('									return 'LEAD'
 'LET'											return 'LET'
 'LEAVE'											return 'LEAVE'
 'LEFT'											return 'LEFT'
@@ -1544,7 +1548,8 @@ FuncValue
 		{
 			var funcid = $1;
 			var exprlist = $4;
-			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
+			var fidU = funcid.toUpperCase();
+			if(exprlist.length > 1 && (fidU == 'MIN' || fidU == 'MAX')) {
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
@@ -1553,6 +1558,14 @@ FuncValue
 			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			};
 		}
+	| LEAD LPAR ExprList RPAR OverClause
+		{ $$ = new yy.PositionalWindowFunc({funcid: 'LEAD', args: $3, over: $5}); }
+	| LAG LPAR ExprList RPAR OverClause
+		{ $$ = new yy.PositionalWindowFunc({funcid: 'LAG', args: $3, over: $5}); }
+	| FIRST_VALUE LPAR ExprList RPAR OverClause
+		{ $$ = new yy.PositionalWindowFunc({funcid: 'FIRST_VALUE', args: $3, over: $5}); }
+	| LAST_VALUE LPAR ExprList RPAR OverClause
+		{ $$ = new yy.PositionalWindowFunc({funcid: 'LAST_VALUE', args: $3, over: $5}); }
 	| Literal LPAR RPAR OverClause
 		{ $$ = new yy.FuncValue({ funcid: $1, over: $4 }) }
 	| IF LPAR ExprList RPAR
@@ -3353,6 +3366,7 @@ NonReserved
 	|FILE
 	|FINAL
 	|FIRST
+	|FIRST_VALUE
 	|FLAG
 	|FOLLOWING
 	|FORTRAN
@@ -3387,7 +3401,10 @@ NonReserved
 	|KEY
 	|KEY_MEMBER
 	|KEY_TYPE
+	|LAG
 	|LAST
+	|LAST_VALUE
+	|LEAD
 	|LENGTH
 	|LEVEL
 	|LIBRARY
@@ -3632,6 +3649,7 @@ var nonReserved = ["A"
 	,"FILE"
 	,"FINAL"
 	,"FIRST"
+	,"FIRST_VALUE"
 	,"FLAG"
 	,"FOLLOWING"
 	,"FORTRAN"
@@ -3666,7 +3684,10 @@ var nonReserved = ["A"
 	,"KEY"
 	,"KEY_MEMBER"
 	,"KEY_TYPE"
+	,"LAG"
 	,"LAST"
+	,"LAST_VALUE"
+	,"LEAD"
 	,"LENGTH"
 	,"LEVEL"
 	,"LIBRARY"
