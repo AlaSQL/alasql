@@ -108,12 +108,12 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+      - uses: actions/download-artifact@2a5974104b6d5dbdb2f9468a3e54da3bdd241578 # master
         with:
           name: dist
           path: dist/
 
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+      - uses: actions/download-artifact@2a5974104b6d5dbdb2f9468a3e54da3bdd241578 # master
         with:
           name: node_modules
           path: ./
@@ -140,7 +140,7 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+      - uses: actions/download-artifact@2a5974104b6d5dbdb2f9468a3e54da3bdd241578 # master
         with:
           name: dist
           path: dist/
