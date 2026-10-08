@@ -73,7 +73,22 @@ yy.ShowColumns.prototype.toString = function () {
 
 yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
-	var table = db.tables[this.table.tableid];
+	var tableid = this.table.tableid;
+	var table = db.tables[tableid];
+
+	// With external engines + autocommit, tables may only be stubs until loaded
+	if (
+		db.engineid &&
+		alasql.engines[db.engineid] &&
+		(!table || table === true || !Array.isArray(table.columns))
+	) {
+		if (typeof alasql.engines[db.engineid].restoreTable === 'function') {
+			table = alasql.engines[db.engineid].restoreTable(
+				this.table.databaseid || this.databaseid || databaseid,
+				tableid
+			);
+		}
+	}
 
 	if (table && table.columns) {
 		var res = table.columns.map(function (col) {
