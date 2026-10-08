@@ -153,4 +153,85 @@ describe('Test 1119 - Trigger callback parameter', function () {
 
 		delete alasql.fn.onchangeInsteadInsert;
 	});
+
+	it('F) AFTER UPDATE trigger callback should receive old and new row data', function () {
+		let triggerReceivedCorrectData = false;
+		let receivedOldValue = undefined;
+		let receivedNewValue = undefined;
+
+		alasql.fn.onchangeAfterUpdate = function (oldRow, newRow) {
+			receivedOldValue = oldRow;
+			receivedNewValue = newRow;
+			if (oldRow && oldRow.a === 10 && newRow && newRow.a === 20) {
+				triggerReceivedCorrectData = true;
+			}
+		};
+
+		alasql('CREATE TABLE six (a INT)');
+		alasql('INSERT INTO six VALUES (10)');
+		alasql('CREATE TRIGGER seven AFTER UPDATE ON six CALL onchangeAfterUpdate()');
+		alasql('UPDATE six SET a = 20 WHERE a = 10');
+
+		assert(
+			triggerReceivedCorrectData,
+			'AFTER UPDATE trigger function did not receive the expected data. Received old: ' +
+				JSON.stringify(receivedOldValue) +
+				', new: ' +
+				JSON.stringify(receivedNewValue)
+		);
+
+		delete alasql.fn.onchangeAfterUpdate;
+	});
+
+	it('G) BEFORE DELETE returning false should prevent deletion', function () {
+		alasql.fn.preventDelete = function (r) {
+			if (r && r.a === 1) return false;
+		};
+
+		alasql('CREATE TABLE seven (a INT)');
+		alasql('INSERT INTO seven VALUES (1), (2)');
+		alasql('CREATE TRIGGER eight BEFORE DELETE ON seven CALL preventDelete()');
+		alasql('DELETE FROM seven WHERE a = 1');
+
+		const res = alasql('SELECT * FROM seven ORDER BY a');
+		assert.deepStrictEqual(
+			res,
+			[{a: 1}, {a: 2}],
+			'Row should not be deleted when BEFORE DELETE returns false'
+		);
+
+		delete alasql.fn.preventDelete;
+	});
+
+	it('H) INSTEAD OF DELETE should keep the row and still receive it', function () {
+		let triggerReceivedCorrectData = false;
+		let receivedValue = undefined;
+
+		alasql.fn.onchangeInsteadDelete = function (r) {
+			receivedValue = r;
+			if (r && r.a === 3) {
+				triggerReceivedCorrectData = true;
+			}
+		};
+
+		alasql('CREATE TABLE eight (a INT)');
+		alasql('INSERT INTO eight VALUES (3), (4)');
+		alasql('CREATE TRIGGER nine INSTEAD OF DELETE ON eight CALL onchangeInsteadDelete()');
+		alasql('DELETE FROM eight WHERE a = 3');
+
+		assert(
+			triggerReceivedCorrectData,
+			'INSTEAD OF DELETE trigger function did not receive the expected data. Received: ' +
+				JSON.stringify(receivedValue)
+		);
+
+		const res = alasql('SELECT * FROM eight ORDER BY a');
+		assert.deepStrictEqual(
+			res,
+			[{a: 3}, {a: 4}],
+			'Data should not have been deleted with INSTEAD OF trigger'
+		);
+
+		delete alasql.fn.onchangeInsteadDelete;
+	});
 });
