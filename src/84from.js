@@ -153,22 +153,32 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	//console.log('cb',cb);
 	//console.log('JSON');
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
-	(alasql.utils.loadFile(filename, !!cb, function (data) {
-		//		console.log('DATA:'+data);
-		//		res = [{a:1}];
-		res = JSON.parse(data);
-		if (cb) {
-			res = cb(res, idx, query);
+	const errorHandler = err => {
+		const error = err instanceof Error ? err : new Error(err);
+		if (query && query.cb) {
+			query.cb(null, error);
+			return;
 		}
-	}),
-		err => {
-			const error = err instanceof Error ? err : new Error(err);
-			if (query && query.cb) {
-				query.cb(null, error);
+		throw error;
+	};
+	alasql.utils.loadFile(
+		filename,
+		!!cb,
+		function (data) {
+			//		console.log('DATA:'+data);
+			//		res = [{a:1}];
+			try {
+				res = JSON.parse(data);
+			} catch (error) {
+				errorHandler(error);
 				return;
 			}
-			throw error;
-		});
+			if (cb) {
+				res = cb(res, idx, query);
+			}
+		},
+		errorHandler
+	);
 	return res;
 };
 
