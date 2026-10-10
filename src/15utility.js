@@ -1196,7 +1196,12 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
  */
 var patternCache = {};
 var like = (utils.like = function (pattern, value, escape = '') {
-	if (escape === '\\\\') {
+	// Normalize the escape character: the SQL ESCAPE clause specifies a single
+	// character, but due to JavaScript string escaping layers in the parser
+	// pipeline, a backslash escape can arrive as multiple backslash characters
+	// (e.g. '\\\\' for '\\', etc.). If the escape string consists entirely
+	// of backslashes, collapse it to a single '\\'.
+	if (escape.length > 1 && /^\\+$/.test(escape)) {
 		escape = '\\';
 	}
 
@@ -1209,7 +1214,7 @@ var like = (utils.like = function (pattern, value, escape = '') {
 			var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
 
 			// Handle escape character.
-			if (currentChar === escape) {
+			if (escape && currentChar === escape) {
 				regexStr += '\\' + nextChar;
 				i++; // Skip next character as it's escaped.
 			}
