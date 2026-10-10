@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node
         # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24.x'
 
@@ -56,7 +56,7 @@ jobs:
       - name: Setup Node
         # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24.x'
 
@@ -101,7 +101,7 @@ jobs:
       - name: Setup Node
         # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
 
