@@ -21,15 +21,21 @@ describe('Test 15', function () {
 			'SELECT a,b,c, SUM(d) AS d FROM test ' + ' GROUP BY GROUPING SETS(a,b),c ORDER BY a,b,c'
 		);
 
+		// Grouping sets (a,c) and (b,c) are separate groups (see #644)
 		var tobe = [
-			{a: 0, b: null, c: 0, d: 1000},
-			{a: 0, b: null, c: 1, d: 1400},
-			{a: null, b: 1, c: 0, d: 2200},
-			{a: null, b: 1, c: 1, d: 2600},
+			{a: 0, b: null, c: 0, d: 400},
+			{a: null, b: 0, c: 0, d: 600},
+			{a: 0, b: null, c: 1, d: 600},
+			{a: null, b: 0, c: 1, d: 800},
+			{a: null, b: 1, c: 0, d: 1000},
+			{a: null, b: 1, c: 1, d: 1200},
+			{a: 1, b: null, c: 0, d: 1200},
+			{a: 1, b: null, c: 1, d: 1400},
 		];
 
+		assert.equal(res.length, tobe.length);
 		var check = true;
-		for (var i = 0; i < 4; i++) {
+		for (var i = 0; i < tobe.length; i++) {
 			for (var p in tobe[i]) {
 				check = check && res[i][p] == tobe[i][p];
 			}
