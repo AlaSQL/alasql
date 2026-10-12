@@ -165,7 +165,7 @@ break;
 case 81:
 
 			this.$ = $$[$0-4];
-			yy.extend(this.$,$$[$0-2]);
+			yy.extendSetOp(this.$,$$[$0-2]);
 			yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
 		    if(yy.exists) this.$.exists = yy.exists.slice();
 /*		    if(yy.queries) this.$.queries = yy.queries;
@@ -174,7 +174,7 @@ case 81:
 break;
 case 82:
 
-			yy.extend(this.$,$$[$0-3]); yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
+			yy.extend(this.$,$$[$0-3]); yy.extendSetOp($$[$0-3],$$[$0-2]); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
 		    this.$ = $$[$0-3];
 		    if(yy.exists) this.$.exists = yy.exists.slice();
 		
@@ -711,7 +711,7 @@ case 260:
 			this.$ = {op: 'intersect', corresponding: true}; 
 		
 break;
-case 261: case 262:
+case 261:
 
 			// Restore parent queries from stack and assign current queries to nested SELECT
 			if(yy.queriesStack && yy.queriesStack.length > 0) {
@@ -720,6 +720,20 @@ case 261: case 262:
 				}
 				yy.queries = yy.queriesStack.pop();
 			}
+			this.$ = $$[$0];
+		
+break;
+case 262:
+
+			// Restore parent queries from stack and assign current queries to nested SELECT
+			if(yy.queriesStack && yy.queriesStack.length > 0) {
+				if(yy.queries && yy.queries.length > 0) {
+					$$[$0].queries = yy.queries;
+				}
+				yy.queries = yy.queriesStack.pop();
+			}
+			// A parenthesized operand keeps its own set operations as a group (#202)
+			$$[$0].parenthesizedOperand = true;
 			this.$ = $$[$0];
 		
 break;
