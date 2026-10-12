@@ -609,3 +609,17 @@ stdfn.NEWID =
 				lut[(d3 >> 24) & 0xff]
 			);
 		};
+
+/**
+ * FORMAT(value, decimals[, locale])
+ * MySQL-style: formats number with comma thousands separators and decimal places
+ */
+stdfn.FORMAT = function (value, decimals, locale) {
+	if (value == null) return null;
+	var num = Number(value);
+	if (isNaN(num)) return null;
+	var [integerPart, decimalPart] = Math.abs(num).toFixed(decimals).split('.');
+	var formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	if (decimals > 0) formatted += '.' + decimalPart;
+	return (num < 0 ? '-' : '') + formatted;
+};
