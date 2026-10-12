@@ -88,15 +88,19 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var deletedRows = [];
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 				if (wherefn(table.data[i], params, alasql)) {
-					// Track deleted row for OUTPUT clause and AFTER DELETE trigger
-					if (self.output || table.afterdelete) {
-						deletedRows.push(cloneDeep(table.data[i]));
-					}
-					// Check for transaction - if it is not possible then return all back
+					// table.delete runs BEFORE/INSTEAD OF triggers and cleans indexes.
+					// false means prevent or INSTEAD OF — keep the row.
+					var deleted = true;
 					if (table.delete) {
-						table.delete(i, params, alasql);
+						deleted = table.delete(i, params, alasql) !== false;
+					}
+					if (deleted) {
+						// Track deleted row for OUTPUT clause and AFTER DELETE trigger
+						if (self.output || table.afterdelete) {
+							deletedRows.push(cloneDeep(table.data[i]));
+						}
 					} else {
-						// Simply do not push
+						newtable.push(table.data[i]);
 					}
 				} else {
 					newtable.push(table.data[i]);
