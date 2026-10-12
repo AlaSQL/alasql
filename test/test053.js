@@ -142,7 +142,7 @@ describe('Test 53 - Automatic types parsing', function () {
 			it('Columns from tables', function (done) {
 				var ast = alasql.parse('SELECT a, a=a, a+a, a-a FROM test');
 				var cols = ast.statements[0].columns;
-				assert.deepEqual(cols[0].toType(), {tableid: 'test', columnid: 'a'});
+				assert.deepStrictEqual(cols[0].toType(), {tableid: 'test', columnid: 'a'});
 				assert.equal(cols[1].toType(), 'boolean');
 				assert.equal(cols[1].toType(), 'strnum');
 				assert.equal(cols[1].toType(), 'number');
@@ -152,7 +152,7 @@ describe('Test 53 - Automatic types parsing', function () {
 			it('Columns from tables', function (done) {
 				var ast = alasql.parse('SELECT FIRST(a), FIRST(1), FIRT("Peter"), FIRST(TRUE) FROM test');
 				var cols = ast.statements[0].columns;
-				assert.deepEqual(cols[0].toType(), {tableid: 'test', columnid: 'a'});
+				assert.deepStrictEqual(cols[0].toType(), {tableid: 'test', columnid: 'a'});
 				assert.equal(cols[1].toType(), 'number');
 				assert.equal(cols[2].toType(), 'string');
 				assert.equal(cols[3].toType(), 'boolean');
@@ -175,7 +175,7 @@ describe('Test 53 - Automatic types parsing', function () {
 			it('Columns from subqueries', function (done) {
 				var ast = alasql.parse('SELECT a FROM (SELECT b AS a FROM test1)');
 				var cols = ast.statements[0].columns;
-				assert.deepEqual(cols[0].toType(), {tableid: 'test', columnid: 'b'});
+				assert.deepStrictEqual(cols[0].toType(), {tableid: 'test', columnid: 'b'});
 				done();
 			});
 		}

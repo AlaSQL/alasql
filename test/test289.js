@@ -20,9 +20,9 @@ describe('Test 289 SEARCH INSTANCEOF', function () {
 		//    right: { value: 20 } } ], from: [Object], group: [Object] } ] }
 
 		var res = alasql('SEARCH /+ aggregatorid FROM ?', [ast]);
-		assert.deepEqual(res, ['SUM']);
+		assert.deepStrictEqual(res, ['SUM']);
 		/// console.log(res);
-		//    assert.deepEqual(res,[ { a: 1, b: 1 }, { a: 2, b: 2 }, { a: 3, b: 3 } ]);
+		//    assert.deepStrictEqual(res,[ { a: 1, b: 1 }, { a: 2, b: 2 }, { a: 3, b: 3 } ]);
 		done();
 	});
 

@@ -12,8 +12,7 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
 	});
 
 	it('2. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       CREATE TABLE students (
         id serial NOT NULL,
         name character varying(50) NOT NULL,
@@ -55,15 +54,13 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
         (4 , 2 , 2 , 82),
         (5 , 3 , 1 , 15),
         (8 , 5 , 1 , 10);
-      */
-		});
+      `);
 		done();
 	});
 
 	it('3. TEST', function (done) {
 		var res = alasql(
-			function () {
-				/*
+			`
       SELECT
         students.name AS student_name,
         students.id AS student_id,
@@ -79,8 +76,7 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
       WHERE
         assignments.class_id = $0;
 
-    */
-			},
+    `,
 			[2]
 		);
 		/// console.log(res);

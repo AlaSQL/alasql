@@ -36,7 +36,7 @@ describe('Test 179 - function in GROUP BY', function () {
 		);
 		//        console.log(res);
 		assert(res.length == 5);
-		// assert.deepEqual(res, [
+		// assert.deepStrictEqual(res, [
 		//     { continent: 'Europe', 'COUNT(*)': 4 },
 		//     { continent: 'Asia', 'COUNT(*)': 2 } ]
 		// );
@@ -61,7 +61,7 @@ describe('Test 179 - function in GROUP BY', function () {
 		assert(res.length == 5);
 
 		//        console.log(res);
-		// assert.deepEqual(res, [
+		// assert.deepStrictEqual(res, [
 		//     { continent: 'Europe', 'COUNT(*)': 4 },
 		//     { continent: 'Asia', 'COUNT(*)': 2 } ]
 		// );

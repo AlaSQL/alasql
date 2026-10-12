@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 29', function () {
 	it('JOIN USING', function (done) {
-		var db = alasql.Database('db');
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');
@@ -16,16 +16,16 @@ describe('Test 29', function () {
 
 		var sql = 'SELECT COLUMN a FROM test1 WHERE a IN (2,3,4) AND a NOT IN (3)';
 		var res = db.exec(sql);
-		assert.deepEqual([2, 4], res);
+		assert.deepStrictEqual([2, 4], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 WHERE a = ANY (2,3,4)';
 		var res = db.exec(sql);
-		assert.deepEqual([2, 3, 4], res);
+		assert.deepStrictEqual([2, 3, 4], res);
 
 		// Postgres notation
 		var sql = 'SELECT COLUMN a FROM test1 WHERE a = ANY (ARRAY[2,3,4])';
 		var res = db.exec(sql);
-		assert.deepEqual([2, 3, 4], res);
+		assert.deepStrictEqual([2, 3, 4], res);
 
 		done();
 	});

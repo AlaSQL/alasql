@@ -31,7 +31,7 @@ yy.Select = class Select {
 			s += 'DISTINCT ';
 		}
 		if (this.top) {
-			s += 'TOP ' + this.top.value + ' ';
+			s += 'TOP ' + this.top.toString() + ' ';
 			if (this.percent) {
 				s += 'PERCENT ';
 			}
@@ -115,10 +115,10 @@ yy.Select = class Select {
 					.join(', ');
 		}
 		if (this.limit) {
-			s += ' LIMIT ' + this.limit.value;
+			s += ' LIMIT ' + this.limit.toString();
 		}
 		if (this.offset) {
-			s += ' OFFSET ' + this.offset.value;
+			s += ' OFFSET ' + this.offset.toString();
 		}
 		if (this.union) {
 			s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
@@ -139,19 +139,15 @@ yy.Select = class Select {
 	 Select statement in expression
 	 */
 	toJS(context) {
-		//	console.log('Expression',this);
-		//	if(this.expression.reduced) return 'true';
-		//	return this.expression.toJS(context, tableid, defcols);
-		// console.log('Select.toJS', 81, this.queriesidx);
-		//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
-		var s =
+		let outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
+		let s =
 			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
 			'](this.params,null,' +
-			context +
+			outerContext +
 			'))[0]';
 
-		//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
+		//	let s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 		return s;
 	}
 
@@ -168,7 +164,6 @@ yy.Select = class Select {
 		query.explain = this.explain; // Explain
 		query.explaination = [];
 		query.explid = 1;
-		//console.log(this.modifier);
 		query.modifier = this.modifier;
 
 		query.database = db;
@@ -191,6 +186,13 @@ yy.Select = class Select {
 		// todo?: 3. Compile SELECT clause
 		// For ROWNUM()
 		query.rownums = [];
+		query.grouprownums = [];
+		query.windowaggrs = []; // For window aggregate functions (COUNT/MAX/MIN/SUM/AVG with OVER)
+
+		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
+		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
+			query.intoObject = true;
+		}
 
 		this.compileSelectGroup0(query);
 
@@ -224,6 +226,8 @@ yy.Select = class Select {
 		// 8. Compile ORDER BY clause
 		if (this.order) {
 			query.orderfn = this.compileOrder(query, params);
+			// Copy orderColumns to query for union handling
+			query.orderColumns = this.orderColumns;
 		}
 
 		if (this.group || query.selectGroup.length > 0) {
@@ -241,11 +245,23 @@ yy.Select = class Select {
 
 		// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 		if (this.top) {
-			query.limit = this.top.value;
+			if (this.top instanceof yy.ParamValue) {
+				query.limitParam = this.top.param;
+			} else {
+				query.limit = this.top.value;
+			}
 		} else if (this.limit) {
-			query.limit = this.limit.value;
+			if (this.limit instanceof yy.ParamValue) {
+				query.limitParam = this.limit.param;
+			} else {
+				query.limit = this.limit.value;
+			}
 			if (this.offset) {
-				query.offset = this.offset.value;
+				if (this.offset instanceof yy.ParamValue) {
+					query.offsetParam = this.offset.param;
+				} else {
+					query.offset = this.offset.value;
+				}
 			}
 		}
 
@@ -255,79 +271,81 @@ yy.Select = class Select {
 		query.corresponding = this.corresponding; // If CORRESPONDING flag exists
 		if (this.union) {
 			query.unionfn = this.union.compile(databaseid);
-			if (this.union.order) {
+			// ORDER BY is now at the top level, not in the union clause
+			if (!query.orderfn && this.union.order) {
 				query.orderfn = this.union.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
 			}
 		} else if (this.unionall) {
 			query.unionallfn = this.unionall.compile(databaseid);
-			if (this.unionall.order) {
+			// ORDER BY is now at the top level, not in the unionall clause
+			if (!query.orderfn && this.unionall.order) {
 				query.orderfn = this.unionall.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
 			}
 		} else if (this.except) {
 			query.exceptfn = this.except.compile(databaseid);
-			if (this.except.order) {
+			// ORDER BY is now at the top level, not in the except clause
+			if (!query.orderfn && this.except.order) {
 				query.orderfn = this.except.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
 			}
 		} else if (this.intersect) {
 			query.intersectfn = this.intersect.compile(databaseid);
-			if (this.intersect.order) {
-				query.intersectfn = this.intersect.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
+			// ORDER BY is now at the top level, not in the intersect clause
+			if (!query.orderfn && this.intersect.order) {
+				query.orderfn = this.intersect.compileOrder(query, params);
 			}
 		}
 
 		// SELECT INTO
 		if (this.into) {
 			if (this.into instanceof yy.Table) {
-				//
 				// Save into the table in database
-				//
 				if (
 					alasql.options.autocommit &&
 					alasql.databases[this.into.databaseid || databaseid].engineid
 				) {
 					// For external database when AUTOCOMMIT is ONs
-					query.intoallfns =
-						'return alasql.engines["' +
-						alasql.databases[this.into.databaseid || databaseid].engineid +
-						'"]' +
-						'.intoTable("' +
-						(this.into.databaseid || databaseid) +
-						'","' +
-						this.into.tableid +
-						'",this.data, columns, cb);';
+					query.intoallfns = `return alasql
+								.engines[${JSON.stringify(alasql.databases[this.into.databaseid || databaseid].engineid)}]
+								.intoTable(
+									${JSON.stringify(this.into.databaseid || databaseid)},
+									${JSON.stringify(this.into.tableid)},
+									this.data,
+									columns,
+									cb
+								);`;
 				} else {
-					// Into AlaSQL tables
-					query.intofns =
-						"alasql.databases['" +
-						(this.into.databaseid || databaseid) +
-						"'].tables" +
-						"['" +
-						this.into.tableid +
-						"'].data.push(r);";
+					// Into AlaSQL tables - convert types based on column definitions
+					var dbid = this.into.databaseid || databaseid;
+					var tblid = this.into.tableid;
+					query.intofns = `
+						var db = alasql.databases[${JSON.stringify(dbid)}];
+						var table = db.tables[${JSON.stringify(tblid)}];
+						var converted = {};
+						for (var key in r) {
+							var colDef = table.xcolumns && table.xcolumns[key];
+							converted[key] = alasql.utils.typeConverter(r[key], colDef ? colDef.dbtypeid : null);
+						}
+						table.data.push(converted);
+					`;
 				}
 			} else if (this.into instanceof yy.VarValue) {
 				//
 				// Save into local variable
 				// SELECT * INTO @VAR1 FROM ?
 				//
-				query.intoallfns =
-					'alasql.vars["' +
-					this.into.variable +
-					'"]=this.data;res=this.data.length;if(cb)res=cb(res);return res;';
+				query.intoallfns = `
+					alasql.vars[${JSON.stringify(this.into.variable)}]=this.data;
+					res=this.data.length;
+					if(cb) res = cb(res);
+					return res;
+				`;
 			} else if (this.into instanceof yy.FuncValue) {
 				//
 				// If this is INTO() function, then call it
 				// with one or two parameters
 				//
-				var qs = 'return alasql.into[' + JSON.stringify(this.into.funcid.toUpperCase()) + '](';
+				var funcid = this.into.funcid.toUpperCase();
+				var qs = 'return alasql.into[' + JSON.stringify(funcid) + '](';
 				if (this.into.args && this.into.args.length > 0) {
 					qs += this.into.args[0].toJS() + ',';
 					if (this.into.args.length > 1) {
@@ -339,35 +357,58 @@ yy.Select = class Select {
 					qs += 'undefined, undefined,';
 				}
 				query.intoallfns = qs + 'this.data,columns,cb)';
-				//console.log('999');
+				// Mark that OBJECT should preserve array results
+				if (funcid === 'OBJECT') {
+					query.preserveArrayResult = true;
+				}
 			} else if (this.into instanceof yy.ParamValue) {
 				//
 				// Save data into parameters array
 				// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
+				// or SELECT * INTO $variable FROM ?
 				//
-				query.intofns = "params['" + this.into.param + "'].push(r)";
+				// Distinguish between ? (numeric param - push to array) and $variable (string param - replace array)
+				if (typeof this.into.param === 'string') {
+					// $variable syntax - replace the array
+					query.intoallfns = `
+						if(!params[${JSON.stringify(this.into.param)}]) params[${JSON.stringify(this.into.param)}]=[];
+						params[${JSON.stringify(this.into.param)}]=this.data;
+						res=this.data.length;
+						if(cb) res = cb(res);
+						return res;
+					`;
+				} else {
+					// ? syntax - push to existing array
+					query.intofns = `params[${JSON.stringify(this.into.param)}].push(r)`;
+				}
 			}
 
 			if (query.intofns) {
 				// Create intofn function
-				// console.log(234234, query.intofns);
 				query.intofn = new Function('r,i,params,alasql', 'var y;' + query.intofns);
 			} else if (query.intoallfns) {
 				// Create intoallfn function
-				// console.log(23423234, query.intoallfns);
 				query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 			}
 		}
-		//console.log(query);
 		// Now, compile all togeather into one function with query object in scope
 		var statement = function (params, cb, oldscope) {
 			query.params = params;
+			if (typeof query.limitParam !== 'undefined') {
+				query.limit = params ? params[query.limitParam] : undefined;
+			}
+			if (typeof query.offsetParam !== 'undefined') {
+				query.offset = params ? params[query.offsetParam] : undefined;
+			}
 			// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
 			// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
 			// the (data, err) standard is maintained here.
 			var res1 = queryfn(query, oldscope, function (res, err) {
 				if (err) {
-					return cb(err, null);
+					if (cb) {
+						return cb(null, err);
+					}
+					throw err;
 				}
 				if (query.rownums.length > 0) {
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
@@ -377,22 +418,126 @@ yy.Select = class Select {
 					}
 				}
 
+				// Handle GROUP_ROW_NUMBER() and ROW_NUMBER() OVER (PARTITION BY ...) - restart numbering when grouping column(s) change
+				if (query.grouprownums && query.grouprownums.length > 0) {
+					for (var j = 0, jlen = query.grouprownums.length; j < jlen; j++) {
+						var config = query.grouprownums[j];
+						var partitionColumns;
+
+						// Determine which columns to partition by
+						if (config.partitionColumns && config.partitionColumns.length > 0) {
+							// Use explicit PARTITION BY columns
+							partitionColumns = config.partitionColumns;
+						} else {
+							// Fall back to first column for GROUP_ROW_NUMBER()
+							var columnKeys = Object.keys(res[0] || {});
+							partitionColumns = [columnKeys[0]];
+						}
+
+						var prevValues = null;
+						var rowNum = 0;
+
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							// Get current partition key (combination of all partition columns)
+							var currentValues = partitionColumns
+								.map(function (col) {
+									return res[i][col];
+								})
+								.join('|');
+
+							// Reset counter when partition changes
+							if (i === 0 || currentValues !== prevValues) {
+								rowNum = 1;
+							} else {
+								rowNum++;
+							}
+
+							res[i][config.as] = rowNum;
+							prevValues = currentValues;
+						}
+					}
+				}
+
+				// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
+				if (query.windowaggrs && query.windowaggrs.length > 0) {
+					for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
+						var config = query.windowaggrs[j];
+						var partitions = {};
+
+						// Group rows by partition
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							var partitionKey =
+								config.partitionColumns && config.partitionColumns.length > 0
+									? config.partitionColumns
+											.map(function (col) {
+												return res[i][col];
+											})
+											.join('|')
+									: '__all__';
+
+							if (!partitions[partitionKey]) partitions[partitionKey] = [];
+							partitions[partitionKey].push(i);
+						}
+
+						// Calculate and assign aggregate for each partition
+						for (var partitionKey in partitions) {
+							var rowIndices = partitions[partitionKey];
+							var values = [];
+							var colId = config.expression && config.expression.columnid;
+
+							// Collect values from partition rows
+							if (config.aggregatorid !== 'COUNT' || (colId && colId !== '*')) {
+								for (var k = 0; k < rowIndices.length; k++) {
+									var val = res[rowIndices[k]][colId];
+									if (val != null) values.push(val);
+								}
+							}
+
+							// Calculate aggregate
+							var aggregateValue;
+							switch (config.aggregatorid) {
+								case 'COUNT':
+									aggregateValue = colId && colId !== '*' ? values.length : rowIndices.length;
+									break;
+								case 'SUM':
+									aggregateValue = values.reduce(function (sum, v) {
+										return sum + v;
+									}, 0);
+									break;
+								case 'AVG':
+									aggregateValue =
+										values.length > 0
+											? values.reduce(function (sum, v) {
+													return sum + v;
+												}, 0) / values.length
+											: null;
+									break;
+								case 'MAX':
+									aggregateValue = values.length > 0 ? Math.max.apply(null, values) : null;
+									break;
+								case 'MIN':
+									aggregateValue = values.length > 0 ? Math.min.apply(null, values) : null;
+									break;
+							}
+
+							// Assign aggregate value to all rows in partition
+							for (var k = 0; k < rowIndices.length; k++) {
+								res[rowIndices[k]][config.as] = aggregateValue;
+							}
+						}
+					}
+				}
+
 				var res2 = modify(query, res);
 
 				if (cb) {
 					cb(res2);
 				}
-				//console.log(8888,res2);
 				return res2;
 			});
-			//console.log(9999,res1);
-			//		if(typeof res1 != 'undefined') res1 =  modify(query,res1);
 			return res1;
 		};
 
-		//	statement.dbversion = ;
-		//	console.log(statement.query);
-		//console.log(202,statement);
 		statement.query = query;
 		return statement;
 	}
@@ -406,8 +551,6 @@ yy.Select = class Select {
 		if (!this.exists) return;
 		query.existsfn = this.exists.map(function (ex) {
 			var nq = ex.compile(query.database.databaseid);
-			//		console.log(nq);
-			//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 			nq.query.modifier = 'RECORDSET';
 			return nq;
 		});
@@ -415,19 +558,80 @@ yy.Select = class Select {
 
 	compileQueries(query) {
 		if (!this.queries) return;
+
+		// Helper function to detect if a subquery might be correlated
+		// A subquery is correlated if it references tables not in its own FROM clause
+		const isCorrelated = (subquery, outerQuery) => {
+			if (!subquery.from) return false;
+
+			// Get table names from subquery's FROM clause
+			const subqueryTables = new Set();
+			subquery.from.forEach(f => {
+				if (f.tableid) subqueryTables.add(f.tableid);
+				if (f.as) subqueryTables.add(f.as);
+			});
+
+			// Check if WHERE clause references tables not in subquery's FROM
+			const referencesExternal = node => {
+				if (!node) return false;
+
+				// Check Column nodes for tableid using instanceof
+				if (node instanceof yy.Column) {
+					if (node.tableid && !subqueryTables.has(node.tableid)) {
+						return true;
+					}
+				}
+
+				// Recursively check own properties only (not inherited)
+				for (let key of Object.keys(node)) {
+					if (node[key] && typeof node[key] === 'object') {
+						if (referencesExternal(node[key])) return true;
+					}
+				}
+				return false;
+			};
+
+			return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
+		};
+
+		// Compile each subquery. Nested scalar subqueries such as
+		// SELECT (SELECT (SELECT 1 AS c) AS b) AS a share one statement-level
+		// queries list (see #1025), so every compiled subquery must be able to
+		// resolve queriesidx against the same queriesfn array at runtime.
 		query.queriesfn = this.queries.map(function (q) {
 			var nq = q.compile(query.database.databaseid);
-			//		console.log(nq);
-			//	if(!nq.query) nq.query = {};
 			nq.query.modifier = 'RECORDSET';
-			//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+
+			// Mark as correlated if it references external tables
+			nq.query.isCorrelated = isCorrelated(q, query);
+
+			// If the nested query has its own queries, ensure they're compiled too
+			// (e.g. IN/ALL/ANY subqueries that captured a nested queries list)
+			if (q.queries && q.queries.length > 0 && !nq.query.queriesfn) {
+				nq.query.queriesfn = q.queries.map(function (qq) {
+					var nnq = qq.compile(query.database.databaseid);
+					nnq.query.modifier = 'RECORDSET';
+					return nnq;
+				});
+			}
 			return nq;
 		});
-	}
 
-	// exec(databaseid) {
-	// 	throw new Error('Select statement should be precompiled');
-	// }
+		// Share compiled subquery functions down the tree. Without this,
+		// multi-level scalar subqueries fail with
+		// "Cannot read properties of undefined (reading '0')" when the
+		// inner select expression evaluates this.queriesfn[queriesidx-1].
+		(function shareQueriesfn(queriesfn) {
+			if (!queriesfn) return;
+			queriesfn.forEach(function (nq) {
+				if (!nq.query.queriesfn) {
+					nq.query.queriesfn = queriesfn;
+				} else if (nq.query.queriesfn !== queriesfn) {
+					shareQueriesfn(nq.query.queriesfn);
+				}
+			});
+		})(query.queriesfn);
+	}
 };
 
 /**
@@ -438,7 +642,6 @@ yy.Select = class Select {
  */
 function modify(query, res) {
 	// jshint ignore:line
-	//	console.log(arguments);
 
 	/* If source is a primitive value then return it */
 	if (
@@ -452,7 +655,42 @@ function modify(query, res) {
 
 	var modifier = query.modifier || alasql.options.modifier;
 	var columns = query.columns;
-	if (typeof columns === 'undefined' || columns.length == 0) {
+
+	// If dirtyColumns is true, we need to merge columns from data with existing columns
+	// This happens when SELECT * is used with dynamic data sources (like parameters)
+	if (query.dirtyColumns && res.length > 0) {
+		var allcol = {};
+		// First, scan the data to find all column names
+		for (var i = Math.min(res.length, alasql.options.columnlookup || 10) - 1; 0 <= i; i--) {
+			for (var key in res[i]) {
+				allcol[key] = true;
+			}
+		}
+
+		// Create columns from data
+		var dataColumns = Object.keys(allcol).map(function (columnid) {
+			return {columnid: columnid};
+		});
+
+		// If we don't have any columns yet, just use the data columns
+		if (!columns || columns.length === 0) {
+			columns = dataColumns;
+		} else {
+			// We have some columns (e.g., from explicit column expressions),
+			// merge them with data columns, avoiding duplicates
+			var existingColumnIds = {};
+			columns.forEach(function (col) {
+				existingColumnIds[col.columnid] = true;
+			});
+
+			// Add data columns that aren't already in the list
+			dataColumns.forEach(function (col) {
+				if (!existingColumnIds[col.columnid]) {
+					columns.push(col);
+				}
+			});
+		}
+	} else if (typeof columns === 'undefined' || columns.length === 0) {
 		// Try to create columns
 		if (res.length > 0) {
 			var allcol = {};
@@ -468,94 +706,76 @@ function modify(query, res) {
 		} else {
 			// Cannot recognize columns
 			columns = [];
+			if (query && query.sources) {
+				query.sources.forEach(source => {
+					if (source && source.columns && Array.isArray(source.columns)) {
+						columns = columns.concat(source.columns);
+					}
+				});
+			}
 		}
 	}
 
-	//	console.log(columns);
+	switch (modifier) {
+		case 'VALUE':
+			if (res.length === 0) return undefined;
+			const keyValue = columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			return res[0][keyValue];
 
-	if (modifier === 'VALUE') {
-		//		console.log(222,res);
-		if (res.length > 0) {
-			var key;
-			if (columns && columns.length > 0) {
-				key = columns[0].columnid;
-			} else {
-				key = Object.keys(res[0])[0];
-			}
-			res = res[0][key];
-		} else {
-			res = undefined;
-		}
-	} else if (modifier === 'ROW') {
-		if (res.length > 0) {
-			var key;
-			var a = [];
-			for (var key in res[0]) {
-				a.push(res[0][key]);
-			}
-			res = a;
-		} else {
-			res = undefined;
-		}
-	} else if (modifier === 'COLUMN') {
-		var ar = [];
-		if (res.length > 0) {
-			var key;
+		case 'ROW':
+			if (res.length === 0) return undefined;
+			return Object.values(res[0]);
+
+		case 'COLUMN':
+			if (res.length === 0) return [];
+
+			let key;
 			if (columns && columns.length > 0) {
 				key = columns[0].columnid;
 			} else {
 				key = Object.keys(res[0])[0];
 			}
 
+			let ar = [];
 			for (var i = 0, ilen = res.length; i < ilen; i++) {
 				ar.push(res[i][key]);
 			}
-		}
-		res = ar;
-	} else if (modifier === 'MATRIX') {
-		// Returns square matrix of rows
-		var ar = [];
-		for (var i = 0; i < res.length; i++) {
-			var a = [];
-			var r = res[i];
-			for (var j = 0; j < columns.length; j++) {
-				a.push(r[columns[j].columnid]);
-			}
-			ar.push(a);
-		}
-		res = ar;
-	} else if (modifier === 'INDEX') {
-		var ar = {};
-		var key, val;
-		if (columns && columns.length > 0) {
-			key = columns[0].columnid;
-			val = columns[1].columnid;
-		} else {
-			var okeys = Object.keys(res[0]);
-			key = okeys[0];
-			val = okeys[1];
-		}
-		for (var i = 0, ilen = res.length; i < ilen; i++) {
-			ar[res[i][key]] = res[i][val];
-		}
-		res = ar;
-		//		res = arrayOfArrays(res);
-	} else if (modifier === 'RECORDSET') {
-		res = new alasql.Recordset({columns: columns, data: res});
-		//		res = arrayOfArrays(res);
-	} else if (modifier === 'TEXTSTRING') {
-		var key;
-		if (columns && columns.length > 0) {
-			key = columns[0].columnid;
-		} else {
-			key = Object.keys(res[0])[0];
-		}
 
-		for (var i = 0, ilen = res.length; i < ilen; i++) {
-			res[i] = res[i][key];
-		}
-		res = res.join('\n');
-		//		res = arrayOfArrays(res);
+			// Apply DISTINCT if specified
+			if (query.distinct) {
+				ar = alasql.utils.distinctArray(ar);
+			}
+
+			return ar;
+
+		case 'MATRIX':
+			if (res.length === 0) return undefined;
+			return res.map(row => columns.map(col => row[col.columnid]));
+
+		case 'INDEX':
+			if (res.length === 0) return undefined;
+			const keyIndex = columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			const valIndex = columns && columns.length > 1 ? columns[1].columnid : Object.keys(res[0])[1];
+			return res.reduce((acc, row) => ({...acc, [row[keyIndex]]: row[valIndex]}), {});
+
+		case 'RECORDSET':
+			// Assuming alasql.Recordset is available in the scope
+			return new alasql.Recordset({columns: columns, data: res});
+
+		case 'TEXTSTRING':
+			if (res.length === 0) return undefined;
+			const keyTextString =
+				columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			return res.map(row => row[keyTextString]).join('\n');
+
+		case 'ALASQL_DETAILS':
+			// Returns both data and column metadata in a structured format
+			// Useful for internal operations that need both data and column info in one call
+			return {
+				data: res,
+				columns: columns,
+				length: res.length,
+			};
 	}
 	return res;
 }

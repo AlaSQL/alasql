@@ -32,7 +32,7 @@ if (typeof exports === 'object') {
 			return e(r ^ (t | ~o), n, t, u, c, f);
 		}
 		function i(n, r) {
-			(n[r >> 5] |= 128 << r % 32), (n[(((r + 64) >>> 9) << 4) + 14] = r);
+			((n[r >> 5] |= 128 << (r % 32)), (n[(((r + 64) >>> 9) << 4) + 14] = r));
 			var e,
 				i,
 				a,
@@ -43,7 +43,7 @@ if (typeof exports === 'object') {
 				v = -1732584194,
 				m = 271733878;
 			for (e = 0; e < n.length; e += 16)
-				(i = l),
+				((i = l),
 					(a = g),
 					(h = v),
 					(d = m),
@@ -114,20 +114,21 @@ if (typeof exports === 'object') {
 					(l = t(l, i)),
 					(g = t(g, a)),
 					(v = t(v, h)),
-					(m = t(m, d));
+					(m = t(m, d)));
 			return [l, g, v, m];
 		}
 		function a(n) {
 			var t,
 				r = '';
-			for (t = 0; t < 32 * n.length; t += 8) r += String.fromCharCode((n[t >> 5] >>> t % 32) & 255);
+			for (t = 0; t < 32 * n.length; t += 8)
+				r += String.fromCharCode((n[t >> 5] >>> (t % 32)) & 255);
 			return r;
 		}
 		function h(n) {
 			var t,
 				r = [];
 			for (r[(n.length >> 2) - 1] = void 0, t = 0; t < r.length; t += 1) r[t] = 0;
-			for (t = 0; t < 8 * n.length; t += 8) r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << t % 32;
+			for (t = 0; t < 8 * n.length; t += 8) r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << (t % 32);
 			return r;
 		}
 		function d(n) {
@@ -140,8 +141,8 @@ if (typeof exports === 'object') {
 				u = [],
 				c = [];
 			for (u[15] = c[15] = void 0, o.length > 16 && (o = i(o, 8 * n.length)), r = 0; 16 > r; r += 1)
-				(u[r] = 909522486 ^ o[r]), (c[r] = 1549556828 ^ o[r]);
-			return (e = i(u.concat(h(t)), 512 + 8 * t.length)), a(i(c.concat(e), 640));
+				((u[r] = 909522486 ^ o[r]), (c[r] = 1549556828 ^ o[r]));
+			return ((e = i(u.concat(h(t)), 512 + 8 * t.length)), a(i(c.concat(e), 640)));
 		}
 		function g(n) {
 			var t,
@@ -149,7 +150,7 @@ if (typeof exports === 'object') {
 				e = '0123456789abcdef',
 				o = '';
 			for (r = 0; r < n.length; r += 1)
-				(t = n.charCodeAt(r)), (o += e.charAt((t >>> 4) & 15) + e.charAt(15 & t));
+				((t = n.charCodeAt(r)), (o += e.charAt((t >>> 4) & 15) + e.charAt(15 & t)));
 			return o;
 		}
 		function v(n) {
@@ -173,10 +174,10 @@ if (typeof exports === 'object') {
 		'function' == typeof define && define.amd
 			? define(function () {
 					return A;
-			  })
+				})
 			: 'object' == typeof module && module.exports
-			? (module.exports = A)
-			: (n.md5 = A);
+				? (module.exports = A)
+				: (n.md5 = A);
 	})(this);
 }
 
@@ -235,7 +236,7 @@ describe('Test 293 SLT#1', function () {
       THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1`
 		);
 		//console.log(res);
-		assert.deepEqual(res.length, 30);
+		assert.deepStrictEqual(res.length, 30);
 		q1 = res;
 		var rs = res
 			.map(function (d) {
@@ -245,7 +246,7 @@ describe('Test 293 SLT#1', function () {
 		// var rs = res.data.map(function(d){return d[res.columns[0].columnid]+'\n'}).join('');
 		//    console.log('char1',rs.length);
 		let rhash = md5(rs);
-		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
+		assert.deepStrictEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
 
@@ -258,7 +259,7 @@ describe('Test 293 SLT#1', function () {
 		);
 		//console.log(res);
 		q2 = res.data;
-		assert.deepEqual(res.data.length, 30);
+		assert.deepStrictEqual(res.data.length, 30);
 		var rs = res.data
 			.map(function (d) {
 				return d[res.columns[0].columnid] + '\n';
@@ -266,18 +267,18 @@ describe('Test 293 SLT#1', function () {
 			.join('');
 		//    console.log('char2',rs.length);
 		let rhash = md5(rs);
-		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
+		assert.deepStrictEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
 
 	it('5. SELECT 1', function (done) {
 		alasql.options.modifier = undefined;
 		var res = alasql('SELECT 1');
-		assert.deepEqual(res, [{1: 1}]);
+		assert.deepStrictEqual(res, [{1: 1}]);
 		//    console.log(res);
 
 		var res = alasql('SELECT avg(c) FROM t1');
-		assert.deepEqual(res, [{'AVG(c)': 174.36666666666667}]);
+		assert.deepStrictEqual(res, [{'AVG(c)': 174.36666666666667}]);
 		//    console.log(res);
 		//console.log('***')
 		if (false) {
@@ -312,14 +313,14 @@ describe('Test 293 SLT#1', function () {
         FROM t1
        ORDER BY 1,2
 	   `);
-			assert.deepEqual(res.length, 60); // Why 60?
+			assert.deepStrictEqual(res.length, 60); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
 			let rhash = md5(rs);
-			assert.deepEqual(rhash, '808146289313018fce25f1a280bd8c30');
+			assert.deepStrictEqual(rhash, '808146289313018fce25f1a280bd8c30');
 			done();
 		});
 
@@ -338,14 +339,14 @@ SELECT a+b*2+c*3+d*4+e*5,
    AND EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b)
  ORDER BY 4,2,1,3,5
  `);
-			assert.deepEqual(res.length, 80); // Why 60?
+			assert.deepStrictEqual(res.length, 80); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
 			let rhash = md5(rs);
-			assert.deepEqual(rhash, 'f588aa173060543daffc54d07638516f');
+			assert.deepStrictEqual(rhash, 'f588aa173060543daffc54d07638516f');
 			done();
 		});
 	}

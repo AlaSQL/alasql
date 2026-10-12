@@ -78,10 +78,6 @@ yy.Search = class Search {
 				nest, // temp value used many places
 				r, // temp value used many places
 				sel = selectors[sidx];
-			//		console.log(sel);
-			//		if(!alasql.srch[sel.srchid]) {
-			//			throw new Error('Selector "'+sel.srchid+'" not found');
-			//		};
 
 			var INFINITE_LOOP_BREAK = alasql.options.loopbreak || 100000;
 
@@ -367,16 +363,6 @@ yy.Search = class Search {
 						alasql.vars[sel.args[0]] = oldv;
 						return r1;
 					}
-					/*/*
-
-	jimmy.TO = function(val,args) {
-		// console.log(args[0]);
-
-		alasql.vars[args[0]].push(val);
-		return {status: 1, values: [val]};
-	};
-
-	*/
 				} else if (sel.selid === 'ARRAY') {
 					var nest = processSelector(sel.args, 0, value);
 					if (nest.length > 0) {
@@ -679,10 +665,6 @@ yy.Search = class Search {
 			) {
 				fromdata = fromdata.find().fetch();
 			}
-			//console.log(selectors,fromdata);
-			//		if(typeof fromdata == 'object' && Array.isArray(fromdata)) {
-			//			selectors.unshift({srchid:'CHILD'});
-			//		}
 		}
 
 		// If source data is array than first step is to run over array
@@ -708,20 +690,38 @@ yy.Search = class Search {
 		}
 
 		if (this.into) {
-			var a1, a2;
-			if (typeof this.into.args[0] !== 'undefined') {
-				a1 = new Function('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
-					params,
-					alasql
-				);
+			// Handle different INTO types
+			if (this.into instanceof yy.ParamValue) {
+				// INTO $variable or INTO ?
+				if (typeof this.into.param === 'string') {
+					// $variable syntax - replace the variable
+					params[this.into.param] = res;
+				} else {
+					// ? syntax - assign to parameter
+					params[this.into.param] = res;
+				}
+				if (cb) res = cb(res);
+			} else if (this.into instanceof yy.VarValue) {
+				// INTO @variable
+				alasql.vars[this.into.variable] = res;
+				if (cb) res = cb(res);
+			} else {
+				// INTO function (TXT(), JSON(), etc.)
+				var a1, a2;
+				if (typeof this.into.args[0] !== 'undefined') {
+					a1 = new Function('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
+						params,
+						alasql
+					);
+				}
+				if (typeof this.into.args[1] !== 'undefined') {
+					a2 = new Function('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
+						params,
+						alasql
+					);
+				}
+				res = alasql.into[this.into.funcid.toUpperCase()](a1, a2, res, [], cb);
 			}
-			if (typeof this.into.args[1] !== 'undefined') {
-				a2 = new Function('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
-					params,
-					alasql
-				);
-			}
-			res = alasql.into[this.into.funcid.toUpperCase()](a1, a2, res, [], cb);
 		} else {
 			if (stope.value && res.length > 0) {
 				res = res[0];
@@ -739,7 +739,7 @@ alasql.srch = {
 	PROP(val, args, stope) {
 		//		console.log('PROP',args[0],val);
 		if (stope.mode === 'XML') {
-			const values = val.children.filter((v) => v.name.toUpperCase() === args[0].toUpperCase());
+			const values = val.children.filter(v => v.name.toUpperCase() === args[0].toUpperCase());
 
 			return {
 				status: values.length ? 1 : -1,
@@ -1059,13 +1059,12 @@ alasql.srch = {
 		//	console.log(arguments);
 		var s = args
 			.map(function (st) {
-				//console.log(898,st);
 				if (st.method === '@') {
-					return "alasql.vars['" + st.variable + "']=" + st.expression.toJS('x', '');
+					return `alasql.vars[${JSON.stringify(st.variable)}]=` + st.expression.toJS('x', '');
 				} else if (st.method === '$') {
-					return "params['" + st.variable + "']=" + st.expression.toJS('x', '');
+					return `params[${JSON.stringify(st.variable)}]=` + st.expression.toJS('x', '');
 				} else {
-					return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
+					return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 				}
 			})
 			.join(';');
@@ -1078,7 +1077,7 @@ alasql.srch = {
 
 	ROW(val, args, stope, params) {
 		var s = 'var y;return [';
-		s += args.map((arg) => arg.toJS('x', '')).join(',');
+		s += args.map(arg => arg.toJS('x', '')).join(',');
 		s += ']';
 		var setfn = new Function('x,params,alasql', s);
 		var rv = setfn(val, params, alasql);
@@ -1147,18 +1146,18 @@ var compileSearchOrder = function (order) {
 					s += 'if(a' + dg + (ord.direction === 'ASC' ? '>' : '<') + 'b' + dg + ')return 1;';
 					s += 'if(a' + dg + '==b' + dg + '){';
 				} else {
-					s +=
-						"if((a['" +
-						columnid +
-						"']||'')" +
-						dg +
-						(ord.direction === 'ASC' ? '>' : '<') +
-						"(b['" +
-						columnid +
-						"']||'')" +
-						dg +
-						')return 1;';
-					s += "if((a['" + columnid + "']||'')" + dg + "==(b['" + columnid + "']||'')" + dg + '){';
+					s += `if (
+							(a[${JSON.stringify(columnid)}]||'')${dg}
+							${ord.direction === 'ASC' ? '>' : '<'}
+							(b[${JSON.stringify(columnid)}]||'')${dg}
+						) return 1;
+
+						if(
+							(a[${JSON.stringify(columnid)}]||'')${dg}
+							==
+							(b[${JSON.stringify(columnid)}]||'')${dg}
+						){
+						`;
 				}
 			} else {
 				dg = '.valueOf()';
@@ -1166,26 +1165,17 @@ var compileSearchOrder = function (order) {
 				if (ord.nocase) {
 					dg += '.toUpperCase()';
 				}
-				s +=
-					'if((' +
-					ord.toJS('a', '') +
-					"||'')" +
-					dg +
-					(ord.direction === 'ASC' ? '>(' : '<(') +
-					ord.toJS('b', '') +
-					"||'')" +
-					dg +
-					')return 1;';
-				s +=
-					'if((' +
-					ord.toJS('a', '') +
-					"||'')" +
-					dg +
-					'==(' +
-					ord.toJS('b', '') +
-					"||'')" +
-					dg +
-					'){';
+				s += `
+					if (
+						(${ord.toJS('a', '')} || '')${dg}
+						${ord.direction === 'ASC' ? '>' : '<'}
+						(${ord.toJS('b', '')} || '')${dg}
+					) return 1;
+
+					if (
+						(${ord.toJS('a', '')} || '')${dg} ==
+						(${ord.toJS('b', '')} || '')${dg}
+					) {`;
 			}
 
 			// TODO Add date comparision

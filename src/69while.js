@@ -1,10 +1,23 @@
 /*
 //
-// CREATE VIEW for Alasql.js
+// WHILE, BREAK, CONTINUE, and BEGIN...END for Alasql.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
 //
 */
+
+// Control flow exception types for BREAK and CONTINUE statements
+function createControlFlowException(name) {
+	var Exception = function () {
+		this.message = name;
+	};
+	Exception.prototype = Object.create(Error.prototype);
+	Exception.prototype.constructor = Exception;
+	return Exception;
+}
+
+yy.BreakException = createControlFlowException('BREAK');
+yy.ContinueException = createControlFlowException('CONTINUE');
 
 yy.While = function (params) {
 	return Object.assign(this, params);
@@ -41,8 +54,18 @@ yy.While.prototype.execute = function (databaseid, params, cb) {
 		loop();
 	} else {
 		while (fn(params, alasql)) {
-			var res1 = self.loopstat.execute(databaseid, params);
-			res.push(res1);
+			try {
+				var res1 = self.loopstat.execute(databaseid, params);
+				res.push(res1);
+			} catch (err) {
+				if (err instanceof yy.BreakException) {
+					break;
+				} else if (err instanceof yy.ContinueException) {
+					continue;
+				} else {
+					throw err;
+				}
+			}
 		}
 	}
 	return res;
@@ -57,9 +80,7 @@ yy.Break.prototype.toString = function () {
 };
 
 yy.Break.prototype.execute = function (databaseid, params, cb, scope) {
-	var res = 1;
-	if (cb) res = cb(res);
-	return res;
+	throw new yy.BreakException();
 };
 
 yy.Continue = function (params) {
@@ -71,9 +92,7 @@ yy.Continue.prototype.toString = function () {
 };
 
 yy.Continue.prototype.execute = function (databaseid, params, cb, scope) {
-	var res = 1;
-	if (cb) res = cb(res);
-	return res;
+	throw new yy.ContinueException();
 };
 
 yy.BeginEnd = function (params) {
@@ -88,15 +107,24 @@ yy.BeginEnd.prototype.execute = function (databaseid, params, cb, scope) {
 	var self = this;
 	var res = [];
 
-	var idx = 0;
-	runone();
-	function runone() {
-		self.statements[idx].execute(databaseid, params, function (data) {
-			res.push(data);
-			idx++;
-			if (idx < self.statements.length) return runone();
-			if (cb) res = cb(res);
-		});
+	if (cb) {
+		// Asynchronous execution with callback
+		var idx = 0;
+		runone();
+		function runone() {
+			self.statements[idx].execute(databaseid, params, function (data) {
+				res.push(data);
+				idx++;
+				if (idx < self.statements.length) return runone();
+				if (cb) res = cb(res);
+			});
+		}
+	} else {
+		// Synchronous execution
+		for (var i = 0; i < self.statements.length; i++) {
+			var res1 = self.statements[i].execute(databaseid, params);
+			res.push(res1);
+		}
 	}
 	return res;
 };

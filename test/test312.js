@@ -118,7 +118,7 @@ var test = {
 		};
 
 		var res = alasql('SEARCH / * WHERE(uid=1) name FROM ?', [data]);
-		assert.deepEqual(res, ['Pizza']);
+		assert.deepStrictEqual(res, ['Pizza']);
 		done();
 	});
 
@@ -153,7 +153,7 @@ I need some javascript to traverse reasonably complex json with nested objects a
 		};
 
 		var res = alasql('SEARCH /+ACCOUNT_NUMBER/ FROM ?', [data]);
-		assert.deepEqual(res, ['37846589', '37846540']);
+		assert.deepStrictEqual(res, ['37846589', '37846540']);
 		done();
 	});
 
@@ -232,7 +232,7 @@ Now, I want to retrieve all the elements which are at a higher level and all the
 		// Fro test
 		var res = alasql('SEARCH /(Categories/)? Id FROM ?', [data]);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			'menuOfficeWebControlsForWebApplication',
 			'menuGettingStarted',
 			'menuCompilingFromSource',
@@ -298,7 +298,7 @@ This object is passed into a master function that builds a angularjs resource ob
 		//    KEYS();
 
 		// console.log(res);
-		//   assert.deepEqual(res,[ 'menuOfficeWebControlsForWebApplication',
+		//   assert.deepStrictEqual(res,[ 'menuOfficeWebControlsForWebApplication',
 		// 'menuGettingStarted',
 		// 'menuCompilingFromSource',
 		// 'menuDownloadReleasePackage',

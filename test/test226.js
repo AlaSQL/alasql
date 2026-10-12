@@ -19,7 +19,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
     		(SELECT b FROM ? two WHERE one.a = two.a) three',
 			[one, two]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
 			{a: 3, b: 30},
@@ -42,7 +42,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 			[one, two]
 		);
 		//    	console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
 			{a: 2, b: 30},
@@ -66,7 +66,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 		);
 		//    	console.log(res);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
 			{a: 2, b: 30},
@@ -90,7 +90,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 			[one, two]
 		);
 		//    	console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
 			{a: 2, b: 30},
@@ -106,7 +106,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
     		OUTER APPLY (SELECT COLUMN ARRAY(_) FROM RANGE(1,one._) half GROUP BY half._ % 2) two'
 		);
 		//    	console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: [1]},
 			{a: 2, b: [1]},
 			{a: 2, b: [2]},

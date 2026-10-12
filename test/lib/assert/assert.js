@@ -118,7 +118,7 @@
 					var keys = [];
 					for (var key in obj) keys.push(key);
 					return keys;
-			  };
+				};
 	// 1. The assert module provides functions that throw
 	// AssertionError's when particular conditions are not met. The
 	// assert module must conform to the following interface.
@@ -242,7 +242,7 @@
 	};
 
 	// 7. The equivalence assertion tests a deep equality relation.
-	// assert.deepEqual(actual, expected, message_opt);
+	// assert.deepStrictEqual(actual, expected, message_opt);
 
 	assert.deepEqual = function deepEqual(actual, expected, message) {
 		if (!_deepEqual(actual, expected)) {

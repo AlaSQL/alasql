@@ -19,7 +19,7 @@ describe('Test 250 Index problem', function () {
 
 		var res = alasql('SELECT * from tab1');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				pk: 1,
 				col0: 5,

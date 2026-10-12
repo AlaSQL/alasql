@@ -25,7 +25,7 @@ describe('Test ' + test + ' Load data from XLSX without extra line', function ()
 			function (res) {
 				assert(res == 4);
 				//      console.log(res);
-				//       assert.deepEqual(res,
+				//       assert.deepStrictEqual(res,
 				// 0
 				//       );
 				done();

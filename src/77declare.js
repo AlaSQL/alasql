@@ -10,24 +10,22 @@ yy.Declare = function (params) {
 	return Object.assign(this, params);
 };
 yy.Declare.prototype.toString = function () {
-	var s = 'DECLARE ';
+	let s = 'DECLARE ';
 	if (this.declares && this.declares.length > 0) {
-		s = this.declares
-			.map(function (declare) {
-				var s = '';
-				s += '@' + declare.variable + ' ';
-				s += declare.dbtypeid;
-				if (this.dbsize) {
-					s += '(' + this.dbsize;
-					if (this.dbprecision) {
-						s += ',' + this.dbprecision;
+		s += this.declares
+			.map(declare => {
+				let declareStr = `@${declare.variable} ${declare.dbtypeid}`;
+				if (declare.dbsize) {
+					declareStr += `(${declare.dbsize}`;
+					if (declare.dbprecision) {
+						declareStr += `,${declare.dbprecision}`;
 					}
-					s += ')';
+					declareStr += ')';
 				}
 				if (declare.expression) {
-					s += ' = ' + declare.expression.toString();
+					declareStr += ` = ${declare.expression.toString()}`;
 				}
-				return s;
+				return declareStr;
 			})
 			.join(',');
 	}
@@ -36,8 +34,9 @@ yy.Declare.prototype.toString = function () {
 
 yy.Declare.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
-	if (this.declares && this.declares.length > 0) {
-		this.declares.map(function (declare) {
+	var that = this; // without this assigned to a variable, inside the forEach, the reference to `this` is lost. It is needed for the Function statement for binding
+	if (that.declares && that.declares.length > 0) {
+		that.declares.forEach(function (declare) {
 			var dbtypeid = declare.dbtypeid;
 			if (!alasql.fn[dbtypeid]) {
 				dbtypeid = dbtypeid.toUpperCase();
@@ -54,7 +53,7 @@ yy.Declare.prototype.execute = function (databaseid, params, cb) {
 				alasql.vars[declare.variable] = new Function(
 					'params,alasql',
 					'return ' + declare.expression.toJS('({})', '', null)
-				)(params, alasql);
+				).bind(that)(params, alasql);
 				if (alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(
 						alasql.vars[declare.variable],

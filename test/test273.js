@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 273 Source columns detextion', function () {
-	const pluck = (arr, key) => arr.map((e) => e[key]);
+	const pluck = (arr, key) => arr.map(e => e[key]);
 
 	before(function () {
 		alasql('CREATE DATABASE test273; USE test273');
@@ -26,8 +26,8 @@ describe('Test 273 Source columns detextion', function () {
 	it('2. Empty test on table with columns', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT * FROM one');
-		var colres = res.columns.map((col) => col.columnid);
-		assert.deepEqual(colres, ['a', 'b']);
+		var colres = res.columns.map(col => col.columnid);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		alasql.options.modifier = undefined;
 		done();
 	});
@@ -36,11 +36,11 @@ describe('Test 273 Source columns detextion', function () {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT *,a FROM one');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'a']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'a']);
 
 		var res = alasql('SELECT a,*,a FROM one');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'a', 'b', 'a']);
+		assert.deepStrictEqual(colres, ['a', 'a', 'b', 'a']);
 		alasql.options.modifier = undefined;
 		done();
 	});
@@ -48,7 +48,7 @@ describe('Test 273 Source columns detextion', function () {
 	it('4. Subquery', function (done) {
 		var res = alasql('SELECT RECORDSET * FROM (SELECT * FROM one)');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
@@ -58,7 +58,7 @@ describe('Test 273 Source columns detextion', function () {
       JOIN one s USING a'
 		);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'a', 'b']);
 		done();
 	});
 });

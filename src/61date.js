@@ -20,7 +20,7 @@ stdfn.ASCII = function (a) {
 	return a.charCodeAt(0);
 };
 
-/** 
+/**
  Return first non-null argument
  See https://msdn.microsoft.com/en-us/library/ms190349.aspx
 */
@@ -43,31 +43,54 @@ stdfn.OBJECT_ID = function (objid) {
 };
 
 stdfn.DATE = function (d) {
-	if (/\d{8}/.test(d)) return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
+	if (!isNaN(d) && d.length === 8)
+		return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
 	return newDate(d);
 };
 
 stdfn.NOW = function () {
-	var d = new Date();
-	var s =
-		d.getFullYear() +
-		'-' +
-		('0' + (d.getMonth() + 1)).substr(-2) +
-		'-' +
-		('0' + d.getDate()).substr(-2);
-	s +=
-		' ' +
-		('0' + d.getHours()).substr(-2) +
-		':' +
-		('0' + d.getMinutes()).substr(-2) +
-		':' +
-		('0' + d.getSeconds()).substr(-2);
-	s += '.' + ('00' + d.getMilliseconds()).substr(-3);
-	return s;
+	if (alasql.options.dateAsString) {
+		var d = new Date();
+		var s =
+			d.getFullYear() +
+			'-' +
+			('0' + (d.getMonth() + 1)).substr(-2) +
+			'-' +
+			('0' + d.getDate()).substr(-2);
+		s +=
+			' ' +
+			('0' + d.getHours()).substr(-2) +
+			':' +
+			('0' + d.getMinutes()).substr(-2) +
+			':' +
+			('0' + d.getSeconds()).substr(-2);
+		s += '.' + ('00' + d.getMilliseconds()).substr(-3);
+		return s;
+	}
+	return new Date();
 };
 
 stdfn.GETDATE = stdfn.NOW;
 stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
+
+/**
+ * Returns the current date, without time component.
+ * @returns date object without time component
+ */
+stdfn.CURDATE = stdfn.CURRENT_DATE = function () {
+	var date = new Date();
+	date.setHours(0, 0, 0, 0);
+	if (alasql.options.dateAsString) {
+		var s =
+			date.getFullYear() +
+			'-' +
+			('0' + (date.getMonth() + 1)).substr(-2) +
+			'-' +
+			('0' + date.getDate()).substr(-2);
+		return s;
+	}
+	return date;
+};
 
 // 	stdfn.GETDATE = function(){
 // 		var d = new Date();
@@ -127,7 +150,7 @@ var PERIODS = {
 
 alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 	var interval = newDate(d2).getTime() - newDate(d1).getTime();
-	return interval / PERIODS[period.toLowerCase()];
+	return (interval / PERIODS[period.toLowerCase()]) | 0;
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {

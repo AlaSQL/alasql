@@ -14,7 +14,7 @@ describe('Test 126 ALTER TABLE RENAME COLUMN', function () {
 		assert(!!alasql.tables.one.xcolumns.bbb);
 
 		var res = alasql('select * from one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, bbb: 1, c: 1},
 			{a: 2, bbb: 2, c: 2},
 		]);
@@ -27,7 +27,7 @@ describe('Test 126 ALTER TABLE RENAME COLUMN', function () {
 		assert(!!alasql.tables.two);
 
 		var res = alasql('select * from two');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, bbb: 1, c: 1},
 			{a: 2, bbb: 2, c: 2},
 		]);
@@ -39,7 +39,7 @@ describe('Test 126 ALTER TABLE RENAME COLUMN', function () {
 		assert(!alasql.tables.two.xcolumns.a);
 
 		var res = alasql('select * from two');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{bbb: 1, c: 1},
 			{bbb: 2, c: 2},
 		]);

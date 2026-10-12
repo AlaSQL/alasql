@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test149.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test149.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
@@ -68,14 +71,14 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		//console.log(57);
 		alasql('select * into test149.one from test149a.one');
 		var table = JSON.parse(localStorage.getItem('ls149.one'));
-		assert.deepEqual(table.data, [
+		assert.deepStrictEqual(table.data, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},
 		]);
 
 		var res = alasql('select * from test149.one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},

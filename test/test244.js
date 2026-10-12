@@ -16,7 +16,7 @@ describe('Test 244 Case-insensitive LIKE', function () {
 		var res = alasql('SELECT b FROM ? WHERE a LIKE "T%"', [data]);
 
 		//console.log(res);
-		assert(res, [{b: 'second'}, {b: 'THIRD'}]);
+		assert.deepStrictEqual(res, [{b: 'second'}, {b: 'THIRD'}]);
 		done();
 	});
 
@@ -33,7 +33,7 @@ describe('Test 244 Case-insensitive LIKE', function () {
 
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "m%"', [data]);
 		//console.log(res);
-		assert(res, [{a: 'MOSCOW'}, {a: 'MINSK'}]);
+		assert.deepStrictEqual(res, [{a: 'MOSCOW'}, {a: 'MINSK'}]);
 		done();
 	});
 });

@@ -239,7 +239,7 @@ SELECT ASCII('ÿ'); -- 255 - Latin small letter y with diaeresis
 		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
 		tests
-			.replace('\r', '')
+			.replace(/\r/g, '')
 			.trim()
 			.split('\n')
 			.forEach(function (test) {

@@ -16,7 +16,7 @@ describe('Test 353 Compiled Promised Statements', function () {
 	it('2. Compiled Sync', function (done) {
 		var st = alasql.compile('SELECT * FROM ?');
 		var res = st([data]);
-		assert.deepEqual(res, data);
+		assert.deepStrictEqual(res, data);
 		done();
 	});
 
@@ -46,7 +46,7 @@ describe('Test 353 Compiled Promised Statements', function () {
 		};
 		var st = alasql.compile('SELECT * FROM ?');
 		st([data], function (res, err) {
-			assert.deepEqual(res, data);
+			assert.deepStrictEqual(res, data);
 			done();
 		});
 	});
@@ -66,7 +66,7 @@ describe('Test 353 Compiled Promised Statements', function () {
 	it('7. Compile Promise', function (done) {
 		var st = alasql.compile('SELECT * FROM ?');
 		st.promise([data]).then(function (res) {
-			assert.deepEqual(res, data);
+			assert.deepStrictEqual(res, data);
 			done();
 		});
 	});

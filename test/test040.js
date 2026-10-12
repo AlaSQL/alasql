@@ -16,7 +16,7 @@ describe('Test 40', function () {
 		it('Float and negative numbers', function (done) {
 			var res = db.exec('SELECT a,b,-1.1*a AS c FROM one ORDER BY a');
 			//			console.log();
-			assert.deepEqual(4.4, res[0].c);
+			assert.deepStrictEqual(4.4, res[0].c);
 			done();
 		});
 	});
@@ -28,7 +28,7 @@ describe('Test 40', function () {
 			db.exec("INSERT INTO five VALUES ('Two')");
 			var res = db.exec('SELECT COLUMN a FROM five');
 			//			console.log();
-			assert.deepEqual(['One', 'Two'], res);
+			assert.deepStrictEqual(['One', 'Two'], res);
 			done();
 		});
 	});
@@ -41,7 +41,7 @@ describe('Test 40', function () {
 			alasql("INSERT INTO six VALUES ('Two')");
 			var res = alasql("SELECT a, 'into', 'as' FROM six");
 			//			console.log();
-			assert.deepEqual(
+			assert.deepStrictEqual(
 				[
 					{"'into'": 'into', "'as'": 'as', a: 'One'},
 					{"'into'": 'into', "'as'": 'as', a: 'Two'},

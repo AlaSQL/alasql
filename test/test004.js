@@ -20,7 +20,7 @@ describe('004 Callbacks', function () {
 		var res = alasql(sql3, [], function (data) {
 			//			console.log(999,data);
 			assert.equal(1, data.length);
-			assert.deepEqual(data, [{schoolid: 1, schoolname: 'Northern Pacific School'}]);
+			assert.deepStrictEqual(data, [{schoolid: 1, schoolname: 'Northern Pacific School'}]);
 			done();
 		});
 		//		console.log(888,res);

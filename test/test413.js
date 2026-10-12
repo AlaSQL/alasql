@@ -70,7 +70,7 @@ describe('Test 413 CONCAT_WS (issue #429)', function () {
 			[data]
 		);
 		//	console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{series_name: 'prepended string category2 type1'},
 			{series_name: 'prepended string category1 type4'},
 			{series_name: 'prepended string category1 type2'},

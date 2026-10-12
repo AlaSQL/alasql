@@ -11,19 +11,19 @@ describe('Test 118 - ADD COLUMN/MODIFY COLUMN/DROP COLUMN', function () {
 		alasql('create table one (a int)');
 		alasql('insert into one values (1), (2), (3)');
 		var res = alasql('select * from one order by a');
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 3}]);
 
 		alasql('alter table one add column b int');
 		alasql('insert into one values (4,40)');
 		var res = alasql('select * from one where b = 40');
-		assert.deepEqual(res, [{a: 4, b: 40}]);
+		assert.deepStrictEqual(res, [{a: 4, b: 40}]);
 
 		alasql('alter table one modify column b string');
 		// Tests are not yet defined
 
 		alasql('alter table one drop column b');
 		var res = alasql('select * from one order by a');
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
 
 		done();
 	});

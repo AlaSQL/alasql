@@ -15,10 +15,11 @@ describe('Test 251 Overwrite XLSX file', function () {
 			alasql(
 				'SELECT HOUR(NOW()), MINUTE(NOW()), SECOND(NOW()) \
         INTO XLSX("' +
-					__dirname +
+					__dirname.toString().replace(/\\/g, '/') +
 					'/restest251.xlsx",{sourcefilename:"' +
-					__dirname +
-					'/test251.xlsx", \
+					__dirname.toString().replace(/\\/g, '/') +
+					'/test251.xlsx' +
+					'", \
           sheetid:"test2", range:"B3"})',
 				[],
 				function (res) {

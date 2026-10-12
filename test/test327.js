@@ -6,27 +6,24 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 327 FOREIGN KEYS', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test327; USE test327');
 		done();
 	});
 
-	it.skip('2. CREATE TABLES Parts', function (done) {
-		alasql(function () {
-			/*
+	it('2. CREATE TABLES Parts', function (done) {
+		alasql(`
       CREATE TABLE dbo.Parts
       (
         partid   INT         NOT NULL PRIMARY KEY,
         partname VARCHAR(25) NOT NULL
       );
-    */
-		});
+    `);
 		done();
 	});
 
-	it.skip('3. INSERT VALUES INTO Parts', function (done) {
-		alasql(function () {
-			/*
+	it('3. INSERT VALUES INTO Parts', function (done) {
+		alasql(`
       INSERT INTO dbo.Parts(partid, partname) VALUES
         ( 1, 'Black Tea'      ),
         ( 2, 'White Tea'      ),
@@ -45,15 +42,13 @@ describe('Test 327 FOREIGN KEYS', function () {
         (15, 'Sugar Bag'      ),
         (16, 'Ground Coffee'  ),
         (17, 'Coffee Beans'   );
-    */
-		});
+    `);
 		done();
 	});
 
-	it.skip('4. CREATE TABLE BOM', function (done) {
+	it('4. CREATE TABLE BOM', function (done) {
 		if (false) {
-			alasql(function () {
-				/*
+			alasql(`
       CREATE TABLE dbo.BOM
       (
         partid     INT           NOT NULL REFERENCES dbo.Parts,
@@ -63,11 +58,9 @@ describe('Test 327 FOREIGN KEYS', function () {
         UNIQUE(partid, assemblyid),
         CHECK (partid <> assemblyid)
       );
-    */
-			});
+    `);
 		}
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE dbo.BOM
       (
         partid     INT           NOT NULL,
@@ -79,15 +72,13 @@ describe('Test 327 FOREIGN KEYS', function () {
         FOREIGN KEY (partid) REFERENCES dbo.Parts,
         CONSTRAINT assembly_fk FOREIGN KEY (assemblyid) REFERENCES dbo.Parts (partid)
       );
-    */
-		});
+    `);
 
 		done();
 	});
 
-	it.skip('5. INSERT VALUES INTO BOM', function (done) {
-		alasql(function () {
-			/*
+	it('5. INSERT VALUES INTO BOM', function (done) {
+		alasql(`
       INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES
         ( 1, NULL, 'EA',   1.00),
         ( 2, NULL, 'EA',   1.00),
@@ -116,14 +107,13 @@ describe('Test 327 FOREIGN KEYS', function () {
         (14,   12, 'mL',  20.00),
         (16,   12, 'g' ,  15.00),
         (17,   16, 'g' ,  15.00);
-      */
-		});
+      `);
 		done();
 	});
 
-	it.skip('6. SELECT values from BOM', function (done) {
+	it('6. SELECT values from BOM', function (done) {
 		var res = alasql('SELECT * FROM BOM WHERE assemblyid = 1');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{partid: 6, assemblyid: 1, unit: 'EA', qty: 1},
 			{partid: 7, assemblyid: 1, unit: 'EA', qty: 1},
 			{partid: 10, assemblyid: 1, unit: 'EA', qty: 1},
@@ -133,7 +123,7 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	it.skip('7. INSERT duplicated key', function (done) {
+	it('7. INSERT duplicated key', function (done) {
 		assert.throws(function () {
 			alasql(
 				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
@@ -143,7 +133,7 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	it.skip('8. INSERT with wrong FOREIGN KEY', function (done) {
+	it('8. INSERT with wrong FOREIGN KEY', function (done) {
 		assert.throws(function () {
 			alasql(
 				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
@@ -153,7 +143,7 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	it.skip('8. INSERT with right FOREIGN KEY', function (done) {
+	it('8. INSERT with right FOREIGN KEY', function (done) {
 		var res = alasql(
 			"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, 2, 'EA',   1.00)"
@@ -164,13 +154,13 @@ describe('Test 327 FOREIGN KEYS', function () {
 
 	/*
       
-  it.skip('8. SELECT',function(done){
+  it('8. SELECT',function(done){
     var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
     assert(res == 99999);
     done();
   });
 
-  it.skip('9. FOREIGN KEY DOT operator',function(done){
+  it('9. FOREIGN KEY DOT operator',function(done){
     var res = alasql.parse("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
 //    console.log(res.statements[0].columns[0].toJS('a','b'));
     var res = alasql("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
@@ -179,7 +169,7 @@ describe('Test 327 FOREIGN KEYS', function () {
   });
 
 */
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test327');
 		done();
 	});

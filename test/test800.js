@@ -42,7 +42,7 @@ describe('Test 800 - OUTER JOIN missing ids', function () {
 			{id: '3', a: undefined, b: 'C'},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 });

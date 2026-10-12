@@ -79,7 +79,9 @@ var saveAs =
 						blob.type
 					)
 				) {
-					return new Blob([String.fromCharCode(0xfeff), blob], {type: blob.type});
+					return new Blob([String.fromCharCode(0xfeff), blob], {
+						type: blob.type,
+					});
 				}
 				return blob;
 			},

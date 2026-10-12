@@ -25,7 +25,7 @@ var Database = (alasql.Database = function (databaseid) {
 			alasql.databases[databaseid] = self;
 			//			}
 			if (!self) {
-				throw new Error('Database "' + databaseid + '" not found');
+				throw new Error(`Database ${databaseid} not found`);
 			}
 		} else {
 			// Create new database (or get alasql?)
@@ -67,6 +67,7 @@ var Database = (alasql.Database = function (databaseid) {
 Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements
 	this.sqlCacheSize = 0;
+	this.astCache = {}; // Cache for AST objects
 };
 
 // Main SQL function
@@ -145,34 +146,4 @@ Database.prototype.compile = function(sql, kind) {
 	return alasql.compile(sql, kind, databaseid);
 };
 
-*/
-
-/*/*
-// 	var self = this;
-// 	var hh = hash(sql);
-
-// 	// Check cache with hash of SQL statement
-// 	var statement = this.sqlcache[hh];
-// 	if(!statement) {
-
-// 		// If not fount, then compile it
-// 		var ast = alasql.parse(sql);
-// 		// Save to cache
-
-// 		statement = this.sqlcache[hh]= ast.compile(self);
-
-// 		// Memory leak prevention
-// 		this.sqlcachesize++;
-// 		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
-// 			this.resetSqlCache();
-// 		}
-// 	};
-// 	return statement;
-// }
-
-// SQL.js compatibility method
-//Database.prototype.prepare = Database.prototype.compile;
-
-
-// Added for compatibility with WebSQL
 */

@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 360 AGGR function', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test360;USE test360');
 		done();
 	});
@@ -564,10 +564,9 @@ describe('Test 360 AGGR function', function () {
 		},
 	];
 
-	it.skip('2. Prepare Data', function (done) {
+	it('2. Prepare Data without GROUP BY', function (done) {
 		var res = alasql(
-			function () {
-				/*
+			`
 
 SELECT
     report_date, srv_class_name,
@@ -581,8 +580,7 @@ SELECT
 
 FROM ?
 
-  */
-			},
+  `,
 			[data]
 		);
 
@@ -591,10 +589,9 @@ FROM ?
 		done();
 	});
 
-	it.skip('2. Prepare Data', function (done) {
+	it('3. Prepare Data with GROUP BY', function (done) {
 		var res = alasql(
-			function () {
-				/*
+			`
 
     SELECT
         SUM(CAST(mails_200er AS float)) AS [Anzahl 200er],
@@ -603,8 +600,7 @@ FROM ?
     FROM ?
     GROUP BY report_date
 
-  */
-			},
+  `,
 			[data]
 		);
 
@@ -613,7 +609,7 @@ FROM ?
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test360');
 		done();

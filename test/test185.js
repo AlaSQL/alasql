@@ -14,23 +14,23 @@ describe('Test 185 - IN Expression', function () {
 			{a: [10], b: 10},
 		];
 		var res = alasql('SELECT * FROM ? WHERE 1 IN a', [data]);
-		assert.deepEqual(res, [{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1}]);
+		assert.deepStrictEqual(res, [{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1}]);
 		//      console.log(res);
 		var res = alasql('SELECT * FROM ? WHERE b IN a', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
 		]);
 		//      console.log(res);
 		var res = alasql('SELECT * FROM ? WHERE b IN @(a)', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
 		]);
 		//      console.log(res);
 		//      console.log(alasql.parse('SELECT * FROM ? WHERE 1 IN a').statements[0].where.expression.right);
 
-		//      assert.deepEqual(res,{"1":[1,1],"2":[2,2,2],"3":[3,3],"4":[4]});
+		//      assert.deepStrictEqual(res,{"1":[1,1],"2":[2,2,2],"3":[3,3],"4":[4]});
 		done();
 	});
 	it('1. REDUCE Aggregator: Summa', function (done) {
@@ -69,7 +69,7 @@ describe('Test 185 - IN Expression', function () {
 		];
 		var res = alasql('SELECT a,Concat(b),COUNT(*) FROM ? GROUP BY a', [a1]);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, 'Concat(b)': [1, 2, 3, 1, 2, 3, 4], 'COUNT(*)': 2},
 			{a: 2, 'Concat(b)': [4, 5], 'COUNT(*)': 1},
 		]);

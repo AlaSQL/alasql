@@ -1,0 +1,1 @@
+yarn test-format || (echo please format using 'yarn format' && exit 1)

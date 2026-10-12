@@ -12,7 +12,7 @@ describe('Test 365 Default database function', function () {
 		name = db.databaseid;
 		//    console.log(db);
 		var res = db.exec('VALUE OF SELECT 2+3');
-		assert.deepEqual(res, 5);
+		assert.deepStrictEqual(res, 5);
 		done();
 	});
 

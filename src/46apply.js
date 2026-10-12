@@ -12,9 +12,11 @@ yy.Apply = class Apply {
 	}
 
 	toString() {
-		var s = this.applymode + ' APPLY (' + this.select.toString() + ')';
+		let s = `${this.applymode} APPLY (${this.select.toString()})`;
 
-		if (this.as) s += ' AS ' + this.as;
+		if (this.as) {
+			s += ` AS ${this.as}`;
+		}
 
 		return s;
 	}

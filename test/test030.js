@@ -16,15 +16,15 @@ describe('Test 30', function () {
 
 		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
 		var res = db.exec(sql);
-		assert.deepEqual([1, 2], res);
+		assert.deepStrictEqual([1, 2], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3';
 		var res = db.exec(sql);
-		assert.deepEqual([1, 2, 3], res);
+		assert.deepStrictEqual([1, 2, 3], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3 OFFSET 2';
 		var res = db.exec(sql);
-		assert.deepEqual([3, 4, 5], res);
+		assert.deepStrictEqual([3, 4, 5], res);
 
 		done();
 	});

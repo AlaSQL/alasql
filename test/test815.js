@@ -10,10 +10,10 @@ if (typeof exports === 'object') {
 	var now = new Date();
 	var unixepoch = new Date(0);
 
-	this.beforeAll(() => {
+	before(() => {
 		unlink('test/test815.xlsx', () => {});
 	});
-	this.afterAll(() => {
+	after(() => {
 		unlink('test/test815.xlsx', () => {});
 	});
 
@@ -24,8 +24,8 @@ if (typeof exports === 'object') {
 
 		var res = alasql('SELECT * FROM dates');
 
-		assert.deepEqual(res[0].date, now);
-		assert.deepEqual(res[1].date, unixepoch);
+		assert.deepStrictEqual(res[0].date, now);
+		assert.deepStrictEqual(res[1].date, unixepoch);
 
 		done();
 	});

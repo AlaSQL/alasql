@@ -15,7 +15,7 @@ if (typeof exports == 'object') {
 				{a: 8, b: 1},
 			];
 			var res = alasql('SELECT MAX(MAX(a),MIN(a)), MIN(MAX(a),MIN(a)) FROM ?', [data]);
-			assert.deepEqual(res, [{'MAX(MAX(a),MIN(a))': 8, 'MIN(MAX(a),MIN(a))': 1}]);
+			assert.deepStrictEqual(res, [{'MAX(MAX(a),MIN(a))': 8, 'MIN(MAX(a),MIN(a))': 1}]);
 			done();
 		});
 
@@ -27,10 +27,10 @@ if (typeof exports == 'object') {
 				{a: 5, b: 5},
 			];
 			var res = alasql('SELECT MIN(`a`, `b`) AS c FROM ?', [a]);
-			assert.deepEqual(res, [{c: 1}, {c: 0}, {c: -5}, {c: 5}]);
+			assert.deepStrictEqual(res, [{c: 1}, {c: 0}, {c: -5}, {c: 5}]);
 			//		console.log(res);
 			var res = alasql('SELECT * FROM ? WHERE MIN(`a`, `b`) > 1', [a]);
-			assert.deepEqual(res, [{a: 5, b: 5}]);
+			assert.deepStrictEqual(res, [{a: 5, b: 5}]);
 			//		console.log(res);
 			done();
 		});
@@ -42,7 +42,7 @@ if (typeof exports == 'object') {
 				{a: 5, b: 5},
 			];
 			var res = alasql('SELECT b FROM ? GROUP BY b HAVING MIN(MIN(a),5) > 1', [a]);
-			assert.deepEqual(res, [{b: 0}]);
+			assert.deepStrictEqual(res, [{b: 0}]);
 			//		console.log(res);
 			done();
 		});

@@ -14,9 +14,8 @@
 
 alasql.from.METEOR = function (filename, opts, cb, idx, query) {
 	var res = filename.find(opts).fetch();
-	if (cb) {
-		res = cb(res, idx, query);
-	}
+	if (cb) res = cb(res, idx, query);
+
 	return res;
 };
 
@@ -30,9 +29,7 @@ alasql.from.TABLETOP = function (key, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	opt.callback = function (data) {
 		res = data;
-		if (cb) {
-			res = cb(res, idx, query);
-		}
+		if (cb) res = cb(res, idx, query);
 	};
 
 	Tabletop.init(opt);
@@ -44,7 +41,7 @@ alasql.from.HTML = function (selector, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 
 	var sel = document.querySelector(selector);
-	if (!sel && sel.tagName !== 'TABLE') {
+	if (!sel || sel.tagName !== 'TABLE') {
 		throw new Error('Selected HTML element is not a TABLE');
 	}
 
@@ -100,6 +97,35 @@ alasql.from.RANGE = function (start, finish, cb, idx, query) {
 	return res;
 };
 
+/**
+ * UNNEST function - converts an array into a table for use in FROM clauses
+ *
+ * This function enables flattening of nested arrays when used with CROSS APPLY or OUTER APPLY.
+ *
+ * @param {Array} arr - The array to unnest
+ * @param {Object} opts - Options (reserved for future use)
+ * @param {Function} cb - Callback function
+ * @param {number} idx - Index
+ * @param {Object} query - Query object
+ * @returns {Array} The input array, or empty array if input is not an array
+ *
+ * @example
+ * // Flatten nested arrays
+ * SELECT b.name, e.id, e.value
+ * FROM data AS b
+ * CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e
+ */
+alasql.from.UNNEST = function (arr, opts, cb, idx, query) {
+	var res = arr;
+	if (!Array.isArray(res)) {
+		res = [];
+	}
+	if (cb) {
+		res = cb(res, idx, query);
+	}
+	return res;
+};
+
 // Read data from any file
 alasql.from.FILE = function (filename, opts, cb, idx, query) {
 	var fname;
@@ -112,11 +138,8 @@ alasql.from.FILE = function (filename, opts, cb, idx, query) {
 	}
 
 	var parts = fname.split('.');
-	//	console.log("parts",parts,parts[parts.length-1]);
 	var ext = parts[parts.length - 1].toUpperCase();
-	//	console.log("ext",ext);
 	if (alasql.from[ext]) {
-		//		console.log(ext);
 		return alasql.from[ext](filename, opts, cb, idx, query);
 	} else {
 		throw new Error('Cannot recognize file type for loading');
@@ -130,16 +153,63 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	//console.log('cb',cb);
 	//console.log('JSON');
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
-	alasql.utils.loadFile(filename, !!cb, function (data) {
+	(alasql.utils.loadFile(filename, !!cb, function (data) {
 		//		console.log('DATA:'+data);
 		//		res = [{a:1}];
 		res = JSON.parse(data);
 		if (cb) {
 			res = cb(res, idx, query);
 		}
-	});
+	}),
+		err => {
+			const error = err instanceof Error ? err : new Error(err);
+			if (query && query.cb) {
+				query.cb(null, error);
+				return;
+			}
+			throw error;
+		});
 	return res;
 };
+
+const jsonl = ext => {
+	return function (filename, opts, cb, idx, query) {
+		let out = [];
+		filename = alasql.utils.autoExtFilename(filename, ext, opts);
+		alasql.utils.loadFile(
+			filename,
+			!!cb,
+			function (data) {
+				data.split(/\r?\n/).forEach((line, ix) => {
+					const trimmed = line.trim();
+					if (trimmed !== '') {
+						// skip empty lines, we do not use filter on an input, as we want to preserve line numbers
+						try {
+							out.push(JSON.parse(trimmed));
+						} catch (e) {
+							throw new Error(`Could not parse JSON at line ${ix}: ${e.toString()}`);
+						}
+					}
+				});
+				if (cb) {
+					out = cb(out, idx, query);
+				}
+			},
+			err => {
+				const error = err instanceof Error ? err : new Error(err);
+				if (query && query.cb) {
+					query.cb(null, error);
+					return;
+				}
+				throw error;
+			}
+		);
+		return out;
+	};
+};
+
+alasql.from.JSONL = jsonl('jsonl');
+alasql.from.NDJSON = jsonl('ndjson');
 
 alasql.from.TXT = function (filename, opts, cb, idx, query) {
 	var res;
@@ -181,10 +251,21 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 		separator: ',',
 		quote: '"',
 		headers: true,
+		raw: false,
 	};
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
+	// Determine once whether to auto-convert: not raw mode, not SELECT INTO, and csvStringToNumber option is set
+	const shouldAutoConvert = !opt.raw && !query?.intofns && alasql.options.csvStringToNumber;
+
+	function potentialAutoConvert(val) {
+		if (shouldAutoConvert && val !== undefined && val.length !== 0 && val == +val) {
+			return +val;
+		}
+		return val;
+	}
+
 	function parseText(text) {
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
@@ -202,7 +283,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 				return EOF;
 			}
 			if (eol) {
-				return (eol = false), EOL;
+				return ((eol = false), EOL);
 			}
 			var j = I;
 			if (text.charCodeAt(j) === quoteCode) {
@@ -261,29 +342,24 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 						hs = opt.headers;
 						var r = {};
 						hs.forEach(function (h, idx) {
-							r[h] = a[idx];
-							// Please avoid === here
-							if (typeof r[h] !== 'undefined' && r[h].length !== 0 && r[h].trim() == +r[h]) {
-								// jshint ignore:line
-								r[h] = +r[h];
-							}
+							r[h] = potentialAutoConvert(a[idx]);
 						});
 						rows.push(r);
 					}
 				} else {
 					var r = {};
 					hs.forEach(function (h, idx) {
-						r[h] = a[idx];
-						if (typeof r[h] !== 'undefined' && r[h].length !== 0 && r[h].trim() == +r[h]) {
-							// jshint ignore:line
-							r[h] = +r[h];
-						}
+						r[h] = potentialAutoConvert(a[idx]);
 					});
 					rows.push(r);
 				}
 				n++;
 			} else {
-				rows.push(a);
+				var r = {};
+				a.forEach(function (v, idx) {
+					r[idx] = potentialAutoConvert(a[idx]);
+				});
+				rows.push(r);
 			}
 		}
 
@@ -300,34 +376,34 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 
 		/*/*
 if(false) {
-    res = data.split(/\r?\n/);
-    if(opt.headers) {
-      if(query && query.sources && query.sources[idx]) {
-        var hh = [];
-        if(typeof opt.headers == 'boolean') {
-          hh = res.shift().split(opt.separator);
-        } else if(Array.isArray(opt.headers)) {
-          hh = opt.headers;
-        }
-        var columns = query.sources[idx].columns = [];
-        hh.forEach(function(h){
-          columns.push({columnid:h});
-        });
-        for(var i=0, ilen=res.length; i<ilen;i++) {
-          var a = res[i].split(opt.separator);
-          var b = {};
-          hh.forEach(function(h,j){
-            b[h] = a[j];
-          });
-          res[i] = b;
-        }
+	res = data.split(/\r?\n/);
+	if(opt.headers) {
+	  if(query && query.sources && query.sources[idx]) {
+		var hh = [];
+		if(typeof opt.headers == 'boolean') {
+		  hh = res.shift().split(opt.separator);
+		} else if(Array.isArray(opt.headers)) {
+		  hh = opt.headers;
+		}
+		var columns = query.sources[idx].columns = [];
+		hh.forEach(function(h){
+		  columns.push({columnid:h});
+		});
+		for(var i=0, ilen=res.length; i<ilen;i++) {
+		  var a = res[i].split(opt.separator);
+		  var b = {};
+		  hh.forEach(function(h,j){
+			b[h] = a[j];
+		  });
+		  res[i] = b;
+		}
 //				console.log(res[0]);
-      }
-    } else {
-      for(var i=0, ilen=res.length; i<ilen;i++) {
-        res[i] = res[i].split(opt.separator);
-      }
-    }
+	  }
+	} else {
+	  for(var i=0, ilen=res.length; i<ilen;i++) {
+		res[i] = res[i].split(opt.separator);
+	  }
+	}
 
 };
 */
@@ -339,7 +415,7 @@ if(false) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText, query.cb);
+		alasql.utils.loadFile(contents, !!cb, parseText, e => query.cb(null, e));
 	}
 	return res;
 };
@@ -374,6 +450,71 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			return text;
 		}
 	}
+
+	function processSheet(workbook, sheetid, sheetOpt) {
+		var range;
+		var sheetRes = [];
+		if (typeof sheetOpt.range === 'undefined') {
+			range = workbook.Sheets[sheetid]['!ref'];
+		} else {
+			range = sheetOpt.range;
+			if (workbook.Sheets[sheetid][range]) {
+				range = workbook.Sheets[sheetid][range];
+			}
+		}
+		// if range has some value then data is present in the current sheet
+		// else current sheet is empty
+		if (range) {
+			var rg = range.split(':');
+			var col0 = rg[0].match(/[A-Z]+/)[0];
+			var row0 = +rg[0].match(/[0-9]+/)[0];
+			var col1 = rg[1].match(/[A-Z]+/)[0];
+			var row1 = +rg[1].match(/[0-9]+/)[0];
+
+			var hh = {};
+			var xlscnCol0 = alasql.utils.xlscn(col0);
+			var xlscnCol1 = alasql.utils.xlscn(col1);
+			for (var j = xlscnCol0; j <= xlscnCol1; j++) {
+				var col = alasql.utils.xlsnc(j);
+				if (sheetOpt.headers) {
+					if (workbook.Sheets[sheetid][col + '' + row0]) {
+						hh[col] = getHeaderText(workbook.Sheets[sheetid][col + '' + row0].v);
+					} else {
+						hh[col] = getHeaderText(col);
+					}
+				} else {
+					hh[col] = col;
+				}
+			}
+			if (sheetOpt.headers) {
+				row0++;
+			}
+			for (var i = row0; i <= row1; i++) {
+				var row = {};
+				for (var j = xlscnCol0; j <= xlscnCol1; j++) {
+					var col = alasql.utils.xlsnc(j);
+					if (workbook.Sheets[sheetid][col + '' + i]) {
+						row[hh[col]] = workbook.Sheets[sheetid][col + '' + i].v;
+					}
+				}
+				sheetRes.push(row);
+			}
+		} else {
+			sheetRes.push([]);
+		}
+
+		// Remove last empty line (issue #548)
+		if (
+			sheetRes.length > 0 &&
+			sheetRes[sheetRes.length - 1] &&
+			Object.keys(sheetRes[sheetRes.length - 1]).length == 0
+		) {
+			sheetRes.pop();
+		}
+
+		return sheetRes;
+	}
+
 	filename = alasql.utils.autoExtFilename(filename, 'xls', opts);
 	alasql.utils.loadBinaryFile(
 		filename,
@@ -382,75 +523,56 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			//	function processData(data) {
 			if (data instanceof ArrayBuffer) {
 				var arr = fixdata(data);
-				var workbook = X.read(btoa(arr), {type: 'base64', ...alasql.options.excel, ...opts});
+				var workbook = X.read(btoa(arr), {
+					type: 'base64',
+					...alasql.options.excel,
+					...opts,
+				});
 			} else {
-				var workbook = X.read(data, {type: 'binary', ...alasql.options.excel, ...opts});
-			}
-			//		console.log(workbook);
-			var sheetid;
-			if (typeof opt.sheetid === 'undefined') {
-				sheetid = workbook.SheetNames[0];
-			} else if (typeof opt.sheetid === 'number') {
-				sheetid = workbook.SheetNames[opt.sheetid];
-			} else {
-				sheetid = opt.sheetid;
-			}
-			var range;
-			var res = [];
-			if (typeof opt.range === 'undefined') {
-				range = workbook.Sheets[sheetid]['!ref'];
-			} else {
-				range = opt.range;
-				if (workbook.Sheets[sheetid][range]) {
-					range = workbook.Sheets[sheetid][range];
-				}
-			}
-			// if range has some value then data is present in the current sheet
-			// else current sheet is empty
-			if (range) {
-				var rg = range.split(':');
-				var col0 = rg[0].match(/[A-Z]+/)[0];
-				var row0 = +rg[0].match(/[0-9]+/)[0];
-				var col1 = rg[1].match(/[A-Z]+/)[0];
-				var row1 = +rg[1].match(/[0-9]+/)[0];
-				//		console.log(114,rg,col0,col1,row0,row1);
-				//		console.log(114,rg,alasql.utils.xlscn(col0),alasql.utils.xlscn(col1));
-
-				var hh = {};
-				var xlscnCol0 = alasql.utils.xlscn(col0);
-				var xlscnCol1 = alasql.utils.xlscn(col1);
-				for (var j = xlscnCol0; j <= xlscnCol1; j++) {
-					var col = alasql.utils.xlsnc(j);
-					if (opt.headers) {
-						if (workbook.Sheets[sheetid][col + '' + row0]) {
-							hh[col] = getHeaderText(workbook.Sheets[sheetid][col + '' + row0].v);
-						} else {
-							hh[col] = getHeaderText(col);
-						}
-					} else {
-						hh[col] = col;
-					}
-				}
-				if (opt.headers) {
-					row0++;
-				}
-				for (var i = row0; i <= row1; i++) {
-					var row = {};
-					for (var j = xlscnCol0; j <= xlscnCol1; j++) {
-						var col = alasql.utils.xlsnc(j);
-						if (workbook.Sheets[sheetid][col + '' + i]) {
-							row[hh[col]] = workbook.Sheets[sheetid][col + '' + i].v;
-						}
-					}
-					res.push(row);
-				}
-			} else {
-				res.push([]);
+				var workbook = X.read(data, {
+					type: 'binary',
+					...alasql.options.excel,
+					...opts,
+				});
 			}
 
-			// Remove last empty line (issue #548)
-			if (res.length > 0 && res[res.length - 1] && Object.keys(res[res.length - 1]).length == 0) {
-				res.pop();
+			// Check if we should process multiple sheets
+			var shouldProcessMultipleSheets =
+				opt.sheetid === '*' || (Array.isArray(opt.sheetid) && opt.sheetid.length > 0);
+
+			if (shouldProcessMultipleSheets) {
+				// Process multiple sheets and combine into a single array
+				res = [];
+				var sheetsToProcess = opt.sheetid === '*' ? workbook.SheetNames : opt.sheetid;
+
+				for (var s = 0; s < sheetsToProcess.length; s++) {
+					var currentSheetId =
+						opt.sheetid === '*'
+							? sheetsToProcess[s]
+							: typeof sheetsToProcess[s] === 'number'
+								? workbook.SheetNames[sheetsToProcess[s]]
+								: sheetsToProcess[s];
+
+					if (workbook.Sheets[currentSheetId]) {
+						var sheetData = processSheet(workbook, currentSheetId, opt);
+						// Add sheet name to each row
+						for (var r = 0; r < sheetData.length; r++) {
+							sheetData[r]._sheet = currentSheetId;
+						}
+						res = res.concat(sheetData);
+					}
+				}
+			} else {
+				// Process single sheet (original behavior)
+				var sheetid;
+				if (typeof opt.sheetid === 'undefined') {
+					sheetid = workbook.SheetNames[0];
+				} else if (typeof opt.sheetid === 'number') {
+					sheetid = workbook.SheetNames[opt.sheetid];
+				} else {
+					sheetid = opt.sheetid;
+				}
+				res = processSheet(workbook, sheetid, opt);
 			}
 
 			if (cb) {
@@ -458,6 +580,10 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			}
 		},
 		function (err) {
+			if (query && query.cb) {
+				query.cb(null, err);
+				return;
+			}
 			throw err;
 		}
 	);
