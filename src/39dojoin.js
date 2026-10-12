@@ -7,12 +7,51 @@ function doJoin(query, scope, h) {
 	if (h >= query.sources.length) {
 		// Todo: check if this runs once too many
 		// Then apply where and select
-		if (query.wherefn(scope, query.params, alasql)) {
-			// If there is a GROUP BY then pipe to grouping function
-			if (query.groupfn) {
-				query.groupfn(scope, query.params, alasql);
-			} else {
-				query.data.push(query.selectfn(scope, query.params, alasql));
+		var params = query.params;
+		var originalParams = params;
+		var restoreQueryParams = false;
+		var previousValues;
+		if (query.lets && query.lets.length > 0) {
+			if (!params || typeof params !== 'object') {
+				params = {};
+				query.params = params;
+				restoreQueryParams = true;
+			}
+			previousValues = new Array(query.lets.length);
+			for (var i = 0; i < query.lets.length; i++) {
+				var assignment = query.lets[i];
+				var target = assignment.method === '@' ? alasql.vars : params;
+				previousValues[i] = {
+					target: target,
+					variable: assignment.variable,
+					exists: Object.prototype.hasOwnProperty.call(target, assignment.variable),
+					value: target[assignment.variable],
+				};
+				target[assignment.variable] = assignment.valuefn(scope, params, alasql);
+			}
+		}
+		try {
+			if (query.wherefn(scope, params, alasql)) {
+				// If there is a GROUP BY then pipe to grouping function
+				if (query.groupfn) {
+					query.groupfn(scope, params, alasql);
+				} else {
+					query.data.push(query.selectfn(scope, params, alasql));
+				}
+			}
+		} finally {
+			if (previousValues) {
+				for (var j = previousValues.length - 1; j >= 0; j--) {
+					var previous = previousValues[j];
+					if (previous.exists) {
+						previous.target[previous.variable] = previous.value;
+					} else {
+						delete previous.target[previous.variable];
+					}
+				}
+			}
+			if (restoreQueryParams) {
+				query.params = originalParams;
 			}
 		}
 	} else if (query.sources[h].applyselect) {

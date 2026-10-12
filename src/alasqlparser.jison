@@ -533,11 +533,11 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  UnionClause OrderClause LimitClause
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? LetClause WhereClause GroupClause  UnionClause OrderClause LimitClause
 		{
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
-		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
+		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10); yy.extend($$,$11);
 		    $$ = $1;
 		    if(yy.exists) $$.exists = yy.exists.slice();
 /*		    if(yy.queries) $$.queries = yy.queries;
@@ -572,10 +572,10 @@ ParenthesizedSelect
 	;
 
 SelectWithoutOrderOrLimit
-	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause UnionClause
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? LetClause WhereClause GroupClause UnionClause
 		{
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
-		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);yy.extend($$,$8);
+		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);yy.extend($$,$8);yy.extend($$,$9);
 		    $$ = $1;
 		    if(yy.exists) $$.exists = yy.exists.slice();
 		}
@@ -1094,6 +1094,24 @@ WhereClause
 	: { $$ = undefined; }
 	| WHERE Expression
 		{ $$ = {where: new yy.Expression({expression:$2})}; }
+	;
+
+LetClause
+	: { $$ = undefined; }
+	| LET LetExpressionsList
+		{ $$ = {let: $2}; }
+	;
+
+LetExpressionsList
+	: LetExpression
+		{ $$ = [$1]; }
+	| LetExpressionsList COMMA LetExpression
+		{ $1.push($3); $$ = $1; }
+	;
+
+LetExpression
+	: AtDollar Literal EQ Expression
+		{ $$ = new yy.SetVariable({variable:$2, expression:$4, method:$1});}
 	;
 
 GroupClause
