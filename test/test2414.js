@@ -283,6 +283,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data, data]
 		);
 
-		assert.deepEqual(res, [{a: 4}, {a: 3}, {a: 1}]);
+		// The inner UNION with a = 2 is kept (#202): {1, 2} UNION {3, 4}, ordered DESC
+		assert.deepEqual(res, [{a: 4}, {a: 3}, {a: 2}, {a: 1}]);
 	});
 });

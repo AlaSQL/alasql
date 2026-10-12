@@ -12,6 +12,57 @@
 
 /* global yy */
 
+/*
+ Set operations (UNION, UNION ALL, EXCEPT, INTERSECT) of a SELECT (#202).
+ The parser nests a chain to the right: A op1 B op2 C gives A.op1 = B and B.op2 = C.
+ The helpers below flatten it, so the chain is evaluated left to right with INTERSECT
+ binding tighter than UNION and EXCEPT, as in SQL. A parenthesized operand
+ (parenthesizedOperand) keeps its own set operations as a group.
+*/
+const SET_OP_KINDS = ['union', 'unionall', 'except', 'intersect'];
+
+// The set operation of a SELECT (or of a parsed UNION clause) and its right operand
+const setOpOf = sel => {
+	const kind = SET_OP_KINDS.find(k => sel[k]);
+	return kind && {kind, select: sel[kind], corresponding: !!sel.corresponding};
+};
+
+// The set operations of a chain, in order, up to a parenthesized operand
+const setOpChain = sel => {
+	const list = [];
+	for (let op = setOpOf(sel); op;) {
+		list.push(op);
+		op = op.select.parenthesizedOperand ? undefined : setOpOf(op.select);
+	}
+	return list;
+};
+
+// An operand without the set operations that belong to the enclosing chain
+const setOpOperand = sel => {
+	if (sel.parenthesizedOperand || !setOpOf(sel)) return sel;
+	const operand = new yy.Select(Object.assign({}, sel));
+	SET_OP_KINDS.forEach(k => delete operand[k]);
+	delete operand.corresponding;
+	return operand;
+};
+
+// INTERSECT binds tighter: it joins the right operand of the preceding UNION or EXCEPT
+const bindIntersects = list => {
+	const out = [];
+	let last;
+	list.forEach(op => {
+		if (op.kind === 'intersect' && last) {
+			last.intersects.push(op);
+		} else if (op.kind === 'intersect') {
+			out.push(op);
+		} else {
+			last = {...op, intersects: []};
+			out.push(last);
+		}
+	});
+	return out;
+};
+
 yy.Select = class Select {
 	constructor(params) {
 		Object.assign(this, params);
@@ -152,6 +203,35 @@ yy.Select = class Select {
 	}
 
 	// Compile SELECT statement
+	/**
+	 Compile the set operations of this SELECT into a list of {kind, corresponding, fn},
+	 applied to its result from left to right (#202)
+	 */
+	compileSetOps(databaseid) {
+		// A parenthesized SELECT can carry outer set operations, as in (A EXCEPT B) UNION C,
+		// and an operand grouped by INTERSECT carries the INTERSECTs bound to it
+		const levels = [setOpChain(this)];
+		(this.outerSetOps || []).forEach(clause => levels.push(setOpChain(clause)));
+		if (this.extraSetOps) levels.push(this.extraSetOps);
+
+		const setops = [];
+		levels.forEach(level => {
+			bindIntersects(level).forEach(op => {
+				let operand = setOpOperand(op.select);
+				if (op.intersects && op.intersects.length) {
+					operand = new yy.Select(Object.assign({}, operand));
+					operand.extraSetOps = op.intersects;
+				}
+				setops.push({
+					kind: op.kind,
+					corresponding: op.corresponding,
+					fn: operand.compile(databaseid),
+				});
+			});
+		});
+		return setops;
+	}
+
 	compile(databaseid, params) {
 		var db = alasql.databases[databaseid];
 		// Create variable for query
@@ -267,32 +347,15 @@ yy.Select = class Select {
 
 		query.percent = this.percent;
 
-		// 9. Compile ordering function for UNION and UNIONALL
+		// 9. Compile set operations (UNION, UNION ALL, EXCEPT, INTERSECT)
 		query.corresponding = this.corresponding; // If CORRESPONDING flag exists
-		if (this.union) {
-			query.unionfn = this.union.compile(databaseid);
-			// ORDER BY is now at the top level, not in the union clause
-			if (!query.orderfn && this.union.order) {
-				query.orderfn = this.union.compileOrder(query, params);
-			}
-		} else if (this.unionall) {
-			query.unionallfn = this.unionall.compile(databaseid);
-			// ORDER BY is now at the top level, not in the unionall clause
-			if (!query.orderfn && this.unionall.order) {
-				query.orderfn = this.unionall.compileOrder(query, params);
-			}
-		} else if (this.except) {
-			query.exceptfn = this.except.compile(databaseid);
-			// ORDER BY is now at the top level, not in the except clause
-			if (!query.orderfn && this.except.order) {
-				query.orderfn = this.except.compileOrder(query, params);
-			}
-		} else if (this.intersect) {
-			query.intersectfn = this.intersect.compile(databaseid);
-			// ORDER BY is now at the top level, not in the intersect clause
-			if (!query.orderfn && this.intersect.order) {
-				query.orderfn = this.intersect.compileOrder(query, params);
-			}
+		query.setops = this.compileSetOps(databaseid);
+		// With (A op B) op C ... the ORDER BY / LIMIT after the chain is for the whole result
+		query.hasOuterSetOps = !!(this.outerSetOps && this.outerSetOps.length);
+		// ORDER BY of the right operand is used at the top level when the query has none
+		const setOpRight = this.union || this.unionall || this.except || this.intersect;
+		if (setOpRight && !query.orderfn && setOpRight.order) {
+			query.orderfn = setOpRight.compileOrder(query, params);
 		}
 
 		// SELECT INTO

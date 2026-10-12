@@ -82,8 +82,15 @@ function queryfn2(data, idx, query) {
 }
 
 function queryfn3(query) {
+	// i, j, ilen, r, ud and nd used to be hoisted from the set operation code now in applySetOp
 	var scope = query.scope,
-		jlen;
+		jlen,
+		i,
+		j,
+		ilen,
+		r,
+		ud,
+		nd;
 
 	// Preindexation of data sources
 	preIndex(query);
@@ -181,14 +188,14 @@ function queryfn3(query) {
 	// apply ORDER BY and LIMIT to the first SELECT before combining.
 	// This handles the pattern: SELECT ... ORDER BY ... LIMIT ... UNION ALL SELECT ... ORDER BY ... LIMIT ...
 	// We only do this if the UNION branch also has ORDER BY/LIMIT (pattern 2), not if ORDER BY is at the end (pattern 1).
-	var unionBranchHasOrder = ['unionallfn', 'unionfn', 'exceptfn', 'intersectfn'].some(
-		function (fnName) {
-			var fn = query[fnName];
-			return fn && fn.query && (fn.query.orderfn || fn.query.limit);
-		}
+	var firstSetOp = query.setops && query.setops[0];
+	var unionBranchHasOrder = !!(
+		firstSetOp &&
+		firstSetOp.fn.query &&
+		(firstSetOp.fn.query.orderfn || firstSetOp.fn.query.limit)
 	);
 
-	if (unionBranchHasOrder && (query.orderfn || query.limit)) {
+	if (unionBranchHasOrder && !query.hasOuterSetOps && (query.orderfn || query.limit)) {
 		// Apply ordering to first SELECT's data
 		if (query.orderfn) {
 			// Populate order keys before sorting (needed for UNION queries)
@@ -224,116 +231,15 @@ function queryfn3(query) {
 		}
 	}
 
-	// UNION / UNION ALL
-	if (query.unionallfn) {
-		// TODO Simplify this part of program
-		var ud, nd;
-		if (query.corresponding) {
-			if (query.unionallfn.query && !query.unionallfn.query.modifier)
-				query.unionallfn.query.modifier = undefined;
-			ud = query.unionallfn(query.params);
-		} else {
-			if (query.unionallfn.query && !query.unionallfn.query.modifier)
-				query.unionallfn.query.modifier = 'RECORDSET';
-			nd = query.unionallfn(query.params);
-			ud = [];
-			ilen = nd.data.length;
-			for (var i = 0; i < ilen; i++) {
-				var r = {};
-				if (query.columns.length) {
-					jlen = Math.min(query.columns.length, nd.columns.length);
-					for (var j = 0; j < jlen; j++) {
-						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-					}
-				} else {
-					jlen = nd.columns.length;
-					for (var j = 0; j < jlen; j++) {
-						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-					}
-				}
-				ud.push(r);
-			}
-		}
-		query.data = query.data.concat(ud);
-	} else if (query.unionfn) {
-		if (query.corresponding) {
-			if (query.unionfn.query && !query.unionfn.query.modifier)
-				query.unionfn.query.modifier = 'ARRAY';
-			ud = query.unionfn(query.params);
-		} else {
-			if (query.unionfn.query && !query.unionfn.query.modifier)
-				query.unionfn.query.modifier = 'RECORDSET';
-			nd = query.unionfn(query.params);
-			ud = [];
-			ilen = nd.data.length;
-			for (var i = 0; i < ilen; i++) {
-				r = {};
-				if (query.columns.length) {
-					jlen = Math.min(query.columns.length, nd.columns.length);
-					for (var j = 0; j < jlen; j++) {
-						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-					}
-				} else {
-					jlen = nd.columns.length;
-					for (var j = 0; j < jlen; j++) {
-						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-					}
-				}
-				ud.push(r);
-			}
-		}
-
-		query.data = arrayUnionDeep(query.data, ud);
-	} else if (query.exceptfn) {
-		if (query.corresponding) {
-			if (query.exceptfn.query && !query.exceptfn.query.modifier)
-				query.exceptfn.query.modifier = 'ARRAY';
-			var ud = query.exceptfn(query.params);
-		} else {
-			if (query.exceptfn.query && !query.exceptfn.query.modifier)
-				query.exceptfn.query.modifier = 'RECORDSET';
-			var nd = query.exceptfn(query.params);
-			var ud = [];
-			for (var i = 0, ilen = nd.data.length; i < ilen; i++) {
-				var r = {};
-				for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
-					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-				}
-				ud.push(r);
-			}
-		}
-
-		query.data = arrayExceptDeep(query.data, ud);
-	} else if (query.intersectfn) {
-		if (query.corresponding) {
-			if (query.intersectfn.query && !query.intersectfn.query.modifier)
-				query.intersectfn.query.modifier = undefined;
-			ud = query.intersectfn(query.params);
-		} else {
-			if (query.intersectfn.query && !query.intersectfn.query.modifier)
-				query.intersectfn.query.modifier = 'RECORDSET';
-			nd = query.intersectfn(query.params);
-			ud = [];
-			ilen = nd.data.length;
-			for (i = 0; i < ilen; i++) {
-				r = {};
-				jlen = Math.min(query.columns.length, nd.columns.length);
-				for (j = 0; j < jlen; j++) {
-					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-				}
-				ud.push(r);
-			}
-		}
-
-		query.data = arrayIntersectDeep(query.data, ud);
+	// UNION / UNION ALL / EXCEPT / INTERSECT, applied from left to right
+	if (query.setops) {
+		query.setops.forEach(function (op) {
+			applySetOp(query, op.kind, op.fn, op.corresponding);
+		});
 	}
 
 	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
-	if (
-		query.orderfn &&
-		query.orderColumns &&
-		(query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn)
-	) {
+	if (query.orderfn && query.orderColumns && query.setops && query.setops.length) {
 		for (i = 0, ilen = query.data.length; i < ilen; i++) {
 			for (var idx = 0; idx < query.orderColumns.length; idx++) {
 				var v = query.orderColumns[idx];
@@ -455,6 +361,108 @@ function queryfn3(query) {
 }
 
 // Limiting
+/**
+ Apply one set operation (UNION, UNION ALL, EXCEPT, INTERSECT) to query.data,
+ with fn the compiled right operand (#202)
+ */
+function applySetOp(query, kind, fn, corresponding) {
+	var ud, nd, r, i, j, ilen, jlen;
+	if (kind === 'unionall') {
+		// TODO Simplify this part of program
+		var ud, nd;
+		if (corresponding) {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = undefined;
+			ud = fn(query.params);
+		} else {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
+			nd = fn(query.params);
+			ud = [];
+			ilen = nd.data.length;
+			for (var i = 0; i < ilen; i++) {
+				var r = {};
+				if (query.columns.length) {
+					jlen = Math.min(query.columns.length, nd.columns.length);
+					for (var j = 0; j < jlen; j++) {
+						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				} else {
+					jlen = nd.columns.length;
+					for (var j = 0; j < jlen; j++) {
+						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				}
+				ud.push(r);
+			}
+		}
+		query.data = query.data.concat(ud);
+	} else if (kind === 'union') {
+		if (corresponding) {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = 'ARRAY';
+			ud = fn(query.params);
+		} else {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
+			nd = fn(query.params);
+			ud = [];
+			ilen = nd.data.length;
+			for (var i = 0; i < ilen; i++) {
+				r = {};
+				if (query.columns.length) {
+					jlen = Math.min(query.columns.length, nd.columns.length);
+					for (var j = 0; j < jlen; j++) {
+						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				} else {
+					jlen = nd.columns.length;
+					for (var j = 0; j < jlen; j++) {
+						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				}
+				ud.push(r);
+			}
+		}
+
+		query.data = arrayUnionDeep(query.data, ud);
+	} else if (kind === 'except') {
+		if (corresponding) {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = 'ARRAY';
+			var ud = fn(query.params);
+		} else {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
+			var nd = fn(query.params);
+			var ud = [];
+			for (var i = 0, ilen = nd.data.length; i < ilen; i++) {
+				var r = {};
+				for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+		query.data = arrayExceptDeep(query.data, ud);
+	} else if (kind === 'intersect') {
+		if (corresponding) {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = undefined;
+			ud = fn(query.params);
+		} else {
+			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
+			nd = fn(query.params);
+			ud = [];
+			ilen = nd.data.length;
+			for (i = 0; i < ilen; i++) {
+				r = {};
+				jlen = Math.min(query.columns.length, nd.columns.length);
+				for (j = 0; j < jlen; j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+		query.data = arrayIntersectDeep(query.data, ud);
+	}
+}
+
 function doLimit(query) {
 	//	console.log(query.limit, query.offset)
 	if (query.limit) {
