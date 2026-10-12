@@ -1091,6 +1091,17 @@ var getValueOf = (utils.getValueOf = function (val) {
 });
 
 /**
+ * Result of `value NOT IN (set)` with SQL three-valued logic (#1414):
+ * false when the value is in the set, NULL (undefined) when it is not but the
+ * set contains NULL (null, undefined or NaN, as in the operator null check),
+ * otherwise true.
+ */
+utils.notIn = function (set, value) {
+	if (set.has(value)) return false;
+	return set.has(null) || set.has(undefined) || set.has(NaN) ? undefined : true;
+};
+
+/**
   Flat array by first row
   */
 var flatArray = (utils.flatArray = function (a) {
