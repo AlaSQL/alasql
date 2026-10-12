@@ -87,6 +87,30 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 			}
 		});
 	}
+	// Subqueries in FROM / JOIN have no table definition, so register the named
+	// columns of their SELECT list. Without this, an unqualified column of a joined
+	// subquery used in an expression (e.g. c - b) resolves to the first source (#832).
+	// Only fill names that are not defined yet, so table columns keep their resolution.
+	var addSubqueryColumns = function (select, alias) {
+		if (!alias || !select || !select.columns) return;
+		select.columns.forEach(function (col) {
+			var name = col.as || (col instanceof yy.Column ? col.columnid : undefined);
+			if (name && name !== '*' && name !== '_' && !(name in defcols)) {
+				defcols[name] = alias;
+			}
+		});
+	};
+	if (this.from) {
+		this.from.forEach(function (fr) {
+			if (fr instanceof yy.Select) addSubqueryColumns(fr, fr.as);
+		});
+	}
+	if (this.joins) {
+		this.joins.forEach(function (jn) {
+			if (jn.select) addSubqueryColumns(jn.select, jn.as);
+		});
+	}
+
 	// for(var k in defcols) {
 	// 	if(defcols[k] == '-') defcols[k] = undefined;
 	// }
