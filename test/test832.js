@@ -57,4 +57,25 @@ describe(`Test ${testId} - unqualified columns of subqueries in expressions`, fu
 			{a: 2, b1: 21},
 		]);
 	});
+
+	it('E) With a schemaless source an unqualified name keeps resolving to the first source', function () {
+		const A = [
+			{id: 1, x: 10},
+			{id: 2, x: 20},
+		];
+		const B = [
+			{id: 1, x: 100},
+			{id: 2, x: 200},
+		];
+		assert.deepStrictEqual(
+			alasql('SELECT x + 0 AS v FROM ? t0 JOIN (SELECT id, x FROM ?) t1 ON t0.id = t1.id', [A, B]),
+			[{v: 10}, {v: 20}]
+		);
+		assert.deepStrictEqual(
+			alasql(
+				'SELECT a + 0 AS v FROM (SELECT * FROM one) t0 JOIN (SELECT a, c FROM two) t1 ON t0.a = t1.a'
+			),
+			[{v: 1}, {v: 2}]
+		);
+	});
 });
