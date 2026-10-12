@@ -393,9 +393,10 @@
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
+						// Key by type and value, so lists like (2, NULL) and (2, '') or (1) and ('1') don't share a Set
+						const allValuesStr = JSON.stringify(allValues.map(v => [typeof v, v]));
 						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						s = `alasql.sets[${JSON.stringify(allValuesStr)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
@@ -427,9 +428,10 @@
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
+						// Key by type and value, so lists like (2, NULL) and (2, '') or (1) and ('1') don't share a Set
+						const allValuesStr = JSON.stringify(allValues.map(v => [typeof v, v]));
 						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `alasql.utils.notIn(alasql.sets["${allValuesStr}"], alasql.utils.getValueOf(${leftJS()}))`;
+						s = `alasql.utils.notIn(alasql.sets[${JSON.stringify(allValuesStr)}], alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;

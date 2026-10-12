@@ -72,4 +72,16 @@ describe(`Test ${testId} - NOT IN with NULL values follows SQL semantics`, funct
 			[{a: 2}]
 		);
 	});
+
+	it('G) Cached value lists that only differ by NULL, empty string or type are kept apart', function () {
+		const rows = [{a: 1}, {a: 2}, {a: ''}, {a: '1'}];
+		assert.deepStrictEqual(alasql('SELECT a FROM ? WHERE a IN (2, NULL)', [rows]), [{a: 2}]);
+		assert.deepStrictEqual(alasql("SELECT a FROM ? WHERE a NOT IN (2, '')", [rows]), [
+			{a: 1},
+			{a: '1'},
+		]);
+		assert.deepStrictEqual(alasql("SELECT a FROM ? WHERE a IN (2, '')", [rows]), [{a: 2}, {a: ''}]);
+		assert.deepStrictEqual(alasql('SELECT a FROM ? WHERE a IN (1, 3)', [rows]), [{a: 1}]);
+		assert.deepStrictEqual(alasql("SELECT a FROM ? WHERE a IN ('1', 3)", [rows]), [{a: '1'}]);
+	});
 });
