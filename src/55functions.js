@@ -186,8 +186,8 @@ stdlib.SUBSTRING =
 	stdlib.SUBSTR =
 	stdlib.MID =
 		function (a, b, c) {
-			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+			if (arguments.length == 2) return und(a, 'alasql.utils.substr(y,' + b + ')');
+			else if (arguments.length == 3) return und(a, 'alasql.utils.substr(y,' + b + ',' + c + ')');
 		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
