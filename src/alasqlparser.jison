@@ -2077,7 +2077,7 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TableClass IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+	:  CREATE TemporaryClause TableClass IfNotExists CreateTableName LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -2086,7 +2086,7 @@ CreateTable
 			yy.extend($$,$7);
 			yy.extend($$,$9);
 		}
-	| CREATE TemporaryClause TableClass IfNotExists Table
+	| CREATE TemporaryClause TableClass IfNotExists CreateTableName
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -2094,6 +2094,24 @@ CreateTable
 			yy.extend($$,$4);
 		}
 ;
+
+/* Double-quoted identifiers as written by SQLite, e.g. CREATE TABLE "t" ("id" INT) (#989) */
+DoubleQuotedIdentifier
+	: STRING
+		{
+			if ($1[0] !== '"') {
+				throw new SyntaxError('Single-quoted string cannot be used as an identifier: ' + $1);
+			}
+			$$ = $1.substr(1, $1.length - 2).replace(/""/g, '"');
+		}
+	;
+
+CreateTableName
+	: Table
+		{ $$ = $1; }
+	| DoubleQuotedIdentifier
+		{ $$ = new yy.Table({tableid: $1}); }
+	;
 
 TableClass
 	: TABLE
@@ -2258,10 +2276,21 @@ OrderedColsList
 	;
 */
 ColumnDefsList
-	: ColumnDef
+	: CreateColumnDef
 		{ $$ = [$1];}
-	| ColumnDefsList COMMA ColumnDef
+	| ColumnDefsList COMMA CreateColumnDef
 		{ $1.push($3); $$ = $1; }
+	;
+
+CreateColumnDef
+	: ColumnDef
+		{ $$ = $1; }
+	| DoubleQuotedIdentifier ColumnType ColumnConstraintsClause
+		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
+	| DoubleQuotedIdentifier ColumnConstraints
+		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
+	| DoubleQuotedIdentifier
+		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
 ColumnDef
