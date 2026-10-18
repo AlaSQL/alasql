@@ -2196,14 +2196,36 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList?
-	     OnReferentialActions
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES CreateTableName ParColsList?
+	     OnReferentialActions DeferrableClause?
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; yy.extend($$, $9); }
 	;
 
 ParColsList
 	: LPAR ColsList RPAR
 		{ $$ = $2; }
+	;
+
+/* DEFERRABLE [INITIALLY DEFERRED|IMMEDIATE] is parsed and ignored (#989) */
+DeferrableClause
+	: LITERAL
+		{
+			if ($1.toUpperCase() !== 'DEFERRABLE') {
+				throw new SyntaxError('Unexpected ' + $1 + ' after REFERENCES clause');
+			}
+			$$ = undefined;
+		}
+	| LITERAL LITERAL LITERAL
+		{
+			if (
+				$1.toUpperCase() !== 'DEFERRABLE' ||
+				$2.toUpperCase() !== 'INITIALLY' ||
+				['DEFERRED', 'IMMEDIATE'].indexOf($3.toUpperCase()) === -1
+			) {
+				throw new SyntaxError('Expected DEFERRABLE [INITIALLY DEFERRED|IMMEDIATE], got ' + [$1, $2, $3].join(' '));
+			}
+			$$ = undefined;
+		}
 	;
 
 OnReferentialActions
@@ -2256,11 +2278,11 @@ ColsList
 	: Literal
 		{ $$ = [$1]; }
 	| STRING
-		{ $$ = [$1]; }
+		{ $$ = [$1[0] === '"' ? $1.substr(1, $1.length - 2).replace(/""/g, '"') : $1]; }
 	| ColsList COMMA Literal
 		{ $$ = $1; $1.push($3); }
 	| ColsList COMMA STRING
-		{ $$ = $1; $1.push($3); }
+		{ $$ = $1; $1.push($3[0] === '"' ? $3.substr(1, $3.length - 2).replace(/""/g, '"') : $3); }
 	;
 
 /*
@@ -2359,14 +2381,16 @@ ColumnConstraintsList
 ParLiteral
 	: LPAR Literal RPAR
 		{ $$ = $2; }
+	| LPAR DoubleQuotedIdentifier RPAR
+		{ $$ = $2; }
 	;
 
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Table ParLiteral? OnReferentialActions
+	| FOREIGN KEY REFERENCES CreateTableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$4, columnid: $5}}; yy.extend($$.foreignkey, $6);}
-	| REFERENCES Table ParLiteral? OnReferentialActions
+	| REFERENCES CreateTableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$2, columnid: $3}}; yy.extend($$.foreignkey, $4);}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
