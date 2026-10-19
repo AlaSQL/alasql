@@ -27,6 +27,24 @@ const setOpOf = sel => {
 	return kind && {kind, select: sel[kind], corresponding: !!sel.corresponding};
 };
 
+const SET_OP_SQL = {
+	union: 'UNION',
+	unionall: 'UNION ALL',
+	except: 'EXCEPT',
+	intersect: 'INTERSECT',
+};
+
+// The set operation of a SELECT (or of a parsed UNION clause) as SQL, a parenthesized operand in parentheses
+const setOpToString = sel => {
+	const op = setOpOf(sel);
+	if (!op) return '';
+	const operand = op.select.toString();
+	return (
+		` ${SET_OP_SQL[op.kind]} ${op.corresponding ? 'CORRESPONDING ' : ''}` +
+		(op.select.parenthesizedOperand ? `(${operand})` : operand)
+	);
+};
+
 // The set operations of a chain, in order, up to a parenthesized operand
 const setOpChain = sel => {
 	const list = [];
@@ -103,7 +121,7 @@ yy.Select = class Select {
 				this.from
 					.map(function (f) {
 						var ss;
-						ss = f.toString();
+						ss = f instanceof yy.Select ? '(' + f.toString() + ')' : f.toString();
 						if (f.as) {
 							ss += ' AS ' + f.as;
 						}
@@ -156,8 +174,9 @@ yy.Select = class Select {
 		if (this.having) {
 			s += ' HAVING ' + this.having.toString();
 		}
+		var tail = '';
 		if (this.order && this.order.length > 0) {
-			s +=
+			tail +=
 				' ORDER BY ' +
 				this.order
 					.map(function (ord) {
@@ -166,24 +185,34 @@ yy.Select = class Select {
 					.join(', ');
 		}
 		if (this.limit) {
-			s += ' LIMIT ' + this.limit.toString();
+			tail += ' LIMIT ' + this.limit.toString();
 		}
 		if (this.offset) {
-			s += ' OFFSET ' + this.offset.toString();
+			tail += ' OFFSET ' + this.offset.toString();
 		}
-		if (this.union) {
-			s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
+
+		// Set operations are printed so that parsing the text again gives the same query (#202)
+		const op = setOpOf(this);
+		if (!op) {
+			return s + tail;
 		}
-		if (this.unionall) {
-			s += ' UNION ALL ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.unionall.toString();
+		const outerSetOps = this.outerSetOps || [];
+		// ORDER BY / LIMIT belong to the first SELECT only when the right operand has its own,
+		// as in (A ORDER BY x LIMIT 1) UNION ALL (B ORDER BY y LIMIT 1). Same rule as in queryfn3.
+		if (
+			!outerSetOps.length &&
+			((this.order && this.order.length > 0) || this.limit) &&
+			((op.select.order && op.select.order.length > 0) || op.select.limit)
+		) {
+			return '(' + s + tail + ')' + setOpToString(this);
 		}
-		if (this.except) {
-			s += ' EXCEPT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.except.toString();
-		}
-		if (this.intersect) {
-			s += ' INTERSECT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.intersect.toString();
-		}
-		return s;
+		s += setOpToString(this);
+		// (A op B) op C: each outer set operation applies to everything before it
+		outerSetOps.forEach(function (clause) {
+			s = '(' + s + ')' + setOpToString(clause);
+		});
+		// Otherwise ORDER BY / LIMIT are for the result of the whole chain
+		return s + tail;
 	}
 
 	/**
