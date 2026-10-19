@@ -212,6 +212,15 @@ function queryfn3(query) {
 				}
 			}
 			query.data = query.data.sort(query.orderfn);
+			// The order keys were only needed for this sort. Remove them, so these rows
+			// compare equal to the rows of the other SELECT in UNION, EXCEPT and INTERSECT
+			if (query.orderColumns) {
+				for (var i = 0, ilen = query.data.length; i < ilen; i++) {
+					for (var idx = 0; idx < query.orderColumns.length; idx++) {
+						delete query.data[i]['$$$' + idx];
+					}
+				}
+			}
 			// Clear orderfn so it doesn't get applied again after UNION
 			query.orderfn = null;
 		}
