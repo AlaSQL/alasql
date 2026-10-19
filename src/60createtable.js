@@ -59,6 +59,27 @@ yy.CreateTable.prototype.toString = function () {
 	return s;
 };
 
+/**
+ JS for one column of an index or UNIQUE constraint. As in MySQL, a(N) where a is a column
+ of the table is a prefix: the first N characters of a (#406)
+ */
+function indexColumnToJS(expr, table) {
+	if (
+		expr instanceof yy.FuncValue &&
+		table.xcolumns &&
+		table.xcolumns[expr.funcid] &&
+		expr.args &&
+		expr.args.length === 1 &&
+		expr.args[0] instanceof yy.NumValue
+	) {
+		var col = 'r[' + JSON.stringify(expr.funcid) + ']';
+		return (
+			'(' + col + '==null?' + col + ':String(' + col + ').substr(0,' + expr.args[0].value + '))'
+		);
+	}
+	return expr.toJS('r', '');
+}
+
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
@@ -230,7 +251,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns
 				.map(function (expr) {
-					return expr.expression.toJS('r', '');
+					return indexColumnToJS(expr.expression, table);
 				})
 				.join("+'`'+");
 			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
