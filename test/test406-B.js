@@ -81,6 +81,37 @@ describe(`Test ${testId} B - index column prefix length`, function () {
 		alasql("INSERT INTO t14 VALUES ('abc')");
 		assert.throws(() => alasql("INSERT INTO t14 VALUES ('abd')"), duplicate);
 
-		assert.deepStrictEqual(alasql('SELECT * FROM t13; SELECT * FROM t14'), [[{a: 'x'}], [{a: 'abc'}]]);
+		assert.deepStrictEqual(alasql('SELECT * FROM t13; SELECT * FROM t14'), [
+			[{a: 'x'}],
+			[{a: 'abc'}],
+		]);
+	});
+
+	it('F) PRIMARY KEY with a prefix', function () {
+		alasql('CREATE TABLE t15(a TEXT, PRIMARY KEY (a(2)))');
+		alasql("INSERT INTO t15 VALUES ('abc')");
+		const duplicateKey = /already exists in primary key index/;
+		assert.throws(() => alasql("INSERT INTO t15 VALUES ('abd')"), duplicateKey);
+
+		alasql('CREATE TABLE t16(a TEXT, b INT, CONSTRAINT pk16 PRIMARY KEY (a(1), b))');
+		alasql("INSERT INTO t16 VALUES ('ab', 1), ('ac', 2)");
+		assert.throws(() => alasql("INSERT INTO t16 VALUES ('ad', 1)"), duplicateKey);
+
+		assert.deepStrictEqual(alasql('SELECT * FROM t15; SELECT * FROM t16'), [
+			[{a: 'abc'}],
+			[
+				{a: 'ab', b: 1},
+				{a: 'ac', b: 2},
+			],
+		]);
+	});
+
+	it('G) INDEX in CREATE TABLE with a prefix', function () {
+		alasql('CREATE TABLE t17(a TEXT, b TEXT, INDEX k17 (a(1), b))');
+		alasql("INSERT INTO t17 VALUES ('ab', 'x'), ('ab', 'x')");
+		assert.deepStrictEqual(alasql('SELECT * FROM t17'), [
+			{a: 'ab', b: 'x'},
+			{a: 'ab', b: 'x'},
+		]);
 	});
 });

@@ -60,8 +60,20 @@ yy.CreateTable.prototype.toString = function () {
 };
 
 /**
- JS for one column of an index or UNIQUE constraint. As in MySQL, a(N) where a is a column
- of the table is a prefix: the first N characters of a (#406)
+ JS for a column of an index, or with a prefix length for its first `prefix` characters,
+ as in MySQL's a(N) (#406)
+ */
+function columnPrefixToJS(columnid, prefix) {
+	var col = 'r[' + JSON.stringify(columnid) + ']';
+	if (prefix === undefined) {
+		return col;
+	}
+	return '(' + col + '==null?' + col + ':String(' + col + ').substr(0,' + prefix + '))';
+}
+
+/**
+ JS for one column of a UNIQUE constraint or CREATE INDEX. These take expressions, so a(N)
+ is parsed as a function call. When a is a column of the table, it is a prefix (#406)
  */
 function indexColumnToJS(expr, table) {
 	if (
@@ -72,10 +84,7 @@ function indexColumnToJS(expr, table) {
 		expr.args.length === 1 &&
 		expr.args[0] instanceof yy.NumValue
 	) {
-		var col = 'r[' + JSON.stringify(expr.funcid) + ']';
-		return (
-			'(' + col + '==null?' + col + ':String(' + col + ').substr(0,' + expr.args[0].value + '))'
-		);
+		return columnPrefixToJS(expr.funcid, expr.args[0].value);
 	}
 	return expr.toJS('r', '');
 }
@@ -229,8 +238,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var pk = (table.pk = {});
 			pk.columns = con.columns;
 			pk.onrightfns = pk.columns
-				.map(function (columnid) {
-					return `r[${JSON.stringify(columnid)}]`;
+				.map(function (columnid, i) {
+					return columnPrefixToJS(columnid, con.prefixes && con.prefixes[i]);
 				})
 				.join("+'`'+");
 			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
