@@ -28,7 +28,7 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 
 	var rightfns = this.columns
 		.map(function (expr) {
-			return expr.expression.toJS('r', '');
+			return indexColumnToJS(expr.expression, table);
 		})
 		.join("+'`'+");
 
