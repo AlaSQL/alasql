@@ -138,6 +138,7 @@ DATABASE(S)?									return 'DATABASE'
 'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
+'SUBSTRING'                                     return 'SUBSTRING'
 'FULL'											return 'FULL'
 'FUNCTION'										return 'FUNCTION'
 'GLOB'                                     		return 'GLOB'
@@ -1567,8 +1568,16 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
 	| DATEDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
+
 	| TIMESTAMPDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[$3,$5,$7]}) }
+
+	| SUBSTRING LPAR Expression FROM Expression FOR Expression RPAR
+       	{ $$ = new yy.FuncValue({ funcid: 'SUBSTRING', args: [$3, $5, $7] }); }
+   	| SUBSTRING LPAR Expression FROM Expression RPAR
+       	{ $$ = new yy.FuncValue({ funcid: 'SUBSTRING', args: [$3, $5] }); }
+   	| SUBSTRING LPAR ExprList RPAR OverClause
+       	{ $$ = new yy.FuncValue({ funcid: 'SUBSTRING', args: $3, over: $5 }); }
 	| INTERVAL Expression Literal
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
