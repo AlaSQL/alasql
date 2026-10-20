@@ -16,3 +16,6 @@ pnpm-lock.yaml
 test*.json
 
 .claude/
+
+# Local planning notes, not part of the repository
+context/

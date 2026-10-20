@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.19.1",
+	"version": "4.20.1",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -68,8 +68,8 @@
 		"git-branch-is": "5.0.0",
 		"husky": "9.1.7",
 		"jison": "^0.4.18",
-		"open": "11.0.2",
-		"prettier": "3.8.3",
+		"open": "11.0.4",
+		"prettier": "3.9.10",
 		"react-native-fetch-blob": "^0.10.8",
 		"rexreplace": "7.1.14",
 		"strftime": "0.10.3",
@@ -77,7 +77,7 @@
 		"uglify-js": "3.19.3"
 	},
 	"resolutions": {
-		"got": "15",
+		"got": "16",
 		"axios": "^1.16.1",
 		"json5": "2",
 		"underscore": "1",
@@ -85,7 +85,7 @@
 		"decode-uri-component": "0.5",
 		"semver": "7",
 		"follow-redirects": "^1.16.0",
-		"js-yaml": "4",
+		"js-yaml": "5",
 		"glob": "^13.0.0",
 		"rimraf": "^6.1.2"
 	},

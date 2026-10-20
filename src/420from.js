@@ -72,9 +72,13 @@ yy.Select.prototype.compileFrom = function (query) {
 			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
 				source.datafn = (query, params, cb, idx, alasql) => {
 					let table = alasql.databases[source.databaseid].tables[source.tableid];
-					// Lazily compile the view's select on first use
-					if (!table.select && table.viewSelect) {
+					// Lazily compile the view's select on first use, and again after a schema change
+					if (
+						table.viewSelect &&
+						(!table.select || table.selectSchemaVersion !== alasql.schemaVersion)
+					) {
 						table.select = table.viewSelect.compile(table.viewDatabaseid);
+						table.selectSchemaVersion = alasql.schemaVersion;
 					}
 					let res = table.select(params);
 					if (cb) res = cb(res, idx, query);

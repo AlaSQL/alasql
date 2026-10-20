@@ -39,6 +39,11 @@ declare module 'alasql' {
 		<T = unknown>(params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 	}
 
+	// returned by alasql.compile(): a compiled statement with a promise helper
+	export interface AlaSQLCompiledStatement extends AlaSQLStatement {
+		promise<T = unknown>(params?: any): Promise<T>;
+	}
+
 	export type AlaSQLDefaultColumns = {[columnName: string]: string};
 
 	/**
@@ -52,7 +57,8 @@ declare module 'alasql' {
 	export interface Op extends AlaSQLExpression {
 		left: ExpressionNode;
 		op: string;
-		right?: ExpressionNode;
+		// `->` with a bare property name (`a->b`, `tx.a.b`) puts the name as a string
+		right?: ExpressionNode | string;
 		right1?: ExpressionNode;
 		right2?: ExpressionNode;
 	}
@@ -84,6 +90,11 @@ declare module 'alasql' {
 		right: ExpressionNode;
 	}
 
+	export interface FuncValue extends AlaSQLExpression {
+		funcid: string;
+		args?: ExpressionNode[];
+	}
+
 	export type ExpressionNode =
 		| Op
 		| Column
@@ -91,7 +102,8 @@ declare module 'alasql' {
 		| NumValue
 		| StringValue
 		| LogicValue
-		| UniOp;
+		| UniOp
+		| FuncValue;
 
 	export interface ExpressionWrapper extends AlaSQLExpression {
 		expression: ExpressionNode;
@@ -221,6 +233,7 @@ declare module 'alasql' {
 		error: Error;
 		<T = unknown>(sql: string, params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 		parse(sql: string): AlaSQLAST;
+		compile(sql: string, databaseid?: string): AlaSQLCompiledStatement;
 		promise<T = unknown>(sql: string, params?: any): Promise<T>;
 		fn: userDefinedFunctionLookUp;
 		from: userFromFunctionLookUp;

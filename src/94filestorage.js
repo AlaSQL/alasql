@@ -227,7 +227,7 @@ FS.begin = FS.commit;
 FS.rollback = function (databaseid, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
-	db.dbversion++;
+	schemaChanged(db);
 	wait();
 	function wait() {
 		setTimeout(function () {

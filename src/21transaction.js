@@ -25,7 +25,7 @@ class Transaction {
 	/** Commit transaction */
 	commit() {
 		this.committed = true;
-		alasql.databases[this.databaseid].dbversion = Date.now();
+		schemaChanged(alasql.databases[this.databaseid]);
 		delete this.bank;
 	}
 
@@ -33,6 +33,7 @@ class Transaction {
 	rollback() {
 		if (!this.committed) {
 			alasql.databases[this.databaseid] = JSON.parse(this.bank);
+			schemaChanged();
 			// alasql.databases[this.databaseid].tables = this.bank;
 			// alasql.databases[this.databaseid].dbversion = this.dbversion;
 			delete this.bank;
