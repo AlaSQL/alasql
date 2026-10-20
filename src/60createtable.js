@@ -329,7 +329,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			fk.columns = con.columns;
 
 			if (fk.fkcolumns.length > fk.columns.length) {
-				throw new Error('Invalid foreign key on table ' + table.tableid);
+				throw new Error('Invalid foreign key on table ' + tableid);
 			}
 
 			// Mark columns with foreignkey property
@@ -360,7 +360,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return true;
 				}
 				if (Object.keys(rr).length !== fk.columns.length) {
-					throw new Error('Invalid foreign key on table ' + table.tableid);
+					throw new Error('Invalid foreign key on table ' + tableid);
 				}
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
