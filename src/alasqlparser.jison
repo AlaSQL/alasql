@@ -276,6 +276,8 @@ SETS                                        	return 'SET'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
+/* A number with an exponent (1e5, 2E-3) before LITERAL, which would take 1e5 as a name */
+\d+(\.\d*)?[eE][+-]?\d+(?![a-zA-Z_0-9])				return 'NUMBER'
 /* LITERAL must come before NUMBER to match identifiers like 50k, 100x as single tokens */
 [0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?(?![a-zA-Z_0-9])				return 'NUMBER'
