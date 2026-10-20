@@ -26,8 +26,7 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	var indexid = this.indexid;
 	db.indices[indexid] = tableid;
 	// The schema changed, so statements in the statement cache must be compiled again
-	db.dbversion++;
-	alasql.schemaVersion++;
+	schemaChanged(db);
 
 	var rightfns = this.columns
 		.map(function (expr) {

@@ -58,6 +58,17 @@ alasql.databasenum = 0;
 alasql.schemaVersion = 0;
 
 /**
+	Record a schema change. All compiled code (the statement cache of every database, statements
+	from alasql.compile() and views) is compiled again on its next use. db.dbversion is still
+	increased for the database that changed, as user code reads and increases it too.
+	@param {object} [db] The database that changed, if it still exists
+*/
+function schemaChanged(db) {
+	if (db) db.dbversion++;
+	alasql.schemaVersion++;
+}
+
+/**
 	  Alasql options object
  */
 alasql.options = {

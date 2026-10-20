@@ -19,8 +19,7 @@ yy.AlterTable.prototype.toString = function () {
 
 yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 	let db = alasql.databases[databaseid];
-	db.dbversion++;
-	alasql.schemaVersion++;
+	schemaChanged(db);
 
 	if (this.renameto) {
 		var oldtableid = this.table.tableid;
@@ -43,7 +42,6 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 	if (this.addcolumn) {
 		db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
 		var columnid = this.addcolumn.columnid;
@@ -76,7 +74,6 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 	if (this.modifycolumn) {
 		let db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
 		var columnid = this.modifycolumn.columnid;
@@ -98,7 +95,6 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 	if (this.renamecolumn) {
 		let db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
 
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
@@ -134,7 +130,6 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 	if (this.dropcolumn) {
 		let db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
 		var columnid = this.dropcolumn;
