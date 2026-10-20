@@ -208,6 +208,7 @@ FS.rollback = function (databaseid, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
+	alasql.schemaVersion++;
 	wait();
 	function wait() {
 		setTimeout(function () {

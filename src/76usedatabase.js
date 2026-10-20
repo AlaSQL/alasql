@@ -80,6 +80,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (!alasql.engines[this.engineid]) {
 		throw new Error('Engine "' + this.engineid + '" is not defined.');
 	}
+	alasql.schemaVersion++;
 	var res = alasql.engines[this.engineid].attachDatabase(
 		this.databaseid,
 		this.as,
@@ -131,6 +132,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 			filename = alasql.databases[dbid].filename || '';
 
 		delete alasql.databases[dbid];
+		alasql.schemaVersion++;
 
 		if (isFS) {
 			// Create a detached FS database
@@ -202,6 +204,7 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 		}
 
 		delete alasql.databases[dbid];
+		alasql.schemaVersion++;
 		if (dbid === alasql.useid) {
 			alasql.use();
 		}
