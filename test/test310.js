@@ -15,7 +15,7 @@ describe('Test 310 Create graph', function () {
 		var data = [{name: 'Moscow'}, {name: 'St.Petersburg'}, {name: 'Prague'}];
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var res = alasql('SEARCH / name LIKE "P%" FROM ?', [data]);
-		assert.deepEqual(res, ['Prague']);
+		assert.deepStrictEqual(res, ['Prague']);
 		done();
 	});
 
@@ -29,13 +29,21 @@ describe('Test 310 Create graph', function () {
 		var res = alasql('CREATE GRAPH #[John Smith] > "loves" > #Mary');
 		var res = alasql('CREATE GRAPH #Anton > "loves" {power:"too much"} > #Julia');
 		var res = alasql('SEARCH / VERTEX [$id]');
-		assert.deepEqual(res, ['Andrey', 'John', 'Mary', 'Anton', 'Julia', 'Victor', 'John Smith']);
+		assert.deepStrictEqual(res, [
+			'Andrey',
+			'John',
+			'Mary',
+			'Anton',
+			'Julia',
+			'Victor',
+			'John Smith',
+		]);
 		done();
 	});
 
 	it('2. RETURNS', function (done) {
 		var res = alasql('SEARCH RETURNS(country,age AS Age) FROM #[John Smith] ');
-		assert.deepEqual(res, [{country: 'Canada', Age: 23}]);
+		assert.deepStrictEqual(res, [{country: 'Canada', Age: 23}]);
 		done();
 	});
 
@@ -83,7 +91,7 @@ describe('Test 310 Create graph', function () {
 	// it('7. ORDER BY',function(done){
 	//   var data = [{a:1},{a:2},{a:0}];
 	//   var res = alasql('SEARCH a FROM ? ORDER BY _ DESC',[data]);
-	//   assert.deepEqual(res,[2,1,0]);
+	//   assert.deepStrictEqual(res,[2,1,0]);
 	//   done();
 	// });
 

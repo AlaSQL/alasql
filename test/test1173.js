@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 1173 - Parser should error on column names starting with numbers', function () {
+describe('Test 1173 - Parser behavior for identifiers with special patterns', function () {
 	const test = '1173';
 
 	before(function () {
@@ -31,30 +31,21 @@ describe('Test 1173 - Parser should error on column names starting with numbers'
 		assert.equal(ast.statements[0].columns[1].columnid, '6minAvgOpac');
 	});
 
-	it('C) Should throw error for unquoted column name starting with number', function () {
+	it('C) Should now parse unquoted column name starting with number (behavior changed in #1185)', function () {
+		// After fix for #1185, identifiers starting with numbers are now allowed
 		var sql = 'SELECT ID, 6minAvgOpac FROM test';
-		assert.throws(
-			function () {
-				alasql.parse(sql);
-			},
-			function (err) {
-				return err instanceof SyntaxError || err instanceof Error;
-			},
-			'Should throw a SyntaxError for invalid column name starting with number'
-		);
+		var ast = alasql.parse(sql);
+		assert.equal(ast.statements[0].columns.length, 2);
+		assert.equal(ast.statements[0].columns[0].columnid, 'ID');
+		assert.equal(ast.statements[0].columns[1].columnid, '6minAvgOpac');
 	});
 
-	it('D) Should throw error for similar invalid identifier pattern', function () {
+	it('D) Should now parse identifiers like 123abc (behavior changed in #1185)', function () {
+		// After fix for #1185, identifiers starting with numbers are now allowed
 		var sql = 'SELECT 123abc FROM test';
-		assert.throws(
-			function () {
-				alasql.parse(sql);
-			},
-			function (err) {
-				return err instanceof SyntaxError || err instanceof Error;
-			},
-			'Should throw a SyntaxError for invalid identifier 123abc'
-		);
+		var ast = alasql.parse(sql);
+		assert.equal(ast.statements[0].columns.length, 1);
+		assert.equal(ast.statements[0].columns[0].columnid, '123abc');
 	});
 
 	it('E) Valid number literals followed by proper aliases should still work', function () {

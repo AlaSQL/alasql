@@ -45,13 +45,14 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 		alasql.utils.loadBinaryFile(opts.sourcefilename, !!cb, function (data) {
 			wb = XLSX.read(data, {type: 'binary', ...alasql.options.excel, ...opts});
 			doExport();
+			if (cb) res = cb(res);
 		});
 	} else {
 		doExport();
+		/* Return result */
+		if (cb) res = cb(res);
 	}
 
-	/* Return result */
-	if (cb) res = cb(res);
 	return res;
 
 	/**

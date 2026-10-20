@@ -24,7 +24,7 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function () {
 
 		var res1 = alasql('select a from sun order by b');
 		var res2 = alasql('select a,b remove columns b from sun order by b');
-		assert.deepEqual(res1, res2);
+		assert.deepStrictEqual(res1, res2);
 		done();
 	});
 
@@ -36,7 +36,7 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function () {
 			],
 		]);
 		//console.log(res);
-		assert.deepEqual(res, [{a: null}, {a: 123}]);
+		assert.deepStrictEqual(res, [{a: null}, {a: 123}]);
 
 		done();
 	});
@@ -49,7 +49,7 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function () {
 			],
 		]);
 
-		assert.deepEqual(res, [{a: null}, {a: 123}]);
+		assert.deepStrictEqual(res, [{a: null}, {a: 123}]);
 		done();
 	});
 
@@ -62,7 +62,7 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function () {
 			],
 		]);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 2, id: 1},
 			{a: 1, id: 2},
 			{a: 3, id: 3},

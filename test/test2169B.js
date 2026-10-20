@@ -36,7 +36,7 @@ describe('Test 2169B - compileToJS function', function () {
 
 		const correctResult = alasql(sql, [data, 2]);
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			result,
 			correctResult,
 			'Compiled function should return same result as direct execution'
@@ -47,7 +47,7 @@ describe('Test 2169B - compileToJS function', function () {
 			{product: 'Book', calculated_price: 500},
 			{product: 'Ball', calculated_price: 300},
 		];
-		assert.deepEqual(result, expected, 'Should return correct filtered and sorted results');
+		assert.deepStrictEqual(result, expected, 'Should return correct filtered and sorted results');
 	});
 
 	it('B) compileToJS should work with database tables', function () {
@@ -65,7 +65,7 @@ describe('Test 2169B - compileToJS function', function () {
 
 		const correctResult = alasql(sql);
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			result,
 			correctResult,
 			'Compiled function should return same result as direct execution'
@@ -75,7 +75,7 @@ describe('Test 2169B - compileToJS function', function () {
 			{product: 'Book', calculated_price: 500},
 			{product: 'Ball', calculated_price: 300},
 		];
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			result,
 			expected,
 			'Should return correct filtered and sorted results from database table'

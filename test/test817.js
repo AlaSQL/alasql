@@ -11,7 +11,7 @@ describe('Test 817 IFNULL bug', function () {
 			},
 		];
 		var res = alasql('SELECT IFNULL(a, 100) as result FROM ?', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				result: 0,
 			},
@@ -26,7 +26,7 @@ describe('Test 817 IFNULL bug', function () {
 			},
 		];
 		var res = alasql('SELECT IFNULL(a, true) as result FROM ?', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				result: false,
 			},
@@ -41,7 +41,7 @@ describe('Test 817 IFNULL bug', function () {
 			},
 		];
 		var res = alasql('SELECT IFNULL(a, 100) as result FROM ?', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				result: 100,
 			},

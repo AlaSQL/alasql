@@ -27,7 +27,7 @@ describe('Test 304 SEARCH over JSON', function () {
 		var data = [p1, c1, p2, c2];
 
 		var res = alasql('SEARCH / INSTANCEOF(City) name FROM ?', [data]);
-		assert.deepEqual(res, ['Milano', 'Odessa']);
+		assert.deepStrictEqual(res, ['Milano', 'Odessa']);
 		done();
 	});
 
@@ -37,29 +37,29 @@ describe('Test 304 SEARCH over JSON', function () {
 		alasql('INSERT INTO Person VALUES {name:"John"},{name:"Mary"}');
 		alasql('INSERT INTO City VALUES {name:"Madrid"},{name:"Kyoto"}');
 		var res = alasql('SEARCH / CLASS(City) name');
-		assert.deepEqual(res, ['Madrid', 'Kyoto']);
+		assert.deepStrictEqual(res, ['Madrid', 'Kyoto']);
 		done();
 	});
 
 	it.skip('3. PLUS selector', function (done) {
 		var data = {a: {a: {a: {a: {b: 10}}}}};
 		var res = alasql('SEARCH a b FROM ?', [data]);
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 
 		var res = alasql('SEARCH (a)+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 
 		var res = alasql('SEARCH (a a)+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 
 		var res = alasql('SEARCH (a a a)+ b FROM ?', [data]);
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 
 		var res = alasql('SEARCH (/)+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 
 		var res = alasql('SEARCH /+b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 
 		done();
 	});
@@ -67,13 +67,13 @@ describe('Test 304 SEARCH over JSON', function () {
 	it.skip('4. STAR and QUESTION selector', function (done) {
 		var data = {a: {a: {a: {a: {b: 10}}}}, b: 20};
 		var res = alasql('SEARCH a* b FROM ?', [data]);
-		assert.deepEqual(res, [20, 10]);
+		assert.deepStrictEqual(res, [20, 10]);
 
 		var res = alasql('SEARCH a+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		assert.deepStrictEqual(res, [10]);
 
 		var res = alasql('SEARCH a? b FROM ?', [data]);
-		assert.deepEqual(res, [20]);
+		assert.deepStrictEqual(res, [20]);
 
 		done();
 	});
@@ -90,26 +90,26 @@ describe('Test 304 SEARCH over JSON', function () {
 		alasql('CREATE EDGE FROM @andrey TO @sofia');
 
 		var res = alasql('SEARCH / AS @p (>>)+ "Sofia" @(@p) name');
-		assert.deepEqual(res, ['Olga', 'Helen', 'Pablo', 'Andrey']);
+		assert.deepStrictEqual(res, ['Olga', 'Helen', 'Pablo', 'Andrey']);
 		var res = alasql('SEARCH / AS @p (>>)* "Sofia" @(@p) name');
-		assert.deepEqual(res, ['Olga', 'Helen', 'Pablo', 'Andrey', 'Sofia']);
+		assert.deepStrictEqual(res, ['Olga', 'Helen', 'Pablo', 'Andrey', 'Sofia']);
 
 		var res = alasql('SEARCH / "Olga" >> name');
-		assert.deepEqual(res, ['Pablo']);
+		assert.deepStrictEqual(res, ['Pablo']);
 		var res = alasql('SEARCH / "Olga" (>>)? name');
-		assert.deepEqual(res, ['Olga', 'Pablo']);
+		assert.deepStrictEqual(res, ['Olga', 'Pablo']);
 
 		done();
 	});
 
 	it.skip('6. STAR and QUESTION selectors in GRAPHS', function (done) {
 		var res = alasql('SEARCH / "Olga" (>>)+ name');
-		assert.deepEqual(res, ['Pablo', 'Sofia']);
+		assert.deepStrictEqual(res, ['Pablo', 'Sofia']);
 		var res = alasql('SEARCH / "Olga" (>>)* name');
-		assert.deepEqual(res, ['Olga', 'Pablo', 'Sofia']);
+		assert.deepStrictEqual(res, ['Olga', 'Pablo', 'Sofia']);
 
 		var res = alasql('SEARCH / IF(>> >> "Sofia") name');
-		assert.deepEqual(res, ['Olga', 'Helen']);
+		assert.deepStrictEqual(res, ['Olga', 'Helen']);
 
 		done();
 	});

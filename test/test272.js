@@ -23,7 +23,7 @@ describe('Test 272 REMOVE columns', function () {
 		];
 		var res = alasql('SELECT RECORDSET * REMOVE COLUMN c FROM ?', [data]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
@@ -34,7 +34,7 @@ describe('Test 272 REMOVE columns', function () {
 		];
 		var res = alasql('SELECT RECORDSET * REMOVE COLUMNS c FROM ?', [data]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
@@ -45,7 +45,7 @@ describe('Test 272 REMOVE columns', function () {
 		];
 		var res = alasql('SELECT RECORDSET * REMOVE COLUMNS LIKE "b%" FROM ?', [data]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a']);
+		assert.deepStrictEqual(colres, ['a']);
 		done();
 	});
 
@@ -56,7 +56,7 @@ describe('Test 272 REMOVE columns', function () {
 		];
 		var res = alasql('SELECT RECORDSET * REMOVE COLUMNS LIKE "b%",a,d FROM ?', [data]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['c']);
+		assert.deepStrictEqual(colres, ['c']);
 		done();
 	});
 
@@ -65,7 +65,7 @@ describe('Test 272 REMOVE columns', function () {
 		alasql('INSERT INTO one VALUES (1,"One",10),(2,"Two",20),(3,"Three",30)');
 		var res = alasql('SELECT RECORDSET * REMOVE COLUMN b FROM one');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'c']);
+		assert.deepStrictEqual(colres, ['a', 'c']);
 		done();
 	});
 });

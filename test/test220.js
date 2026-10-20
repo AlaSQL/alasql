@@ -21,7 +21,7 @@ describe('Test 220 WITH clause', function () {
 			]
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10},
 			{a: 1, b: 20},
 			{a: 2, b: 10},

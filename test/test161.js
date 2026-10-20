@@ -19,7 +19,7 @@ if (false) {
 				"select country, population from xlsx('test161.xlsx',{sheet:'Sheet1',range:'A1:D5',headers:true}) where city like 'M%'",
 				[],
 				function (res) {
-					assert.deepEqual(res, [
+					assert.deepStrictEqual(res, [
 						{country: 'USA', population: 12000000},
 						{country: 'Spain', population: 2500000},
 					]);

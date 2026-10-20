@@ -20,7 +20,7 @@ describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
 		const res = alasql(
 			'SELECT EXISTS(SELECT a FROM one WHERE 0) AS main_exists, * FROM (SELECT EXISTS(SELECT a FROM one) AS sub_exists, a FROM one)'
 		);
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{main_exists: false, a: 1, sub_exists: true},
 				{main_exists: false, a: 2, sub_exists: true},
@@ -39,7 +39,7 @@ describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
 			SET @existsGreaterThan10 = (SELECT EXISTS(SELECT a FROM one WHERE a > 10));
 			SELECT @existsLessThan3, @existsGreaterThan10;`
 		);
-		assert.deepEqual([{'@existsLessThan3': true, '@existsGreaterThan10': false}], res[2]);
+		assert.deepStrictEqual([{'@existsLessThan3': true, '@existsGreaterThan10': false}], res[2]);
 		done();
 	});
 });

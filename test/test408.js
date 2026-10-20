@@ -20,34 +20,30 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 	});
 
 	it('2. DATEDIFF()', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     CREATE TABLE Duration (
       startDate datetime
       ,endDate datetime
     );
     INSERT INTO Duration(startDate,endDate)
       VALUES('2007-05-06 12:10:09','2007-05-07 12:10:09');
-  */
-		});
+  `);
 		var res = alasql(
 			'SELECT DATEDIFF(day,startDate,endDate) AS Duration \
       FROM Duration'
 		);
-		assert.deepEqual(res, [{Duration: 1}]);
+		assert.deepStrictEqual(res, [{Duration: 1}]);
 
 		done();
 	});
 
 	it('3. DATEDIFF()', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       DECLARE @startdate datetime = '2007-05-05 12:10:09.3312722';
       DECLARE @enddate datetime = '2007-05-04 12:10:09.3312722';
-    */
-		});
+    `);
 		var res = alasql('VALUE OF SELECT DATEDIFF(day, @startdate, @enddate)');
-		assert.deepEqual(res, -1);
+		assert.deepStrictEqual(res, -1);
 
 		done();
 	});
@@ -131,7 +127,7 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			['millisecond', jsDateAdd('millisecond', 1, baseDate).toISOString()],
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 
 		done();
 	});
@@ -214,7 +210,7 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			['millisecond', jsDateAdd('millisecond', 1, baseDate).toISOString()],
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 
 		done();
 	});
@@ -224,7 +220,7 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 		var res2 = alasql("= DATE_ADD('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
 		assert(res1.getDate() == 9);
 		assert(res2.getDate() == 17);
-		//    assert.deepEqual(res,[ { Duration: 1 } ]);
+		//    assert.deepStrictEqual(res,[ { Duration: 1 } ]);
 		done();
 	});
 

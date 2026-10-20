@@ -26,75 +26,67 @@ describe('Test 383 - MySQL compatibility issue #452', function () {
 	});
 
 	it('2. Create table issue', function (done) {
-		alasql(function () {
-			/*
-    CREATE TABLE `org1` (
-      `id` CHAR(36) NOT NULL,
-      `name` VARCHAR(100) NOT NULL,
-      `createUser` VARCHAR(100),
-      `updateUser` VARCHAR(100),
-      `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      `lastUpdateTime` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
-      `deleteId` CHAR(36) NOT NULL DEFAULT "",
-      PRIMARY KEY (`id`)
+		alasql(`
+    CREATE TABLE \`org1\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      \`createTime\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      \`lastUpdateTime\` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+      \`deleteId\` CHAR(36) NOT NULL DEFAULT "",
+      PRIMARY KEY (\`id\`)
      );
 
-    */
-		});
+    `);
 
 		done();
 	});
 
 	it('3. UNIQUE KEY issue', function (done) {
-		alasql(function () {
-			/*
-    CREATE TABLE `org2` (
-      `id` CHAR(36) NOT NULL,
-      `name` VARCHAR(100) NOT NULL,
-      `createUser` VARCHAR(100),
-      `updateUser` VARCHAR(100),
-      `deleteId` CHAR(36) NOT NULL DEFAULT "",
-      PRIMARY KEY (`id`),
-      UNIQUE KEY `org_u1` (`name`, `deleteId`)
+		alasql(`
+    CREATE TABLE \`org2\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      \`deleteId\` CHAR(36) NOT NULL DEFAULT "",
+      PRIMARY KEY (\`id\`),
+      UNIQUE KEY \`org_u1\` (\`name\`, \`deleteId\`)
      ) ;
-    */
-		});
+    `);
 
 		done();
 	});
 
 	it('4. COLLATE issue', function (done) {
-		alasql(function () {
-			/*
-    CREATE TABLE `org3` (
-      `id` CHAR(36) NOT NULL,
-      `name` VARCHAR(100) NOT NULL,
-      `createUser` VARCHAR(100),
-      `updateUser` VARCHAR(100),
-      PRIMARY KEY (`id`)
+		alasql(`
+    CREATE TABLE \`org3\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      PRIMARY KEY (\`id\`)
      )  CHARSET=utf8 COLLATE=utf8_bin;
-    */
-		});
+    `);
 
 		done();
 	});
 
 	it('5. All issues', function (done) {
-		alasql(function () {
-			/*
-    CREATE TABLE `org4` (
-      `id` CHAR(36) NOT NULL,
-      `name` VARCHAR(100) NOT NULL,
-      `createUser` VARCHAR(100),
-      `updateUser` VARCHAR(100),
-      `createTime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      `lastUpdateTime` TIMESTAMP NOT NULL DEFAULT 0 ON UPDATE CURRENT_TIMESTAMP,
-      `deleteId` CHAR(36) NOT NULL DEFAULT "",
-      PRIMARY KEY (`id`),
-      UNIQUE KEY `org_u1` (`name`, `deleteId`)
+		alasql(`
+    CREATE TABLE \`org4\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      \`createTime\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      \`lastUpdateTime\` TIMESTAMP NOT NULL DEFAULT 0 ON UPDATE CURRENT_TIMESTAMP,
+      \`deleteId\` CHAR(36) NOT NULL DEFAULT "",
+      PRIMARY KEY (\`id\`),
+      UNIQUE KEY \`org_u1\` (\`name\`, \`deleteId\`)
      )  CHARSET=utf8 COLLATE=utf8_bin;
-    */
-		});
+    `);
 
 		done();
 	});

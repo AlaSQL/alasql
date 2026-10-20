@@ -78,7 +78,7 @@ if (typeof exports == 'object') {
 				[data]
 			);
 
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{
 					a: 1,
 					'MYMEDIAN(b)': 2,

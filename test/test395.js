@@ -17,9 +17,9 @@ describe('Test 395 SQLLOGICTEST SELECT 1', function () {
 
 	it('2. Test inline', function (done) {
 		var res = alasql('COLUMN OF SELECT 1 FROM @[1,2,3] WHERE 1 IN (SELECT 1)');
-		assert.deepEqual(res, [1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1]);
 		var res = alasql('COLUMN OF SELECT 1 FROM @[] WHERE 1 IN (SELECT 1)');
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 		done();
 	});
 
@@ -27,20 +27,20 @@ describe('Test 395 SQLLOGICTEST SELECT 1', function () {
 		alasql('CREATE TABLE t1 (a INT)');
 		alasql('INSERT INTO t1 VALUES (1),(2),(3)');
 		var res = alasql('COLUMN OF SELECT 1 FROM t1 WHERE 1 IN (SELECT 1)');
-		assert.deepEqual(res, [1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1]);
 		done();
 	});
 
 	it('4. Test like in command-line', function (done) {
 		alasql.promise('COLUMN OF SELECT 1 FROM @[1,2] WHERE 1 IN (SELECT 1)').then(function (res) {
-			assert.deepEqual(res, [1, 1]);
+			assert.deepStrictEqual(res, [1, 1]);
 			done();
 		});
 	});
 
 	it('5. More tests', function (done) {
 		var res = alasql('COLUMN OF SELECT 1 FROM t1 WHERE 1 IN (SELECT 1,2)');
-		assert.deepEqual(res, [1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1]);
 		done();
 	});
 

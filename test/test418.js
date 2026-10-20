@@ -43,12 +43,10 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = baseUrl + '/test/test411.xlsx';
 
 		it('Load http', function (done) {
-			this.timeout(10000);
 			testRequest(4, 'http://' + url, 'true', done);
 		});
 
 		it('Load https', function (done) {
-			this.timeout(10000);
 			testRequest(4, 'https://' + url, 'true', done);
 		});
 	});
@@ -57,12 +55,10 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = baseUrl + '/test/test168.xls';
 
 		it('Load http', function (done) {
-			this.timeout(10000);
 			testRequest(5, 'http://' + url, 'true', done);
 		});
 
 		it('Load https', function (done) {
-			this.timeout(10000);
 			testRequest(5, 'https://' + url, 'true', done);
 		});
 	});
@@ -71,12 +67,10 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = baseUrl + '/test/test157.json';
 
 		it('Load http', function (done) {
-			this.timeout(2000);
 			testRequest(3, 'http://' + url, 'false', done);
 		});
 
 		it('Load https', function (done) {
-			this.timeout(10000);
 			testRequest(3, 'https://' + url, 'false', done);
 		});
 	});
@@ -85,12 +79,10 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = baseUrl + '/test/test157.tab';
 
 		it('Load http', function (done) {
-			this.timeout(10000);
 			testRequest(5, 'http://' + url, 'false', done);
 		});
 
 		it('Load https', function (done) {
-			this.timeout(10000);
 			testRequest(5, 'https://' + url, 'false', done);
 		});
 	});
@@ -99,12 +91,10 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = baseUrl + '/test/test157.txt';
 
 		it('Load http', function (done) {
-			this.timeout(10000);
 			testRequest(8, 'http://' + url, 'false', done);
 		});
 
 		it('Load https', function (done) {
-			this.timeout(10000);
 			testRequest(8, 'https://' + url, 'false', done);
 		});
 	});
@@ -113,12 +103,10 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = baseUrl + '/test/test157a.csv';
 
 		it('Load http', function (done) {
-			this.timeout(10000);
 			testRequest(5, 'http://' + url, 'false', done);
 		});
 
 		it('Load https', function (done) {
-			this.timeout(10000);
 			testRequest(5, 'https://' + url, 'false', done);
 		});
 	});

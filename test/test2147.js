@@ -30,7 +30,7 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 			{id: 3, maxDate: new Date('2025-03-01T01:00:00.000Z'), cnt: 1},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 
@@ -46,7 +46,7 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 			{id: 3, minDate: new Date('2025-03-01T01:00:00.000Z'), cnt: 1},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 
@@ -75,7 +75,7 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 			},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 
@@ -89,7 +89,7 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 			{id: 3, dateCount: 1},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 
@@ -103,7 +103,7 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 			{id: 3, sumTimestamps: undefined},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 
@@ -117,7 +117,7 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 			{id: 3, avgTimestamp: undefined},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 });

@@ -83,7 +83,7 @@ describe('Test 385 - Nested Search (issue #495)', function () {
 			'2',
 		]);
 
-		assert.deepEqual(data1, data2);
+		assert.deepStrictEqual(data1, data2);
 		done();
 	});
 

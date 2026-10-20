@@ -19,7 +19,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 
 	it('1. Simple non-recursive CTE should work', function () {
 		var res = alasql('WITH cnt AS (SELECT 1 AS x) SELECT x FROM cnt');
-		assert.deepEqual(res, [{x: 1}]);
+		assert.deepStrictEqual(res, [{x: 1}]);
 	});
 
 	it('2. Recursive CTE with UNION ALL - count from 1 to 5', function () {
@@ -31,7 +31,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 			)
 			SELECT x FROM cnt
 		`);
-		assert.deepEqual(res, [{x: 1}, {x: 2}, {x: 3}, {x: 4}, {x: 5}]);
+		assert.deepStrictEqual(res, [{x: 1}, {x: 2}, {x: 3}, {x: 4}, {x: 5}]);
 	});
 
 	it('3. Recursive CTE with column names - count from 1 to 5', function () {
@@ -43,7 +43,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 			)
 			SELECT x FROM cnt
 		`);
-		assert.deepEqual(res, [{x: 1}, {x: 2}, {x: 3}, {x: 4}, {x: 5}]);
+		assert.deepStrictEqual(res, [{x: 1}, {x: 2}, {x: 3}, {x: 4}, {x: 5}]);
 	});
 
 	it('4. Recursive CTE with multiple columns', function () {
@@ -55,7 +55,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 			)
 			SELECT a, b FROM seq
 		`);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 1},
 			{a: 2, b: 2},
 			{a: 3, b: 4},
@@ -96,7 +96,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 			SELECT id, name, level FROM emp_tree ORDER BY level, id
 		`);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'CEO', level: 0},
 			{id: 2, name: 'VP Sales', level: 1},
 			{id: 3, name: 'VP Engineering', level: 1},
@@ -119,7 +119,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 			)
 			SELECT n FROM counter
 		`);
-		assert.deepEqual(res, [{n: 10}, {n: 11}, {n: 12}, {n: 13}]);
+		assert.deepStrictEqual(res, [{n: 10}, {n: 11}, {n: 12}, {n: 13}]);
 	});
 
 	it('7. ALASQL_DETAILS modifier returns data and columns', function () {
@@ -136,7 +136,7 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 		assert.ok(result.data, 'Result should have data property');
 		assert.ok(result.columns, 'Result should have columns property');
 		assert.equal(result.length, 2, 'Result should have length property');
-		assert.deepEqual(result.data, [
+		assert.deepStrictEqual(result.data, [
 			{id: 1, name: 'a'},
 			{id: 2, name: 'b'},
 		]);

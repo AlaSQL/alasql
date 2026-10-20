@@ -10,31 +10,28 @@ if (typeof exports === 'object') {
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
 describe('Test 334 WITH CTE', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test334;USE test334');
 
 		done();
 	});
 
-	it.skip('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+	it('2. Create table', function (done) {
+		var res = alasql(`
       CREATE TABLE grocery (name STRING, price MONEY, quantity INT);
-      INSERT INTO test VALUES ("Apples",10,10),("Melons",15,20),("Cucumbers",40,50);
-    */
-		});
-		assert.deepEqual(res, [1, 1]);
+      INSERT INTO grocery VALUES ("Apples",10,10),("Melons",15,20),("Cucumbers",40,50);
+    `);
+		assert.deepStrictEqual(res, [1, 3]);
 		done();
 	});
 
-	it.skip('3. WITH SELECT', function (done) {
-		var res = alasql(function () {
-			/*
+	it('3. WITH SELECT', function (done) {
+		var res = alasql(`
 
  With Totals as
  (
     select  *,
-            price * quantity as [Total price],
+            price * quantity as [Total price]
     from    grocery
  )
  select  *
@@ -47,10 +44,8 @@ describe('Test 334 WITH CTE', function () {
  from
    Totals
 
-    */
-		});
-		console.log(res);
-		assert.deepEqual(res, [
+    `);
+		assert.deepStrictEqual(res, [
 			{tax: '0%', name: 'Apples', price: 10, quantity: 10, 'Total price': 100},
 			{tax: '3%', name: 'Melons', price: 15, quantity: 20, 'Total price': 300},
 			{
@@ -65,7 +60,7 @@ describe('Test 334 WITH CTE', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test334');
 		done();
 	});

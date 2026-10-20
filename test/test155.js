@@ -21,7 +21,7 @@ if (typeof exports != 'object') {
 				function (res) {
 					//				console.trace();
 					//			console.log(res);
-					assert.deepEqual(res, [1, 1, 1, 1, 1, 2, [{a: 1}, {a: 2}]]);
+					assert.deepStrictEqual(res, [1, 1, 1, 1, 1, 2, [{a: 1}, {a: 2}]]);
 					done();
 				}
 			);

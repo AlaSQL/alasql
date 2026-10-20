@@ -27,7 +27,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 	it('2. OVERWRITE JOINSTAR with qualified names', () => {
 		alasql.options.joinstar = 'overwrite';
 		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
-		assert.deepEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
+		assert.deepStrictEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
 	});
 
 	it('3. JSON JOINSTAR with qualified names', () => {
@@ -35,7 +35,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
 		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
 		// Expected: nested objects by table name
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
 			{one: {a: 1}, two: {a: 20}},
 			{one: {a: 2}, two: {a: 10}},
@@ -48,7 +48,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
 		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
 		// Expected: columns prefixed with table names
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one_a: 1, two_a: 10},
 			{one_a: 1, two_a: 20},
 			{one_a: 2, two_a: 10},
@@ -62,7 +62,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql.databases['test' + testId].dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one, two');
 		// Expected: nested objects by table name (should work)
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
 			{one: {a: 1}, two: {a: 20}},
 			{one: {a: 2}, two: {a: 10}},
@@ -76,7 +76,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql.databases['test' + testId].dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one, two');
 		// Expected: columns prefixed with table names (should work)
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one_a: 1, two_a: 10},
 			{one_a: 1, two_a: 20},
 			{one_a: 2, two_a: 10},

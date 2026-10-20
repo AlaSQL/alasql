@@ -16,12 +16,12 @@ describe('Test 305 CREATE GRAPH', function () {
 			'CREATE GRAPH Andrey #Andrey:Person, Olga "Olga Ivanova",\
      John, Andrey >> Olga, Olga >> John'
 		);
-		assert.deepEqual(res, ['Andrey', 'Olga', 'John', 0, 1]);
+		assert.deepStrictEqual(res, ['Andrey', 'Olga', 'John', 0, 1]);
 		done();
 	});
 	it('3. CREATE GRAPH', function (done) {
 		var res = alasql('CREATE GRAPH Peter:Person {age:63}');
-		assert.deepEqual(res, ['Peter']);
+		assert.deepStrictEqual(res, ['Peter']);
 		done();
 	});
 	it('4. CREATE GRAPH', function (done) {
@@ -29,69 +29,69 @@ describe('Test 305 CREATE GRAPH', function () {
 			'CREATE GRAPH Serge {age:44}, Helen {age:25}, \
       Serge > loves {how:"to much"} > Helen'
 		);
-		assert.deepEqual(res, ['Serge', 'Helen', 2]);
+		assert.deepStrictEqual(res, ['Serge', 'Helen', 2]);
 		done();
 	});
 	it('5. Search over graph', function (done) {
 		var res = alasql('SEARCH FROM #Peter');
-		assert.deepEqual(res.age, 63);
+		assert.deepStrictEqual(res.age, 63);
 		done();
 	});
 	it('6. Search over graph', function (done) {
 		var res = alasql('SEARCH FROM #Peter');
-		assert.deepEqual(res.age, 63);
+		assert.deepStrictEqual(res.age, 63);
 		done();
 	});
 	it('7. Search over graph', function (done) {
 		var res = alasql('SEARCH / #Peter age');
-		assert.deepEqual(res, [63]);
+		assert.deepStrictEqual(res, [63]);
 		done();
 	});
 	it('8. Search over graph', function (done) {
 		var res = alasql('SEARCH / :Person age');
-		assert.deepEqual(res, [63]);
+		assert.deepStrictEqual(res, [63]);
 		done();
 	});
 	it('9a. Search over graph with >>', function (done) {
 		var res = alasql('SEARCH / #Andrey >> name');
-		assert.deepEqual(res, ['Olga Ivanova']);
+		assert.deepStrictEqual(res, ['Olga Ivanova']);
 		done();
 	});
 
 	it('9b. Search over graph with <<', function (done) {
 		var res = alasql('SEARCH / #Olga << name');
-		assert.deepEqual(res, ['Andrey']);
+		assert.deepStrictEqual(res, ['Andrey']);
 		done();
 	});
 
 	it('10. CREATE GRAPH', function (done) {
 		var res = alasql('SEARCH / #Andrey >> >> name');
-		assert.deepEqual(res, ['John']);
+		assert.deepStrictEqual(res, ['John']);
 		done();
 	});
 	it('11. CREATE GRAPH', function (done) {
 		var res = alasql('SEARCH / #Andrey (>>)+ name');
-		assert.deepEqual(res, ['Olga Ivanova', 'John']);
+		assert.deepStrictEqual(res, ['Olga Ivanova', 'John']);
 		done();
 	});
 	it('12. CREATE GRAPH', function (done) {
 		var res = alasql('SEARCH / #Andrey (>>)* name');
-		assert.deepEqual(res, ['Andrey', 'Olga Ivanova', 'John']);
+		assert.deepStrictEqual(res, ['Andrey', 'Olga Ivanova', 'John']);
 		done();
 	});
 	it('13. CREATE GRAPH', function (done) {
 		var res = alasql('SEARCH / :Person age');
-		assert.deepEqual(res, [63]);
+		assert.deepStrictEqual(res, [63]);
 		done();
 	});
 	it('14. CREATE GRAPH', function (done) {
 		var res = alasql('SEARCH / age');
-		assert.deepEqual(res, [63, 44, 25]);
+		assert.deepStrictEqual(res, [63, 44, 25]);
 		done();
 	});
 	it('15. CREATE GRAPH', function (done) {
 		var res = alasql('SEARCH / AS @p1 >"loves"> @p1 name');
-		assert.deepEqual(res, ['Serge']);
+		assert.deepStrictEqual(res, ['Serge']);
 		done();
 	});
 

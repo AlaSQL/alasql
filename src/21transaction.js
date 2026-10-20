@@ -25,7 +25,7 @@ class Transaction {
 	/** Commit transaction */
 	commit() {
 		this.committed = true;
-		alasql.databases[this.databaseid].dbversion = Date.now();
+		alasql.databases[this.databaseid].dbversion++;
 		delete this.bank;
 	}
 

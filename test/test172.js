@@ -17,7 +17,7 @@ describe('Test 172 - XLSX to array', function () {
 			[],
 			function (res) {
 				//			console.log(res);
-				assert.deepEqual(res, ['Kyoto', 'Mexico', 'Minsk', 'Moscow', 'Tokyo']);
+				assert.deepStrictEqual(res, ['Kyoto', 'Mexico', 'Minsk', 'Moscow', 'Tokyo']);
 				done();
 			}
 		);

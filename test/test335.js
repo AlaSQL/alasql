@@ -10,25 +10,23 @@ if (typeof exports === 'object') {
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
 describe('Test 335 WITH RECURSIVE CTE', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test335;USE test335');
 
 		done();
 	});
 
-	it.skip('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+	it('2. Create table', function (done) {
+		var res = alasql(`
       -- Create an Employee table.
       CREATE TABLE dbo.MyEmployees
       (
-      EmployeeID smallint NOT NULL,
+      EmployeeID smallint NOT NULL PRIMARY KEY,
       FirstName nvarchar(30)  NOT NULL,
       LastName  nvarchar(40) NOT NULL,
       Title nvarchar(50) NOT NULL,
       DeptID smallint NOT NULL,
-      ManagerID int NULL,
-       CONSTRAINT PK_EmployeeID PRIMARY KEY CLUSTERED (EmployeeID ASC) 
+      ManagerID
       );
       -- Populate the table with values.
       INSERT INTO dbo.MyEmployees VALUES 
@@ -41,23 +39,21 @@ describe('Test 335 WITH RECURSIVE CTE', function () {
       ,(286, N'Lynn', N'Tsoflias', N'Sales Representative',3,285)
       ,(16,  N'David',N'Bradley', N'Marketing Manager', 4, 273)
       ,(23,  N'Mary', N'Gibson', N'Marketing Specialist', 4, 16);
-    */
-		});
-		assert.deepEqual(res, [1, 1]);
+    `);
+		assert.deepStrictEqual(res, [1, 9]);
 		done();
 	});
 
-	it.skip('3. WITH SELECT', function (done) {
-		var res = alasql(function () {
-			/*
+	it('3. WITH SELECT', function (done) {
+		var res = alasql(`
 
-WITH DirectReports(ManagerID, EmployeeID, Title, EmployeeLevel) AS 
+WITH RECURSIVE DirectReports(ManagerID, EmployeeID, Title, EmployeeLevel) AS 
 (
     SELECT ManagerID, EmployeeID, Title, 0 AS EmployeeLevel
     FROM dbo.MyEmployees 
     WHERE ManagerID IS NULL
     UNION ALL
-    SELECT e.ManagerID, e.EmployeeID, e.Title, EmployeeLevel + 1
+    SELECT e.ManagerID, e.EmployeeID, e.Title, d.EmployeeLevel + 1
     FROM dbo.MyEmployees AS e
         INNER JOIN DirectReports AS d
         ON e.ManagerID = d.EmployeeID 
@@ -66,15 +62,22 @@ SELECT ManagerID, EmployeeID, Title, EmployeeLevel
 FROM DirectReports
 ORDER BY ManagerID;
 
-    */
-		});
-		console.log(res);
-		assert.deepEqual(res, []);
+    `);
+		// Verify all 9 employees are in the result
+		assert.equal(res.length, 9);
+		// Verify CEO is at level 0
+		var ceo = res.find(r => r.EmployeeID === 1);
+		assert.equal(ceo.EmployeeLevel, 0);
+		assert.equal(ceo.ManagerID, undefined);
+		// Verify VPs report to CEO (level 1)
+		var vp = res.find(r => r.EmployeeID === 273);
+		assert.equal(vp.ManagerID, 1);
+		assert.equal(vp.EmployeeLevel, 1);
 
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test335');
 		done();
 	});

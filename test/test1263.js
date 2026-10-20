@@ -28,13 +28,13 @@ describe('Test 1263 - Nested SELECT', function () {
 		];
 
 		var res = alasql('SELECT * FROM ? T1 OUTER JOIN ? T2 ON T1.id = T2.id', [t1, t2]);
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 
 		var res = alasql('SELECT * FROM ? T1 OUTER JOIN (SELECT * FROM ?) T2 ON T1.id = T2.id', [
 			t1,
 			t2,
 		]);
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 });

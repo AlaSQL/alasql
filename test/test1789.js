@@ -28,7 +28,7 @@ describe('Test ' + test + ' - joins with subquery', function () {
 			[data1, data2]
 		);
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('Join with aggregate in subquery', function () {
@@ -55,6 +55,6 @@ describe('Test ' + test + ' - joins with subquery', function () {
 			[data, data]
 		);
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 });

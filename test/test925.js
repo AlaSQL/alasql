@@ -30,7 +30,7 @@ describe('Test 925 - UNIQUE JSON property', function () {
 		alasql('INSERT INTO BOM1 VALUES (@{test:2})');
 
 		var res = alasql('SELECT * FROM BOM1');
-		assert.deepEqual(res, [{name: {test: 1}}, {name: {test: 2}}]);
+		assert.deepStrictEqual(res, [{name: {test: 1}}, {name: {test: 2}}]);
 	});
 
 	it('B) UNIQUE with JSON property using . operator should work', () => {
@@ -48,7 +48,7 @@ describe('Test 925 - UNIQUE JSON property', function () {
 		alasql('INSERT INTO BOM2 VALUES (@{test:2})');
 
 		var res = alasql('SELECT * FROM BOM2');
-		assert.deepEqual(res, [{name: {test: 1}}, {name: {test: 2}}]);
+		assert.deepStrictEqual(res, [{name: {test: 1}}, {name: {test: 2}}]);
 	});
 
 	it('C) CREATE UNIQUE INDEX with JSON property should check uniqueness', () => {
@@ -67,7 +67,7 @@ describe('Test 925 - UNIQUE JSON property', function () {
 		alasql('INSERT INTO BOM3 VALUES (@{test:2})');
 
 		var res = alasql('SELECT * FROM BOM3');
-		assert.deepEqual(res, [{name: {test: 1}}, {name: {test: 2}}]);
+		assert.deepStrictEqual(res, [{name: {test: 1}}, {name: {test: 2}}]);
 	});
 
 	it('D) Regular (non-unique) index with JSON property allows duplicates', () => {
@@ -82,7 +82,7 @@ describe('Test 925 - UNIQUE JSON property', function () {
 
 		var res = alasql('SELECT * FROM BOM4');
 		assert.equal(res.length, 4, 'Should allow duplicate values in regular index');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: {test: 1}},
 			{name: {test: 1}},
 			{name: {test: 2}},
@@ -102,7 +102,7 @@ describe('Test 925 - UNIQUE JSON property', function () {
 
 		var res = alasql('SELECT * FROM BOM5 ORDER BY id');
 		assert.equal(res.length, 3);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, data: {amount: 100}},
 			{id: 2, data: {amount: 100}},
 			{id: 3, data: {amount: 200}},
@@ -163,7 +163,7 @@ describe('Test 925 - UNIQUE JSON property', function () {
 
 		var res = alasql('SELECT * FROM BOM7 ORDER BY id');
 		assert.equal(res.length, 3);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: {val: 'x'}},
 			{id: 2, name: {val: 'y'}},
 			{id: 3, name: {val: 'z'}},

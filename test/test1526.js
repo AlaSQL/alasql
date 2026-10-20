@@ -14,14 +14,8 @@ describe('Test 1645', function () {
 		}
 	});
 
-	it('Throws error when callback for user function error', done => {
-		try {
-			alasql('SELECT medain(8)');
-		} catch (e) {
-			done();
-		}
-
-		throw 'error';
+	it('Throws error when callback for user function error', () => {
+		expect(() => alasql('SELECT medain(8)')).toThrow();
 	});
 
 	it('Catches error when promise for user function error', done => {

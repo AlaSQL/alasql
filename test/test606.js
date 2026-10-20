@@ -88,6 +88,6 @@ describe('Test ' + test + ' - get autoval', function () {
 	        ) FROM ?',
 			[data]
 		);
-		assert.deepEqual(res, [{name: 'chosen-pod', namespace: 'namespace3'}]);
+		assert.deepStrictEqual(res, [{name: 'chosen-pod', namespace: 'namespace3'}]);
 	});
 });

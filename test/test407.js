@@ -18,8 +18,7 @@ describe('Test 407 - TWO JOINS', function () {
 	});
 
 	it('0.2. Create table', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE one (id NVARCHAR(3));
       CREATE TABLE two (id NVARCHAR(3));
       CREATE TABLE three (id NVARCHAR(3));
@@ -27,8 +26,7 @@ describe('Test 407 - TWO JOINS', function () {
       INSERT INTO one VALUES ('A'),('AB'),('AC'),('ABC');
       INSERT INTO two VALUES ('B'),('AB'),('BC'),('ABC');
       INSERT INTO three VALUES ('C'),('BC'),('AC'),('ABC');
-    */
-		});
+    `);
 		done();
 	});
 
@@ -36,7 +34,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [['ABC', 'ABC', 'ABC']]);
+		assert.deepStrictEqual(res, [['ABC', 'ABC', 'ABC']]);
 		done();
 	});
 
@@ -44,7 +42,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['AB', 'AB', undefined],
 			['ABC', 'ABC', 'ABC'],
 		]);
@@ -55,7 +53,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[undefined, undefined, 'C'],
 			[undefined, undefined, 'BC'],
 			[undefined, undefined, 'AC'],
@@ -68,7 +66,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['AB', 'AB', undefined],
 			['ABC', 'ABC', 'ABC'][(undefined, undefined, 'C')],
 			[undefined, undefined, 'BC'],
@@ -81,7 +79,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [['ABC', 'ABC', 'ABC']]);
+		assert.deepStrictEqual(res, [['ABC', 'ABC', 'ABC']]);
 		done();
 	});
 
@@ -89,7 +87,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['A', undefined, undefined],
 			['AB', 'AB', undefined],
 			['AC', undefined, undefined],
@@ -102,8 +100,8 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
 		);
-		console.log(res);
-		assert.deepEqual(res, [
+		// console.log(res);
+		assert.deepStrictEqual(res, [
 			[undefined, undefined, 'C'],
 			[undefined, undefined, 'BC'],
 			[undefined, undefined, 'AC'],
@@ -116,8 +114,8 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
 		);
-		console.log(res);
-		assert.deepEqual(res, [
+		// console.log(res);
+		assert.deepStrictEqual(res, [
 			['A', undefined, undefined],
 			['AB', 'AB', undefined],
 			['AC', undefined, undefined],
@@ -133,7 +131,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['ABC', 'ABC', 'ABC'],
 			[undefined, 'BC', 'BC'],
 		]);
@@ -144,7 +142,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['AB', 'AB', undefined],
 			['ABC', 'ABC', 'ABC'],
 			[undefined, 'B', undefined],
@@ -157,7 +155,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[undefined, undefined, 'C'],
 			[undefined, 'BC', 'BC'],
 			[undefined, undefined, 'AC'],
@@ -170,8 +168,8 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
 		);
-		console.log(res);
-		assert.deepEqual(res, [
+		// console.log(res);
+		assert.deepStrictEqual(res, [
 			[undefined, 'B', undefined],
 			['AB', 'AB', undefined],
 			[undefined, 'BC', 'BC'],
@@ -186,7 +184,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['ABC', 'ABC', 'ABC'],
 			[undefined, 'BC', 'BC'],
 		]);
@@ -197,7 +195,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['A', undefined, undefined],
 			['AB', 'AB', undefined],
 			['AC', undefined, undefined],
@@ -212,7 +210,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[undefined, undefined, 'C'],
 			[undefined, 'BC', 'BC'],
 			[undefined, undefined, 'AC'],
@@ -225,7 +223,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['A', undefined, undefined],
 			['AB', 'AB', undefined],
 			['AC', undefined, undefined],

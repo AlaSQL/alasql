@@ -19,11 +19,11 @@ describe('Test 307 special selectors', function () {
 		var res = alasql('SEARCH / set(b=a*3) FROM ?', [data]);
 		// console.log(res);
 		// console.log(data);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 3},
 			{a: 2, b: 6},
 		]);
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{a: 1, b: 3},
 			{a: 2, b: 6},
 		]);
@@ -38,11 +38,11 @@ describe('Test 307 special selectors', function () {
 		var res = alasql('SEARCH / clonedeep() set(b=a*3) FROM ?', [data]);
 		// console.log(res);
 		// console.log(data);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 3},
 			{a: 2, b: 6},
 		]);
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
 		]);
@@ -54,8 +54,8 @@ describe('Test 307 special selectors', function () {
 	//   var res = alasql('SEARCH / ok(a=1)  FROM ?',[data]);
 	//   console.log(res);
 	//   console.log(data);
-	//   // assert.deepEqual(res,[ { a: 1, b: 3 }, { a: 2, b: 6 } ]);
-	//   // assert.deepEqual(data,[ { a: 1, b: 10 }, { a: 2, b: 20 } ]);
+	//   // assert.deepStrictEqual(res,[ { a: 1, b: 3 }, { a: 2, b: 6 } ]);
+	//   // assert.deepStrictEqual(data,[ { a: 1, b: 10 }, { a: 2, b: 20 } ]);
 	//   done();
 	// });
 

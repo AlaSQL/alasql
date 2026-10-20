@@ -25,7 +25,7 @@ describe('Test 421 Test for JOINSTAR', function () {
 	it('2. OVERWRITE JOINSTAR', () => {
 		alasql.options.joinstar = 'overwrite';
 		var res = alasql('SELECT * FROM one,two');
-		assert.deepEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
+		assert.deepStrictEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
 	});
 
 	it('3. JSON JOINSTAR', () => {
@@ -33,7 +33,7 @@ describe('Test 421 Test for JOINSTAR', function () {
 		alasql.databases.test421.dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one,two');
 		//console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
 			{one: {a: 1}, two: {a: 20}},
 			{one: {a: 2}, two: {a: 10}},
@@ -46,7 +46,7 @@ describe('Test 421 Test for JOINSTAR', function () {
 		alasql.databases.test421.dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one,two');
 		//console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one_a: 1, two_a: 10},
 			{one_a: 1, two_a: 20},
 			{one_a: 2, two_a: 10},
@@ -59,7 +59,7 @@ describe('Test 421 Test for JOINSTAR', function () {
 		alasql.databases.test421.dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
 		//console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
 			{one: {a: 1}, two: {a: 20}},
 			{one: {a: 2}, two: {a: 10}},
@@ -72,7 +72,7 @@ describe('Test 421 Test for JOINSTAR', function () {
 		alasql.databases.test421.dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
 		//console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{one_a: 1, two_a: 10},
 			{one_a: 1, two_a: 20},
 			{one_a: 2, two_a: 10},

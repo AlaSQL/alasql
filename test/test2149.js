@@ -6,7 +6,6 @@ if (typeof exports === 'object') {
 }
 
 describe('Test CLI - Command Line Interface)', function () {
-	console.log(__dirname);
 	const cliPath = path.join(__dirname, '..', 'bin', 'alasql-cli.js');
 	const testSqlFile = path.join(__dirname, 'temp-test.sql');
 	const testWithTxtFile = path.join(__dirname, 'test2149-with-txt.sql');
@@ -68,7 +67,7 @@ describe('Test CLI - Command Line Interface)', function () {
 		const result = execSync(
 			`echo "hello" | node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()"`
 		).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					Success: true,
@@ -80,7 +79,7 @@ describe('Test CLI - Command Line Interface)', function () {
 
 	it('9. Should handle piped input data without txt() function - backward compatibility', function () {
 		const result = execSync(`echo "SELECT 1 as Success" | node "${cliPath}"`).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					Success: 1,
@@ -94,7 +93,7 @@ describe('Test CLI - Command Line Interface)', function () {
 		const result = execSync(
 			`node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`
 		).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					Success: true,
@@ -108,7 +107,7 @@ describe('Test CLI - Command Line Interface)', function () {
 		const result = execSync(
 			`echo "hello world" | node "${cliPath}" -f "${testWithTxtFile}"`
 		).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					Success: true,
@@ -120,7 +119,7 @@ describe('Test CLI - Command Line Interface)', function () {
 
 	it('12. Should handle file without txt() function normally', function () {
 		const result = execSync(`node "${cliPath}" -f "${testWithoutTxtFile}"`).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					Success: 1,
@@ -134,7 +133,7 @@ describe('Test CLI - Command Line Interface)', function () {
 		const result = execSync(
 			`echo "this should be ignored" | node "${cliPath}" -f "${testWithoutTxtFile}"`
 		).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					Success: 1,
@@ -148,7 +147,7 @@ describe('Test CLI - Command Line Interface)', function () {
 		const result = execSync(
 			`echo -e "line1\nline2\nline3" | node "${cliPath}" "SELECT COUNT(*) as LineCount FROM txt()"`
 		).toString();
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{
 					LineCount: 3,

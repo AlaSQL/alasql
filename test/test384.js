@@ -29,7 +29,7 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 		alasql('INSERT INTO tab4 SELECT * FROM tab3');
 
 		var res = alasql('SELECT * FROM tab3');
-		assert.deepEqual(res, [[3]]);
+		assert.deepStrictEqual(res, [[3]]);
 
 		done();
 	});
@@ -37,17 +37,15 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 	if (false) {
 		it('2. Create table issue - one statement', function (done) {
 			alasql.options.modifier = 'MATRIX';
-			alasql(function () {
-				/*
+			alasql(`
       CREATE TABLE tab0 (pk INTEGER NOT NULL);
       CREATE TABLE tab1 (pk INTEGER NOT NULL);
       INSERT INTO tab0 VALUES(3);
       INSERT INTO tab1 SELECT * FROM tab0;
-    */
-			});
+    `);
 
 			var res = alasql('SELECT * FROM tab3');
-			assert.deepEqual(res, [[3]]);
+			assert.deepStrictEqual(res, [[3]]);
 
 			done();
 		});

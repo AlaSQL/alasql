@@ -18,7 +18,7 @@ describe('Test 379', function () {
 		alasql('DROP TABLE ls379.one');
 		alasql('CREATE TABLE IF NOT EXISTS ls379.one (a int, b string)');
 		var res = alasql('SELECT 1 FROM ls379.one');
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 		done();
 	});
 });

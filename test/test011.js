@@ -21,12 +21,12 @@ describe('Test 11', function () {
 		alasql.exec('UPDATE test SET b = 6 WHERE b = ?', [5]);
 
 		var res = alasql.exec('SELECT * FROM test WHERE b > 5');
-		assert.deepEqual([{a: 5, b: 6}], res);
+		assert.deepStrictEqual([{a: 5, b: 6}], res);
 
 		alasql.exec('DELETE FROM test WHERE a > :val', {val: 1});
 
 		var res = alasql.exec('SELECT * FROM test');
-		assert.deepEqual([{a: 1, b: 1}], res);
+		assert.deepStrictEqual([{a: 1, b: 1}], res);
 
 		done();
 	});

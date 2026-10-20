@@ -17,7 +17,7 @@ describe('Test 277 NVARCHAR(precision) - issue #150', function () {
 			'INSERT INTO one VALUES (1,"One","one",1.1), (2,"Two","two",1.2), (3,"Three","three",1.3)'
 		);
 		var res = alasql('SELECT RECORDSET * FROM one');
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res.columns,
 
 			[

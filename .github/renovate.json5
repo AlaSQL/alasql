@@ -1,18 +1,15 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "packageRules": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["config:recommended"],
+  packageRules: [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    }
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      automerge: true,
+    },
   ],
-  "automerge": true,
-  "automergeStrategy": "squash",
-  "dependencyDashboard": true, 
-  "schedule": ["every weekend"],
-  "ignorePaths": ["modules/**"]
-
+  automerge: true,
+  automergeStrategy: "squash",
+  dependencyDashboard: true,
+  schedule: ["every weekend"],
+  ignorePaths: ["modules/**"],
 }

@@ -13,25 +13,25 @@ describe('Test 349 VALUE OF', function () {
 
 	it('2. VALUE OF', function (done) {
 		var res = alasql('VALUE OF SELECT SUM(a*b) FROM @[{a:1,b:10},{a:2,b:20}]');
-		assert.deepEqual(res, 50);
+		assert.deepStrictEqual(res, 50);
 		done();
 	});
 
 	it('3. ROW OF', function (done) {
 		var res = alasql('ROW OF SELECT a,b FROM @[{a:1,b:10},{a:2,b:20}]');
-		assert.deepEqual(res, [1, 10]);
+		assert.deepStrictEqual(res, [1, 10]);
 		done();
 	});
 
 	it('4. COLUMN OF', function (done) {
 		var res = alasql('COLUMN OF SELECT a,b FROM @[{a:1,b:10},{a:2,b:20}]');
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
 	it('5. MATRIX OF', function (done) {
 		var res = alasql('MATRIX OF SELECT a,b FROM @[{a:1,b:10},{a:2,b:20}]');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[1, 10],
 			[2, 20],
 		]);
@@ -40,7 +40,7 @@ describe('Test 349 VALUE OF', function () {
 
 	it('6. RECORDSET OF', function (done) {
 		var res = alasql('RECORDSET OF SELECT a,b FROM @[{a:1,b:10},{a:2,b:20}]');
-		assert.deepEqual(res.data, [
+		assert.deepStrictEqual(res.data, [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
 		]);

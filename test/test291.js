@@ -10,7 +10,7 @@ describe('Test 291 - Promises:', function () {
 		alasql
 			.promise('SELECT VALUE 1')
 			.then(function (res) {
-				assert.deepEqual(res, 1);
+				assert.deepStrictEqual(res, 1);
 				done();
 			})
 			.catch(function (err) {
@@ -19,12 +19,10 @@ describe('Test 291 - Promises:', function () {
 	});
 
 	it('.promise all', function (done) {
-		this.timeout(2000); // dont get why this is timing out...
-
 		alasql
 			.promise(['SELECT VALUE 1'])
 			.then(function (res) {
-				assert.deepEqual(res, [1]);
+				assert.deepStrictEqual(res, [1]);
 				done();
 			})
 			.catch(function (err) {
@@ -34,8 +32,6 @@ describe('Test 291 - Promises:', function () {
 	});
 
 	it('.promise .catch exception', function (done) {
-		this.timeout(2000); // dont get why this is timing out...
-
 		alasql.promise('SELECT * FROM tableThatDoesNotExists').catch(function (err) {
 			assert(err instanceof Error);
 			done();
@@ -43,8 +39,6 @@ describe('Test 291 - Promises:', function () {
 	});
 
 	it('.promise all .catch exception', function (done) {
-		this.timeout(5000); // dont get why this is timing out...
-
 		alasql.promise(['SELECT * FROM tableThatDoesNotExists']).catch(function (err) {
 			assert(err instanceof Error);
 			done();
@@ -55,7 +49,7 @@ describe('Test 291 - Promises:', function () {
 		alasql
 			.promise(['value of SELECT 1', ['value of select ?', 2]])
 			.then(function (res) {
-				assert.deepEqual(res, [1, 2]);
+				assert.deepStrictEqual(res, [1, 2]);
 				done();
 			})
 			.catch(function (reason) {
@@ -66,7 +60,7 @@ describe('Test 291 - Promises:', function () {
 	it('.promise all, lazy notation', function (done) {
 		alasql(['value of SELECT 1 --so lazy', ['value of select ?', 2]])
 			.then(function (res) {
-				assert.deepEqual(res, [1, 2]);
+				assert.deepStrictEqual(res, [1, 2]);
 				done();
 			})
 			.catch(function (reason) {

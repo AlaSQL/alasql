@@ -16,7 +16,7 @@ describe('Test 735: BETWEEN in CASE statement', function () {
 			[cities]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{City: 'Moscow', isBetween1and100: 'no'},
 			{City: 'London', isBetween1and100: 'yes'},
 			{City: 'Paris', isBetween1and100: 'no'},
@@ -36,7 +36,7 @@ describe('Test 735: BETWEEN in CASE statement', function () {
 			[cities]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{City: 'Moscow', isBetween1and100: 'yes'},
 			{City: 'London', isBetween1and100: 'yes'},
 			{City: 'Paris', isBetween1and100: 'yes'},
@@ -56,7 +56,7 @@ describe('Test 735: BETWEEN in CASE statement', function () {
 			[cities]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{City: 'Moscow', isBetween2and99: 'no'},
 			{City: 'London', isBetween2and99: 'yes'},
 			{City: 'Paris', isBetween2and99: 'no'},

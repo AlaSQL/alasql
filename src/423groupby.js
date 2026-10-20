@@ -7,6 +7,24 @@
 */
 
 /**
+ * Helper to get GROUP_CONCAT parameters for compilation
+ * @param {Object} col - Column with aggregatorid and funcid
+ * @returns {string} - Comma-separated parameter string for aggregator call
+ */
+function getGroupConcatParams(col) {
+	if (!col.funcid || col.funcid.toUpperCase() !== 'GROUP_CONCAT') {
+		return '';
+	}
+	const separator = col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
+	// Extract direction from order expressions (MySQL GROUP_CONCAT orders by the value itself)
+	const orderDir =
+		col.order && col.order.length > 0 && col.order[0].direction
+			? JSON.stringify(col.order[0].direction)
+			: 'undefined';
+	return `,${separator},${orderDir}`;
+}
+
+/**
  Compile group of statements
  */
 yy.Select.prototype.compileGroup = function (query) {
@@ -18,6 +36,7 @@ yy.Select.prototype.compileGroup = function (query) {
 		var tableid = '';
 	}
 	var defcols = query.defcols;
+	query.groupSources = new WeakMap();
 	var allgroup = [[]];
 	if (this.group) {
 		allgroup = decartes(this.group, query);
@@ -32,7 +51,7 @@ yy.Select.prototype.compileGroup = function (query) {
 
 	query.ingroup = [];
 	var s = '';
-	allgroup.forEach(function (agroup) {
+	allgroup.forEach(function (agroup, setIdx) {
 		// Start of group function
 		s += 'var g=this.xgroups[';
 
@@ -52,9 +71,16 @@ yy.Select.prototype.compileGroup = function (query) {
 			rg = ["''"];
 		}
 
-		s += rg.join('+"`"+');
+		// With several grouping sets (CUBE, ROLLUP, GROUPING SETS) the same values can
+		// appear in different sets, e.g. (a=2) and (b=2), so the key must include the set
+		var groupKey = rg.join('+"`"+');
+		if (allgroup.length > 1) {
+			groupKey = `'${setIdx}\`'+` + groupKey;
+		}
+
+		s += groupKey;
 		s += '];if(!g) {this.groups.push((g=this.xgroups[';
-		s += rg.join('+"`"+');
+		s += groupKey;
 		s += '] = {';
 		s += agroup
 			.map(function (col2) {
@@ -117,15 +143,15 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+						return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}' : (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
+						return `'${colas}' : (${colexp} !== null && (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint') ? ${colexp} : ${colexp} !== null && typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : undefined : undefined),`;
 					} else if (col.aggregatorid === 'ARRAY') {
 						return `'${colas}':[${colexp}],`;
@@ -145,7 +171,16 @@ yy.Select.prototype.compileGroup = function (query) {
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
 						query.aggrKeys.push(col);
-						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
+						const extraParams = getGroupConcatParams(col);
+						// Support multiple arguments for user-defined aggregates
+						if (col.args && col.args.length > 1) {
+							// Multiple arguments - pass all of them
+							let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
+							return `'${colas}':alasql.aggr['${col.funcid}'](${argExpressions},undefined,1${extraParams}),`;
+						} else {
+							// Single argument - backward compatibility
+							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
+						}
 					}
 					return '';
 				}
@@ -154,7 +189,7 @@ yy.Select.prototype.compileGroup = function (query) {
 			})
 			.join('');
 
-		s += '}' + aft + ',g));' + aft2 + '} else {';
+		s += '}' + aft + ',g));this.groupSources.set(g,Object.assign({},p));' + aft2 + '} else {';
 		s += query.selectGroup
 			.map(function (col) {
 				var colas = col.nick;
@@ -415,11 +450,21 @@ yy.Select.prototype.compileGroup = function (query) {
 							g['${colas}']=${col.expression.toJS('g', -1)};
 							${post}`;
 					} else if (col.aggregatorid === 'REDUCE') {
-						return `${pre}
-							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2);
-							${post}`;
+						const extraParams = getGroupConcatParams(col);
+						// Support multiple arguments for user-defined aggregates
+						if (col.args && col.args.length > 1) {
+							// Multiple arguments - pass all of them
+							let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
+							return `${pre}
+								g['${colas}'] = alasql.aggr.${col.funcid}(${argExpressions},g['${colas}'],2${extraParams});
+								${post}`;
+						} else {
+							// Single argument - backward compatibility
+							return `${pre}
+								g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2${extraParams});
+								${post}`;
+						}
 					}
-
 					return '';
 				}
 

@@ -41,7 +41,7 @@ alasql.from.HTML = function (selector, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 
 	var sel = document.querySelector(selector);
-	if (!sel && sel.tagName !== 'TABLE') {
+	if (!sel || sel.tagName !== 'TABLE') {
 		throw new Error('Selected HTML element is not a TABLE');
 	}
 
@@ -91,6 +91,35 @@ alasql.from.RANGE = function (start, finish, cb, idx, query) {
 		res.push(i);
 	}
 	//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
+	if (cb) {
+		res = cb(res, idx, query);
+	}
+	return res;
+};
+
+/**
+ * UNNEST function - converts an array into a table for use in FROM clauses
+ *
+ * This function enables flattening of nested arrays when used with CROSS APPLY or OUTER APPLY.
+ *
+ * @param {Array} arr - The array to unnest
+ * @param {Object} opts - Options (reserved for future use)
+ * @param {Function} cb - Callback function
+ * @param {number} idx - Index
+ * @param {Object} query - Query object
+ * @returns {Array} The input array, or empty array if input is not an array
+ *
+ * @example
+ * // Flatten nested arrays
+ * SELECT b.name, e.id, e.value
+ * FROM data AS b
+ * CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e
+ */
+alasql.from.UNNEST = function (arr, opts, cb, idx, query) {
+	var res = arr;
+	if (!Array.isArray(res)) {
+		res = [];
+	}
 	if (cb) {
 		res = cb(res, idx, query);
 	}
@@ -227,6 +256,16 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
+	// Determine once whether to auto-convert: not raw mode, not SELECT INTO, and csvStringToNumber option is set
+	const shouldAutoConvert = !opt.raw && !query?.intofns && alasql.options.csvStringToNumber;
+
+	function potentialAutoConvert(val) {
+		if (shouldAutoConvert && val !== undefined && val.length !== 0 && val == +val) {
+			return +val;
+		}
+		return val;
+	}
+
 	function parseText(text) {
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
@@ -303,51 +342,22 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 						hs = opt.headers;
 						var r = {};
 						hs.forEach(function (h, idx) {
-							r[h] = a[idx];
-							// Please avoid === here
-							if (
-								!opt.raw &&
-								typeof r[h] !== 'undefined' &&
-								r[h].length !== 0 &&
-								r[h].trim() == +r[h]
-							) {
-								// jshint ignore:line
-								r[h] = +r[h];
-							}
+							r[h] = potentialAutoConvert(a[idx]);
 						});
 						rows.push(r);
 					}
 				} else {
 					var r = {};
 					hs.forEach(function (h, idx) {
-						r[h] = a[idx];
-						if (
-							!opt.raw &&
-							typeof r[h] !== 'undefined' &&
-							r[h].length !== 0 &&
-							r[h].trim() == +r[h]
-						) {
-							// jshint ignore:line
-							r[h] = +r[h];
-						}
+						r[h] = potentialAutoConvert(a[idx]);
 					});
 					rows.push(r);
 				}
 				n++;
 			} else {
 				var r = {};
-				// different bug here, if headers are not defined, the numerical values will not be parsed
 				a.forEach(function (v, idx) {
-					r[idx] = a[idx];
-					if (
-						!opt.raw &&
-						typeof r[idx] !== 'undefined' &&
-						r[idx].length !== 0 &&
-						r[idx].trim() == +r[idx]
-					) {
-						// jshint ignore:line
-						r[idx] = +r[idx];
-					}
+					r[idx] = potentialAutoConvert(a[idx]);
 				});
 				rows.push(r);
 			}

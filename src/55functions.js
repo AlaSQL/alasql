@@ -192,7 +192,11 @@ stdlib.SUBSTRING =
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
-	return (a || '').search(RegExp(b, c)) > -1;
+	// Convert MySQL word boundaries to JavaScript word boundaries
+	// [[:<:]] -> \b (start of word)
+	// [[:>:]] -> \b (end of word)
+	var pattern = b.replace(/\[\[:<:\]\]/g, '\\b').replace(/\[\[:>:\]\]/g, '\\b');
+	return (a || '').search(RegExp(pattern, c)) > -1;
 };
 
 // Here we uses undefined instead of null
@@ -277,14 +281,76 @@ stdfn.CONCAT_WS = function () {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
-	if (stage === 1) {
-		return '' + v;
-	} else if (stage === 2) {
-		s += ',' + v;
-		return s;
+// Can be called with options: alasql.aggr.GROUP_CONCAT(v, s, stage, separator, orderDirection)
+alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
+	v,
+	s,
+	stage,
+	separator,
+	orderDirection
+) {
+	// Default separator is comma
+	if (separator === undefined) {
+		separator = ',';
 	}
-	return s;
+
+	if (stage === 1) {
+		// Initialize: create array to collect values
+		// Store as object with values array and metadata
+		if (v === null || v === undefined) {
+			return {values: [], separator: separator, orderDirection: orderDirection};
+		}
+		return {values: [v], separator: separator, orderDirection: orderDirection};
+	} else if (stage === 2) {
+		// Accumulate: add to values array, skip null values
+		if (v === null || v === undefined) {
+			return s;
+		}
+		// If accumulator is null/undefined, initialize it
+		if (s === null || s === undefined) {
+			return {values: [v], separator: separator, orderDirection: orderDirection};
+		}
+		// Handle both old string format (for backwards compatibility) and new object format
+		if (typeof s === 'string') {
+			// Old format - convert to new format
+			s = {values: s.split(','), separator: ',', orderDirection: undefined};
+		}
+		s.values.push(v);
+		return s;
+	} else {
+		// Stage 3 (or final): sort if needed and join
+		if (s === null || s === undefined) {
+			return undefined;
+		}
+		// Handle both old string format and new object format
+		if (typeof s === 'string') {
+			return s; // Already formatted
+		}
+
+		let values = s.values;
+
+		// If no values were collected (all nulls), return undefined
+		if (values.length === 0) {
+			return undefined;
+		}
+
+		// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
+		if (s.orderDirection && s.orderDirection !== undefined) {
+			let ascending = s.orderDirection === 'ASC';
+			values = values.slice().sort((a, b) => {
+				if (a === b) return 0;
+				if (a === null || a === undefined) return 1;
+				if (b === null || b === undefined) return -1;
+				if (typeof a === 'string' && typeof b === 'string') {
+					return ascending ? a.localeCompare(b) : b.localeCompare(a);
+				}
+				// For numbers and other types - add parentheses for clarity
+				return ascending ? (a < b ? -1 : 1) : b < a ? -1 : 1;
+			});
+		}
+
+		return values.join(s.separator);
+	}
 };
 
 alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
@@ -303,7 +369,7 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	}
 
 	if (!s.length) {
-		return null;
+		return undefined;
 	}
 
 	let r = s.sort((a, b) => {
@@ -321,6 +387,53 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	} else {
 		return (el + r[middleFloor]) / 2;
 	}
+};
+
+alasql.aggr.mode = alasql.aggr.MODE = function (v, s, stage) {
+	if (stage === 1) {
+		if (v == null) {
+			return {counts: new Map(), maxCount: 0};
+		}
+		return {counts: new Map([[v, 1]]), maxCount: 1};
+	}
+
+	if (stage === 2) {
+		if (!s || !s.counts) {
+			s = {counts: new Map(), maxCount: 0};
+		}
+		if (v == null) {
+			return s;
+		}
+		const count = (s.counts.get(v) || 0) + 1;
+		s.counts.set(v, count);
+		if (count > s.maxCount) {
+			s.maxCount = count;
+		}
+		return s;
+	}
+
+	if (stage === 3) {
+		if (!s || s.maxCount === 0) {
+			return undefined;
+		}
+
+		let result;
+		let hasResult = false;
+
+		for (const [value, count] of s.counts) {
+			if (count !== s.maxCount) {
+				continue;
+			}
+			if (!hasResult || value < result) {
+				result = value;
+				hasResult = true;
+			}
+		}
+
+		return result;
+	}
+
+	return undefined;
 };
 
 alasql.aggr.QUART = function (v, s, stage, nth) {

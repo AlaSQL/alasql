@@ -187,8 +187,10 @@
 		}
 	}
 
-	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^']);
+	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^', '<<', '>>', '&', '|']);
 	const toTypeStringOps = new Set(['||']);
+	// Regex to detect identifiers that need bracket wrapping (spaces, dots, hyphens, square brackets)
+	const re_needsBrackets = /[\s.\-\[\]]/;
 	const toTypeBoolOps = new Set([
 		'AND',
 		'OR',
@@ -292,6 +294,7 @@
 			var s;
 			let refs = [];
 			let op = this.op;
+			let skipNullCheck = false; // Flag to skip null checking for deterministic empty set operations
 			let _this = this;
 			let ref = function (expr) {
 				if (expr.toJS) {
@@ -365,9 +368,25 @@
 				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
+					// Check if this is a correlated subquery (references outer tables)
+					// If correlated, we cannot cache the results as they depend on the current row
+					const cacheKey = `in${this.queriesidx}`;
+					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
+					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
+					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
-					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					// Empty array: nothing is IN an empty set, always false
+					if (this.right.length === 0) {
+						// Must call leftJS() to populate the refs array for the declareRefs statement,
+						// even though the result is not used in the final expression
+						leftJS();
+						s = 'false';
+						skipNullCheck = true; // Result is deterministic even with null operands
+					} else if (
+						!alasql.options.cache ||
+						this.right.some(value => value instanceof yy.ParamValue)
+					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
@@ -383,9 +402,25 @@
 				}
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
+					// Check if this is a correlated subquery (references outer tables)
+					// If correlated, we cannot cache the results as they depend on the current row
+					const cacheKey = `notIn${this.queriesidx}`;
+					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
+					const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
+					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
-					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					// Empty array: everything is NOT IN an empty set, always true
+					if (this.right.length === 0) {
+						// Must call leftJS() to populate the refs array for the declareRefs statement,
+						// even though the result is not used in the final expression
+						leftJS();
+						s = 'true';
+						skipNullCheck = true; // Result is deterministic even with null operands
+					} else if (
+						!alasql.options.cache ||
+						this.right.some(value => value instanceof yy.ParamValue)
+					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
@@ -461,11 +496,18 @@
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-			if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
+			if (
+				skipNullCheck ||
+				op === '&&' ||
+				op === '||' ||
+				op === 'IS' ||
+				op === 'IS NULL' ||
+				op === 'IS NOT NULL'
+			) {
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
-			return `(${declareRefs}, y.some(e => e == null) ? void 0 : ${expr})`;
+			return `(${declareRefs}, y.some(e => e == null || (typeof e === 'number' && isNaN(e))) ? void 0 : ${expr})`;
 		}
 	}
 
@@ -688,18 +730,41 @@
 			assign(this, params);
 		}
 
-		toString() {
-			let s = this.columnid;
+		// Check if identifier needs to be wrapped in brackets
+		// (numeric values, or contains spaces, dots, or other special characters)
+		static needsBrackets(id) {
+			if (id == null) return false;
+			// Numeric indices need brackets
+			if (id == +id) return true;
+			// Check for special characters that require brackets
+			return re_needsBrackets.test(id);
+		}
 
-			if (this.columnid == +this.columnid) {
-				s = '[' + this.columnid + ']';
+		static wrapId(id) {
+			if (Column.needsBrackets(id)) {
+				return '[' + id + ']';
 			}
+			return id;
+		}
+
+		// Value of an unqualified column from the first source where it is not null
+		static fromAnySource(context, aliases, columnid) {
+			return (
+				'(' + aliases.map(alias => `${context}['${alias}']?.['${columnid}']`).join(' ?? ') + ')'
+			);
+		}
+
+		toString() {
+			const colNeedsBrackets = Column.needsBrackets(this.columnid);
+			let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
 
 			if (this.tableid) {
-				s = this.tableid + (this.columnid === +this.columnid ? '' : '.') + s;
+				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1])
+				const separator = colNeedsBrackets ? '' : '.';
+				s = Column.wrapId(this.tableid) + separator + s;
 
 				if (this.databaseid) {
-					s = this.databaseid + '.' + s;
+					s = Column.wrapId(this.databaseid) + '.' + s;
 				}
 			}
 
@@ -716,7 +781,11 @@
 			}
 
 			if (context === 'g') {
-				return `g['${this.nick}']`;
+				// When accessing grouped columns, use columnid (without table prefix) if nick is not set
+				// This handles cases like: SELECT a.id + 1 FROM ... GROUP BY a.id
+				// where the column in the expression doesn't have nick set, but the group stores it by columnid
+				const nickToUse = this.nick || this.columnid;
+				return `g['${nickToUse}']`;
 			}
 
 			if (this.tableid) {
@@ -737,6 +806,10 @@
 					return this.columnid !== '_'
 						? `${context}['${tbid}']['${this.columnid}']`
 						: `${context}['${tbid}']`;
+				} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
+					// Not a column of any table here, so it comes from a subquery, parameter
+					// or table without column definitions (#832)
+					return Column.fromAnySource(context, Object.keys(defcols['.']), this.columnid);
 				} else {
 					return this.columnid !== '_'
 						? `${context}['${this.tableid || tableid}']['${this.columnid}']`
@@ -772,17 +845,29 @@
 		}
 
 		findAggregator(query) {
-			const colas = escapeq(this.toString()) + ':' + query.selectGroup.length;
-
-			if (!this.nick) {
-				this.nick = colas;
-
-				if (!query.removeKeys.includes(colas)) {
-					query.removeKeys.push(colas);
-				}
+			// Skip adding window aggregates (aggregates with OVER clause) to selectGroup
+			// They will be handled separately as window functions
+			if (this.over) {
+				return;
 			}
 
-			query.selectGroup.push(this);
+			// Check if an identical aggregate already exists in selectGroup
+			let existingAggr = query.selectGroup.find(agg => agg.toString() === this.toString());
+
+			if (existingAggr) {
+				// Reuse the existing aggregate's nick to share the same accumulator
+				this.aggrNick = existingAggr.nick;
+			} else {
+				// New aggregate - assign nick and add to selectGroup
+				if (!this.nick) {
+					this.nick = escapeq(this.toString()) + ':' + query.selectGroup.length;
+					if (!query.removeKeys.includes(this.nick)) {
+						query.removeKeys.push(this.nick);
+					}
+				}
+				this.aggrNick = this.nick;
+				query.selectGroup.push(this);
+			}
 		}
 
 		toType() {
@@ -802,7 +887,8 @@
 		}
 
 		toJS() {
-			var colas = this.nick;
+			// Use aggrNick for duplicate aggregates to share the same accumulator, otherwise use the unique nick
+			var colas = this.aggrNick || this.nick;
 			if (colas === undefined) {
 				colas = escapeq(this.toString());
 			}

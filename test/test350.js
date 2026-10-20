@@ -13,19 +13,19 @@ describe('Test 350 SERIAL data type', function () {
 
 	it('2. CREATE TABLE', function (done) {
 		var res = alasql('CREATE TABLE one (id SERIAL, name STRING)');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		done();
 	});
 
 	it('3. INSERT', function (done) {
 		var res = alasql('INSERT INTO one (name) VALUES ("One"), ("Two"), ("Three")');
-		assert.deepEqual(res, 3);
+		assert.deepStrictEqual(res, 3);
 		done();
 	});
 
 	it('4. SELECT', function (done) {
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'One'},
 			{id: 2, name: 'Two'},
 			{id: 3, name: 'Three'},

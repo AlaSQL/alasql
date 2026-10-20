@@ -12,7 +12,9 @@ permissions:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'blacksmith-4vcpu-ubuntu-2204' }}
+    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'blacksmith-4vcpu-ubuntu-2204' }}
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
     permissions:
       actions: read
@@ -26,22 +28,22 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d
         with:
           egress-policy: audit
 
       - name: Checkout repository
-        uses: actions/checkout@71cf2267d89c5cb81562390fa70a37fa40b1305e
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@ce729e4d353d580e6cacd6a8cf2921b72e5e310a
+        uses: github/codeql-action/init@c618c9bddbf8ce520050acf14e9bb6c220e22931
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@ce729e4d353d580e6cacd6a8cf2921b72e5e310a
+        uses: github/codeql-action/autobuild@c618c9bddbf8ce520050acf14e9bb6c220e22931
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@ce729e4d353d580e6cacd6a8cf2921b72e5e310a
+        uses: github/codeql-action/analyze@c618c9bddbf8ce520050acf14e9bb6c220e22931
         with:
           category: '/language:${{ matrix.language }}'

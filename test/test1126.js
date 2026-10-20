@@ -25,7 +25,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 			'SELECT category, amount, ROW_NUMBER() OVER (PARTITION BY category) AS rn FROM ? ORDER BY category, amount',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{category: 'A', amount: 10, rn: 1},
 			{category: 'A', amount: 20, rn: 2},
 			{category: 'A', amount: 30, rn: 3},
@@ -43,7 +43,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 		var res = alasql(
 			'SELECT * FROM (SELECT category, amount, ROW_NUMBER() OVER (PARTITION BY category) AS rn FROM test_data ORDER BY category, amount) WHERE rn <= 2'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{category: 'X', amount: 1, rn: 1},
 			{category: 'X', amount: 2, rn: 2},
 			{category: 'Y', amount: 10, rn: 1},
@@ -61,7 +61,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 			{category: 'B', amount: 30},
 		];
 		var res = alasql('SELECT category, amount, ROW_NUMBER() AS rn FROM ?', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{category: 'A', amount: 10, rn: 1},
 			{category: 'A', amount: 20, rn: 2},
 			{category: 'B', amount: 30, rn: 3},
@@ -81,7 +81,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 			'SELECT dept, team, name, ROW_NUMBER() OVER (PARTITION BY dept, team) AS rn FROM ? ORDER BY dept, team, name',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', team: 'A', name: 'Alice', rn: 1},
 			{dept: 'IT', team: 'A', name: 'Charlie', rn: 2},
 			{dept: 'IT', team: 'B', name: 'Dave', rn: 1},
@@ -104,7 +104,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 			'SELECT * FROM (SELECT dept, score, ROW_NUMBER() OVER (PARTITION BY dept) AS rn FROM ? ORDER BY dept, score DESC) WHERE rn <= 2',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', score: 98, rn: 1},
 			{dept: 'IT', score: 92, rn: 2},
 			{dept: 'Sales', score: 100, rn: 1},

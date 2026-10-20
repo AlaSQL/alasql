@@ -23,7 +23,7 @@ describe('Test 401 NOT INDEXED', function () {
 
 	it('3. Insert', function (done) {
 		var res = alasql('COLUMN OF SELECT * FROM one NOT INDEXED');
-		assert.deepEqual(res, [100, 200, 300]);
+		assert.deepStrictEqual(res, [100, 200, 300]);
 		done();
 	});
 

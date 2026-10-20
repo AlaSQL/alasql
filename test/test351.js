@@ -14,11 +14,11 @@ describe('Test 351 CALL PROCEDURE', function () {
 	it('2. CREATE TABLE', function (done) {
 		alasql.fn.myfn = function (a, b) {
 			//      console.log(a,b);
-			assert.deepEqual([a, b], [1, 2]);
+			assert.deepStrictEqual([a, b], [1, 2]);
 			done();
 		};
 		var res = alasql('CALL myfn(1,2)');
-		//    assert.deepEqual(res,1);
+		//    assert.deepStrictEqual(res,1);
 	});
 
 	it('99. DROP DATABASE', function (done) {

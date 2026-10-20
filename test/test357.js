@@ -13,8 +13,7 @@ describe('Test 357 Test', function () {
 
 	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
 	it.skip('2. Prepare Data', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
 
       CREATE TABLE users( id int, name char(16) ) ; 
       INSERT INTO users VALUES (1,'John'),(2,'Lewis'),(3,'Muhammad'); 
@@ -26,21 +25,18 @@ describe('Test 357 Test', function () {
       VALUES (1,2),(1,3),(1,6),(2,1),(2,5),(2,6),(3,2),(3,5),(3,6),(1,2),(1,3),(1,6),(2,1), 
       (2,5),(2,6),(3,2),(3,5),(3,6),(1,2),(1,3),(1,6),(2,1),(2,5),(2,6),(3,2),(3,5),(3,6); 
 
-  */
-		});
+  `);
 
 		done();
 	});
 
 	it.skip('3. Select Query', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     SELECT a.user_id, b.user_id, GROUP_CONCAT(a.hobby_id) AS 'Pairwise shared hobbies' 
     FROM users_hobbies a 
     JOIN users_hobbies b ON a.user_id<b.user_id AND a.hobby_id=b.hobby_id 
     GROUP BY a.user_id,b.user_id;
-*/
-		});
+`);
 
 		done();
 	});

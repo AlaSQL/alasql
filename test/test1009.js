@@ -29,7 +29,6 @@ describe('Test 1009 - Foreign key error message with table name', function () {
 			alasql('INSERT INTO tableB VALUES (2, 20)');
 			assert.fail('Should have thrown an error for foreign key violation');
 		} catch (err) {
-			console.log('Error message:', err.message);
 			// The error message should include information about what key and table failed
 			assert(err.message.includes('Foreign key'), 'Error should mention foreign key');
 			assert(err.message.includes('20'), 'Error should include the key value');
@@ -55,7 +54,6 @@ describe('Test 1009 - Foreign key error message with table name', function () {
 			alasql('INSERT INTO tableD VALUES (2, 99)');
 			assert.fail('Should have thrown an error for foreign key violation');
 		} catch (err) {
-			console.log('Error message:', err.message);
 			assert(err.message.includes('Foreign key'), 'Error should mention foreign key');
 			assert(err.message.includes('99'), 'Error should include the key value');
 			assert(err.message.includes('tableC'), 'Error should include the table name');
@@ -79,7 +77,6 @@ describe('Test 1009 - Foreign key error message with table name', function () {
 			alasql('INSERT INTO tableF VALUES (2, 99, 99)');
 			assert.fail('Should have thrown an error for foreign key violation');
 		} catch (err) {
-			console.log('Error message:', err.message);
 			assert(err.message.includes('Foreign key'), 'Error should mention foreign key');
 			assert(err.message.includes('99'), 'Error should include the key value');
 			assert(err.message.includes('tableE'), 'Error should include the table name');

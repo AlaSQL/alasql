@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..'); // You might need to adjust the path depending on where you save the test file
 }
 
-describe.skip('Test 1119 - Trigger callback parameter', function () {
+describe('Test 1119 - Trigger callback parameter', function () {
 	const test = '1119'; // Test file number
 
 	before(function () {
@@ -149,7 +149,7 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 
 		// Verify that the data was NOT actually inserted because it was an INSTEAD OF trigger
 		const res = alasql('SELECT * FROM five');
-		assert.deepEqual(res, [], 'Data should not have been inserted with INSTEAD OF trigger');
+		assert.deepStrictEqual(res, [], 'Data should not have been inserted with INSTEAD OF trigger');
 
 		delete alasql.fn.onchangeInsteadInsert;
 	});

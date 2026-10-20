@@ -122,7 +122,7 @@ function doTests() {
 			'SELECT courses.courseid, COUNT(*) AS cnt ' +
 				' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid'
 		);
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{courseid: 1, cnt: 1},
 				{courseid: 2, cnt: 2},
@@ -150,7 +150,7 @@ function doTests() {
 		var res = alasql(
 			'SELECT COLUMN students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
 		);
-		assert.deepEqual([1, 1, 1, 2, 1], res);
+		assert.deepStrictEqual([1, 1, 1, 2, 1], res);
 		done();
 	});
 	it('Select 1.4: queryValue', function (done) {

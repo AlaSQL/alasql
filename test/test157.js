@@ -10,7 +10,7 @@ describe('Test 157 - json()', function () {
 	it('1. Load text data from file async', function (done) {
 		alasql('select * from json("' + __dirname + '/test157.json")', [], function (res) {
 			//			console.log(13,res);
-			assert.deepEqual(res, [{a: 1}, {a: 2}, {c: '😂'}]);
+			assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {c: '😂'}]);
 			done();
 		});
 	});
@@ -21,7 +21,7 @@ describe('Test 157 - json()', function () {
 			[],
 			function (res) {
 				//			console.log(res);
-				assert.deepEqual(res, ['Madrid', 'Milano', 'Minsk', 'Moscow']);
+				assert.deepStrictEqual(res, ['Madrid', 'Milano', 'Minsk', 'Moscow']);
 				done();
 			}
 		);
@@ -34,7 +34,7 @@ describe('Test 157 - json()', function () {
 				'/test157a.tab",{headers:false}) where [1] > 100 order by [0]',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
+				assert.deepStrictEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
 				done();
 			}
 		);
@@ -47,7 +47,7 @@ describe('Test 157 - json()', function () {
 				'/test157b.tab", {headers:true}) where population > 100 order by city',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
+				assert.deepStrictEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
 				done();
 			}
 		);
@@ -60,7 +60,7 @@ describe('Test 157 - json()', function () {
 				'/test157a.csv",{headers:false}) where [1] > 100 order by [0]',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
+				assert.deepStrictEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
 				done();
 			}
 		);
@@ -73,7 +73,7 @@ describe('Test 157 - json()', function () {
 				'/test157b.csv",{headers:true}) where population > 100 order by city',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
+				assert.deepStrictEqual(res, ['Astana', 'Tokyo', 'Vitebsk']);
 				done();
 			}
 		);

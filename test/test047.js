@@ -13,7 +13,7 @@ describe('Test 47', function () {
 			alasql('INSERT INTO one VALUES (1),(2),(3),(4),(5)');
 
 			var res = alasql('SELECT COLUMN * FROM (SELECT * FROM one WHERE a < 3)');
-			assert.deepEqual([1, 2], res);
+			assert.deepStrictEqual([1, 2], res);
 			done();
 		});
 

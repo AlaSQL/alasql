@@ -19,7 +19,7 @@ describe('Test from jsFiddle', function () {
 			{name: 'sara', sex: 'F', income: 100000},
 		];
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[{name: 'sara', sex: 'F', income: 100000}],
 			db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000")
 		);

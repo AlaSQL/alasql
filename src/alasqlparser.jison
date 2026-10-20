@@ -26,7 +26,7 @@
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
-(["](\\.|[^"]|\\\")*?["])+              return 'STRING'
+(["](\\.|[^"]|\\\")*?["])+              return 'DQSTRING'
 
 
 "--"(.*?)($|\r\n|\r|\n)							return /* its a COMMENT */
@@ -86,6 +86,7 @@ NOT\s+ILIKE										return 'NOT_LIKE'
 
 'CALL'											return 'CALL'
 'CASE'											return 'CASE'
+'CASCADE'										return 'CASCADE'
 'CAST'											return 'CAST'
 'CHECK'											return 'CHECK'
 'CLASS'											return 'CLASS'
@@ -143,11 +144,13 @@ DATABASE(S)?									return 'DATABASE'
 'GO'                                      		return 'GO'
 'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
+'GROUP_CONCAT'                                  return 'GROUP_CONCAT'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 /*'HELP'											return 'HELP'*/
 'IF'											return 'IF'
 'IDENTITY'										return 'IDENTITY'
+'IGNORE'										return 'IGNORE'
 'IS'											return 'IS'
 'IN'											return 'IN'
 'INDEX'											return 'INDEX'
@@ -194,6 +197,7 @@ DATABASE(S)?									return 'DATABASE'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
+'OUTPUT'										return 'OUTPUT'
 'OVER'											return 'OVER'
 'PATH'                                        	return 'PATH'
 'PARTITION'										return 'PARTITION'
@@ -216,6 +220,7 @@ DATABASE(S)?									return 'DATABASE'
 'RENAME'                                        return 'RENAME'
 'REPEAT'										return 'REPEAT'
 'REPLACE'										return 'REPLACE'
+'RESTRICT'										return 'RESTRICT'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
 'RETURN'                                       	return 'RETURN'
@@ -229,6 +234,7 @@ SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 
 'SEMI'                                        	return 'SEMI'
+'SEPARATOR'                                     return 'SEPARATOR'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
@@ -270,10 +276,9 @@ SETS                                        	return 'SET'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
-/* Issue #1173: Reject invalid identifiers like 6minAvgOpac (number followed by letters without space) */
-/* This rule must precede NUMBER to catch invalid patterns before they're tokenized as NUMBER + LITERAL */
-\d+[a-zA-Z_][a-zA-Z_0-9]*						return 'INVALID'
-(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
+/* LITERAL must come before NUMBER to match identifiers like 50k, 100x as single tokens */
+[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
+(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?(?![a-zA-Z_0-9])				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
 '+'												return 'PLUS'
@@ -318,7 +323,6 @@ SETS                                        	return 'SET'
 
 '~'												return 'TILDA'
 
-[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
 '@'												return 'AT'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
@@ -356,7 +360,15 @@ Literal
 			else $$ = $1.toLowerCase();
 		}
 	| BRALITERAL
-		{ $$ = {val:doubleq($1.substr(1,$1.length-2)), wrap:$1.substr(0,1)}; }
+		{ $$ = doubleq($1.substr(1,$1.length-2)); }
+	| KEY
+		{ $$ = $1.toLowerCase(); }
+	| OPEN
+		{ $$ = $1.toLowerCase(); }
+	| CLOSE
+		{ $$ = $1.toLowerCase(); }
+	| SEPARATOR
+		{ $$ = $1.toLowerCase(); }
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
 	;
@@ -427,6 +439,7 @@ Statement
 	| Reindex
 	| RenameTable
 	| Select
+	| ParenthesizedSelect
 	| ShowCreateTable
 	| ShowColumns
 	| ShowDatabases
@@ -530,12 +543,32 @@ Select
 /*		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
+	| LPAR Select RPAR UnionClause OrderClause LimitClause
+		{
+			$$ = $2;
+			yy.extend($$,$4);
+			yy.extend($$,$5); yy.extend($$,$6);
+		    if(yy.exists) $$.exists = yy.exists.slice();
+/*		    if(yy.queries) $$.queries = yy.queries;
+			delete yy.queries;
+*/		}
+	| ParenthesizedSelect UnionClause OrderClause LimitClause
+		{
+			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
+		    $$ = $1;
+		    if(yy.exists) $$.exists = yy.exists.slice();
+		}
 	| SEARCH SearchSelector* IntoClause SearchFrom?
 	/* SearchLimit? SearchStrategy? SearchTimeout? */
 		{
 			$$ = new yy.Search({selectors:$2, from:$4});
 			yy.extend($$,$3);
 		}
+	;
+
+ParenthesizedSelect
+	: LPAR Select RPAR
+		{ $$ = $2; }
 	;
 
 SelectWithoutOrderOrLimit
@@ -546,6 +579,11 @@ SelectWithoutOrderOrLimit
 		    $$ = $1;
 		    if(yy.exists) $$.exists = yy.exists.slice();
 		}
+	;
+
+ParenthesizedSelect
+	: LPAR Select RPAR
+		{ $$ = $2; }
 	;
 
 PivotClause
@@ -642,7 +680,7 @@ SearchSelector
 		{ $$ = {srchid:"CLASS", args:[$3]}; }
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
-	| STRING
+	| AnyString
 		{ $$ = {srchid:"NAME", args: [$1.substr(1,$1.length-2)]}; }
 	| SLASH
 		{ $$ = {srchid:"CHILD"}; }
@@ -811,9 +849,9 @@ SelectModifier
 	;
 
 TopClause
-	: TOP NumValue PERCENT?
+	: TOP (NumValue|ParamValue) PERCENT?
 		{ $$ = {top: $2, percent:(typeof $3 != 'undefined'?true:undefined)}; }
-	| TOP LPAR NumValue RPAR
+	| TOP LPAR (NumValue|ParamValue) RPAR
 		{ $$ = {top: $3}; }
 	| { $$ = undefined; }
 	;
@@ -828,7 +866,7 @@ IntoClause
 		{$$ = {into: $2} }
 	| INTO VarValue
 		{$$ = {into: $2} }
-	| INTO STRING
+	| INTO AnyString
 		{
 			var s = $2;
 			s = s.substr(1,s.length-2);
@@ -851,6 +889,32 @@ FromClause
 		{ $$ = { from: [$2], joins: $3 }; }
 */	| FROM FromTablesList JoinTablesList
 		{ $$ = { from: $2, joins: $3 }; }
+	| FROM FromTablesList JoinTablesList COMMA FromTablesList
+		{ 
+			// Convert comma-separated tables after joins into CROSS JOINs
+			var joins = $3;
+			$5.forEach(t => {
+				var join = new yy.Join({joinmode:"CROSS"});
+				if(t.tableid) {
+					join.table = new yy.Table({databaseid:t.databaseid, tableid:t.tableid});
+				} else if(t instanceof yy.Select) {
+					join.select = t;
+				} else if(t instanceof yy.Search) {
+					join.search = t;
+				} else if(t instanceof yy.ParamValue) {
+					join.param = t;
+				} else if(t instanceof yy.VarValue) {
+					join.variable = t.variable;
+				} else if(t instanceof yy.FuncValue) {
+					join.func = t;
+				} else if(t instanceof yy.Json) {
+					join.json = t;
+				}
+				if(t.as) join.as = t.as;
+				joins.push(join);
+			});
+			$$ = { from: $2, joins: joins }; 
+		}
 /*	| FROM LPAR FromTable JoinTablesList RPAR
 		{ $$ = { from: [$3], joins: $4 }; }
 */	| FROM LPAR FromTablesList JoinTablesList RPAR
@@ -884,58 +948,35 @@ FromTablesList
 	;
 
 FromTable
-	: LPAR Select RPAR Literal
-		{ $$ = $2; $$.as = $4 }
-	| LPAR Select RPAR AS Literal
-		{ $$ = $2; $$.as = $5 }
-	| LPAR Select RPAR /* default alias */
-		{ $$ = $2; $$.as = 'default' }
-
+	: LPAR Select RPAR FromTableAlias?
+		{ $$ = $2; $$.as = $4 || 'default'; }
 	| Json AS? Literal?
 		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
-
-	| Table Literal
-		{ $$ = $1; $1.as = $2 }
-	| Table AS Literal
-		{ $$ = $1; $1.as = $3 }
-	| Table
-		{ $$ = $1; }
+	| Table FromTableAlias?
+		{ $$ = $1; if($2) $1.as = $2; }
 	| Table NOT INDEXED
 		{ $$ = $1; }
-	| ParamValue Literal
-		{ $$ = $1; $1.as = $2; }
-	| ParamValue AS Literal
-		{ $$ = $1; $1.as = $3; }
-	| ParamValue
-		{ $$ = $1; $1.as = 'default'; }
-
-	| FuncValue
-		{ $$ = $1; $1.as = 'default'; }
-	| FuncValue Literal
-		{ $$ = $1; $1.as = $2; }
-	| FuncValue AS Literal
-		{ $$ = $1; $1.as = $3; }
-
+	| ParamValue FromTableAlias?
+		{ $$ = $1; $1.as = $2 || 'default'; }
+	| FuncValue FromTableAlias?
+		{ $$ = $1; $1.as = $2 || 'default'; }
+	| VarValue FromTableAlias?
+		{ $$ = $1; $1.as = $2 || 'default'; }
+	| FromString FromTableAlias?
+		{ $$ = $1; $1.as = $2 || 'default'; }
 	| INSERTED
 		{ $$ = {inserted:true}; }
+	;
 
-	| VarValue
-		{ $$ = $1; $1.as = 'default'; }
-	| VarValue Literal
-		{ $$ = $1; $1.as = $2; }
-	| VarValue AS Literal
-		{ $$ = $1; $1.as = $3; }
-
-	| FromString
-		{ $$ = $1; $1.as = 'default'; }
-	| FromString Literal
-		{ $$ = $1; $1.as = $2; }
-	| FromString AS Literal
-		{ $$ = $1; $1.as = $3; }
+FromTableAlias
+	: Literal
+		{ $$ = $1; }
+	| AS Literal
+		{ $$ = $2; }
 	;
 
 FromString
-	: STRING
+	: AnyString
 		{
 			var s = $1;
 			s = s.substr(1,s.length-2);
@@ -968,6 +1009,13 @@ Table
 		{ $$ = new yy.Table({tableid: $1});}
 	;
 
+TargetTable
+	: TableName
+		{ $$ = $1; }
+	| ParamValue
+		{ $$ = $1; }
+	;
+
 JoinTablesList
 	: JoinTablesList JoinTable
 		{ $$ = $1; $1.push($2); }
@@ -985,35 +1033,18 @@ JoinTable
 	;
 
 JoinTableAs
-	: Table
-		{ $$ = {table: $1}; }
-	| Table Literal
-		{ $$ = {table: $1, as: $2 } ; }
-	| Table AS Literal
-		{ $$ = {table: $1, as: $3 } ; }
+	: Table FromTableAlias?
+		{ $$ = {table: $1}; if($2) $$.as = $2; }
 	| Json AS? Literal?
 		{ $$ = {json:new yy.Json({value:$1,as:$3})}; }
-	| ParamValue Literal
-		{ $$ = {param: $1, as: $2 } ; }
-	| ParamValue AS Literal
-		{ $$ = {param: $1, as: $3 } ; }
-	| LPAR Select RPAR Literal
-		{ $$ = {select: $2, as: $4} ; }
-	| LPAR Select RPAR AS Literal
-		{ $$ = {select: $2, as: $5 } ; }
-	| FuncValue
-		{ $$ = {func:$1, as:'default'}; }
-	| FuncValue Literal
-		{ $$ = {func:$1, as: $2}; }
-	| FuncValue AS Literal
-		{ $$ = {func:$1, as: $3}; }
-
-	| VarValue
-		{ $$ = {variable:$1,as:'default'}; }
-	| VarValue Literal
-		{ $$ = {variable:$1,as:$2}; }
-	| VarValue AS Literal
-		{ $$ = {variable:$1,as:$3} }
+	| ParamValue FromTableAlias
+		{ $$ = {param: $1, as: $2}; }
+	| LPAR Select RPAR FromTableAlias
+		{ $$ = {select: $2, as: $4}; }
+	| FuncValue FromTableAlias?
+		{ $$ = {func:$1, as: $2 || 'default'}; }
+	| VarValue FromTableAlias?
+		{ $$ = {variable:$1, as: $2 || 'default'}; }
 	;
 
 JoinMode
@@ -1069,6 +1100,10 @@ GroupClause
 	: { $$ = undefined; }
 	| GROUP BY GroupExpressionsList HavingClause
 		{ $$ = {group:$3}; yy.extend($$,$4); }
+	| GROUP BY GroupExpressionsList WITH ROLLUP HavingClause
+		{ $$ = {group:[new yy.GroupExpression({type:'ROLLUP', group: $3})]}; yy.extend($$,$6); }
+	| GROUP BY GroupExpressionsList WITH CUBE HavingClause
+		{ $$ = {group:[new yy.GroupExpression({type:'CUBE', group: $3})]}; yy.extend($$,$6); }
 	;
 
 GroupExpressionsList
@@ -1097,23 +1132,98 @@ HavingClause
 	;
 
 UnionClause
-	:   { $$ = undefined; }
-	| UNION SelectWithoutOrderOrLimit
-		{ $$ = {union: $2} ; }
-	| UNION ALL SelectWithoutOrderOrLimit
-		{ $$ = {unionall: $3} ; }
-	| EXCEPT SelectWithoutOrderOrLimit
-		{ $$ = {except: $2} ; }
-	| INTERSECT SelectWithoutOrderOrLimit
-		{ $$ = {intersect: $2} ; }
-	| UNION CORRESPONDING SelectWithoutOrderOrLimit
-		{ $$ = {union: $3, corresponding:true} ; }
-	| UNION ALL CORRESPONDING SelectWithoutOrderOrLimit
-		{ $$ = {unionall: $4, corresponding:true} ; }
-	| EXCEPT CORRESPONDING SelectWithoutOrderOrLimit
-		{ $$ = {except: $3, corresponding:true} ; }
-	| INTERSECT CORRESPONDING SelectWithoutOrderOrLimit
-		{ $$ = {intersect: $3, corresponding:true} ; }
+	: { $$ = undefined; }
+	| UnionOp UnionableSelect
+		{
+			$$ = {};
+			$$[$1.op] = $2;
+			if($1.corresponding) $$.corresponding = true;
+		}
+	;
+
+UnionOp
+	: UNION
+		{ 
+			// Save and reset queries for nested SELECT using stack pattern
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'union'}; 
+		}
+	| UNION ALL
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'unionall'}; 
+		}
+	| EXCEPT
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'except'}; 
+		}
+	| INTERSECT
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'intersect'}; 
+		}
+	| UNION CORRESPONDING
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'union', corresponding: true}; 
+		}
+	| UNION ALL CORRESPONDING
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'unionall', corresponding: true}; 
+		}
+	| EXCEPT CORRESPONDING
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'except', corresponding: true}; 
+		}
+	| INTERSECT CORRESPONDING
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'intersect', corresponding: true}; 
+		}
+	;
+
+UnionableSelect
+	: SelectWithoutOrderOrLimit
+		{
+			// Restore parent queries from stack and assign current queries to nested SELECT
+			if(yy.queriesStack && yy.queriesStack.length > 0) {
+				if(yy.queries && yy.queries.length > 0) {
+					$1.queries = yy.queries;
+				}
+				yy.queries = yy.queriesStack.pop();
+			}
+			$$ = $1;
+		}
+	| ParenthesizedSelect
+		{
+			// Restore parent queries from stack and assign current queries to nested SELECT
+			if(yy.queriesStack && yy.queriesStack.length > 0) {
+				if(yy.queries && yy.queries.length > 0) {
+					$1.queries = yy.queries;
+				}
+				yy.queries = yy.queriesStack.pop();
+			}
+			$$ = $1;
+		}
 	;
 
 OrderClause
@@ -1151,15 +1261,15 @@ OrderExpression
 
 LimitClause
 	: { $$ = undefined; }
-	| LIMIT NumValue OffsetClause
+	| LIMIT (NumValue|ParamValue) OffsetClause
 		{ $$ = {limit:$2}; yy.extend($$, $3); }
-	| OFFSET NumValue ROWS? FETCH NEXT? NumValue ROWS? ONLY?
+	| OFFSET (NumValue|ParamValue) ROWS? FETCH NEXT? (NumValue|ParamValue) ROWS? ONLY?
 		{ $$ = {limit:$6,offset:$2}; }
 	;
 
 OffsetClause
 	: { $$ = undefined; }
-	| OFFSET NumValue
+	| OFFSET (NumValue|ParamValue)
 		{ $$ = {offset:$2}; }
 	;
 
@@ -1181,9 +1291,9 @@ ResultColumn
 	| Expression NUMBER
 		{ $1.as = $2; $$ = $1;}
 	| Expression AS StringValue
-		{ $1.as = $3; $$ = $1;}
+		{ $1.as = $3.value; $$ = $1;}
 	| Expression StringValue
-		{ $1.as = $2; $$ = $1;}
+		{ $1.as = $2.value; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
 	;
@@ -1193,6 +1303,10 @@ Star
 		{ $$ = new yy.Column({columid: $5, tableid: $3, databaseid:$1}); }
 	| Literal DOT STAR
 		{ $$ = new yy.Column({columnid: $3, tableid: $1}); }
+	| INSERTED DOT STAR
+		{ $$ = new yy.Column({columnid: $3, tableid: 'INSERTED'}); }
+	| DELETED DOT STAR
+		{ $$ = new yy.Column({columnid: $3, tableid: 'DELETED'}); }
 	| STAR
 		{ $$ = new yy.Column({columnid:$1}); }
 	;
@@ -1200,12 +1314,25 @@ Star
 Column
 	: Literal DOT Literal DOT Literal
 		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}
+	// INSERTED/DELETED DOT Literal must come before Literal DOT Literal
+	// to match OUTPUT clause pseudo-tables (INSERTED.*, DELETED.*)
+	| INSERTED DOT Literal
+		{ $$ = new yy.Column({columnid: $3, tableid: 'INSERTED'});}
+	| DELETED DOT Literal
+		{ $$ = new yy.Column({columnid: $3, tableid: 'DELETED'});}
 	| Literal DOT Literal
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT VALUE
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT AT Literal
 		{ $$ = new yy.Column({columnid: '@'+$4, tableid: $1});}
+	// Standalone INSERTED/DELETED are treated as regular identifiers (lowercase)
+	// when not followed by DOT, allowing use as column/table names.
+	// Lowercase matches SQL case-insensitive identifier behavior.
+	| INSERTED
+		{ $$ = new yy.Column({columnid: 'inserted'});}
+	| DELETED
+		{ $$ = new yy.Column({columnid: 'deleted'});}
 	| Literal
 		{ $$ = new yy.Column({columnid: $1});}
 	;
@@ -1357,17 +1484,16 @@ AggrValue
 	| Aggregator LPAR ALL Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
 		 over:$6}); }
+	| GROUP_CONCAT LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, order: $4, separator: $5}); }
+	| GROUP_CONCAT LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $4, distinct: true, order: $5, separator: $6}); }
 	;
 
 OverClause
-	:
-		{$$ = undefined; }
-	| OVER LPAR OverPartitionClause RPAR
-		{ $$ = new yy.Over(); yy.extend($$,$3); }
-	| OVER LPAR OverOrderByClause RPAR
-		{ $$ = new yy.Over(); yy.extend($$,$3); }
-	| OVER LPAR OverPartitionClause OverOrderByClause RPAR
-		{ $$ = new yy.Over(); yy.extend($$,$3); yy.extend($$,$4);}
+	: { $$ = undefined; }
+	| OVER LPAR OverPartitionClause? OverOrderByClause? RPAR
+		{ $$ = new yy.Over(); yy.extend($$,$3); yy.extend($$,$4); }
 	;
 
 OverPartitionClause
@@ -1378,6 +1504,26 @@ OverOrderByClause
 	: ORDER BY OrderExpressionsList
 		{ $$ = {order:$3}; }
 	;
+
+GroupConcatOrderClause
+	:
+		{ $$ = undefined; }
+	| ORDER BY OrderExpressionsList
+		{ $$ = $3; }
+	;
+
+GroupConcatSeparatorClause
+	:
+		{ $$ = undefined; }
+	| SEPARATOR AnyString
+		{ 
+			var str = $2.substring(1, $2.length-1);
+			// Process common escape sequences
+			str = str.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\r/g, '\r').replace(/\\\\/g, '\\');
+			$$ = str;
+		}
+	;
+
 Aggregator
 	: SUM { $$ = "SUM"; }
 	| TOTAL { $$ = "TOTAL"; }
@@ -1389,6 +1535,7 @@ Aggregator
 	| LAST { $$ = "LAST"; }
 	| AGGR { $$ = "AGGR"; }
 	| ARRAY { $$ = "ARRAY"; }
+	| GROUP_CONCAT { $$ = "GROUP_CONCAT"; }
 /*	| REDUCE { $$ = "REDUCE"; } */
 	;
 
@@ -1401,7 +1548,7 @@ FuncValue
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
-                      funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT'), over: $6 });
+                      funcid: funcid, expression: exprlist[0], args: exprlist, distinct:($3=='DISTINCT'), over: $6 });
 		    } else {
 			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			};
@@ -1416,11 +1563,11 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
+	| DATEADD LPAR AnyString COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
 	| DATEDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
+	| DATEDIFF LPAR AnyString COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
 	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
@@ -1447,9 +1594,20 @@ LogicValue
 		{ $$ = new yy.LogicValue({value:false}); }
 	;
 
-StringValue
+/* A string in single or double quotes. Where a name is expected, double quotes make a name (#989) */
+AnyString
 	: STRING
-		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
+		{ $$ = $1; }
+	| DQSTRING
+		{ $$ = $1; }
+	;
+
+StringValue
+	: AnyString
+		{
+			$$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
+			if ($1[0] == '"') $$.doubleQuoted = true;
+		}
 	| NSTRING
 		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	;
@@ -1796,10 +1954,10 @@ AllSome
 /* UPDATE */
 
 Update
-	: UPDATE Table SET SetColumnsList WHERE Expression
-		{ $$ = new yy.Update({table:$2, columns:$4, where:$6}); }
-	| UPDATE Table SET SetColumnsList
-		{ $$ = new yy.Update({table:$2, columns:$4}); }
+	: UPDATE TargetTable SET SetColumnsList WHERE Expression OutputClause
+		{ $$ = new yy.Update({table:$2, columns:$4, where:$6}); yy.extend($$,$7); }
+	| UPDATE TargetTable SET SetColumnsList OutputClause
+		{ $$ = new yy.Update({table:$2, columns:$4}); yy.extend($$,$5); }
 	;
 
 SetColumnsList
@@ -1820,40 +1978,54 @@ SetColumn
 /* DELETE */
 
 Delete
-	: DELETE FROM Table WHERE Expression
-		{ $$ = new yy.Delete({table:$3, where:$5});}
-	| DELETE FROM Table
-		{ $$ = new yy.Delete({table:$3});}
+	: DELETE FROM TargetTable WHERE Expression OutputClause
+		{ $$ = new yy.Delete({table:$3, where:$5}); yy.extend($$,$6);}
+	| DELETE FROM TargetTable OutputClause
+		{ $$ = new yy.Delete({table:$3}); yy.extend($$,$4);}
 	;
 
 /* INSERT */
 
 Insert
-        : INSERT Into Table Values  ValuesListsList
-                { $$ = new yy.Insert({into:$3, values: $5}); }
-        | INSERT Into Table ValuesListsList
-                { $$ = new yy.Insert({into:$3, values: $4}); }
-        | INSERT OR REPLACE Into Table Values  ValuesListsList
-                { $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
-        | INSERT OR REPLACE Into Table ValuesListsList
-                { $$ = new yy.Insert({into:$5, values: $6, orreplace:true}); }
-        | REPLACE Into Table Values  ValuesListsList
-                { $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); }
-        | REPLACE Into Table ValuesListsList
-                { $$ = new yy.Insert({into:$3, values: $4, orreplace:true}); }
-        | INSERT Into Table DEFAULT Values
-                { $$ = new yy.Insert({into:$3, "default": true}) ; }
-        | INSERT Into Table LPAR ColumnsList RPAR Values  ValuesListsList
-                { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
-        | INSERT Into Table LPAR ColumnsList RPAR ValuesListsList
-                { $$ = new yy.Insert({into:$3, columns: $5, values: $7}); }
-        | INSERT Into Table Select
-                { $$ = new yy.Insert({into:$3, select: $4}); }
-        | INSERT OR REPLACE Into Table Select
-                { $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); }
-        | INSERT Into Table LPAR ColumnsList RPAR Select
-                { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
-        ;
+	: INSERT Into TargetTable Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, values: $5}); yy.extend($$,$6); }
+	| INSERT Into TargetTable ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, values: $4}); yy.extend($$,$5); }
+	| INSERT IGNORE Into TargetTable Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$4, values: $6, ignore:true}); yy.extend($$,$7); }
+	| INSERT IGNORE Into TargetTable ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$4, values: $5, ignore:true}); yy.extend($$,$6); }
+	| INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$4, columns: $6, values: $9, ignore:true}); yy.extend($$,$10); }
+	| INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$4, columns: $6, values: $8, ignore:true}); yy.extend($$,$9); }
+	| INSERT IGNORE Into TargetTable Select OutputClause
+		{ $$ = new yy.Insert({into:$4, select: $5, ignore:true}); yy.extend($$,$6); }
+	| INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR Select OutputClause
+		{ $$ = new yy.Insert({into:$4, columns: $6, select: $8, ignore:true}); yy.extend($$,$9); }
+	| INSERT OR REPLACE Into TargetTable Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); yy.extend($$,$8); }
+	| INSERT OR REPLACE Into TargetTable ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$5, values: $6, orreplace:true}); yy.extend($$,$7); }
+	| REPLACE Into TargetTable Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); yy.extend($$,$6); }
+	| REPLACE Into TargetTable ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, values: $4, orreplace:true}); yy.extend($$,$5); }
+	| INSERT Into TargetTable DEFAULT Values OutputClause
+		{ $$ = new yy.Insert({into:$3, "default": true}); yy.extend($$,$6); }
+	| INSERT Into TargetTable LPAR ColumnsList RPAR Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); yy.extend($$,$9); }
+	| INSERT Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, columns: $5, values: $7}); yy.extend($$,$8); }
+	| INSERT Into TargetTable Select OutputClause
+		{ $$ = new yy.Insert({into:$3, select: $4}); yy.extend($$,$5); }
+	| INSERT OR REPLACE Into TargetTable Select OutputClause
+		{ $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); yy.extend($$,$7); }
+	| INSERT Into TargetTable LPAR ColumnsList RPAR Select OutputClause
+		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); yy.extend($$,$8); }
+	| INSERT Into TargetTable SET SetColumnsList OutputClause
+		{ $$ = new yy.Insert({into:$3, setcolumns: $5}); yy.extend($$,$6); }
+	;
 
 Values
         : VALUES
@@ -1916,7 +2088,7 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TableClass IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+	:  CREATE TemporaryClause TableClass IfNotExists TableName LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -1925,7 +2097,7 @@ CreateTable
 			yy.extend($$,$7);
 			yy.extend($$,$9);
 		}
-	| CREATE TemporaryClause TableClass IfNotExists Table
+	| CREATE TemporaryClause TableClass IfNotExists TableName
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -1933,6 +2105,28 @@ CreateTable
 			yy.extend($$,$4);
 		}
 ;
+
+/*
+ A name where a string cannot appear: a word, [name], `name` or "name", as SQLite writes them (#989).
+ In double quotes it keeps its case and "" stands for one ". Names are placed in generated code,
+ so it cannot be empty or hold ' or \ ([name] and `name` cannot hold ' either).
+*/
+Name
+	: Literal
+		{ $$ = $1; }
+	| DQSTRING
+		{
+			$$ = $1.slice(1, -1).replace(/""/g, '"');
+			if (!$$ || /['\\]/.test($$)) throw new SyntaxError('Not a valid name: ' + $1);
+		}
+	;
+
+TableName
+	: Name
+		{ $$ = new yy.Table({tableid: $1}); }
+	| Name DOT Name
+		{ $$ = new yy.Table({databaseid: $1, tableid: $3}); }
+	;
 
 TableClass
 	: TABLE
@@ -2002,7 +2196,7 @@ Constraint
 
 ConstraintName
 	:   { $$ = undefined; }
-	| CONSTRAINT Literal
+	| CONSTRAINT Name
 		{ $$ = $2; }
 	;
 
@@ -2012,14 +2206,14 @@ Check
 	;
 
 PrimaryKey
-	: PRIMARY KEY Literal? LPAR ColsList RPAR
-		{ $$ = {type: 'PRIMARY KEY', columns: $5, clustered:($3+'').toUpperCase()}; }
+	: PRIMARY KEY Literal? LPAR IndexColsList RPAR
+		{ $$ = {type: 'PRIMARY KEY', columns: $5.columns, prefixes: $5.prefixes, clustered:($3+'').toUpperCase()}; }
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList?
-	     OnForeignKeyClause
-		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES TableName ParColsList?
+	     OnReferentialActions DeferrableClause?
+		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; yy.extend($$, $9); }
 	;
 
 ParColsList
@@ -2027,41 +2221,94 @@ ParColsList
 		{ $$ = $2; }
 	;
 
-OnForeignKeyClause
+/* DEFERRABLE [INITIALLY DEFERRED|IMMEDIATE] is parsed and ignored (#989) */
+DeferrableClause
+	: LITERAL
+		{
+			if ($1.toUpperCase() !== 'DEFERRABLE') {
+				throw new SyntaxError('Unexpected ' + $1 + ' after REFERENCES clause');
+			}
+			$$ = undefined;
+		}
+	| LITERAL LITERAL LITERAL
+		{
+			if (
+				$1.toUpperCase() !== 'DEFERRABLE' ||
+				$2.toUpperCase() !== 'INITIALLY' ||
+				['DEFERRED', 'IMMEDIATE'].indexOf($3.toUpperCase()) === -1
+			) {
+				throw new SyntaxError('Expected DEFERRABLE [INITIALLY DEFERRED|IMMEDIATE], got ' + [$1, $2, $3].join(' '));
+			}
+			$$ = undefined;
+		}
+	;
+
+OnReferentialActions
 	:
-		{ $$ = undefined; }
+		{$$ = {}; }
+	| OnDeleteClause
+		{$$ = {ondelete: $1}; }
+	| OnUpdateClause
+		{$$ = {onupdate: $1}; }
 	| OnDeleteClause OnUpdateClause
-		{ $$ = undefined; }
+		{$$ = {ondelete: $1, onupdate: $2}; }
+	| OnUpdateClause OnDeleteClause
+		{$$ = {ondelete: $2, onupdate: $1}; }
 	;
 
 OnDeleteClause
-	: ON DELETE NO ACTION
-		{$$ = undefined; }
+	: ON DELETE ReferentialAction
+		{$$ = $3; }
 	;
 OnUpdateClause
-	: ON UPDATE NO ACTION
-		{$$ = undefined; }
+	: ON UPDATE ReferentialAction
+		{$$ = $3; }
+	;
+
+ReferentialAction
+	: CASCADE
+		{$$ = 'CASCADE'; }
+	| SET NULL
+		{$$ = 'SET NULL'; }
+	| SET DEFAULT
+		{$$ = 'SET DEFAULT'; }
+	| RESTRICT
+		{$$ = 'RESTRICT'; }
+	| NO ACTION
+		{$$ = 'NO ACTION'; }
 	;
 
 UniqueKey
-	: UNIQUE KEY? Literal? LPAR OrderExpressionsList RPAR
+	: UNIQUE KEY? Name? LPAR OrderExpressionsList RPAR
 		{
 			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}
 	;
 
 IndexKey
-	: INDEX Literal LPAR ColumnsList RPAR
-	| KEY Literal LPAR ColumnsList RPAR
+	: INDEX Name LPAR IndexColsList RPAR
+		{ $$ = {type: 'INDEX', indexid: $2, columns: $4.columns, prefixes: $4.prefixes}; }
 	;
+
+IndexColsList
+	: IndexCol
+		{ $$ = {columns: [$1.columnid], prefixes: [$1.prefix]}; }
+	| IndexColsList COMMA IndexCol
+		{ $$ = $1; $1.columns.push($3.columnid); $1.prefixes.push($3.prefix); }
+	;
+
+/* A column of an index, with an optional prefix length as in MySQL: a(10) (#406) */
+IndexCol
+	: Name
+		{ $$ = {columnid: $1}; }
+	| Name LPAR NUMBER RPAR
+		{ $$ = {columnid: $1, prefix: +$3}; }
+	;
+
 ColsList
-	: Literal
+	: Name
 		{ $$ = [$1]; }
-	| STRING
-		{ $$ = [$1]; }
-	| ColsList COMMA Literal
-		{ $$ = $1; $1.push($3); }
-	| ColsList COMMA STRING
+	| ColsList COMMA Name
 		{ $$ = $1; $1.push($3); }
 	;
 
@@ -2085,11 +2332,11 @@ ColumnDefsList
 	;
 
 ColumnDef
-	: Literal ColumnType ColumnConstraintsClause
+	: Name ColumnType ColumnConstraintsClause
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| Literal ColumnConstraints
+	| Name ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	| Literal
+	| Name
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
@@ -2148,17 +2395,17 @@ ColumnConstraintsList
 	;
 
 ParLiteral
-	: LPAR Literal RPAR
+	: LPAR Name RPAR
 		{ $$ = $2; }
 	;
 
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$4, columnid: $5}};}
-	| REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$2, columnid: $3}};}
+	| FOREIGN KEY REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
+		{$$ = {foreignkey:{table:$4, columnid: $5}}; yy.extend($$.foreignkey, $6);}
+	| REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
+		{$$ = {foreignkey:{table:$2, columnid: $3}}; yy.extend($$.foreignkey, $4);}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY
@@ -2191,9 +2438,9 @@ DropTable
 	;
 
 TablesList
-	: TablesList COMMA Table
+	: TablesList COMMA TableName
 		{ $1.push($3); $$=$1; }
-	| Table
+	| TableName
 		{ $$ = [$1]; }
 	;
 
@@ -2207,20 +2454,20 @@ IfExists
 /* ALTER TABLE */
 
 AlterTable
-	: ALTER TABLE Table RENAME TO Literal
+	: ALTER TABLE TableName RENAME TO Name
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
-	| ALTER TABLE Table ADD COLUMN ColumnDef
+	| ALTER TABLE TableName ADD COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
-	| ALTER TABLE Table MODIFY COLUMN ColumnDef
+	| ALTER TABLE TableName MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
-	| ALTER TABLE Table RENAME COLUMN Literal TO Literal
+	| ALTER TABLE TableName RENAME COLUMN Name TO Name
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| ALTER TABLE Table DROP COLUMN Literal
+	| ALTER TABLE TableName DROP COLUMN Name
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
 
 RenameTable
-	: RENAME TABLE Table TO Literal
+	: RENAME TABLE TableName TO Name
 		{ $$ = new yy.AlterTable({table:$3, renameto: $5});}
 	;
 
@@ -2281,16 +2528,16 @@ DropDatabase
 
 CreateIndex
 	:
-	 CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	 CREATE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
 	|
 
-	CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	CREATE UNIQUE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
 DropIndex
-	: DROP INDEX Literal
+	: DROP INDEX Name
 		{ $$ = new yy.DropIndex({indexid:$3});}
 	;
 
@@ -2340,13 +2587,13 @@ ShowCreateTable
 	;
 
 CreateView
-	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select SubqueryRestriction?
+	:  CREATE TemporaryClause VIEW IfNotExists TableName LPAR ColumnsList RPAR AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7});
 			yy.extend($$,$2);
 			yy.extend($$,$4);
 		}
-	| CREATE TemporaryClause VIEW IfNotExists Table AS Select SubqueryRestriction?
+	| CREATE TemporaryClause VIEW IfNotExists TableName AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$7});
 			yy.extend($$,$2);
@@ -2426,7 +2673,7 @@ Assert
 		{ $$ = new yy.Assert({value:$2}); }
 	| ASSERT PrimitiveValue
 		{ $$ = new yy.Assert({value:$2.value}); }
-	| ASSERT STRING COMMA Json
+	| ASSERT AnyString COMMA Json
 		{ $$ = new yy.Assert({value:$4, message:$2}); }
 	;
 
@@ -2459,6 +2706,8 @@ JsonValue
 JsonPrimitiveValue
 	: NumValue
 		{ $$ = +$1.value; }
+	| MINUS NumValue
+		{ $$ = -$2.value; }
 	| StringValue
 		{ $$ = ""+$1.value; }
 	| LogicValue
@@ -2502,12 +2751,18 @@ JsonPropertiesList
 	;
 
 JsonProperty
-	: STRING COLON JsonValue
+	: AnyString COLON JsonValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
 	| Literal COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
+	| AnyString COLONDASH NumValue
+		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = -$3.value; }
+	| NUMBER COLONDASH NumValue
+		{ $$ = {}; $$[$1] = -$3.value; }
+	| Literal COLONDASH NumValue
+		{ $$ = {}; $$[$1] = -$3.value; }
 /*	| STRING COLON ParamValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON ParamValue
@@ -2721,7 +2976,7 @@ DeclareItem
 	;
 
 TruncateTable
-	: TRUNCATE TABLE Table
+	: TRUNCATE TABLE TableName
 		{ $$ = new yy.TruncateTable({table:$3});}
 	;
 
@@ -2951,7 +3206,7 @@ GraphAtClause
 	;
 
 GraphElement2
-	:  Literal? SharpLiteral? STRING? ColonLiteral?
+	:  Literal? SharpLiteral? AnyString? ColonLiteral?
 		{
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
@@ -2959,17 +3214,17 @@ GraphElement2
 	;
 
 GraphElement
-	:  Literal SharpLiteral? STRING? ColonLiteral?
+	:  Literal SharpLiteral? AnyString? ColonLiteral?
 		{
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
 		}
-	|  SharpLiteral STRING? ColonLiteral?
+	|  SharpLiteral AnyString? ColonLiteral?
 		{
 			var s2 = $2;
 			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3};
 		}
-	|  STRING ColonLiteral?
+	|  AnyString ColonLiteral?
 		{
 			var s1 = $1;
 			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2};
@@ -3075,19 +3330,572 @@ DropTrigger
 	;
 
 Reindex
-	: REINDEX Literal
+	: REINDEX Name
 		{ $$ = new yy.Reindex({indexid:$2});}
 	;
 
 NonReserved
-	: A|ABSENT|ABSOLUTE|ACCORDING|ACTION|ADA|ADD|ADMIN|AFTER|ALWAYS|ASC|ASSERTION|ASSIGNMENT|ATTRIBUTE|ATTRIBUTES|BASE64|BEFORE|BERNOULLI|BLOCKED|BOM|BREADTH|C|CASCADE|CATALOG|CATALOG_NAME|CHAIN|CHARACTERISTICS|CHARACTERS|CHARACTER_SET_CATALOG|CHARACTER_SET_NAME|CHARACTER_SET_SCHEMA|CLASS_ORIGIN|COBOL|COLLATION|COLLATION_CATALOG|COLLATION_NAME|COLLATION_SCHEMA|COLUMNS|COLUMN_NAME|COMMAND_FUNCTION|COMMAND_FUNCTION_CODE|COMMITTED|CONDITION_NUMBER|CONNECTION|CONNECTION_NAME|CONSTRAINTS|CONSTRAINT_CATALOG|CONSTRAINT_NAME|CONSTRAINT_SCHEMA|CONSTRUCTOR|CONTENT|CONTINUE|CONTROL|CURSOR_NAME|DATA|DATETIME_INTERVAL_CODE|DATETIME_INTERVAL_PRECISION|DB|DEFAULTS|DEFERRABLE|DEFERRED|DEFINED|DEFINER|DEGREE|DEPTH|DERIVED|DESC|DESCRIPTOR|DIAGNOSTICS|DISPATCH|DOCUMENT|DOMAIN|DYNAMIC_FUNCTION|DYNAMIC_FUNCTION_CODE|EMPTY|ENCODING|ENFORCED|EXCLUDE|EXCLUDING|EXPRESSION|FILE|FINAL|FIRST|FLAG|FOLLOWING|FORTRAN|FOUND|FS|G|GENERAL|GENERATED|GO|GOTO|GRANTED|HEX|HIERARCHY|ID|IGNORE|IMMEDIATE|IMMEDIATELY|IMPLEMENTATION|INCLUDING|INCREMENT|INDENT|INITIALLY|INPUT|INSTANCE|INSTANTIABLE|INSTEAD|INTEGRITY|INVOKER|ISOLATION|K|KEY|KEY_MEMBER|KEY_TYPE|LAST|LEFT|LENGTH|LEVEL|LIBRARY|LIMIT|LINK|LOCATION|LOCATOR|M|MAP|MAPPING|MATCHED|MAXVALUE|MESSAGE_LENGTH|MESSAGE_OCTET_LENGTH|MESSAGE_TEXT|MINVALUE|MORE|MUMPS|NAME|NAMES|NAMESPACE|NESTING|NEXT|NFC|NFD|NFKC|NFKD|NIL|NORMALIZED|NULLABLE|NULLS|NUMBER|OBJECT|OCTETS|OFF|OPTION|OPTIONS|ORDERING|ORDINALITY|OTHERS|OUTPUT|OVERRIDING|P|PAD|PARAMETER_MODE|PARAMETER_NAME|PARAMETER_ORDINAL_POSITION|PARAMETER_SPECIFIC_CATALOG|PARAMETER_SPECIFIC_NAME|PARAMETER_SPECIFIC_SCHEMA|PARTIAL|PASCAL|PASSING|PASSTHROUGH|PATH|PERMISSION|PLACING|PLI|PRECEDING|PRESERVE|PRIOR|PRIVILEGES|PUBLIC|READ|RECOVERY|RELATIVE|REPEATABLE|REQUIRING|RESPECT|RESTART|RESTORE|RESTRICT|RETURNED_CARDINALITY|RETURNED_LENGTH|RETURNED_OCTET_LENGTH|RETURNED_SQLSTATE|RETURNING|RIGHT|ROLE|ROUTINE|ROUTINE_CATALOG|ROUTINE_NAME|ROUTINE_SCHEMA|ROW_COUNT|SCALE|SCHEMA|SCHEMA_NAME|SCOPE_CATALOG|SCOPE_NAME|SCOPE_SCHEMA|SECTION|SECURITY|SELECTIVE|SELF|SEQUENCE|SERIALIZABLE|SERVER|SERVER_NAME|SESSION|SETS|SIMPLE|SIZE|SOURCE|SPACE|SPECIFIC_NAME|STANDALONE|STATE|STATEMENT|STRIP|STRUCTURE|STYLE|SUBCLASS_ORIGIN|T|TABLE_NAME|TEMPORARY|TIES|TOKEN|TOP_LEVEL_COUNT|TRANSACTION|TRANSACTIONS_COMMITTED|TRANSACTIONS_ROLLED_BACK|TRANSACTION_ACTIVE|TRANSFORM|TRANSFORMS|TRIGGER_CATALOG|TRIGGER_NAME|TRIGGER_SCHEMA|TYPE|UNBOUNDED|UNCOMMITTED|UNDER|UNLINK|UNNAMED|UNTYPED|URI|USAGE|USER_DEFINED_TYPE_CATALOG|USER_DEFINED_TYPE_CODE|USER_DEFINED_TYPE_NAME|USER_DEFINED_TYPE_SCHEMA|VALID|VALUE|VALUES|VERSION|VIEW|WHITESPACE|WORK|WRAPPER|WRITE|XMLDECLARATION|XMLSCHEMA|YES|ZONE;
-
+	: A
+	|ABSENT
+	|ABSOLUTE
+	|ACCORDING
+	|ACTION
+	|ADA
+	|ADD
+	|ADMIN
+	|AFTER
+	|ALWAYS
+	|ASC
+	|ASSERTION
+	|ASSIGNMENT
+	|ATTRIBUTE
+	|ATTRIBUTES
+	|BASE64
+	|BEFORE
+	|BERNOULLI
+	|BLOCKED
+	|BOM
+	|BREADTH
+	|C
+	|CASCADE
+	|CATALOG
+	|CATALOG_NAME
+	|CHAIN
+	|CHARACTERISTICS
+	|CHARACTERS
+	|CHARACTER_SET_CATALOG
+	|CHARACTER_SET_NAME
+	|CHARACTER_SET_SCHEMA
+	|CLASS_ORIGIN
+	|CLOSE
+	|COBOL
+	|COLLATION
+	|COLLATION_CATALOG
+	|COLLATION_NAME
+	|COLLATION_SCHEMA
+	|COLUMNS
+	|COLUMN_NAME
+	|COMMAND_FUNCTION
+	|COMMAND_FUNCTION_CODE
+	|COMMITTED
+	|CONDITION_NUMBER
+	|CONNECTION
+	|CONNECTION_NAME
+	|CONSTRAINTS
+	|CONSTRAINT_CATALOG
+	|CONSTRAINT_NAME
+	|CONSTRAINT_SCHEMA
+	|CONSTRUCTOR
+	|CONTENT
+	|CONTINUE
+	|CONTROL
+	|CURSOR_NAME
+	|DATA
+	|DATETIME_INTERVAL_CODE
+	|DATETIME_INTERVAL_PRECISION
+	|DB
+	|DEFAULTS
+	|DEFERRABLE
+	|DEFERRED
+	|DEFINED
+	|DEFINER
+	|DEGREE
+	|DELETED
+	|DEPTH
+	|DERIVED
+	|DESC
+	|DESCRIPTOR
+	|DIAGNOSTICS
+	|DISPATCH
+	|DOCUMENT
+	|DOMAIN
+	|DYNAMIC_FUNCTION
+	|DYNAMIC_FUNCTION_CODE
+	|EMPTY
+	|ENCODING
+	|ENFORCED
+	|EXCLUDE
+	|EXCLUDING
+	|EXPRESSION
+	|FILE
+	|FINAL
+	|FIRST
+	|FLAG
+	|FOLLOWING
+	|FORTRAN
+	|FOUND
+	|FS
+	|G
+	|GENERAL
+	|GENERATED
+	|GO
+	|GOTO
+	|GRANTED
+	|HEX
+	|HIERARCHY
+	|ID
+	|IGNORE
+	|IMMEDIATE
+	|IMMEDIATELY
+	|IMPLEMENTATION
+	|INCLUDING
+	|INCREMENT
+	|INDENT
+	|INITIALLY
+	|INPUT
+	|INSERTED
+	|INSTANCE
+	|INSTANTIABLE
+	|INSTEAD
+	|INTEGRITY
+	|INVOKER
+	|ISOLATION
+	|K
+	|KEY
+	|KEY_MEMBER
+	|KEY_TYPE
+	|LAST
+	|LEFT
+	|LENGTH
+	|LEVEL
+	|LIBRARY
+	|LIMIT
+	|LINK
+	|LOCATION
+	|LOCATOR
+	|M
+	|MAP
+	|MAPPING
+	|MATCHED
+	|MAXVALUE
+	|MESSAGE_LENGTH
+	|MESSAGE_OCTET_LENGTH
+	|MESSAGE_TEXT
+	|MINVALUE
+	|MORE
+	|MUMPS
+	|NAME
+	|NAMES
+	|NAMESPACE
+	|NESTING
+	|NEXT
+	|NFC
+	|NFD
+	|NFKC
+	|NFKD
+	|NIL
+	|NORMALIZED
+	|NULLABLE
+	|NULLS
+	|NUMBER
+	|OBJECT
+	|OCTETS
+	|OFF
+	|OPEN
+	|OPTION
+	|OPTIONS
+	|ORDER
+	|ORDERING
+	|ORDINALITY
+	|OTHERS
+	|OUTPUT
+	|OVERRIDING
+	|P
+	|PAD
+	|PARAMETER_MODE
+	|PARAMETER_NAME
+	|PARAMETER_ORDINAL_POSITION
+	|PARAMETER_SPECIFIC_CATALOG
+	|PARAMETER_SPECIFIC_NAME
+	|PARAMETER_SPECIFIC_SCHEMA
+	|PARTIAL
+	|PASCAL
+	|PASSING
+	|PASSTHROUGH
+	|PATH
+	|PERMISSION
+	|PLACING
+	|PLI
+	|PRECEDING
+	|PRESERVE
+	|PRIOR
+	|PRIVILEGES
+	|PUBLIC
+	|READ
+	|RECOVERY
+	|RELATIVE
+	|REPEATABLE
+	|REQUIRING
+	|RESPECT
+	|RESTART
+	|RESTORE
+	|RESTRICT
+	|RETURNED_CARDINALITY
+	|RETURNED_LENGTH
+	|RETURNED_OCTET_LENGTH
+	|RETURNED_SQLSTATE
+	|RETURNING
+	|RIGHT
+	|ROLE
+	|ROUTINE
+	|ROUTINE_CATALOG
+	|ROUTINE_NAME
+	|ROUTINE_SCHEMA
+	|ROW_COUNT
+	|SCALE
+	|SCHEMA
+	|SCHEMA_NAME
+	|SCOPE_CATALOG
+	|SCOPE_NAME
+	|SCOPE_SCHEMA
+	|SECTION
+	|SECURITY
+	|SELECTIVE
+	|SELF
+	|SEPARATOR
+	|SEQUENCE
+	|SERIALIZABLE
+	|SERVER
+	|SERVER_NAME
+	|SESSION
+	|SETS
+	|SIMPLE
+	|SIZE
+	|SOURCE
+	|SPACE
+	|SPECIFIC_NAME
+	|STANDALONE
+	|STATE
+	|STATEMENT
+	|STRIP
+	|STRUCTURE
+	|STYLE
+	|SUBCLASS_ORIGIN
+	|T
+	|TABLE_NAME
+	|TEMPORARY
+	|TIES
+	|TOKEN
+	|TOP_LEVEL_COUNT
+	|TRANSACTION
+	|TRANSACTIONS_COMMITTED
+	|TRANSACTIONS_ROLLED_BACK
+	|TRANSACTION_ACTIVE
+	|TRANSFORM
+	|TRANSFORMS
+	|TRIGGER_CATALOG
+	|TRIGGER_NAME
+	|TRIGGER_SCHEMA
+	|TYPE
+	|UNBOUNDED
+	|UNCOMMITTED
+	|UNDER
+	|UNLINK
+	|UNNAMED
+	|UNTYPED
+	|URI
+	|USAGE
+	|USER_DEFINED_TYPE_CATALOG
+	|USER_DEFINED_TYPE_CODE
+	|USER_DEFINED_TYPE_NAME
+	|USER_DEFINED_TYPE_SCHEMA
+	|VALID
+	|VALUE
+	|VALUES
+	|VERSION
+	|VIEW
+	|WHITESPACE
+	|WORK
+	|WRAPPER
+	|WRITE
+	|XMLDECLARATION
+	|XMLSCHEMA
+	|YES
+	|ZONE
+	;
 %%
 
 // from https://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
 // JSON.stringify([].slice.call(document.querySelectorAll('tr')).filter(x => x.children.length == 5 && x.children[2].innerText == 'reserved').map(x => x.children[0].innerText))
 
-var nonReserved = ["A","ABSENT","ABSOLUTE","ACCORDING","ACTION","ADA","ADD","ADMIN","AFTER","ALWAYS","ASC","ASSERTION","ASSIGNMENT","ATTRIBUTE","ATTRIBUTES","BASE64","BEFORE","BERNOULLI","BLOCKED","BOM","BREADTH","C","CASCADE","CATALOG","CATALOG_NAME","CHAIN","CHARACTERISTICS","CHARACTERS","CHARACTER_SET_CATALOG","CHARACTER_SET_NAME","CHARACTER_SET_SCHEMA","CLASS_ORIGIN","COBOL","COLLATION","COLLATION_CATALOG","COLLATION_NAME","COLLATION_SCHEMA","COLUMNS","COLUMN_NAME","COMMAND_FUNCTION","COMMAND_FUNCTION_CODE","COMMITTED","CONDITION_NUMBER","CONNECTION","CONNECTION_NAME","CONSTRAINTS","CONSTRAINT_CATALOG","CONSTRAINT_NAME","CONSTRAINT_SCHEMA","CONSTRUCTOR","CONTENT","CONTINUE","CONTROL","CURSOR_NAME","DATA","DATETIME_INTERVAL_CODE","DATETIME_INTERVAL_PRECISION","DB","DEFAULTS","DEFERRABLE","DEFERRED","DEFINED","DEFINER","DEGREE","DEPTH","DERIVED","DESC","DESCRIPTOR","DIAGNOSTICS","DISPATCH","DOCUMENT","DOMAIN","DYNAMIC_FUNCTION","DYNAMIC_FUNCTION_CODE","EMPTY","ENCODING","ENFORCED","EXCLUDE","EXCLUDING","EXPRESSION","FILE","FINAL","FIRST","FLAG","FOLLOWING","FORTRAN","FOUND","FS","G","GENERAL","GENERATED","GO","GOTO","GRANTED","HEX","HIERARCHY","ID","IGNORE","IMMEDIATE","IMMEDIATELY","IMPLEMENTATION","INCLUDING","INCREMENT","INDENT","INITIALLY","INPUT","INSTANCE","INSTANTIABLE","INSTEAD","INTEGRITY","INVOKER","ISOLATION","K","KEY","KEY_MEMBER","KEY_TYPE","LAST","LEFT","LENGTH","LEVEL","LIBRARY","LIMIT","LINK","LOCATION","LOCATOR","M","MAP","MAPPING","MATCHED","MAXVALUE","MESSAGE_LENGTH","MESSAGE_OCTET_LENGTH","MESSAGE_TEXT","MINVALUE","MORE","MUMPS","NAME","NAMES","NAMESPACE","NESTING","NEXT","NFC","NFD","NFKC","NFKD","NIL","NORMALIZED","NULLABLE","NULLS","NUMBER","OBJECT","OCTETS","OFF","OPTION","OPTIONS","ORDERING","ORDINALITY","OTHERS","OUTPUT","OVERRIDING","P","PAD","PARAMETER_MODE","PARAMETER_NAME","PARAMETER_ORDINAL_POSITION","PARAMETER_SPECIFIC_CATALOG","PARAMETER_SPECIFIC_NAME","PARAMETER_SPECIFIC_SCHEMA","PARTIAL","PASCAL","PASSING","PASSTHROUGH","PATH","PERMISSION","PLACING","PLI","PRECEDING","PRESERVE","PRIOR","PRIVILEGES","PUBLIC","READ","RECOVERY","RELATIVE","REPEATABLE","REQUIRING","RESPECT","RESTART","RESTORE","RESTRICT","RETURNED_CARDINALITY","RETURNED_LENGTH","RETURNED_OCTET_LENGTH","RETURNED_SQLSTATE","RETURNING","RIGHT","ROLE","ROUTINE","ROUTINE_CATALOG","ROUTINE_NAME","ROUTINE_SCHEMA","ROW_COUNT","SCALE","SCHEMA","SCHEMA_NAME","SCOPE_CATALOG","SCOPE_NAME","SCOPE_SCHEMA","SECTION","SECURITY","SELECTIVE","SELF","SEQUENCE","SERIALIZABLE","SERVER","SERVER_NAME","SESSION","SETS","SIMPLE","SIZE","SOURCE","SPACE","SPECIFIC_NAME","STANDALONE","STATE","STATEMENT","STRIP","STRUCTURE","STYLE","SUBCLASS_ORIGIN","T","TABLE_NAME","TEMPORARY","TIES","TOKEN","TOP_LEVEL_COUNT","TRANSACTION","TRANSACTIONS_COMMITTED","TRANSACTIONS_ROLLED_BACK","TRANSACTION_ACTIVE","TRANSFORM","TRANSFORMS","TRIGGER_CATALOG","TRIGGER_NAME","TRIGGER_SCHEMA","TYPE","UNBOUNDED","UNCOMMITTED","UNDER","UNLINK","UNNAMED","UNTYPED","URI","USAGE","USER_DEFINED_TYPE_CATALOG","USER_DEFINED_TYPE_CODE","USER_DEFINED_TYPE_NAME","USER_DEFINED_TYPE_SCHEMA","VALID","VALUE","VALUES","VERSION","VIEW","WHITESPACE","WORK","WRAPPER","WRITE","XMLDECLARATION","XMLSCHEMA","YES","ZONE"]
+var nonReserved = ["A"
+	,"ABSENT"
+	,"ABSOLUTE"
+	,"ACCORDING"
+	,"ACTION"
+	,"ADA"
+	,"ADD"
+	,"ADMIN"
+	,"AFTER"
+	,"ALWAYS"
+	,"ASC"
+	,"ASSERTION"
+	,"ASSIGNMENT"
+	,"ATTRIBUTE"
+	,"ATTRIBUTES"
+	,"BASE64"
+	,"BEFORE"
+	,"BERNOULLI"
+	,"BLOCKED"
+	,"BOM"
+	,"BREADTH"
+	,"C"
+	,"CASCADE"
+	,"CATALOG"
+	,"CATALOG_NAME"
+	,"CHAIN"
+	,"CHARACTERISTICS"
+	,"CHARACTERS"
+	,"CHARACTER_SET_CATALOG"
+	,"CHARACTER_SET_NAME"
+	,"CHARACTER_SET_SCHEMA"
+	,"CLASS_ORIGIN"
+	,"CLOSE"
+	,"COBOL"
+	,"COLLATION"
+	,"COLLATION_CATALOG"
+	,"COLLATION_NAME"
+	,"COLLATION_SCHEMA"
+	,"COLUMNS"
+	,"COLUMN_NAME"
+	,"COMMAND_FUNCTION"
+	,"COMMAND_FUNCTION_CODE"
+	,"COMMITTED"
+	,"CONDITION_NUMBER"
+	,"CONNECTION"
+	,"CONNECTION_NAME"
+	,"CONSTRAINTS"
+	,"CONSTRAINT_CATALOG"
+	,"CONSTRAINT_NAME"
+	,"CONSTRAINT_SCHEMA"
+	,"CONSTRUCTOR"
+	,"CONTENT"
+	,"CONTINUE"
+	,"CONTROL"
+	,"CURSOR_NAME"
+	,"DATA"
+	,"DATETIME_INTERVAL_CODE"
+	,"DATETIME_INTERVAL_PRECISION"
+	,"DB"
+	,"DEFAULTS"
+	,"DEFERRABLE"
+	,"DEFERRED"
+	,"DEFINED"
+	,"DEFINER"
+	,"DEGREE"
+	,"DELETED"
+	,"DEPTH"
+	,"DERIVED"
+	,"DESC"
+	,"DESCRIPTOR"
+	,"DIAGNOSTICS"
+	,"DISPATCH"
+	,"DOCUMENT"
+	,"DOMAIN"
+	,"DYNAMIC_FUNCTION"
+	,"DYNAMIC_FUNCTION_CODE"
+	,"EMPTY"
+	,"ENCODING"
+	,"ENFORCED"
+	,"EXCLUDE"
+	,"EXCLUDING"
+	,"EXPRESSION"
+	,"FILE"
+	,"FINAL"
+	,"FIRST"
+	,"FLAG"
+	,"FOLLOWING"
+	,"FORTRAN"
+	,"FOUND"
+	,"FS"
+	,"G"
+	,"GENERAL"
+	,"GENERATED"
+	,"GO"
+	,"GOTO"
+	,"GRANTED"
+	,"HEX"
+	,"HIERARCHY"
+	,"ID"
+	,"IGNORE"
+	,"IMMEDIATE"
+	,"IMMEDIATELY"
+	,"IMPLEMENTATION"
+	,"INCLUDING"
+	,"INCREMENT"
+	,"INDENT"
+	,"INITIALLY"
+	,"INPUT"
+	,"INSERTED"
+	,"INSTANCE"
+	,"INSTANTIABLE"
+	,"INSTEAD"
+	,"INTEGRITY"
+	,"INVOKER"
+	,"ISOLATION"
+	,"K"
+	,"KEY"
+	,"KEY_MEMBER"
+	,"KEY_TYPE"
+	,"LAST"
+	,"LEFT"
+	,"LENGTH"
+	,"LEVEL"
+	,"LIBRARY"
+	,"LIMIT"
+	,"LINK"
+	,"LOCATION"
+	,"LOCATOR"
+	,"M"
+	,"MAP"
+	,"MAPPING"
+	,"MATCHED"
+	,"MAXVALUE"
+	,"MESSAGE_LENGTH"
+	,"MESSAGE_OCTET_LENGTH"
+	,"MESSAGE_TEXT"
+	,"MINVALUE"
+	,"MORE"
+	,"MUMPS"
+	,"NAME"
+	,"NAMES"
+	,"NAMESPACE"
+	,"NESTING"
+	,"NEXT"
+	,"NFC"
+	,"NFD"
+	,"NFKC"
+	,"NFKD"
+	,"NIL"
+	,"NORMALIZED"
+	,"NULLABLE"
+	,"NULLS"
+	,"NUMBER"
+	,"OBJECT"
+	,"OCTETS"
+	,"OFF"
+	,"OPEN"
+	,"OPTION"
+	,"OPTIONS"
+	,"ORDER"
+	,"ORDERING"
+	,"ORDINALITY"
+	,"OTHERS"
+	,"OUTPUT"
+	,"OVERRIDING"
+	,"P"
+	,"PAD"
+	,"PARAMETER_MODE"
+	,"PARAMETER_NAME"
+	,"PARAMETER_ORDINAL_POSITION"
+	,"PARAMETER_SPECIFIC_CATALOG"
+	,"PARAMETER_SPECIFIC_NAME"
+	,"PARAMETER_SPECIFIC_SCHEMA"
+	,"PARTIAL"
+	,"PASCAL"
+	,"PASSING"
+	,"PASSTHROUGH"
+	,"PATH"
+	,"PERMISSION"
+	,"PLACING"
+	,"PLI"
+	,"PRECEDING"
+	,"PRESERVE"
+	,"PRIOR"
+	,"PRIVILEGES"
+	,"PUBLIC"
+	,"READ"
+	,"RECOVERY"
+	,"RELATIVE"
+	,"REPEATABLE"
+	,"REQUIRING"
+	,"RESPECT"
+	,"RESTART"
+	,"RESTORE"
+	,"RESTRICT"
+	,"RETURNED_CARDINALITY"
+	,"RETURNED_LENGTH"
+	,"RETURNED_OCTET_LENGTH"
+	,"RETURNED_SQLSTATE"
+	,"RETURNING"
+	,"RIGHT"
+	,"ROLE"
+	,"ROUTINE"
+	,"ROUTINE_CATALOG"
+	,"ROUTINE_NAME"
+	,"ROUTINE_SCHEMA"
+	,"ROW_COUNT"
+	,"SCALE"
+	,"SCHEMA"
+	,"SCHEMA_NAME"
+	,"SCOPE_CATALOG"
+	,"SCOPE_NAME"
+	,"SCOPE_SCHEMA"
+	,"SECTION"
+	,"SECURITY"
+	,"SELECTIVE"
+	,"SELF"
+	,"SEPARATOR"
+	,"SEQUENCE"
+	,"SERIALIZABLE"
+	,"SERVER"
+	,"SERVER_NAME"
+	,"SESSION"
+	,"SETS"
+	,"SIMPLE"
+	,"SIZE"
+	,"SOURCE"
+	,"SPACE"
+	,"SPECIFIC_NAME"
+	,"STANDALONE"
+	,"STATE"
+	,"STATEMENT"
+	,"STRIP"
+	,"STRUCTURE"
+	,"STYLE"
+	,"SUBCLASS_ORIGIN"
+	,"T"
+	,"TABLE_NAME"
+	,"TEMPORARY"
+	,"TIES"
+	,"TOKEN"
+	,"TOP_LEVEL_COUNT"
+	,"TRANSACTION"
+	,"TRANSACTIONS_COMMITTED"
+	,"TRANSACTIONS_ROLLED_BACK"
+	,"TRANSACTION_ACTIVE"
+	,"TRANSFORM"
+	,"TRANSFORMS"
+	,"TRIGGER_CATALOG"
+	,"TRIGGER_NAME"
+	,"TRIGGER_SCHEMA"
+	,"TYPE"
+	,"UNBOUNDED"
+	,"UNCOMMITTED"
+	,"UNDER"
+	,"UNLINK"
+	,"UNNAMED"
+	,"UNTYPED"
+	,"URI"
+	,"USAGE"
+	,"USER_DEFINED_TYPE_CATALOG"
+	,"USER_DEFINED_TYPE_CODE"
+	,"USER_DEFINED_TYPE_NAME"
+	,"USER_DEFINED_TYPE_SCHEMA"
+	,"VALID"
+	,"VALUE"
+	,"VALUES"
+	,"VERSION"
+	,"VIEW"
+	,"WHITESPACE"
+	,"WORK"
+	,"WRAPPER"
+	,"WRITE"
+	,"XMLDECLARATION"
+	,"XMLSCHEMA"
+	,"YES"
+	,"ZONE"
+]
 
 parser.parseError = function(str, hash) {
 	if (hash.expected && hash.expected.indexOf("'LITERAL'") > -1 && /[a-zA-Z_][a-zA-Z_0-9]*/.test(hash.token) && nonReserved.indexOf(hash.token) > -1) {

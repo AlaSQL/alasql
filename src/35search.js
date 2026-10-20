@@ -690,20 +690,38 @@ yy.Search = class Search {
 		}
 
 		if (this.into) {
-			var a1, a2;
-			if (typeof this.into.args[0] !== 'undefined') {
-				a1 = new Function('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
-					params,
-					alasql
-				);
+			// Handle different INTO types
+			if (this.into instanceof yy.ParamValue) {
+				// INTO $variable or INTO ?
+				if (typeof this.into.param === 'string') {
+					// $variable syntax - replace the variable
+					params[this.into.param] = res;
+				} else {
+					// ? syntax - assign to parameter
+					params[this.into.param] = res;
+				}
+				if (cb) res = cb(res);
+			} else if (this.into instanceof yy.VarValue) {
+				// INTO @variable
+				alasql.vars[this.into.variable] = res;
+				if (cb) res = cb(res);
+			} else {
+				// INTO function (TXT(), JSON(), etc.)
+				var a1, a2;
+				if (typeof this.into.args[0] !== 'undefined') {
+					a1 = new Function('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
+						params,
+						alasql
+					);
+				}
+				if (typeof this.into.args[1] !== 'undefined') {
+					a2 = new Function('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
+						params,
+						alasql
+					);
+				}
+				res = alasql.into[this.into.funcid.toUpperCase()](a1, a2, res, [], cb);
 			}
-			if (typeof this.into.args[1] !== 'undefined') {
-				a2 = new Function('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
-					params,
-					alasql
-				);
-			}
-			res = alasql.into[this.into.funcid.toUpperCase()](a1, a2, res, [], cb);
 		} else {
 			if (stope.value && res.length > 0) {
 				res = res[0];

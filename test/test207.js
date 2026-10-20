@@ -9,7 +9,7 @@ describe('Test 207 WHILE', function () {
 	it('1. FALSE WHILE', function (done) {
 		var res = alasql('WHILE FALSE SELECT VALUE 1; SELECT VALUE 2');
 		//        console.log(res);
-		assert.deepEqual(res, [[], 2]);
+		assert.deepStrictEqual(res, [[], 2]);
 		done();
 	});
 
@@ -23,7 +23,7 @@ describe('Test 207 WHILE', function () {
 			[],
 			function (res) {
 				//                console.log("ASYNC:",res);
-				assert.deepEqual(res, [1, [1, 1, 1]]);
+				assert.deepStrictEqual(res, [1, [1, 1, 1]]);
 				done();
 			}
 		);
@@ -38,7 +38,7 @@ describe('Test 207 WHILE', function () {
             '
 		);
 		// console.log("SYNC:",res);
-		assert.deepEqual(res, [1, [1, 1, 1]]);
+		assert.deepStrictEqual(res, [1, [1, 1, 1]]);
 		done();
 	});
 });

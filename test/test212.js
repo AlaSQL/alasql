@@ -35,7 +35,7 @@ describe('Test 212: CONVERT dates with style', function () {
             ',
 			[],
 			function (res) {
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					1,
 					[
 						'01/08/15',

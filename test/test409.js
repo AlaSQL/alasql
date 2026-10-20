@@ -56,7 +56,7 @@ describe('Test 409 Backup and restore database', function () {
 		alasql('USE test409');
 		alasql('INSERT INTO one VALUES (4)');
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
 
 		assert.throws(new Error(), function () {
 			alasql('INSERT INTO one VALUES (1)');

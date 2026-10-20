@@ -79,9 +79,16 @@ IDB.showDatabases = function (like, cb) {
 
 IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (found) {
 		if (ifnotexists) {
@@ -90,7 +97,11 @@ IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 			const err = new Error(
 				`IndexedDB: Cannot create new database "${ixdbid}" because it already exists`
 			);
-			if (cb) cb(null, err);
+			if (cb) {
+				cb(null, err);
+				return;
+			}
+			throw err;
 		}
 	} else {
 		const request = indexedDB.open(ixdbid, 1);
@@ -103,9 +114,16 @@ IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 
 IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (found) {
 		const request = indexedDB.deleteDatabase(ixdbid);
@@ -116,26 +134,39 @@ IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 		if (ifexists) {
 			cb && cb(0);
 		} else {
-			cb &&
+			if (cb) {
 				cb(
 					null,
-					new Error(`IndexedDB: Cannot drop new database "${ixdbid}" because it does not exist'`)
+					new Error(`IndexedDB: Cannot drop database "${ixdbid}" because it does not exist`)
 				);
+				return;
+			}
+			throw new Error(`IndexedDB: Cannot drop database "${ixdbid}" because it does not exist`);
 		}
 	}
 };
 
 IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			`IndexedDB: Cannot attach database "${ixdbid}" because it does not exist`
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
@@ -172,15 +203,25 @@ IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			'IndexedDB: Cannot create table in database "' + ixdbid + '" because it does not exist'
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
@@ -206,15 +247,25 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			'IndexedDB: Cannot drop table in database "' + ixdbid + '" because it does not exist'
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
@@ -299,6 +350,25 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		var ixdb = request.result;
 		var tx = ixdb.transaction([tableid], 'readwrite');
 		var tb = tx.objectStore(tableid);
+		// Apply AUTOINCREMENT / IDENTITY values before inserting (only when table has identity columns)
+		if (table && table.identities && Object.keys(table.identities).length > 0) {
+			for (var columnid in table.identities) {
+				var ident = table.identities[columnid];
+				for (var i = 0; i < value.length; i++) {
+					var userProvided =
+						typeof value[i][columnid] !== 'undefined' && value[i][columnid] !== null;
+					if (!userProvided) {
+						value[i][columnid] = ident.value;
+					}
+					// Advance counter: if the inserted value is >= current, sync counter past it
+					if (userProvided && +value[i][columnid] >= ident.value) {
+						ident.value = +value[i][columnid] + ident.step;
+					} else {
+						ident.value += ident.step;
+					}
+				}
+			}
+		}
 		for (var i = 0, ilen = value.length; i < ilen; i++) {
 			tb.add(value[i]);
 		}
@@ -401,4 +471,33 @@ IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) 
 			}
 		};
 	};
+};
+
+/**
+ * Commit transaction for IndexedDB
+ * Note: IndexedDB operations are auto-committed per operation
+ * This method provides API compatibility
+ */
+IDB.commit = function (databaseid, cb) {
+	// IndexedDB auto-commits each operation's transaction
+	// No additional action needed
+	return cb ? cb(1) : 1;
+};
+
+/**
+ * Begin transaction - alias to commit for IndexedDB
+ * Similar to LOCALSTORAGE pattern
+ */
+IDB.begin = IDB.commit;
+
+/**
+ * Rollback transaction for IndexedDB
+ * Note: IndexedDB operations are auto-committed per operation
+ * Manual rollback not supported - operations cannot be undone
+ */
+IDB.rollback = function (databaseid, cb) {
+	// IndexedDB auto-commits each operation
+	// Cannot rollback already-committed operations
+	// This provides API compatibility only
+	return cb ? cb(1) : 1;
 };

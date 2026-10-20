@@ -23,7 +23,7 @@ describe('Test 205 SET Local variables', function () {
 	it('3. SET @var->prop = expression', function (done) {
 		alasql('SET @obj = {}; SET @obj->one = 100');
 		var res = alasql('SELECT VALUE @obj');
-		assert.deepEqual(res, {one: 100});
+		assert.deepStrictEqual(res, {one: 100});
 		done();
 	});
 	it('4. SET @var->prop = expression', function (done) {
@@ -31,7 +31,7 @@ describe('Test 205 SET Local variables', function () {
 		//SET @obj->("two")->(1-1)=100
 		var res = alasql('SELECT VALUE @obj');
 		//        console.log(res);
-		assert.deepEqual(res, {two: 100});
+		assert.deepStrictEqual(res, {two: 100});
 		done();
 	});
 });

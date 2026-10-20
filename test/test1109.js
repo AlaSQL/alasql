@@ -21,6 +21,6 @@ describe('Test 1109 - Export empty tables to excel sheets', function () {
 		res.push(
 			alasql('SELECT INTO XLSX("' + __dirname + '/restest1109.xlsx",?) FROM ?', [opts, [[], []]])
 		);
-		assert.deepEqual(res, [1]);
+		assert.deepStrictEqual(res, [1]);
 	});
 });

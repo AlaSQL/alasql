@@ -10,14 +10,14 @@ describe('Test 198 - MS SQL compatibility', function () {
 		alasql('CREATE DATABASE test198; USE test198');
 		alasql('SOURCE "' + __dirname + '/test198-1.sql"');
 		var res = alasql('SELECT * FROM Customers');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA', city: 'Madrid'},
 			{customerid: 'FRNDO', city: 'Madrid'},
 			{customerid: 'KRLOS', city: 'Madrid'},
 			{customerid: 'MRPHS', city: 'Zion'},
 		]);
 		var res = alasql('SELECT * FROM Orders');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{orderid: 1, customerid: 'FRNDO'},
 			{orderid: 2, customerid: 'FRNDO'},
 			{orderid: 3, customerid: 'KRLOS'},
@@ -31,7 +31,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 
 	it('2. Select', function (done) {
 		var res = alasql('SOURCE "' + __dirname + '/test198-2.sql"');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA', numorders: 0},
 			{customerid: 'FRNDO', numorders: 2},
 		]);
@@ -84,7 +84,11 @@ describe('Test 198 - MS SQL compatibility', function () {
 			GROUP BY C.customerid'
 		);
 		//        assert(res.length == 6);
-		assert.deepEqual(res, [{customerid: 'FISSA'}, {customerid: 'FRNDO'}, {customerid: 'KRLOS'}]);
+		assert.deepStrictEqual(res, [
+			{customerid: 'FISSA'},
+			{customerid: 'FRNDO'},
+			{customerid: 'KRLOS'},
+		]);
 		done();
 	});
 
@@ -96,7 +100,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			GROUP BY C.customerid \
 			HAVING COUNT(O.orderid) < 3'
 		);
-		assert.deepEqual(res, [{customerid: 'FISSA'}, {customerid: 'FRNDO'}]);
+		assert.deepStrictEqual(res, [{customerid: 'FISSA'}, {customerid: 'FRNDO'}]);
 		done();
 	});
 
@@ -109,7 +113,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			GROUP BY C.customerid \
 			HAVING COUNT(O.orderid) < 3'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA', numorders: 0},
 			{customerid: 'FRNDO', numorders: 2},
 		]);
@@ -122,7 +126,7 @@ describe('Test 198 - MS SQL compatibility', function () {
           ORDER BY customerid, orderid;'
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{orderid: 7, customerid: undefined},
 			{orderid: 1, customerid: 'FRNDO'},
 			{orderid: 2, customerid: 'FRNDO'},
@@ -144,7 +148,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			HAVING COUNT(O.orderid) < 3 \
 			ORDER BY numorders DESC'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FRNDO', numorders: 2},
 			{customerid: 'FISSA', numorders: 0},
 		]);
@@ -157,7 +161,7 @@ describe('Test 198 - MS SQL compatibility', function () {
           FROM Orders ORDER BY customerid, orderid;'
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{orderid: 7, customerid: undefined},
 			{orderid: 1, customerid: 'FRNDO'},
 			{orderid: 2, customerid: 'FRNDO'},
@@ -224,7 +228,7 @@ describe('Test 198 - MS SQL compatibility', function () {
          		WHERE customerid LIKE '%S%' \
          	ORDER BY letter, customerid, orderid"
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{letter: 'O', customerid: 'FRNDO', orderid: 1},
 			{letter: 'O', customerid: 'FRNDO', orderid: 2},
 			{letter: 'O', customerid: 'KRLOS', orderid: 3},
@@ -253,7 +257,7 @@ describe('Test 198 - MS SQL compatibility', function () {
          GROUP BY C.customerid, city"
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				customerid: 'FISSA',
 				city: 'Madrid',

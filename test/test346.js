@@ -17,8 +17,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	it.skip('2. SEARCH 8 queens', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
     select 'a' || a A, 'b' || b B, 'c' || c C, 'd' || d D, 'e' || e E, 'f' || f F, 'g' || g G, 'h' || h H
     from
@@ -64,17 +63,15 @@ describe('Test 337 SEARCH 8 queens', function () {
     (select level h from dual connect by level <= 8)
     )
     where chk = 1
-    */
-		});
+    `);
 
 		console.log(res);
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		done();
 	});
 	if (false) {
 		it.skip('2. SEARCH 8 queens', function (done) {
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
     
     search times(
         ^/ as @f 
@@ -90,9 +87,8 @@ describe('Test 337 SEARCH 8 queens', function () {
       return @h
     from range(1,8)
 
-    */
-			});
-			assert.deepEqual(res, 1);
+    `);
+			assert.deepStrictEqual(res, 1);
 			done();
 		});
 

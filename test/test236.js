@@ -28,7 +28,7 @@ describe('Test 236 MERGE', function () {
 
 		alasql(sql);
 		var res = alasql('SELECT * FROM [Target]');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{EmployeeID: 100, EmployeeName: 'Mary'},
 			{EmployeeID: 101, EmployeeName: 'Sara'},
 			{EmployeeID: 102, EmployeeName: 'Stefano'},
@@ -36,7 +36,7 @@ describe('Test 236 MERGE', function () {
 		//        console.log(res);
 
 		res = alasql('SELECT * FROM [Source]');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{EmployeeID: 103, EmployeeName: 'Bob'},
 			{EmployeeID: 104, EmployeeName: 'Steve'},
 		]);

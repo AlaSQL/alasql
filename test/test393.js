@@ -47,7 +47,7 @@ describe('Test 393 Triggers', function () {
 		alasql('INSERT INTO two VALUES (276),(145)');
 
 		var res = alasql('COLUMN OF SELECT * FROM two');
-		assert.deepEqual(res, [145]);
+		assert.deepStrictEqual(res, [145]);
 		done();
 	});
 
@@ -73,7 +73,7 @@ describe('Test 393 Triggers', function () {
 		alasql('INSERT INTO three VALUES (222)');
 
 		var res = alasql('COLUMN OF SELECT * FROM three');
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 		assert(test == 1);
 		done();
 	});
@@ -83,17 +83,17 @@ describe('Test 393 Triggers', function () {
 		alasql.fn.onchange61 = function (r) {
 			test++;
 			var res = alasql('COLUMN OF SELECT * FROM four');
-			assert.deepEqual(res, [1, 2, 3, 4, 5]);
+			assert.deepStrictEqual(res, [1, 2, 3, 4, 5]);
 		};
 		alasql.fn.onchange62 = function () {
 			test++;
 			var res = alasql('COLUMN OF SELECT * FROM four');
-			assert.deepEqual(res, [2, 3, 4, 5]);
+			assert.deepStrictEqual(res, [2, 3, 4, 5]);
 		};
 		alasql.fn.onchange63 = function () {
 			test++;
 			var res = alasql('COLUMN OF SELECT * FROM four');
-			assert.deepEqual(res, [2, 3, 4, 5]);
+			assert.deepStrictEqual(res, [2, 3, 4, 5]);
 		};
 		alasql('CREATE TABLE four (a INT)');
 		alasql('CREATE TRIGGER tr61 BEFORE DELETE ON four onchange61');
@@ -123,7 +123,7 @@ describe('Test 393 Triggers', function () {
 		alasql('UPDATE four SET a = 7 WHERE a = 2');
 
 		var res = alasql('COLUMN OF SELECT * FROM four');
-		assert.deepEqual(res, [7, 3, 4, 5]);
+		assert.deepStrictEqual(res, [7, 3, 4, 5]);
 		assert(test == 2);
 		done();
 	});
@@ -141,7 +141,7 @@ describe('Test 393 Triggers', function () {
 		alasql('UPDATE five SET a = 7 WHERE a = 2');
 
 		var res = alasql('COLUMN OF SELECT * FROM five');
-		assert.deepEqual(res, [1, 2, 3, 4, 5]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5]);
 		assert(test == 1);
 		done();
 	});

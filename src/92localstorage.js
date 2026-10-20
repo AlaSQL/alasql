@@ -50,6 +50,8 @@ LS.storeTable = function (databaseid, tableid) {
 	tbl.columns = table.columns;
 	tbl.data = table.data;
 	tbl.identities = table.identities;
+	tbl.defaultfns = table.defaultfns;
+	tbl.onupdatefns = table.onupdatefns;
 	// TODO: May be add indexes, objects and other fields?
 	LS.set(db.lsdbid + '.' + tableid, tbl);
 };

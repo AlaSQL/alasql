@@ -14,13 +14,13 @@ describe('Test 323 ANY() and ALL()', function () {
 	var data = [{a: 1}, {a: 2}];
 	it('2. ALL', function (done) {
 		var res = alasql('SEARCH ALL(/a) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]); // To be checked
+		assert.deepStrictEqual(res, [1, 2]); // To be checked
 		done();
 	});
 
 	it('3. ANY', function (done) {
 		var res = alasql('SEARCH ANY(/a) FROM ?', [data]);
-		assert.deepEqual(res, [1]); // To be checked
+		assert.deepStrictEqual(res, [1]); // To be checked
 		done();
 	});
 

@@ -97,30 +97,30 @@ describe('Test 809 - ORDER BY', function () {
 	it('without NULLS clause', function (done) {
 		var res;
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC, b ASC', [testData]);
-		assert.deepEqual(res, testDataAscAsc);
+		assert.deepStrictEqual(res, testDataAscAsc);
 		res = alasql('SELECT a, b FROM ? ORDER BY a DESC, b DESC', [testData]);
-		assert.deepEqual(res, testDataDescDesc);
+		assert.deepStrictEqual(res, testDataDescDesc);
 		done();
 	});
 	it('with NULLS CLAUSE', function (done) {
 		var res;
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC NULLS FIRST, b ASC NULLS FIRST', [testData]);
-		assert.deepEqual(res, testDataAscFirstAscFirst);
+		assert.deepStrictEqual(res, testDataAscFirstAscFirst);
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC NULLS FIRST, b ASC NULLS LAST', [testData]);
-		assert.deepEqual(res, testDataAscFirstAscLast);
+		assert.deepStrictEqual(res, testDataAscFirstAscLast);
 		res = alasql('SELECT a, b FROM ? ORDER BY a DESC NULLS FIRST, b ASC NULLS FIRST', [testData]);
-		assert.deepEqual(res, testDataDescFirstAscFirst);
+		assert.deepStrictEqual(res, testDataDescFirstAscFirst);
 		res = alasql('SELECT a, b FROM ? ORDER BY a DESC NULLS FIRST, b ASC NULLS LAST', [testData]);
-		assert.deepEqual(res, testDataDescFirstAscLast);
+		assert.deepStrictEqual(res, testDataDescFirstAscLast);
 
 		res = alasql('SELECT a, b FROM ? ORDER BY a DESC NULLS LAST, b DESC NULLS LAST', [testData]);
-		assert.deepEqual(res, testDataAscFirstAscFirst.slice().reverse());
+		assert.deepStrictEqual(res, testDataAscFirstAscFirst.slice().reverse());
 		res = alasql('SELECT a, b FROM ? ORDER BY a DESC NULLS LAST, b DESC NULLS FIRST', [testData]);
-		assert.deepEqual(res, testDataAscFirstAscLast.slice().reverse());
+		assert.deepStrictEqual(res, testDataAscFirstAscLast.slice().reverse());
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC NULLS LAST, b DESC NULLS LAST', [testData]);
-		assert.deepEqual(res, testDataDescFirstAscFirst.slice().reverse());
+		assert.deepStrictEqual(res, testDataDescFirstAscFirst.slice().reverse());
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC NULLS LAST, b DESC NULLS FIRST', [testData]);
-		assert.deepEqual(res, testDataDescFirstAscLast.slice().reverse());
+		assert.deepStrictEqual(res, testDataDescFirstAscLast.slice().reverse());
 
 		done();
 	});

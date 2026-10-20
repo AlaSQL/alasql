@@ -18,9 +18,9 @@ describe('Test 309 # operator and graphs', function () {
 		var res = alasql('SELECT VALUE #Andrey->age');
 		assert(res == 44);
 		var res = alasql('SEARCH age FROM #Olga');
-		assert.deepEqual(res, [35]);
+		assert.deepStrictEqual(res, [35]);
 		var res = alasql('SEARCH / AS @p #Olga age');
-		assert.deepEqual(res, [35]);
+		assert.deepStrictEqual(res, [35]);
 		var res = alasql('SEARCH VALUE / #Olga age');
 		//    console.log(res);
 		assert(res == 35);

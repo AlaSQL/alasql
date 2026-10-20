@@ -79,7 +79,7 @@ describe('Test 118 - Implicit JOIN optimization', function () {
 				'INNER JOIN t3 ON t2.b = t3.a ORDER BY t1.a'
 		);
 
-		assert.deepEqual(implicit, explicit);
+		assert.deepStrictEqual(implicit, explicit);
 	});
 
 	it('E) Optimization is applied to implicit joins', function () {
@@ -120,6 +120,6 @@ describe('Test 118 - Implicit JOIN optimization', function () {
 			'SELECT t1.x as x1, t2.x as x2 FROM t1, t2 WHERE t2.a = t1.b ORDER BY t1.a'
 		);
 
-		assert.deepEqual(result1, result2);
+		assert.deepStrictEqual(result1, result2);
 	});
 });

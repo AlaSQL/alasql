@@ -13,7 +13,7 @@ describe('Test 135 a la NoSQL', function () {
 		one.insert({a: 1, b: 2}, function (res) {
 			assert(res == 1);
 			one.find({a: 1}, function (res) {
-				assert.deepEqual(res, {a: 1, b: 2});
+				assert.deepStrictEqual(res, {a: 1, b: 2});
 				done();
 			});
 		});

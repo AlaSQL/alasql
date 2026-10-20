@@ -15,7 +15,7 @@ describe('Test 371 INSERT OR REPLACE', function () {
 		alasql('CREATE TABLE one (a INT PRIMARY KEY, b STRING)');
 		alasql('INSERT INTO one VALUES (1,"One"), (2,"Two"), (3,"Three")');
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'One'},
 			{a: 2, b: 'Two'},
 			{a: 3, b: 'Three'},
@@ -24,7 +24,7 @@ describe('Test 371 INSERT OR REPLACE', function () {
 		alasql('CREATE TABLE two (a INT PRIMARY KEY, b STRING)');
 		alasql('INSERT INTO two VALUES (4,"Four"), (5,"Five"), (1,"Ein")');
 		var res = alasql('SELECT * FROM two');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 4, b: 'Four'},
 			{a: 5, b: 'Five'},
 			{a: 1, b: 'Ein'},
@@ -38,7 +38,7 @@ describe('Test 371 INSERT OR REPLACE', function () {
 		assert(res == 1);
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Uno'},
 			{a: 2, b: 'Two'},
 			{a: 3, b: 'Three'},
@@ -56,7 +56,7 @@ describe('Test 371 INSERT OR REPLACE', function () {
 
 		var res = alasql('SELECT * FROM one');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Ein'},
 			{a: 2, b: 'Two'},
 			{a: 3, b: 'Three'},
@@ -75,7 +75,7 @@ describe('Test 371 INSERT OR REPLACE', function () {
 		assert(res == 1);
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Uno'},
 			{a: 2, b: 'Deux'},
 			{a: 3, b: 'Three'},
@@ -89,7 +89,7 @@ describe('Test 371 INSERT OR REPLACE', function () {
 		assert(res == 1);
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Uno'},
 			{a: 2, b: 'Deux'},
 			{a: 3, b: 'Three'},
