@@ -268,6 +268,21 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
+		} else if (con.type === 'INDEX') {
+			// Register the index the way CREATE INDEX does, so INSERT keeps it up to date
+			var rightfns = con.columns
+				.map(function (columnid, i) {
+					var prefix = con.prefixes && con.prefixes[i];
+					if (prefix === undefined) {
+						return new yy.Column({columnid: columnid}).toJS('r', '');
+					}
+					return columnPrefixToJS(columnid, prefix);
+				})
+				.join("+'`'+");
+			var hh = hash(rightfns);
+			table.inddefs[con.indexid] = {rightfns: rightfns, hh: hh};
+			table.indices[hh] = {};
+			db.indices[con.indexid] = tableid;
 		} else if (con.type === 'FOREIGN KEY') {
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {
