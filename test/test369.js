@@ -76,13 +76,13 @@ describe('Test 369 LIKE', function () {
 
 	it('1. Test %', function (done) {
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef"', [data]);
-		assert.deepEqual(res, [{a: 'abcdef'}]);
+		assert.deepStrictEqual(res, [{a: 'abcdef'}]);
 
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef1"', [data]);
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "%abc%"', [data]);
-		assert.deepEqual(res, [{a: 'abcdef'}, {a: 'abc123'}]);
+		assert.deepStrictEqual(res, [{a: 'abcdef'}, {a: 'abc123'}]);
 		done();
 	});
 

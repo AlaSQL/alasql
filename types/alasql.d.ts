@@ -3,11 +3,12 @@
 declare module 'alasql' {
 	import * as xlsx from 'xlsx';
 
-	interface AlaSQLCallback {
-		(data?: any, err?: Error): void;
+	// Callback with error-first convention and optional data
+	export interface AlaSQLCallback<T = unknown> {
+		(err: Error | null, data?: T): void;
 	}
 
-	interface AlaSQLOptions {
+	export interface AlaSQLOptions {
 		errorlog: boolean;
 		valueof: boolean;
 		dropifnotexists: boolean; // drop database in any case
@@ -15,7 +16,7 @@ declare module 'alasql' {
 		casesensitive: boolean; // table and column names are case sensitive and converted to lower-case
 		logtarget: string; // target for log. Values: 'console', 'output', 'id' of html tag
 		logprompt: boolean; // print SQL at log
-		modifier: any; // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
+		modifier?: 'RECORDSET' | 'VALUE' | 'ROW' | 'COLUMN' | 'MATRIX' | 'TEXTSTRING' | 'INDEX';
 		columnlookup: number; // how many rows to lookup to define columns
 		autovertex: boolean; // create vertex if not found
 		usedbo: boolean; // use dbo as current database (for partial T-SQL comaptibility)
@@ -30,59 +31,252 @@ declare module 'alasql' {
 		oracle: boolean;
 		sqlite: boolean;
 		orientdb: boolean;
-		excel: any;
+		excel?: xlsx.WorkBook; // now typed
 	}
 
 	// compiled Statement
-	interface AlaSQLStatement {
-		(params?: any, cb?: AlaSQLCallback, scope?: any): any;
+	export interface AlaSQLStatement {
+		<T = unknown>(params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
+	}
+
+	// returned by alasql.compile(): a compiled statement with a promise helper
+	export interface AlaSQLCompiledStatement extends AlaSQLStatement {
+		promise<T = unknown>(params?: any): Promise<T>;
+	}
+
+	export type AlaSQLDefaultColumns = {[columnName: string]: string};
+
+	/**
+	 * Base parsed expression node.
+	 * Node shapes below are part of the public parser AST surface and follow semver.
+	 */
+	export interface AlaSQLExpression {
+		toJS(context: string, tableid: string | number, defcols: AlaSQLDefaultColumns | null): string;
+	}
+
+	export interface Op extends AlaSQLExpression {
+		left: ExpressionNode;
+		op: string;
+		// `->` with a bare property name (`a->b`, `tx.a.b`) puts the name as a string
+		right?: ExpressionNode | string;
+		right1?: ExpressionNode;
+		right2?: ExpressionNode;
+	}
+
+	export interface Column extends AlaSQLExpression {
+		columnid: string;
+		tableid?: string;
+		databaseid?: string;
+	}
+
+	export interface ParamValue extends AlaSQLExpression {
+		param: string | number;
+	}
+
+	export interface NumValue extends AlaSQLExpression {
+		value: number;
+	}
+
+	export interface StringValue extends AlaSQLExpression {
+		value: string;
+	}
+
+	export interface LogicValue extends AlaSQLExpression {
+		value: boolean;
+	}
+
+	export interface UniOp extends AlaSQLExpression {
+		op: string | null;
+		right: ExpressionNode;
+	}
+
+	export interface FuncValue extends AlaSQLExpression {
+		funcid: string;
+		args?: ExpressionNode[];
+	}
+
+	export type ExpressionNode =
+		Op | Column | ParamValue | NumValue | StringValue | LogicValue | UniOp | FuncValue;
+
+	export interface ExpressionWrapper extends AlaSQLExpression {
+		expression: ExpressionNode;
+		reduced?: boolean;
+	}
+
+	export interface Statement {
+		compile(databaseid: string): AlaSQLStatement;
+		where?: ExpressionWrapper;
+		[key: string]: unknown;
 	}
 
 	// abstract Syntax Tree
-	interface AlaSQLAST {
+	export interface AlaSQLAST {
+		statements: Statement[];
 		compile(databaseid: string): AlaSQLStatement;
 	}
 
-	// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/es6-promise/es6-promise.d.ts
-	interface Thenable<T> {
-		then<U>(
-			onFulfilled?: (value: T) => U | Thenable<U>,
-			onRejected?: (error: any) => U | Thenable<U>
-		): Thenable<U>;
-		then<U>(
-			onFulfilled?: (value: T) => U | Thenable<U>,
-			onRejected?: (error: any) => void
-		): Thenable<U>;
-		catch<U>(onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
+	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
+	export interface userDefinedFunction {
+		(...x: unknown[]): unknown;
+	}
+
+	export interface userDefinedFunctionLookUp {
+		[x: string]: userDefinedFunction;
 	}
 
 	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
-	interface userDefinedFunction {
-		(...x: any[]): any;
+	export interface userAggregator {
+		(value: unknown, accumulator: unknown, stage: number): unknown;
 	}
-	interface userDefinedFunctionLookUp {
-		[x: string]: userDefinedFunction;
-	}
-	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
-	interface userAggregator {
-		(value: any, accumulator: any, stage: number): any;
-	}
-	interface userAggregatorLookUp {
+
+	export interface userAggregatorLookUp {
 		[x: string]: userAggregator;
 	}
 
-	interface AlaSQL {
+	export interface userFromFunction {
+		(
+			dataReference: unknown,
+			options: unknown,
+			callback: (res: unknown) => void,
+			index: unknown,
+			query: unknown
+		): void;
+	}
+
+	export interface userFromFunctionLookUp {
+		[x: string]: userFromFunction;
+	}
+
+	/**
+	 * AlaSQL database object. This is a lightweight implimentation
+	 *
+	 * @interface database
+	 */
+	export interface database {
+		/**
+		 * The database ID.
+		 *
+		 * @type {string}
+		 * @memberof database
+		 */
+		databaseid: string;
+
+		/**
+		 * The collection of tables in the database.
+		 *
+		 * @type {tableLookUp}
+		 * @memberof database
+		 */
+		tables: tableLookUp;
+	}
+
+	/**
+	 * AlaSQL table object. This is a lightweight implimentation
+	 *
+	 * @interface table
+	 */
+	export interface table {
+		/**
+		 * The array of data stored in the table which can be queried
+		 *
+		 * @type {any[]}
+		 * @memberof table
+		 */
+		data: unknown[];
+	}
+
+	/**
+	 * AlaSQL database dictionary
+	 *
+	 * @interface databaseLookUp
+	 */
+	export interface databaseLookUp {
+		[databaseName: string]: database;
+	}
+
+	/**
+	 * AlaSQL table dictionary
+	 *
+	 * @interface tableLookUp
+	 */
+	export interface tableLookUp {
+		[tableName: string]: table;
+	}
+
+	export interface Database {
+		new (databaseid?: string): Database;
+		databaseid: string;
+		dbversion: number;
+		tables: {[key: string]: unknown};
+		views: {[key: string]: unknown};
+		triggers: {[key: string]: unknown};
+		indices: {[key: string]: unknown};
+		objects: {[key: string]: unknown};
+		counter: number;
+		sqlCache: {[key: string]: unknown};
+		sqlCacheSize: number;
+		astCache: {[key: string]: unknown};
+		resetSqlCache(): void;
+		exec<T = unknown>(sql: string, params?: any, cb?: AlaSQLCallback<T>): T;
+		autoval(tablename: string, colname: string, getNext: boolean): unknown;
+	}
+
+	export interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
-		(sql: any, params?: any, cb?: AlaSQLCallback, scope?: any): any;
-		parse(sql: any): AlaSQLAST;
-		promise(sql: any, params?: any): Thenable<any>;
+		<T = unknown>(sql: string, params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
+		parse(sql: string): AlaSQLAST;
+		compile(sql: string, databaseid?: string): AlaSQLCompiledStatement;
+		promise<T = unknown>(sql: string, params?: any): Promise<T>;
 		fn: userDefinedFunctionLookUp;
+		from: userFromFunctionLookUp;
 		aggr: userAggregatorLookUp;
 		autoval(tablename: string, colname: string, getNext?: boolean): number;
 		yy: {};
 		setXLSX(xlsxlib: typeof xlsx): void;
+		Database: {
+			new (databaseid?: string): Database;
+		};
+
+		/**
+		 * Array of databases in the AlaSQL object.
+		 *
+		 * @type {databaseLookUp}
+		 * @memberof AlaSQL
+		 */
+		databases: databaseLookUp;
+
+		/**
+		 * Equivalent to alasql('USE '+databaseid). This will change the current
+		 * database to the one specified. This will update the useid property and
+		 * the tables property.
+		 *
+		 * @param {string} databaseid
+		 * @memberof AlaSQL
+		 */
+		use(databaseid: string): void;
+
+		/**
+		 * The current database ID. If no database is selected, this is the
+		 * default database ID (called alasql).
+		 *
+		 * @type {string}
+		 * @memberof AlaSQL
+		 */
+		useid: string;
+
+		/**
+		 * Array of the tables in the default database (called alasql). If
+		 * the database is changed via a USE statement or the use method, this
+		 * becomes the tables in the new database.
+		 *
+		 * @type {tableLookUp}
+		 * @memberof AlaSQL
+		 */
+		tables: tableLookUp;
 	}
+
 	const alasql: AlaSQL;
+
 	export = alasql;
 }

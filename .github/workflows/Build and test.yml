@@ -1,65 +1,193 @@
-name: "CICD pipeline"
- 
+name: 'CI build & test'
+
 on:
   push:
     branches: '*'
   pull_request:
     branches: '*'
 
+permissions: read-all
+
 jobs:
-  Build:
+  verify-formatting:
+    name: Verify code formatting
+    permissions:
+      contents: read
+    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Bulid from src
-      uses: actions/setup-node@v3
-      with:
-        node-version: "latest"
-    - run: yarn install --frozen-lockfile
-    - run: npx gulp
-    - uses: actions/upload-artifact@master
-      with:
-        name: dist
-        path: dist/
-    - run: tar -cvf node_modules.tar node_modules
-    - uses: actions/upload-artifact@master
-      with:
-        name: node_modules
-        path: node_modules.tar
-    
-  test_node:
-    needs: Build
+      - name: Harden Runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Verify formatting
+        run: yarn test-format-all
+
+  build:
+    name: Build from source files
+    needs: []
+    permissions:
+      contents: write
+    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.x'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn build-only
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist
+          path: dist/
+
+      - name: Package node_modules
+        run: tar --exclude='.cache' -cvf node_modules.tar node_modules
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: node_modules
+          path: node_modules.tar
+
+  test-suite-node:
+    name: Test suite for Node
+    permissions:
+      contents: read
+    needs: [build, verify-formatting]
+    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [15.x, 16.x, 17.x, 18.x, 19.x, latest]
+        node-version: [16.x, 18.x, 20.x, 22.x, 24.x] # Dropped '23.x' (EOL) and 'latest' for stability
     steps:
-    - uses: actions/checkout@v3
-    - name: Run prod version with Node v${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - uses: actions/download-artifact@master
-      with:
-        name: dist
-        path: dist/
-    - uses: actions/download-artifact@master
-      with:
-        name: node_modules
-        path: ./
-    - run: tar -xvf node_modules.tar
-    - run: yarn test-only
- 
-  test_browser:
-    needs: Build
+      - name: Harden Runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+        with:
+          name: dist
+          path: dist/
+
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+        with:
+          name: node_modules
+          path: ./
+
+      - name: Unpack node_modules
+        run: tar -xvf node_modules.tar
+
+      - name: Run test suite
+        run: yarn test-only
+
+  test-suite-browser:
+    name: Test suite for Browser
+    permissions:
+      contents: read
+    needs: [build, verify-formatting]
+    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/download-artifact@master
-      with:
-        name: dist
-        path: dist/
-    - run: echo '::warning ::Not able to automate browser tests yet'
-    - run: '# yarn test-browser-ci'
+      - name: Harden Runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
 
- 
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+        with:
+          name: dist
+          path: dist/
+
+      - name: Placeholder for browser tests
+        run: echo '::warning ::Not able to automate browser tests yet'
+
+      - name: Run browser tests (disabled)
+        run: '# yarn test-browser-ci'
+
+  verify-parser:
+    name: Verify grammar vs generated parser
+    needs: []
+    permissions:
+      contents: read
+    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # runs-on: blacksmith-4vcpu-ubuntu-2204
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: detect-changes
+        uses: tj-actions/changed-files@v47.0.6
+        with:
+          files: src/alasqlparser.jison
+
+      - name: Setup Bun
+        if: steps.detect-changes.outputs.any_changed == 'true'
+        uses: oven-sh/setup-bun@v2
+
+      - name: Build from src
+        # This step only runs if the jison file changed
+        if: steps.detect-changes.outputs.any_changed == 'true'
+        run: |
+          yarn install --frozen-lockfile
+          yarn jison
+          yarn test
+
+      - name: Check generated parser for changes
+        if: steps.detect-changes.outputs.any_changed == 'true'
+        run: |
+          git diff --exit-code -- src/alasqlparser.js || (echo "Please run 'yarn jison && yarn test' and commit again." && exit 1)

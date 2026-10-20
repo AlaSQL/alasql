@@ -13,7 +13,7 @@ describe('Test 176 - CSV and TSV', function () {
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:false})',
 			[],
 			function (res) {
-				assert.deepEqual(res[0], {0: 'Country', 1: 'City'});
+				assert.deepStrictEqual(res[0], {0: 'Country', 1: 'City'});
 				done();
 			}
 		);
@@ -25,7 +25,7 @@ describe('Test 176 - CSV and TSV', function () {
 			[],
 			function (res) {
 				//			console.log(res);
-				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
+				assert.deepStrictEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
 				done();
 			}
 		);
@@ -37,7 +37,7 @@ describe('Test 176 - CSV and TSV', function () {
 			[],
 			function (res) {
 				//			console.log(res);
-				assert.deepEqual(res[0], {country: 'Country', city: 'City'});
+				assert.deepStrictEqual(res[0], {country: 'Country', city: 'City'});
 				done();
 			}
 		);
@@ -48,7 +48,7 @@ describe('Test 176 - CSV and TSV', function () {
 			'SELECT * FROM CSV("' + __dirname + '/test176a.tab",{separator:"\t",headers:true})',
 			[],
 			function (res) {
-				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
+				assert.deepStrictEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
 				done();
 			}
 		);
@@ -59,7 +59,7 @@ describe('Test 176 - CSV and TSV', function () {
 			'SELECT * FROM CSV("' + __dirname + '/test176b.csv",{separator:";",headers:true})',
 			[],
 			function (res) {
-				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
+				assert.deepStrictEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
 				done();
 			}
 		);
@@ -72,7 +72,7 @@ describe('Test 176 - CSV and TSV', function () {
 				'/test176b.csv",{separator:";",quote:"\\"",headers:true})',
 			[],
 			function (res) {
-				assert.deepEqual(res[1], {Country: 'Kazakhstan', City: 'Almaty'});
+				assert.deepStrictEqual(res[1], {Country: 'Kazakhstan', City: 'Almaty'});
 				done();
 			}
 		);
@@ -85,7 +85,7 @@ describe('Test 176 - CSV and TSV', function () {
 				'/test176b.csv",{separator:";",quote:"\\"",headers:true})',
 			[],
 			function (res) {
-				assert.deepEqual(res[1], {Country: 'Kazakhstan', City: 'Almaty'});
+				assert.deepStrictEqual(res[1], {Country: 'Kazakhstan', City: 'Almaty'});
 				done();
 			}
 		);
@@ -96,7 +96,7 @@ describe('Test 176 - CSV and TSV', function () {
 			'SELECT * FROM CSV("' + __dirname + '/test176c.csv",{headers:true, quote:"\'"})'
 		);
 		//   console.log(res);
-		//assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
+		//assert.deepStrictEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
 		done();
 	});
 
@@ -110,6 +110,6 @@ describe('Test 176 - CSV and TSV', function () {
 				done();
 			}
 		);
-		//assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
+		//assert.deepStrictEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
 	});
 });

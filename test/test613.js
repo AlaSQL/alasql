@@ -19,7 +19,7 @@ describe(
 
 		it('2.1. Synchronous SHOW COLUMNS (operation still works when no callback is provided)', function () {
 			var res = alasql('SHOW COLUMNS FROM one0');
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{
 					columnid: 'a',
 					dbsize: undefined,
@@ -31,7 +31,7 @@ describe(
 		it('2.2.1. Async SHOW COLUMNS (operation works when callback is provided, and no sql params)', function (done) {
 			//
 			alasql.promise('SHOW COLUMNS FROM one0').then(function (res) {
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					{
 						columnid: 'a',
 						dbsize: undefined,
@@ -45,7 +45,7 @@ describe(
 		it('2.2.2. Async SHOW COLUMNS (operation works when callback is provided, and empty sql params)', function (done) {
 			//
 			alasql.promise('SHOW COLUMNS FROM one0', []).then(function (res) {
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					{
 						columnid: 'a',
 						dbsize: undefined,

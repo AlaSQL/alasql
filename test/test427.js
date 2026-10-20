@@ -22,7 +22,7 @@ describe('Test ' + test + ' REPLACE test', function () {
 		alasql('CREATE TABLE one (a STRING)');
 		alasql('INSERT INTO one VALUES (".a."),("_._")');
 		var res = alasql('COLUMN OF SELECT REPLACE(a,".","_") FROM one');
-		//assert.deepEqual(res, [ '_a_', '___' ]);
+		//assert.deepStrictEqual(res, [ '_a_', '___' ]);
 		done();
 	});
 });

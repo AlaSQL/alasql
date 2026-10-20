@@ -1,32 +1,43 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "5.0.0-beta",
-	"author": "Andrey Gershun <agershun@gmail.com>, Mathias Wulff <m@rawu.dk>",
+	"version": "4.20.1",
+	"author": "Andrey Gershun <agershun@gmail.com>",
+	"contributors": [
+		"Mathias Wulff <m@rawu.dk>"
+	],
 	"main": "dist/alasql.fs.js",
 	"browser": "dist/alasql.min.js",
+	"exports": {
+		".": {
+			"types": "./types/alasql.d.ts",
+			"node": "./dist/alasql.fs.js",
+			"browser": "./dist/alasql.min.js",
+			"default": "./dist/alasql.fs.js"
+		},
+		"./precompile": "./dist/precompile/index.js"
+	},
 	"directories": {
 		"test": "test"
 	},
 	"typings": "types/alasql.d.ts",
 	"scripts": {
-		"test": "gulp && yarn test-only",
-		"test-ci": "(yarn test-format || 1) && yarn test && yarn install-g && alasql 'select 1 as Succes'",
-		"test-only": "mocha ./test --reporter dot",
+		"test": "sh build.sh && yarn test-only",
+		"test-ci": "(yarn test-format-all || 1) && yarn test-only && yarn install-g && alasql 'select 1 as Succes'",
+		"test-only": "bun test --dots --preload ./test/bun-setup.js ./test/test[0-9]*.js ./test/test-*.js",
 		"test-browser": "node test/browserTestRunner.js 7387",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
-		"build": "yarn format && gulp",
-		"build-jison": "gulp --jison && gulp",
-		"build-watch": "gulp watch",
+		"build": "yarn format && yarn build-only",
+		"build-only": "sh build.sh",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
 		"release": "yarn version",
-		"jison": "npx jison-gho ./src/alasqlparser.jison -o ./src/alasqlparser.js",
+		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
 		"fmt": "yarn pretty-commit --write",
-		"format": "yarn pretty-since-main --write",
+		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
-		"test-format": "yarn pretty-since-main --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
-		"lint": "eslint .",
-		"pretty-since-main": "{ git diff --name-only --diff-filter=d origin/main ; git diff --name-only --diff-filter=d --staged origin/main ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
+		"test-format": "yarn pretty-since-dev --list-different || (echo 'Please correct file formatting using `yarn format` and try again.' && exit 1)",
+		"test-format-all": "prettier --list-different '{.,src,test}/*.{js,ts,json}' || (echo 'Please correct file formatting using `yarn format-all` and try again.' && exit 1)",
+		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
@@ -38,53 +49,51 @@
 		"todo": "git ls-tree --full-tree --name-only -r head | xargs grep -inEro '\\Wtodo[ :].*' #",
 		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
-		"prepare": "husky install",
-		"preversion": "yarn && yarn test",
+		"prepare": "husky",
+		"preversion": "yarn && yarn test && npm login",
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
-		"cross-fetch": "^3.1.5",
-		"dom-storage": "2.1.0",
-		"es6-promise": "4.2.8",
-		"node-fetch": "3",
+		"cross-fetch": "4.1.0",
 		"yargs": "16"
+	},
+	"optionalDependencies": {
+		"react-native-fs": "^2.20.0"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
-		"cmdmix": "2.1.1",
-		"eslint": "^8.30.0",
-		"eslint-config-standard": "17.1.0",
-		"eslint-plugin-import": "^2.26.0",
-		"eslint-plugin-n": "16.0.0",
-		"eslint-plugin-node": "^11.1.0",
-		"eslint-plugin-promise": "^6.1.1",
-		"eslint-plugin-standard": "^5.0.0",
-		"git-branch-is": "4.0.0",
-		"gulp": "4.0.2",
-		"gulp-concat": "2.6.1",
-		"gulp-exec": "5.0.0",
-		"gulp-jison": "1.2.0",
-		"gulp-rename": "2.0.0",
-		"gulp-replace": "1.1.4",
-		"gulp-shell": "0.8.0",
-		"gulp-uglify": "3.0.2",
-		"husky": "8.0.3",
-		"lint-staged": "13.2.2",
-		"mocha": "10.2.0",
-		"mocha.parallel": "0.15.6",
-		"open": "9.1.0",
-		"prettier": "2.8.8",
-		"strftime": "0.10.2",
-		"tabletop": "1.6.3",
-		"uglify-js": "3.17.4"
+		"cmdmix": "2.2.2",
+		"dom-storage": "2.1.0",
+		"esbuild": "0.28.2",
+		"git-branch-is": "5.0.0",
+		"husky": "9.1.7",
+		"jison": "^0.4.18",
+		"open": "11.0.4",
+		"prettier": "3.9.10",
+		"react-native-fetch-blob": "^0.10.8",
+		"rexreplace": "7.1.14",
+		"strftime": "0.10.3",
+		"tabletop": "^1.6.2",
+		"uglify-js": "3.19.3"
 	},
 	"resolutions": {
-		"got": "^13.0.0",
-		"axios": "^1.0.0",
-		"json5": "^2.2.2",
-		"underscore": "^1.12.1",
-		"glob-parent": "^6.0.0",
-		"decode-uri-component": "^0.2.1"
+		"got": "16",
+		"axios": "^1.16.1",
+		"json5": "2",
+		"underscore": "1",
+		"glob-parent": "6",
+		"decode-uri-component": "0.5",
+		"semver": "7",
+		"follow-redirects": "^1.16.0",
+		"js-yaml": "5",
+		"glob": "^13.0.0",
+		"rimraf": "^6.1.2"
+	},
+	"overrides": {
+		"axios": "^1.16.1",
+		"follow-redirects": "^1.16.0",
+		"glob": "^13.0.0",
+		"rimraf": "^6.1.2"
 	},
 	"engines": {
 		"node": ">=15"
@@ -114,13 +123,8 @@
 		"useTabs": true,
 		"printWidth": 100,
 		"singleQuote": true,
-		"arrowParens": "always",
-		"bracketSpacing": false,
-		"trailingComma": "es5"
-	},
-	"husky": {
-		"hooks": {
-			"pre-push": "yarn test-format || (echo please format using 'yarn format' && exit 1)"
-		}
+		"arrowParens": "avoid",
+		"trailingComma": "es5",
+		"bracketSpacing": false
 	}
 }

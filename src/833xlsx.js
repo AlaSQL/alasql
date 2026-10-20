@@ -45,13 +45,14 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 		alasql.utils.loadBinaryFile(opts.sourcefilename, !!cb, function (data) {
 			wb = XLSX.read(data, {type: 'binary', ...alasql.options.excel, ...opts});
 			doExport();
+			if (cb) res = cb(res);
 		});
 	} else {
 		doExport();
+		/* Return result */
+		if (cb) res = cb(res);
 	}
 
-	/* Return result */
-	if (cb) res = cb(res);
 	return res;
 
 	/**
@@ -90,10 +91,14 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 		var dataLength = Object.keys(data).length;
 
 		// Generate columns if they are not defined
-		if ((!columns || columns.length == 0) && dataLength > 0) {
-			columns = Object.keys(data[0]).map(function (columnid) {
-				return {columnid: columnid};
-			});
+		if (!columns || columns.length == 0) {
+			if (dataLength > 0) {
+				columns = Object.keys(data[0]).map(function (columnid) {
+					return {columnid: columnid};
+				});
+			} else {
+				columns = [];
+			}
 		}
 
 		var cells = {};
@@ -132,7 +137,9 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 
 		if (opt.headers) {
 			columns.forEach(function (col, idx) {
-				cells[alasql.utils.xlsnc(col0 + idx) + '' + i] = {v: col.columnid.trim()};
+				cells[alasql.utils.xlsnc(col0 + idx) + '' + i] = {
+					v: col.columnid.trim(),
+				};
 			});
 			i++;
 		}
@@ -184,10 +191,6 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 					return buf;
 				};
 
-				/* the saveAs call downloads a file on the local machine */
-				//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
-				//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
-				//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
 				saveAs(new Blob([s2ab(wbout)], {type: 'application/octet-stream'}), filename);
 			}
 		}

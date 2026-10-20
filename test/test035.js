@@ -16,15 +16,15 @@ describe('Test 35 - LIMIT OFFSET', function () {
 
 		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
 		var res = db.exec(sql);
-		assert.deepEqual([1, 2], res);
+		assert.deepStrictEqual([1, 2], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3';
 		var res = db.exec(sql);
-		assert.deepEqual([1, 2, 3], res);
+		assert.deepStrictEqual([1, 2, 3], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3 OFFSET 2';
 		var res = db.exec(sql);
-		assert.deepEqual([3, 4, 5], res);
+		assert.deepStrictEqual([3, 4, 5], res);
 
 		done();
 	});
@@ -39,15 +39,15 @@ describe('Test 35 - LIMIT OFFSET', function () {
 
 		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
 		var res = alasql(sql);
-		assert.deepEqual([1, 2], res);
+		assert.deepStrictEqual([1, 2], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 5';
 		var res = alasql(sql);
-		assert.deepEqual([1, 2, 3, 4, 5], res);
+		assert.deepStrictEqual([1, 2, 3, 4, 5], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 5 OFFSET 2';
 		var res = alasql(sql);
-		assert.deepEqual([3, 4, 5, 6, 7], res);
+		assert.deepStrictEqual([3, 4, 5, 6, 7], res);
 
 		alasql('drop database test35');
 		done();

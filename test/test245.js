@@ -12,7 +12,7 @@ describe('Test 245 Square brackets and JavaScript', function () {
 		var res = alasql('SELECT COLUMN `[one]` FROM ?', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
@@ -30,7 +30,7 @@ describe('Test 245 Square brackets and JavaScript', function () {
 		var res = alasql('SELECT VALUE ``1+1``', [data]);
 		//console.log(res);
 
-		assert(res, 2);
+		assert.equal(res, 2);
 		done();
 	});
 });

@@ -9,7 +9,6 @@ if (typeof exports === 'object') {
 //if(typeof exports === 'object' && false) {
 
 describe('Test 168a - read XLSX', function () {
-	this.timeout(10000);
 	it('1. Read XLSX file', function (done) {
 		var res = alasql(
 			'select * from xlsx("' + dirname + '/test168.xlsx",{headers:false})',
@@ -30,7 +29,7 @@ describe('Test 168a - read XLSX', function () {
 				where Population > 10000000 order by City',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Mexico', 'Moscow']);
+				assert.deepStrictEqual(res, ['Mexico', 'Moscow']);
 				done();
 			}
 		);
@@ -45,7 +44,7 @@ describe('Test 168a - read XLSX', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['Moscow']);
+				assert.deepStrictEqual(res, ['Moscow']);
 				done();
 			}
 		);
@@ -60,7 +59,7 @@ describe('Test 168a - read XLSX', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['New York']);
+				assert.deepStrictEqual(res, ['New York']);
 				done();
 			}
 		);
@@ -68,7 +67,6 @@ describe('Test 168a - read XLSX', function () {
 });
 
 describe('Test 168b - read XLS', function () {
-	this.timeout(9000);
 	it('1. Read XLS file', function (done) {
 		var res = alasql(
 			'select * from xls("' + dirname + '/test168.xls",{headers:false})',
@@ -89,7 +87,7 @@ describe('Test 168b - read XLS', function () {
 				where Population > 10000000 order by City',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Mexico', 'Moscow']);
+				assert.deepStrictEqual(res, ['Mexico', 'Moscow']);
 				done();
 			}
 		);
@@ -104,7 +102,7 @@ describe('Test 168b - read XLS', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['Moscow']);
+				assert.deepStrictEqual(res, ['Moscow']);
 				done();
 			}
 		);
@@ -119,7 +117,7 @@ describe('Test 168b - read XLS', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['New York']);
+				assert.deepStrictEqual(res, ['New York']);
 				done();
 			}
 		);

@@ -102,7 +102,7 @@ if (typeof exports != 'object') {
 			SELECT * INTO schools FROM ?',
 					[studentsData, coursesData, schoolsData],
 					function (res) {
-						assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
+						assert.deepStrictEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
 						done();
 					}
 				);
@@ -114,7 +114,7 @@ if (typeof exports != 'object') {
 						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
 					[],
 					function (res) {
-						assert.deepEqual(res, [
+						assert.deepStrictEqual(res, [
 							{courseid: 1, cnt: 1},
 							{courseid: 2, cnt: 2},
 							{courseid: 3, cnt: 1},
@@ -146,7 +146,7 @@ if (typeof exports != 'object') {
 						' LEFT JOIN courses USING courseid',
 					[],
 					function (res) {
-						assert.deepEqual([1, 1, 1, 2, 1], res);
+						assert.deepStrictEqual([1, 1, 1, 2, 1], res);
 						done();
 					}
 				);
@@ -174,7 +174,7 @@ if (typeof exports != 'object') {
 			SELECT * INTO schools FROM ?',
 					[studentsData, coursesData, schoolsData],
 					function (res) {
-						assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
+						assert.deepStrictEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
 						done();
 					}
 				);
@@ -185,7 +185,7 @@ if (typeof exports != 'object') {
 						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
 					[],
 					function (res) {
-						assert.deepEqual(res, [
+						assert.deepStrictEqual(res, [
 							{courseid: 1, cnt: 1},
 							{courseid: 2, cnt: 2},
 							{courseid: 3, cnt: 1},
@@ -217,7 +217,7 @@ if (typeof exports != 'object') {
 						' LEFT JOIN courses USING courseid',
 					[],
 					function (res) {
-						assert.deepEqual([1, 1, 1, 2, 1], res);
+						assert.deepStrictEqual([1, 1, 1, 2, 1], res);
 						done();
 					}
 				);
@@ -320,7 +320,7 @@ function prepareData (defined) {
 		it('Select 1.1: COUNT', function(done){
 		 	alasql('SELECT courseid, COUNT(*) AS cnt '+
 		 		' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',[],function(res){
-		 		assert.deepEqual([ 
+		 		assert.deepStrictEqual([ 
 		 		{ courseid: 1, cnt: 1 },
 				{ courseid: 2, cnt: 2 },
 				{ courseid: 3, cnt: 1 },
@@ -343,7 +343,7 @@ function prepareData (defined) {
 				' FROM students '+
 				' LEFT JOIN courses USING courseid'
 			);
-			assert.deepEqual([1,1,1,2,1], res);
+			assert.deepStrictEqual([1,1,1,2,1], res);
 			done();
 		});
 		it('Select 1.4: queryValue', function(done){

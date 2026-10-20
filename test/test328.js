@@ -16,7 +16,7 @@ describe('Test 328 COMMA SELECTOR', function () {
 		//    var res = alasql('SEARCH / a where(_1<=2) as @a, / a where(_<>@a) as @b return @a,@b',[data]);
 		var res = alasql('SEARCH /a as @a ^ /a AS @b WHERE(@a!=@b) RETURNS(@a,@b) FROM ?', [data]);
 		// console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{'@a': 1, '@b': 2},
 			{'@a': 1, '@b': 3},
 			{'@a': 2, '@b': 1},
@@ -32,7 +32,7 @@ describe('Test 328 COMMA SELECTOR', function () {
 		//    var res = alasql('SEARCH / a where(_1<=2) as @a, / a where(_<>@a) as @b return @a,@b',[data]);
 		var res = alasql('SEARCH /a as @a ^ /a AS @b WHERE(@a!=@b) @[(@a),(@b)] FROM ?', [data]);
 		//     console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[1, 2],
 			[1, 3],
 			[2, 1],

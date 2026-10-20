@@ -35,12 +35,39 @@ yy.Select.prototype.compileOrder = function (query, params) {
 			// console.log(ord.expression instanceof yy.Column);
 
 			if (ord.expression instanceof yy.NumValue) {
-				if (ord.expression.value > self.columns.length) {
+				// Validate that column number is at least 1
+				if (ord.expression.value < 1) {
 					throw new Error(
-						`You are trying to order by column number ${ord.expression.value} but you have only selected ${self.columns.length} columns.`
+						`Invalid column number ${ord.expression.value}. Column numbers must be at least 1.`
 					);
 				}
+
 				var v = self.columns[ord.expression.value - 1];
+				// Check if we're dealing with SELECT * case
+				var hasWildcard =
+					self.columns.length === 1 &&
+					self.columns[0] instanceof yy.Column &&
+					self.columns[0].columnid === '*';
+
+				if (hasWildcard) {
+					// With SELECT *, use positional ordering (resolved at runtime)
+					// Skip validation as we don't know the column count at compile time
+					v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
+				} else {
+					// With explicit columns, validate the column number
+					if (ord.expression.value > self.columns.length) {
+						throw new Error(
+							`You are trying to order by column number ${ord.expression.value} but you have only selected ${self.columns.length} columns.`
+						);
+					}
+					// Also check if the resolved column is a wildcard (shouldn't happen but be safe)
+					if (v instanceof yy.Column && v.columnid === '*') {
+						v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
+					}
+				}
+			} else if (ord.expression instanceof yy.StringValue) {
+				// Treat quoted strings in ORDER BY as column references
+				var v = new yy.Column({columnid: ord.expression.value});
 			} else {
 				var v = ord.expression;
 			}
@@ -48,11 +75,17 @@ yy.Select.prototype.compileOrder = function (query, params) {
 
 			var key = '$$$' + idx;
 
-			// Date conversion
+			// Date conversion - get columnid based on expression type
 			var dg = '';
-			//if(alasql.options.valueof)
+			var columnid;
 			if (ord.expression instanceof yy.Column) {
-				var columnid = ord.expression.columnid;
+				columnid = ord.expression.columnid;
+			} else if (ord.expression instanceof yy.ParamValue) {
+				columnid = params[ord.expression.param];
+			} else if (ord.expression instanceof yy.StringValue) {
+				columnid = ord.expression.value;
+			}
+			if (columnid) {
 				if (alasql.options.valueof) {
 					dg = '.valueOf()';
 				} else if (query.xcolumns[columnid]) {
@@ -65,28 +98,8 @@ yy.Select.prototype.compileOrder = function (query, params) {
 						dbtypeid == 'NUMBER'
 					)
 						dg = '.valueOf()';
-					// TODO Add other types mapping
 				}
 			}
-			if (ord.expression instanceof yy.ParamValue) {
-				var columnid = params[ord.expression.param];
-				if (alasql.options.valueof) {
-					dg = '.valueOf()';
-				} else if (query.xcolumns[columnid]) {
-					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if (
-						dbtypeid == 'DATE' ||
-						dbtypeid == 'DATETIME' ||
-						dbtypeid == 'DATETIME2' ||
-						dbtypeid == 'STRING' ||
-						dbtypeid == 'NUMBER'
-					)
-						dg = '.valueOf()';
-					// TODO Add other types mapping
-				}
-			}
-			// COLLATE NOCASE
-			if (ord.nocase) dg += '.toUpperCase()';
 
 			if (ord.nullsOrder) {
 				if (ord.nullsOrder == 'FIRST') {
@@ -98,18 +111,15 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				sk += '}';
 			}
 
-			s +=
-				"if((a['" +
-				key +
-				"']||'')" +
-				dg +
-				(ord.direction == 'ASC' ? '>' : '<') +
-				"(b['" +
-				key +
-				"']||'')" +
-				dg +
-				')return 1;';
-			s += "if((a['" + key + "']||'')" + dg + "==(b['" + key + "']||'')" + dg + '){';
+			var va = "(a['" + key + "']||'')" + dg;
+			var vb = "(b['" + key + "']||'')" + dg;
+			// COLLATE NOCASE ignores case in text; numbers and other values compare as they are
+			if (ord.nocase) {
+				va = '(typeof (y=' + va + ")=='string'?y.toUpperCase():y)";
+				vb = '(typeof (y=' + vb + ")=='string'?y.toUpperCase():y)";
+			}
+			s += 'if(' + va + (ord.direction == 'ASC' ? '>' : '<') + vb + ')return 1;';
+			s += 'if(' + va + '==' + vb + '){';
 			//console.log(37,s);
 
 			/*

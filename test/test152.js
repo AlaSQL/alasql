@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test152.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test152.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', function () {
@@ -22,7 +25,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		//		assert(!alasql.databases.ls152.tables.one.data);
 
 		var res = alasql('SELECT * FROM ls152.one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Rome'},
 			{a: 2, b: 'London'},
 			{a: 3, b: 'Berlin'},
@@ -39,7 +42,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		//debugger;
 		alasql('INSERT INTO ls152.two SELECT * FROM ls152.one WHERE a IN (2,3)');
 		var res = alasql('SELECT * FROM ls152.two');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 2, b: 'London'},
 			{a: 3, b: 'Berlin'},
 		]);
@@ -49,14 +52,14 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 	it('3. DELETE FROM', function (done) {
 		alasql('DELETE FROM ls152.two WHERE a=3');
 		var res = alasql('SELECT * FROM ls152.two');
-		assert.deepEqual(res, [{a: 2, b: 'London'}]);
+		assert.deepStrictEqual(res, [{a: 2, b: 'London'}]);
 		done();
 	});
 
 	it('4. UPDATE', function (done) {
 		alasql('UPDATE ls152.one SET b="Prague" WHERE a IN (2,3)');
 		var res = alasql('SELECT * FROM ls152.one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Rome'},
 			{a: 2, b: 'Prague'},
 			{a: 3, b: 'Prague'},
@@ -70,7 +73,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		alasql('INSERT INTO ls152.three (b) VALUES ("Rome"),("London"),("Berlin"),("Paris")');
 
 		var res = alasql('SELECT * FROM ls152.three');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Rome'},
 			{a: 2, b: 'London'},
 			{a: 3, b: 'Berlin'},

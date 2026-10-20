@@ -12,9 +12,9 @@ describe('Test 200 IS NULL + IS NOT NULL', function () {
 		assert(!!alasql.tables.one);
 
 		var res = alasql('ROW OF SELECT NULL IS NULL, 1 IS NULL, NULL NOT NULL, 1 NOT NULL');
-		assert.deepEqual(res, [true, false, false, true]);
+		assert.deepStrictEqual(res, [true, false, false, true]);
 		var res = alasql('ROW OF SELECT NULL IS NOT NULL, 1 IS NOT NULL');
-		assert.deepEqual(res, [false, true]);
+		assert.deepStrictEqual(res, [false, true]);
 
 		alasql('DROP DATABASE test200');
 		done();

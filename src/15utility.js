@@ -1,9 +1,9 @@
 /*jshint unused:false*/
 /*
-    Utilities for Alasql.js
+	Utilities for Alasql.js
 
-    @todo Review the list of utilities
-    @todo Find more effective utilities
+	@todo Review the list of utilities
+	@todo Find more effective utilities
 */
 
 /**
@@ -25,9 +25,11 @@ var utils = (alasql.utils = {});
   NaN         => undefined
 
   */
-function n2u(s) {
+function nanToUndefined(s) {
+	//rename for clarity.
 	return '(y=' + s + ',y===y?y:undefined)';
 }
+var n2u = nanToUndefined; // Alias for backward compatibility
 
 /**
   Return undefined if s undefined
@@ -41,9 +43,11 @@ function n2u(s) {
   NaN,a       => undefined
 
   */
-function und(s, r) {
+function undefinedOrValue(s, r) {
+	//rename for clarity
 	return '(y=' + s + ',typeof y=="undefined"?undefined:' + r + ')';
 }
+var und = undefinedOrValue; // Alias for backward compatibility
 
 /**
   Return always true. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
@@ -124,15 +128,14 @@ var doubleq = (utils.doubleq = function (s) {
 });
 
 /**
-  Replace sigle quote to escaped single quote
+  Replace single quote with escaped single quote
   @param {string} s Source string
   @return {string} Replaced string
 
-  @todo Chack this functions
-
-  */
+  @todo Check this function
+*/
 var doubleqq = (utils.doubleqq = function (s) {
-	return s.replace(/\'/g, "'");
+	return s.replace(/'/g, "\\'");
 });
 
 /**
@@ -194,7 +197,10 @@ utils.isWebWorker = (function () {
   */
 utils.isNode = (function () {
 	try {
-		return utils.isNativeFunction(utils.global.process.reallyExit);
+		if (typeof process === 'undefined' || !process.versions || !process.versions.node) {
+			return false;
+		}
+		return true;
 	} catch (e) {
 		return false;
 	}
@@ -287,6 +293,7 @@ utils.hasIndexedDB = (function () {
 utils.isArray = function (obj) {
 	return '[object Array]' === Object.prototype.toString.call(obj);
 };
+
 /**
   Load text file from anywhere
   @param {string|object} path File path or HTML event
@@ -298,14 +305,16 @@ utils.isArray = function (obj) {
   @todo Define Event type
   @todo Smaller if-else structures.
   */
-var loadFile = (utils.loadFile = function (path, asy, success, error) {
+
+const protocolRegex = /^[a-z]+:\/\//i;
+let loadFile = (utils.loadFile = function (path, asy, success, error) {
 	var data, fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
 		fs = require('fs');
 
 		// If path is empty, than read data from stdin (for Node)
-		if (typeof path === 'undefined') {
+		if ([null, undefined].includes(path)) {
 			var buff = '';
 			process.stdin.setEncoding('utf8');
 			process.stdin.on('readable', function () {
@@ -317,30 +326,38 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			process.stdin.on('end', function () {
 				success(cutbom(buff));
 			});
-		} else {
-			if (/^[a-z]+:\/\//i.test(path)) {
-				fetchData(path, (x) => success(cutbom(x)), error, asy);
-			} else {
-				//If async callthen call async
-				if (asy) {
-					fs.readFile(path, function (err, data) {
-						if (err) {
-							return error(err, null);
-						}
-						success(cutbom(data.toString()));
-					});
-				} else {
-					// Call sync version
-					try {
-						data = fs.readFileSync(path);
-					} catch (e) {
-						return error(err, null);
-					}
-					success(cutbom(data.toString()));
-				}
-			}
+			return;
 		}
-	} else if (utils.isReactNative) {
+
+		if (protocolRegex.test(path)) {
+			fetchData(path, x => success(cutbom(x)), error, asy);
+			return;
+		}
+
+		//If async callthen call async
+		if (asy) {
+			fs.readFile(path, function (err, data) {
+				if (err) {
+					return error(err, null);
+				}
+				success(cutbom(data.toString()));
+			});
+			return;
+		}
+
+		// Call sync version
+		try {
+			data = fs.readFileSync(path);
+		} catch (e) {
+			error(e, null);
+			return;
+		}
+
+		success(cutbom(data.toString()));
+		return;
+	}
+
+	if (utils.isReactNative) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.readFile(path, 'utf8')
@@ -351,7 +368,10 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 				return error(err, null);
 			});
 		//*/
-	} else if (utils.isCordova) {
+		return;
+	}
+
+	if (utils.isCordova) {
 		/* If Cordova */
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
@@ -365,70 +385,52 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		});
 
-		/** @todo Check eliminated code below */
-
-		/*/*
-
-		 var paths = path.split('/');
-		 var filename = paths[paths.length-1];
-		 var dirpath = path.substr(0,path.length-filename.length);
-  //       console.log('CORDOVA',filename,dirpath);
-  //return success('[{"a":"'+filename+'"}]');
-
-		 window.resolveLocalFileSystemURL(dirpath, function(dir) {
-			 dir.getFile(filename, null, function(file) {
-				 file.file(function(file) {
-					 var reader = new FileReader();
-  //                   console.log('READ FILE 2');
-					 reader.onloadend = function(e) {
- //                    console.log('READ FILE 3',this.result);
-						 success(this.result);
-					 };
-					 reader.readAsText(file);
-				 });
-			 });
-		 });
- */
-	} else {
-		/* For string */
-		if (typeof path === 'string') {
-			// For browser read from tag
-			/*
-				 SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
-			 */
-			if (path.substr(0, 1) === '#' && typeof document !== 'undefined') {
-				data = document.querySelector(path).textContent;
-				success(data);
-			} else {
-				/*
-					 Simply read file from HTTP request, like:
-					 SELECT * FROM TXT('http://alasql.org/README.md');
-				 */
-				fetchData(path, (x) => success(cutbom(x)), error, asy);
-			}
-		} else if (path instanceof Event) {
-			/*
-				 For browser read from files input element
-				 <input type="files" onchange="readFile(event)">
-				 <script>
-					 function readFile(event) {
-						 alasql('SELECT * FROM TXT(?)',[event])
-					 }
-				 </script>
-			 */
-			/** @type {array} List of files from <input> element */
-			var files = path.target.files;
-			/** type {object} */
-			var reader = new FileReader();
-			/** type {string} */
-			var name = files[0].name;
-			reader.onload = function (e) {
-				var data = e.target.result;
-				success(cutbom(data));
-			};
-			reader.readAsText(files[0]);
-		}
+		return;
 	}
+
+	/* For string */
+	if (typeof path === 'string') {
+		// For browser read from tag
+		/*
+			 SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
+		 */
+		if (path.substr(0, 1) === '#' && typeof document !== 'undefined') {
+			data = document.querySelector(path).textContent;
+			success(data);
+			return;
+		}
+
+		/*
+			 Simply read file from HTTP request, like:
+			 SELECT * FROM TXT('http://alasql.org/README.md');
+		 */
+		fetchData(path, x => success(cutbom(x)), error, asy);
+		return;
+	}
+
+	if (path instanceof Event) {
+		/*
+			 For browser read from files input element
+			 <input type="files" onchange="readFile(event)">
+			 <script>
+				 function readFile(event) {
+					 alasql('SELECT * FROM TXT(?)',[event])
+				 }
+			 </script>
+		 */
+		/** @type {array} List of files from <input> element */
+		var files = path.target.files;
+		/** type {object} */
+		var reader = new FileReader();
+		/** type {string} */
+		var name = files[0].name;
+		reader.onload = function (e) {
+			var data = e.target.result;
+			success(cutbom(data));
+		};
+		reader.readAsText(files[0]);
+	}
+	fetchData(path, x => success(cutbom(x)), error, asy);
 });
 
 let _fetch = typeof fetch !== 'undefined' ? fetch : null;
@@ -445,13 +447,26 @@ async function fetchData(path, success, error, async) {
 
 function getData(path, success, error) {
 	return _fetch(path)
-		.then((response) => response.arrayBuffer())
-		.then((buf) => {
+		.then(response => response.text())
+		.then(txt => {
+			success(txt);
+		})
+		.catch(e => {
+			if (error) return error(e);
+			console.error(e);
+			throw e;
+		});
+}
+
+function getBinaryData(path, success, error) {
+	return _fetch(path)
+		.then(response => response.arrayBuffer())
+		.then(buf => {
 			var a = new Uint8Array(buf);
-			var b = [...a].map((e) => String.fromCharCode(e)).join('');
+			var b = [...a].map(e => String.fromCharCode(e)).join('');
 			success(b);
 		})
-		.catch((e) => {
+		.catch(e => {
 			if (error) return error(e);
 			console.error(e);
 			throw e;
@@ -473,7 +488,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 	path,
 	runAsync,
 	success,
-	error = (x) => {
+	error = x => {
 		throw x;
 	}
 ) {
@@ -483,7 +498,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
-			fetchData(path, success, error, runAsync);
+			return getBinaryData(path, success, error);
 		} else {
 			if (runAsync) {
 				fs.readFile(path, function (err, data) {
@@ -615,7 +630,7 @@ utils.autoExtFilename = function (filename, ext, config) {
 	config = config || {};
 	if (
 		typeof filename !== 'string' ||
-		filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) ||
+		filename.match(/^[A-Z]+:\/\/|\n|\..{2,6}$/i) ||
 		config.autoExt === 0 ||
 		config.autoExt === false
 	) {
@@ -1176,72 +1191,109 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
   @return {boolean} If value LIKE pattern ESCAPE escape
   */
 
-var like = (utils.like = function (pattern, value, escape) {
-	// Verify escape character
-	if (!escape) escape = '';
+/* * Tests if a given value matches a pattern with optional escape character.
+ * Supports SQL-like syntax with % and _ as wildcards and custom escape character.
+ */
+var patternCache = new Map(); // escape character -> pattern -> RegExp
+var like = (utils.like = function (pattern, value, escape = '') {
+	var cache = patternCache.get(escape);
+	if (!cache) patternCache.set(escape, (cache = new Map()));
+	var re = cache.get(pattern);
+	if (!re) {
+		var regexStr = '^'; // Start regex pattern to match from the beginning.
+		var i = 0; // Index for traversing the pattern string.
 
-	var i = 0;
-	var s = '^';
+		while (i < pattern.length) {
+			var currentChar = pattern[i];
+			var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
 
-	while (i < pattern.length) {
-		var c = pattern[i],
-			c1 = '';
-		if (i < pattern.length - 1) c1 = pattern[i + 1];
-
-		if (c === escape) {
-			s += '\\' + c1;
+			// Handle escape character.
+			if (currentChar === escape) {
+				regexStr += '\\' + nextChar;
+				i++; // Skip next character as it's escaped.
+			}
+			// Handle negation within character classes.
+			else if (currentChar === '[' && nextChar === '^') {
+				regexStr += '[^';
+				i++; // Include '^' as part of the set.
+			}
+			// Directly append square brackets.
+			else if (currentChar === '[' || currentChar === ']') {
+				regexStr += currentChar;
+			}
+			// Replace '%' with regex to match any character sequence.
+			else if (currentChar === '%') {
+				regexStr += '[\\s\\S]*';
+			}
+			// Replace '_' with regex to match any single character.
+			else if (currentChar === '_') {
+				regexStr += '.';
+			}
+			// Escape special regex characters.
+			else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
+				regexStr += '\\' + currentChar;
+			}
+			// Append literal characters.
+			else {
+				regexStr += currentChar;
+			}
 			i++;
-		} else if (c === '[' && c1 === '^') {
-			s += '[^';
-			i++;
-		} else if (c === '[' || c === ']') {
-			s += c;
-		} else if (c === '%') {
-			s += '.*';
-		} else if (c === '_') {
-			s += '.';
-		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
-			s += '\\' + c;
-		} else {
-			s += c;
 		}
-		i++;
+
+		regexStr += '$'; // End regex pattern to match until the end.
+		// Compile and cache the regex pattern for future use.
+		re = RegExp(regexStr, 'i');
+		cache.set(pattern, re);
 	}
 
-	s += '$';
-	//    if(value == undefined) return false;
-	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1;
+	// Convert value to string (handling null/undefined) and test against compiled pattern.
+	return ('' + (value ?? '')).search(re) > -1;
 });
 
+/**
+ * Tests if a given value matches a glob pattern.
+ * The function supports '*', '?' as wildcards where '*' matches any sequence of characters,
+ * and '?' matches any single character. Square brackets can be used for character sets and ranges.
+ *
+ * @param {string} value - The string value to test against the glob pattern.
+ * @param {string} pattern - The glob pattern to match the value against.
+ * @returns {boolean} - True if the value matches the pattern, false otherwise.
+ */
 utils.glob = function (value, pattern) {
-	var i = 0;
-	var s = '^';
+	var currentIndex = 0; // Index for traversing the pattern string.
+	var regexPattern = '^'; // Start regex pattern to match from the beginning.
 
-	while (i < pattern.length) {
-		var c = pattern[i],
-			c1 = '';
-		if (i < pattern.length - 1) c1 = pattern[i + 1];
+	while (currentIndex < pattern.length) {
+		var currentChar = pattern[currentIndex];
+		var nextChar = currentIndex < pattern.length - 1 ? pattern[currentIndex + 1] : '';
 
-		if (c === '[' && c1 === '^') {
-			s += '[^';
-			i++;
-		} else if (c === '[' || c === ']') {
-			s += c;
-		} else if (c === '*') {
-			s += '.*';
-		} else if (c === '?') {
-			s += '.';
-		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
-			s += '\\' + c;
+		// Handle character sets and negation within them.
+		if (currentChar === '[' && nextChar === '^') {
+			regexPattern += '[^';
+			currentIndex++; // Include '^' as part of the set.
+		} else if (currentChar === '[' || currentChar === ']') {
+			// Directly append square brackets.
+			regexPattern += currentChar;
+		} else if (currentChar === '*') {
+			// Replace '*' with regex to match any character sequence.
+			regexPattern += '.*';
+		} else if (currentChar === '?') {
+			// Replace '?' with regex to match any single character.
+			regexPattern += '.';
+		} else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
+			// Escape special regex characters.
+			regexPattern += '\\' + currentChar;
 		} else {
-			s += c;
+			// Append literal characters.
+			regexPattern += currentChar;
 		}
-		i++;
+		currentIndex++;
 	}
 
-	s += '$';
-	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1;
+	regexPattern += '$'; // End regex pattern to match until the end.
+
+	// Convert value to uppercase, compile the regex pattern in uppercase to perform a case-insensitive match.
+	return ('' + (value || '')).toUpperCase().search(RegExp(regexPattern.toUpperCase())) > -1;
 };
 
 /**
@@ -1297,6 +1349,65 @@ var getXLSX = function () {
 	}
 
 	return XLSX;
+};
+
+/**
+ * Type converter regex patterns
+ */
+var reTypeConverter = {
+	str: /string|char$|text/i,
+	int: /^int|int$/i,
+	num: /float|double|real|^num|decimal|money/i,
+	bool: /^bool/i,
+	date: /^date|^time/i,
+};
+
+/**
+ * Convert a value to the appropriate type based on column definition
+ * @param {*} value - The value to convert
+ * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
+ * @return {*} The converted value
+ */
+utils.typeConverter = function (value, dbtypeid) {
+	// If value is null or undefined, return as is
+	if (value === null || value === undefined) {
+		return value;
+	}
+
+	// If no type specified, try to auto-convert if it looks like a number
+	if (!dbtypeid) {
+		if (alasql.options.csvStringToNumber && typeof value === 'string' && value.length > 0) {
+			if (value == +value) {
+				return +value;
+			}
+		}
+		return value;
+	}
+
+	// Check type using regex patterns
+	if (reTypeConverter.str.test(dbtypeid)) {
+		return String(value);
+	}
+	if (reTypeConverter.int.test(dbtypeid)) {
+		var intVal = parseInt(value, 10);
+		return isNaN(intVal) ? value : intVal;
+	}
+	if (reTypeConverter.num.test(dbtypeid)) {
+		var numVal = parseFloat(value);
+		return isNaN(numVal) ? value : numVal;
+	}
+	if (reTypeConverter.bool.test(dbtypeid)) {
+		if (typeof value === 'string') {
+			return /^(true|1|yes)$/i.test(value);
+		}
+		return Boolean(value);
+	}
+	if (reTypeConverter.date.test(dbtypeid)) {
+		return value instanceof Date ? value : new Date(value);
+	}
+
+	// Unknown type, return as is
+	return value;
 };
 
 // set AlaSQl path

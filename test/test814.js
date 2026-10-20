@@ -12,13 +12,16 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		alasql('CREATE table i_am_a_table;');
 		//alasql(`INSERT INTO i_am_a_table VALUES (1337);`);
 		//alasql('INSERT INTO i_am_a_table VALUES (1337);')
+		// Reset errorlog to ensure security tests throw exceptions
+		alasql.options.errorlog = false;
 	});
 
 	after(function () {
 		alasql('drop database test' + test);
+		alasql.options.errorlog = false;
 	});
 
-	const genPayload = (command) => `
+	const genPayload = command => `
 	console.log(${JSON.stringify(command)})
 	`;
 
@@ -63,7 +66,7 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		sql += 'insert into three values (1),(2),(3),(4),(5);';
 		sql += 'select * from three;';
 		alasql(sql, function (res) {
-			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
+			assert.deepStrictEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 			done();
 		});
 	});

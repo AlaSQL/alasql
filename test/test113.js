@@ -105,7 +105,7 @@ describe('Test 113 - SELECT ', function () {
 			ORDER BY courseid'
 		);
 		//		console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{courseid: 1, cnt: 1},
 			{courseid: 2, cnt: 2},
 			{courseid: 3, cnt: 0},

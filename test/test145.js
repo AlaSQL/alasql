@@ -40,7 +40,7 @@ if (typeof exports != 'object') {
 			};
 
 			var res = alasql('SELECT * FROM ?', [JSON.parse(localStorage['one'])]);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{a: 1, b: 2},
 				{a: 2, b: 4},
 				{a: 3, b: 6},
@@ -48,7 +48,7 @@ if (typeof exports != 'object') {
 			var res = alasql('SELECT a FROM ? WHERE a = localStorage("two")', [
 				JSON.parse(localStorage['one']),
 			]);
-			assert.deepEqual(res, [{a: 1}]);
+			assert.deepStrictEqual(res, [{a: 1}]);
 			localStorage['three'] = JSON.stringify(res);
 
 			delete alasql.fn.localStorage;
@@ -72,7 +72,7 @@ if (typeof exports != 'object') {
 					return lsfn;
 				};
 				var res = alasql('SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"');
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					[
 						{a: 1, b: 2},
 						{a: 2, b: 4},
@@ -81,7 +81,7 @@ if (typeof exports != 'object') {
 				]);
 
 				var res = alasql('SELECT COLUMN [1] FROM ? WHERE [0] LIKE "one"', [lsfn]);
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					[
 						{a: 1, b: 2},
 						{a: 2, b: 4},

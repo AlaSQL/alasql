@@ -43,35 +43,54 @@ stdfn.OBJECT_ID = function (objid) {
 };
 
 stdfn.DATE = function (d) {
-	if (/^\d{8}$/.test(d.toString()))
+	if (!isNaN(d) && d.length === 8)
 		return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
 	return newDate(d);
 };
 
-stdfn.NOW = function (param) {
-	var d;
-	if (param) d = stdfn.DATE(param);
-	else d = new Date();
-	var separator = alasql.options.nowdateseparator;
-	var s =
-		d.getFullYear() +
-		separator +
-		('0' + (d.getMonth() + 1)).substr(-2) +
-		separator +
-		('0' + d.getDate()).substr(-2);
-	s +=
-		alasql.options.nowdatetimeseparator +
-		('0' + d.getHours()).substr(-2) +
-		':' +
-		('0' + d.getMinutes()).substr(-2) +
-		':' +
-		('0' + d.getSeconds()).substr(-2);
-	s += '.' + ('00' + d.getMilliseconds()).substr(-3);
-	return s;
+stdfn.NOW = function () {
+	if (alasql.options.dateAsString) {
+		var d = new Date();
+		var s =
+			d.getFullYear() +
+			'-' +
+			('0' + (d.getMonth() + 1)).substr(-2) +
+			'-' +
+			('0' + d.getDate()).substr(-2);
+		s +=
+			' ' +
+			('0' + d.getHours()).substr(-2) +
+			':' +
+			('0' + d.getMinutes()).substr(-2) +
+			':' +
+			('0' + d.getSeconds()).substr(-2);
+		s += '.' + ('00' + d.getMilliseconds()).substr(-3);
+		return s;
+	}
+	return new Date();
 };
 
 stdfn.GETDATE = stdfn.NOW;
 stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
+
+/**
+ * Returns the current date, without time component.
+ * @returns date object without time component
+ */
+stdfn.CURDATE = stdfn.CURRENT_DATE = function () {
+	var date = new Date();
+	date.setHours(0, 0, 0, 0);
+	if (alasql.options.dateAsString) {
+		var s =
+			date.getFullYear() +
+			'-' +
+			('0' + (date.getMonth() + 1)).substr(-2) +
+			'-' +
+			('0' + date.getDate()).substr(-2);
+		return s;
+	}
+	return date;
+};
 
 // 	stdfn.GETDATE = function(){
 // 		var d = new Date();
@@ -129,9 +148,16 @@ var PERIODS = {
 	microsecond: 0.001,
 };
 
+function periodLength(period) {
+	if (!PERIODS.hasOwnProperty(period)) {
+		throw new Error('Unknown date part: ' + period);
+	}
+	return PERIODS[period];
+}
+
 alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 	var interval = newDate(d2).getTime() - newDate(d1).getTime();
-	return interval / PERIODS[period.toLowerCase()];
+	return (interval / periodLength(period.toLowerCase())) | 0;
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
@@ -149,7 +175,7 @@ alasql.stdfn.DATEADD = function (period, interval, d) {
 			nd.setMonth(nd.getMonth() + interval);
 			break;
 		default:
-			nd = new Date(nd.getTime() + interval * PERIODS[period]);
+			nd = new Date(nd.getTime() + interval * periodLength(period));
 			break;
 	}
 
@@ -170,58 +196,12 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	return new Date(nd);
 };
 
-var dateRegexp =
-	// /^(?<year>\d{4})[-\.](?<month>\d{1,2})[-\.](?<day>\d{1,2})( (?<hours>\d{2}):(?<minutes>\d{2})(:(?<seconds>\d{2})(\.(?<milliseconds>)\d{3})?)?)?/;
-	/^\W*(?<year>\d{4})[-\/\.](?<month>[0-1]?\d)[-\/\.](?<day>[0-3]?\d)([T ](?<hour>[0-2][0-9]):(?<min>[0-5][0-9])(:(?<sec>[0-5][0-9])(\.(?<msec>\d{3}))?\d*)?(?<tz>Z|(?<tz_dir>[-+])(?<tz_HH>\d\d):(?<tz_mm>\d\d))?)?/i;
+var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
 function newDate(d) {
-	// Read https://stackoverflow.com/questions/2587345/why-does-date-parse-give-incorrect-results/20463521#20463521 to understand
-	// why we need to rely on our own parsing to ensure consistency across runtimes.
-	// Also: YYYY-MM-DD defaults to UTC is required by ECMA-262 but YYYY-MM-DD HH:ss is not.
-	// AlaSQL will treat _anything_ with no timezone as local time.
-
-	var date;
-
-	if (typeof d === 'interger') {
-		return new Date(d);
-	}
-
 	if (typeof d === 'string') {
-		const match = d.match(dateRegexp);
-		if (match) {
-			const {year, month, day, hour, min, sec, msec, tz, tz_dir, tz_HH, tz_mm} = match.groups;
-
-			if (tz) {
-				var offset_HH = 0;
-				var offset_mm = 0;
-
-				if ('Z' != tz) {
-					offset_HH = -1 * +(tz_dir + tz_HH);
-					offset_mm = -1 * +(tz_dir + tz_mm);
-				}
-				date = new Date(
-					Date.UTC(+year, +month - 1, +day, +hour + offset_HH, +min + offset_mm, +sec, +msec)
-				);
-			} else {
-				const dateArrguments = [year, month - 1, day];
-				if (hour) {
-					dateArrguments.push(hour, min, sec || 0, msec || 0);
-				}
-				date = new Date(...dateArrguments);
-			}
-		} else {
-			date = new Date(Date.parse(d));
+		if (dateRegexp.test(d)) {
+			d = d.replace('.', '-').replace('.', '-');
 		}
 	}
-
-	if (isNaN(date)) {
-		date = new Date(d);
-	}
-
-	// https://github.com/AlaSQL/alasql/pull/1534#discussion_r1051623032
-	//if (isNaN(date)) {
-	//	throw 'The value could not be converted to a date: ' + JSON.stringify(d);
-	//	//console.warn(`d:${d}, date:${date}`)
-	//}
-
-	return date;
+	return new Date(d);
 }

@@ -14,6 +14,7 @@ yy.Insert.prototype.toString = function () {
 	var s = 'INSERT ';
 	if (this.orreplace) s += 'OR REPLACE ';
 	if (this.replaceonly) s = 'REPLACE ';
+	if (this.ignore) s += 'IGNORE ';
 	s += 'INTO ' + this.into.toString();
 	if (this.columns) s += '(' + this.columns.toString() + ')';
 	if (this.values) {
@@ -23,6 +24,22 @@ yy.Insert.prototype.toString = function () {
 		s += ' VALUES ' + values.join(',');
 	}
 	if (this.select) s += ' ' + this.select.toString();
+	if (this.setcolumns) {
+		s += ' SET ';
+		s += this.setcolumns.map(col => col.toString()).join(', ');
+	}
+	if (this.output) {
+		s += ' OUTPUT ';
+		s += this.output.columns.map(col => col.toString()).join(', ');
+		if (this.output.intovar) {
+			s += ' INTO ' + this.output.method + this.output.intovar;
+		} else if (this.output.intotable) {
+			s += ' INTO ' + this.output.intotable.toString();
+			if (this.output.intocolumns) {
+				s += '(' + this.output.intocolumns.map(col => col.toString()).join(', ') + ')';
+			}
+		}
+	}
 	return s;
 };
 
@@ -42,6 +59,12 @@ yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
+
+	// Handle ParamValue (anonymous data table) - wrap execution
+	if (self.into instanceof yy.ParamValue) {
+		return yy.compileParamValue(self.into.param, 'INSERT', true, databaseid, self, 'into');
+	}
+
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
 	//	console.log(self);
@@ -52,10 +75,19 @@ yy.Insert.prototype.compile = function (databaseid) {
 		throw "Table '" + tableid + "' could not be found";
 	}
 
+	// Helper function to create error message for value/column count mismatch
+	var createValueCountMismatchError = function (valueCount, columnCount, columnType) {
+		return (
+			`The number of values (${valueCount}) does not match the number of ${columnType} (${columnCount}). ` +
+			'If using a subquery, use INSERT INTO ... SELECT instead of INSERT INTO ... VALUES (SELECT ...)'
+		);
+	};
+
 	// Check, if this dirty flag is required
 	var s = '';
 	var sw = '';
 	var s = "db.tables['" + tableid + "'].dirty=true;";
+	// aa = array to accumulate inserted rows (used for OUTPUT clause and concat to table.data)
 	var s3 = 'var a,aa=[],x;';
 
 	var s33;
@@ -85,6 +117,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			//			s += '';
 			if (self.columns) {
+				// Validate that we have the right number of values for the columns
+				if (values.length !== self.columns.length) {
+					throw new Error(
+						createValueCountMismatchError(values.length, self.columns.length, 'columns')
+					);
+				}
 				self.columns.forEach(function (col, idx) {
 					//console.log(db.tables, tableid, table);
 					//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
@@ -119,6 +157,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 				//console.log(111, table.columns);
 				//console.log(74,table);
 				if (Array.isArray(values) && table.columns && table.columns.length > 0) {
+					// Validate that we have the right number of values for the table columns
+					if (values.length !== table.columns.length) {
+						throw new Error(
+							createValueCountMismatchError(values.length, table.columns.length, 'table columns')
+						);
+					}
 					table.columns.forEach(function (col, idx) {
 						var q = "'" + col.columnid + "':";
 						//						var val = values[idx].toJS();
@@ -190,7 +234,28 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
-				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
+				s +=
+					"var inserted=db.tables['" +
+					tableid +
+					"'].insert(a," +
+					(self.orreplace ? 'true' : 'false') +
+					',' +
+					(self.ignore ? 'true' : 'false') +
+					');';
+				// Track successful inserts (insert returns false when ignored)
+				if (self.ignore) {
+					s += 'if(inserted!==false){';
+				}
+				// Also push to aa for OUTPUT clause
+				if (self.output) {
+					s += 'aa.push(a);';
+				} else if (self.ignore) {
+					// For ignore mode without output, track successful insertions
+					s += 'aa.push(a);';
+				}
+				if (self.ignore) {
+					s += '}';
+				}
 			} else {
 				s += 'aa.push(a);';
 			}
@@ -214,14 +279,44 @@ yy.Insert.prototype.compile = function (databaseid) {
 				"'].data.concat(aa);";
 		}
 
-		if (db.tables[tableid].insert) {
+		// Handle OUTPUT clause
+		if (self.output) {
+			s += 'var output = [];';
+			s += 'for(var i=0;i<aa.length;i++){';
+			s += 'var r = aa[i];';
+			s += 'var outputRow = {};';
+			// Process each output column
+			self.output.columns.forEach(function (col) {
+				if (col.columnid === '*') {
+					// For *, expand all properties
+					s += 'for(var key in r){ outputRow[key] = r[key]; }';
+				} else {
+					var colname = col.as || col.columnid;
+					// Direct property access for simple columns
+					s += "outputRow['" + colname + "']=r['" + col.columnid + "'];";
+				}
+			});
+			s += 'output.push(outputRow);';
+			s += '}';
+			s += 'return output;';
+		} else if (db.tables[tableid].insert) {
 			if (db.tables[tableid].isclass) {
 				s += 'return a.$id;';
 			} else {
-				s += 'return ' + self.values.length;
+				// For IGNORE mode, return count of actually inserted rows
+				if (self.ignore) {
+					s += 'return aa.length;';
+				} else {
+					s += 'return ' + self.values.length;
+				}
 			}
 		} else {
-			s += 'return ' + self.values.length;
+			// For IGNORE mode, return count of actually inserted rows
+			if (self.ignore) {
+				s += 'return aa.length;';
+			} else {
+				s += 'return ' + self.values.length;
+			}
 		}
 
 		//console.log(186,s3+s);
@@ -243,20 +338,50 @@ yy.Insert.prototype.compile = function (databaseid) {
 			return statement;
 		} else {
 			//			console.log(224,table.defaultfns);
-			var defaultfns = 'return alasql.utils.extend(r,{' + table.defaultfns + '})';
+			var defaultfns =
+				'var defaults={' +
+				table.defaultfns +
+				'};for(var key in defaults){if(!(key in r)){r[key]=defaults[key]}}return r';
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
+				var insertedRows = [];
 				if (db.tables[tableid].insert) {
 					// If insert() function exists (issue #92)
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
 						var r = cloneDeep(res[i]);
 						defaultfn(r, db, params, alasql);
-						db.tables[tableid].insert(r, self.orreplace);
+						db.tables[tableid].insert(r, self.orreplace, self.ignore);
+						insertedRows.push(r);
 					}
 				} else {
+					insertedRows = res;
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
 				}
+
+				// Handle OUTPUT clause
+				if (self.output) {
+					var output = [];
+					for (var i = 0; i < insertedRows.length; i++) {
+						var r = insertedRows[i];
+						var outputRow = {};
+						self.output.columns.forEach(function (col) {
+							if (col.columnid === '*') {
+								// For *, expand all properties
+								for (var key in r) {
+									outputRow[key] = r[key];
+								}
+							} else {
+								var colname = col.as || col.columnid;
+								// Direct property access for simple columns
+								outputRow[colname] = r[col.columnid];
+							}
+						});
+						output.push(outputRow);
+					}
+					return output;
+				}
+
 				if (alasql.options.nocount) return;
 				else return res.length;
 			};
@@ -264,6 +389,31 @@ yy.Insert.prototype.compile = function (databaseid) {
 	} else if (this.default) {
 		var insertfns = "db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
 		var insertfn = new Function('db,params,alasql', insertfns);
+	} else if (this.setcolumns) {
+		// INSERT INTO table SET column = value - convert to VALUES equivalent
+		// Build column list and value expression list from SET columns
+		var columns = [];
+		var valueExprs = [];
+		this.setcolumns.forEach(function (setcol) {
+			columns.push(setcol.column);
+			valueExprs.push(setcol.expression);
+		});
+
+		// Temporarily transform to use VALUES path
+		var originalColumns = this.columns;
+		var originalValues = this.values;
+		this.columns = columns;
+		this.values = [valueExprs];
+
+		try {
+			// Reuse VALUES compilation logic by recursively calling compile
+			var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
+			return compiledFn;
+		} finally {
+			// Always restore original state
+			this.columns = originalColumns;
+			this.values = originalValues;
+		}
 	} else {
 		throw new Error('Wrong INSERT parameters');
 	}
@@ -273,7 +423,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	if (db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
 		var statement = function (params, cb) {
-			var aa = new Function('db,params', 'var y;' + s33 + 'return aa;')(db, params);
+			var aa = new Function('db,params,alasql', 'var y;' + s33 + 'return aa;')(db, params, alasql);
 			//			console.log(s33);
 			var res = alasql.engines[db.engineid].intoTable(db.databaseid, tableid, aa, null, cb);
 			//			if(cb) cb(res);

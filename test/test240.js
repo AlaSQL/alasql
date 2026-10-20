@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test239.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test239.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 240 DELETE TEST', function () {
@@ -26,7 +29,7 @@ describe('Test 240 DELETE TEST', function () {
     `);
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},
@@ -37,7 +40,7 @@ describe('Test 240 DELETE TEST', function () {
 		alasql('DELETE FROM one WHERE a = 3');
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 		]);
@@ -45,7 +48,7 @@ describe('Test 240 DELETE TEST', function () {
 		alasql('DELETE FROM one WHERE 1=1');
 
 		res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 
 		//	console.log(res);
 		done();

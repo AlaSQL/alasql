@@ -12,14 +12,15 @@ yy.AlterTable = function (params) {
 	return Object.assign(this, params);
 };
 yy.AlterTable.prototype.toString = function () {
-	var s = 'ALTER TABLE ' + this.table.toString();
+	let s = 'ALTER TABLE ' + this.table.toString();
 	if (this.renameto) s += ' RENAME TO ' + this.renameto;
 	return s;
 };
 
 yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[databaseid];
-	db.dbversion = Date.now();
+	var dbid = this.table.databaseid || databaseid;
+	let db = alasql.databases[dbid];
+	schemaChanged(db);
 
 	if (this.renameto) {
 		var oldtableid = this.table.tableid;
@@ -27,14 +28,10 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		var res = 1;
 		if (db.tables[newtableid]) {
 			throw new Error(
-				"Can not rename a table '" +
-					oldtableid +
-					"' to '" +
-					newtableid +
-					"', because the table with this name already exists"
+				`Can not rename a table "${oldtableid}" to "${newtableid}" because the table with this name already exists`
 			);
 		} else if (newtableid === oldtableid) {
-			throw new Error("Can not rename a table '" + oldtableid + "' to itself");
+			throw new Error(`Can not rename a table "${oldtableid}" to itself`);
 		} else {
 			db.tables[newtableid] = db.tables[oldtableid];
 			delete db.tables[oldtableid];
@@ -42,28 +39,41 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		}
 		if (cb) cb(res);
 		return res;
-	} else if (this.addcolumn) {
-		db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
+	}
+
+	// A table in a storage engine is loaded before the change and saved after it, as INSERT,
+	// UPDATE and DELETE do. Without this the change is lost on the next statement (#1107)
+	var tableid = this.table.tableid;
+	var engine = alasql.options.autocommit && db.engineid && alasql.engines[db.engineid];
+	if (engine && engine.loadTableData) {
+		engine.loadTableData(dbid, tableid);
+	}
+	var res = this.alterColumn(db.tables[tableid], tableid);
+	if (engine && engine.saveTableData) {
+		engine.saveTableData(dbid, tableid);
+	}
+	return cb ? cb(res) : res;
+};
+
+/**
+ Add, modify, rename or drop a column of a table in memory
+ @return {number} 1, or the number of rows for RENAME COLUMN and DROP COLUMN
+ */
+yy.AlterTable.prototype.alterColumn = function (table, tableid) {
+	if (this.addcolumn) {
 		var columnid = this.addcolumn.columnid;
 		if (table.xcolumns[columnid]) {
 			throw new Error(
-				'Cannot add column "' +
-					columnid +
-					'", because it already exists in the table "' +
-					tableid +
-					'"'
+				`Cannot add column "${columnid}" because it already exists in table "${tableid}"`
 			);
 		}
 
 		var col = {
 			columnid: columnid,
 			dbtypeid: this.addcolumn.dbtypeid,
-			dbsize: this.dbsize,
-			dbprecision: this.dbprecision,
-			dbenum: this.dbenum,
+			dbsize: this.addcolumn.dbsize,
+			dbprecision: this.addcolumn.dbprecision,
+			dbenum: this.addcolumn.dbenum,
 			defaultfns: null, // TODO defaultfns!!!
 		};
 
@@ -72,48 +82,35 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		table.columns.push(col);
 		table.xcolumns[columnid] = col;
 
-		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
-			//				console.log(table.data[i][columnid]);
+		for (let i = 0, ilen = table.data.length; i < ilen; i++) {
 			table.data[i][columnid] = defaultfn();
 		}
 
-		// TODO
-		return cb ? cb(1) : 1;
-	} else if (this.modifycolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
+		return 1;
+	}
+
+	if (this.modifycolumn) {
 		var columnid = this.modifycolumn.columnid;
 
 		if (!table.xcolumns[columnid]) {
 			throw new Error(
-				'Cannot modify column "' +
-					columnid +
-					'", because it was not found in the table "' +
-					tableid +
-					'"'
+				`Cannot modify column "${columnid}" because it was not found in table "${tableid}"`
 			);
 		}
 
-		col = table.xcolumns[columnid];
-		col.dbtypeid = this.dbtypeid;
-		col.dbsize = this.dbsize;
-		col.dbprecision = this.dbprecision;
-		col.dbenum = this.dbenum;
+		var col = table.xcolumns[columnid];
+		col.dbtypeid = this.modifycolumn.dbtypeid;
+		col.dbsize = this.modifycolumn.dbsize;
+		col.dbprecision = this.modifycolumn.dbprecision;
+		col.dbenum = this.modifycolumn.dbenum;
 
-		// TODO
-		return cb ? cb(1) : 1;
-	} else if (this.renamecolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
+		return 1;
+	}
 
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
+	if (this.renamecolumn) {
 		var columnid = this.renamecolumn;
 		var tocolumnid = this.to;
 
-		var col;
 		if (!table.xcolumns[columnid]) {
 			throw new Error('Column "' + columnid + '" is not found in the table "' + tableid + '"');
 		}
@@ -132,19 +129,15 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			delete table.xcolumns[columnid];
 
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
-				//				console.log(table.data[i][columnid]);
 				table.data[i][tocolumnid] = table.data[i][columnid];
 				delete table.data[i][columnid];
 			}
 			return table.data.length;
-		} else {
-			return cb ? cb(0) : 0;
 		}
-	} else if (this.dropcolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
+		return 0;
+	}
+
+	if (this.dropcolumn) {
 		var columnid = this.dropcolumn;
 
 		var found = false;
@@ -158,11 +151,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 		if (!found) {
 			throw new Error(
-				'Cannot drop column "' +
-					columnid +
-					'", because it was not found in the table "' +
-					tableid +
-					'"'
+				`Cannot drop column "${columnid}" because it was not found in the table ${tableid}"`
 			);
 		}
 
@@ -171,8 +160,9 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		for (i = 0, ilen = table.data.length; i < ilen; i++) {
 			delete table.data[i][columnid];
 		}
-		return cb ? cb(table.data.length) : table.data.length;
-	} else {
-		throw Error('Unknown ALTER TABLE method');
+
+		return table.data.length;
 	}
+
+	throw Error('Unknown ALTER TABLE method');
 };

@@ -15,13 +15,13 @@ describe('Test 292 Nested searches', function () {
 
 	it.skip('2. Search inside select', function (done) {
 		var res = alasql('SELECT (SEARCH b SUM(/c) FROM _) FROM ?', [data]);
-		console.log(res);
+		// console.log(res);
 		done();
 	});
 
 	it.skip('3. SELECT inside SEARCH', function (done) {
 		var res = alasql('SEARCH a (SELECT SUM(c) FROM b) FROM ?');
-		console.log(res);
+		// console.log(res);
 		done();
 	});
 

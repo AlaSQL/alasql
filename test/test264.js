@@ -14,7 +14,7 @@ if (typeof exports == 'object') {
 			];
 			var res = alasql('SELECT RECORDSET * FROM ?', [data]);
 			/// console.log(res);
-			//    assert.deepEqual(res,[ { 'MAX(MAX(a),MIN(a))': 8, 'MIN(MAX(a),MIN(a))': 1 } ]);
+			//    assert.deepStrictEqual(res,[ { 'MAX(MAX(a),MIN(a))': 8, 'MIN(MAX(a),MIN(a))': 1 } ]);
 			done();
 		});
 	});

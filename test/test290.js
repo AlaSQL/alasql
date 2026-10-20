@@ -14,7 +14,7 @@ describe('Test 290 FROM Json', function () {
 	it.skip('2. SELECT', function (done) {
 		var res = alasql('SELECT VALUE @[1,2,3,(b+4)] FROM @[{b:100}]');
 		//    console.log(res);
-		assert.deepEqual(res, [1, 2, 3, 104]);
+		assert.deepStrictEqual(res, [1, 2, 3, 104]);
 		done();
 	});
 
@@ -24,7 +24,7 @@ describe('Test 290 FROM Json', function () {
       JOIN @[{b:10,c:100},{b:20,c:200},{b:30,c:300},] ON b'
 		);
 		console.log(res);
-		assert.deepEqual(res, [1, 2, 3, 104]);
+		assert.deepStrictEqual(res, [1, 2, 3, 104]);
 		done();
 	});
 

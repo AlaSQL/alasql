@@ -16,7 +16,7 @@ describe('Test 06', function () {
 
 		var res = db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000");
 
-		assert.deepEqual([{name: 'sara', sex: 'F', income: 100000}], res);
+		assert.deepStrictEqual([{name: 'sara', sex: 'F', income: 100000}], res);
 		done();
 	});
 });

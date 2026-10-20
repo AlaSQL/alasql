@@ -65,7 +65,7 @@ describe('Test 404 OUTER JOIN', function () {
 			'select t0.name t0n ,t1.name t1n from colors t0 full outer join fruits t1 on t1.name = t0.name'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{t0n: 'red', t1n: undefined},
 			{t0n: 'blue', t1n: undefined},
 			{t0n: 'orange', t1n: 'orange'},
@@ -81,7 +81,7 @@ describe('Test 404 OUTER JOIN', function () {
 			'with t1 as (select COALESCE(t0.name, t1.name) AS name, t0.name as t0n, t0.id as t0id, t1.name as t1n, t1.id as t1id FROM colors t0 full outer join fruits t1 on t1.name = t0.name) select t0n, t1n, t2.name as t2n from t1 full outer join mascots t2 on t2.name = t1.name'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{t0n: 'red', t1n: undefined, t2n: undefined},
 			{t0n: 'blue', t1n: undefined, t2n: undefined},
 			{t0n: 'orange', t1n: 'orange', t2n: 'orange'},
@@ -99,7 +99,7 @@ describe('Test 404 OUTER JOIN', function () {
 			'select t0.name t0n ,t1.name t1n, t2.name t2n from colors t0 full outer join fruits t1 on t1.name = t0.name full outer join mascots t2 on t2.name = t0.name or t2.name = t1.name'
 		);
 		//console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{t0n: 'red', t1n: undefined, t2n: undefined},
 			{t0n: 'blue', t1n: undefined, t2n: undefined},
 			{t0n: 'orange', t1n: 'orange', t2n: 'orange'},

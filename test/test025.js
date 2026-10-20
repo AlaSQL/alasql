@@ -27,7 +27,7 @@ describe('Test 25', function () {
 
 		var res = db.exec(sql);
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[
 				{a: 3, b: 30},
 				{a: 4, b: 40},

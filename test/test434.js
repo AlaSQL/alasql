@@ -28,6 +28,6 @@ describe('Test 434 - joins SELECT', function () {
 		assert.equal(res.length, 1);
 
 		// TODO: The test currently does not pass. Now, the wrong value is returned.
-		//assert.deepEqual(res, [{firstValue : 1, secondValue : 2, rightSide : 2}]);
+		//assert.deepStrictEqual(res, [{firstValue : 1, secondValue : 2, rightSide : 2}]);
 	});
 });

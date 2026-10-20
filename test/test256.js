@@ -11,7 +11,7 @@ describe('Test 256 INTO() in result and into params array', function () {
 		var resdata = [{a: 0}];
 		var res = alasql('SELECT * INTO ? FROM ?', [resdata, data]);
 		assert(res == 2);
-		assert.deepEqual(resdata, [{a: 0}, {a: 1}, {a: 2}]);
+		assert.deepStrictEqual(resdata, [{a: 0}, {a: 1}, {a: 2}]);
 		done();
 	});
 

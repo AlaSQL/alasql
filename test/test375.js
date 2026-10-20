@@ -23,7 +23,7 @@ describe('375. Problem with UPDATE (https://github.com/alasql/alasql/issues/479)
 		alasql('UPDATE RpdAssignments SET Name="id2" WHERE Id=1');
 
 		var res = alasql('SELECT * FROM RpdAssignments');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				Id: 1,
 				Name: 'id2',

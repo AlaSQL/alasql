@@ -36,25 +36,28 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 			})
 			.join(',');
 		s += ') VALUES (';
-		s += columns.map(function (col) {
-			var val = data[i][col.columnid];
-			if (col.typeid) {
-				if (
-					col.typeid === 'STRING' ||
-					col.typeid === 'VARCHAR' ||
-					col.typeid === 'NVARCHAR' ||
-					col.typeid === 'CHAR' ||
-					col.typeid === 'NCHAR'
-				) {
+		s += columns
+			.map(function (col) {
+				var val = data[i][col.columnid];
+				// Handle null and undefined values
+				if (val === null || val === undefined) {
+					return 'NULL';
+				}
+				// Check if value should be escaped as a string
+				var shouldEscape =
+					(col.typeid &&
+						(col.typeid === 'STRING' ||
+							col.typeid === 'VARCHAR' ||
+							col.typeid === 'NVARCHAR' ||
+							col.typeid === 'CHAR' ||
+							col.typeid === 'NCHAR')) ||
+					typeof val == 'string';
+				if (shouldEscape) {
 					val = "'" + escapeqq(val) + "'";
 				}
-			} else {
-				if (typeof val == 'string') {
-					val = "'" + escapeqq(val) + "'";
-				}
-			}
-			return val;
-		});
+				return val;
+			})
+			.join(',');
 		s += ');\n';
 	}
 	//	if(filename === '') {
@@ -135,6 +138,30 @@ alasql.into.JSON = function (filename, opts, data, columns, cb) {
 
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
 	res = alasql.utils.saveFile(filename, s);
+	if (cb) {
+		res = cb(res);
+	}
+	return res;
+};
+
+alasql.into.OBJECT = function (filename, opts, data, columns, cb) {
+	var res;
+	if (typeof filename === 'object') {
+		opts = filename;
+		filename = undefined;
+	}
+
+	// Data is already in nested object format from core compilation
+	// If filename is provided, save to file like JSON
+	if (filename) {
+		var s = JSON.stringify(data);
+		filename = alasql.utils.autoExtFilename(filename, 'json', opts);
+		res = alasql.utils.saveFile(filename, s);
+	} else {
+		// Return the data directly
+		res = data;
+	}
+
 	if (cb) {
 		res = cb(res);
 	}

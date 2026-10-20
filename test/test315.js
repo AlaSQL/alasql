@@ -60,32 +60,32 @@ describe('Test 315b Brackets for SEARCH', function () {
 
 	it('2. Simple Brackets', function (done) {
 		var res = alasql('SEARCH / a FROM ?', [data]);
-		assert.deepEqual(res, [1]);
+		assert.deepStrictEqual(res, [1]);
 		done();
 	});
 
 	it('3. Simple Brackets', function (done) {
 		var res = alasql('SEARCH / + a FROM ?', [data]);
 		//    console.log(res);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
 	it('4. Simple Brackets', function (done) {
 		var res = alasql('SEARCH (/)+ a FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
 	it('5. Simple Brackets', function (done) {
 		var res = alasql('SEARCH ((/)+ (a)) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
 	it('6. Simple Brackets', function (done) {
 		var res = alasql('SEARCH (/)? a FROM ?', [data]);
-		assert.deepEqual(res, [1]);
+		assert.deepStrictEqual(res, [1]);
 		//    console.log(res);
 		done();
 	});
@@ -96,7 +96,7 @@ describe('Test 315c Brackets for SEARCH', function () {
 
 	it('1. Simple Brackets', function (done) {
 		var res = alasql('SEARCH /+ a FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 
 		done();
 	});
@@ -108,40 +108,40 @@ describe('Test 315c Brackets for SEARCH', function () {
 	});
 	it('3. Simple Brackets', function (done) {
 		var res = alasql('SEARCH / + FROM ?', [data]);
-		assert.deepEqual(res, [{a: 1}, {b: {a: 2}, c: 2}, {c: 3}, 1, {a: 2}, 2, 3, 2]);
+		assert.deepStrictEqual(res, [{a: 1}, {b: {a: 2}, c: 2}, {c: 3}, 1, {a: 2}, 2, 3, 2]);
 		done();
 	});
 
 	it('4. Simple Brackets', function (done) {
 		var res = alasql('SEARCH ((/+) a) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		var res = alasql('SEARCH ALL((/+) a) ORDER BY(DESC) FROM ?', [data]);
-		assert.deepEqual(res, [2, 1]);
+		assert.deepStrictEqual(res, [2, 1]);
 		var res = alasql('SEARCH ALL((/+) a) ORDER BY() FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		var res = alasql('SEARCH ALL((/+) a) ORDER BY(ASC) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 
 	it('5. Simple Brackets', function (done) {
 		var res = alasql('SEARCH ALL((/+) a) ORDER BY() FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		done();
 	});
 	it('6. Simple Brackets', function (done) {
 		var res = alasql('SEARCH ALL((/+) a) ORDER BY(DESC) FROM ?', [data]);
-		assert.deepEqual(res, [2, 1]);
+		assert.deepStrictEqual(res, [2, 1]);
 		done();
 	});
 	it('7. Simple Brackets', function (done) {
 		var res = alasql('SEARCH ALL(/+a) ORDER BY(DESC) FROM ?', [data]);
-		assert.deepEqual(res, [2, 1]);
+		assert.deepStrictEqual(res, [2, 1]);
 		done();
 	});
 	it('8. Simple Brackets', function (done) {
 		var res = alasql('SEARCH ALL(/ *a) ORDER BY(DESC) FROM ?', [data]);
-		assert.deepEqual(res, [2, 1]);
+		assert.deepStrictEqual(res, [2, 1]);
 		done();
 	});
 });

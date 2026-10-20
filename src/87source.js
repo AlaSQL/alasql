@@ -17,14 +17,11 @@ yy.Source.prototype.toString = function () {
 
 // SOURCE FILE
 yy.Source.prototype.execute = function (databaseid, params, cb) {
-	//	console.log(this.url);
 	var res;
 	loadFile(
 		this.url,
 		!!cb,
 		function (data) {
-			//		console.log(data);
-			//		res = 1;
 			res = alasql(data);
 			if (cb) res = cb(res);
 			return res;

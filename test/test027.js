@@ -35,7 +35,7 @@ describe('Test 27', function () {
 
 		var res = db.exec(sql);
 
-		assert.deepEqual([4, 5], res);
+		assert.deepStrictEqual([4, 5], res);
 		done();
 	});
 });

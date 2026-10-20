@@ -50,6 +50,8 @@ LS.storeTable = function (databaseid, tableid) {
 	tbl.columns = table.columns;
 	tbl.data = table.data;
 	tbl.identities = table.identities;
+	tbl.defaultfns = table.defaultfns;
+	tbl.onupdatefns = table.onupdatefns;
 	// TODO: May be add indexes, objects and other fields?
 	LS.set(db.lsdbid + '.' + tableid, tbl);
 };
@@ -176,7 +178,6 @@ LS.attachDatabase = function (lsdbid, databaseid, args, params, cb) {
 		if (db.tables) {
 			for (var tbid in db.tables) {
 				LS.restoreTable(databaseid, tbid);
-				//				db.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
 			}
 		}
 	}
@@ -352,11 +353,7 @@ LS.intoTable = function (databaseid, tableid, value, columns, cb) {
 	}
 	if (!tb.data) tb.data = [];
 	tb.data = tb.data.concat(value);
-	//	LS.set(lsdbid+'.'+tableid, tb);
 	LS.storeTable(databaseid, tableid);
-	//	console.log(lsdbid+'.'+tableid, tb);
-	//	console.log(localStorage[lsdbid+'.'+tableid]);
-	//console.log(165,res);
 	if (cb) res = cb(res);
 	//console.log(167,res);
 	return res;
@@ -379,7 +376,7 @@ LS.loadTableData = function (databaseid, tableid) {
 LS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-	LS.storeTable(lsdbid, tableid);
+	LS.storeTable(databaseid, tableid);
 	//	LS.set(lsdbid+'.'+tableid,db.tables[tableid].data);
 	db.tables[tableid].data = undefined;
 };

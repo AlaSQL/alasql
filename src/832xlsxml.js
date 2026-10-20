@@ -30,6 +30,17 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	return res;
 
 	function toXML() {
+		// Helper function to escape XML special characters
+		function escapeXML(str) {
+			if (str === null || str === undefined) return '';
+			return String(str)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&apos;');
+		}
+
 		var s1 =
 			'<?xml version="1.0"?> \
 		<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" \
@@ -75,7 +86,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 					} else {
 						s += 'ss:';
 					}
-					s += attr + '="' + st[key][attr] + '"';
+					s += attr + '=' + JSON.stringify(st[key][attr]);
 				}
 				s += '/>';
 			}
@@ -85,8 +96,8 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 			if (styles[hh]) {
 			} else {
 				styles[hh] = {styleid: stylesn};
-				s2 += '<Style ss:ID="s' + stylesn + '">';
-				s2 += s;
+				s2 += `<Style ss:ID=${JSON.stringify('s' + stylesn)}>`;
+				s2 += s.replace(/<\s*\/\s*Style /gi, '<');
 				s2 += '</Style>';
 				stylesn++;
 			}
@@ -152,9 +163,9 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 
 			// Header
 			s3 +=
-				'<Worksheet ss:Name="' +
-				sheetid +
-				'"> \
+				'<Worksheet ss:Name=' +
+				JSON.stringify(sheetid) +
+				'> \
 	  			<Table ss:ExpandedColumnCount="' +
 				columns.length +
 				'" ss:ExpandedRowCount="' +
@@ -163,12 +174,12 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	   			x:FullRows="1" ss:DefaultColumnWidth="65" ss:DefaultRowHeight="15">';
 
 			columns.forEach(function (column, columnidx) {
-				s3 +=
-					'<Column ss:Index="' +
-					(columnidx + 1) +
-					'" ss:AutoFitWidth="0" ss:Width="' +
-					column.width +
-					'"/>';
+				s3 += `
+					<Column 
+						ss:Index="${columnidx + 1}" 
+						ss:AutoFitWidth="0" 
+						ss:Width=${JSON.stringify('' + column.width)}
+					/>`;
 			});
 
 			// Headers
@@ -188,7 +199,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 						} else {
 							extend(st, column.style);
 						}
-						s3 += 'ss:StyleID="' + hstyle(st) + '"';
+						s3 += 'ss:StyleID=' + JSON.stringify(hstyle(st));
 					}
 
 					s3 += '><Data ss:Type="String">';
@@ -196,9 +207,9 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 					// Column title
 					if (typeof column.title != 'undefined') {
 						if (typeof column.title == 'function') {
-							s3 += column.title(sheet, column, columnidx);
+							s3 += escapeXML(column.title(sheet, column, columnidx));
 						} else {
-							s3 += column.title;
+							s3 += escapeXML(column.title);
 						}
 					}
 					s3 += '</Data></Cell>';
@@ -232,7 +243,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 							} else {
 								extend(st, srow.style);
 							}
-							s3 += 'ss:StyleID="' + hstyle(st) + '"';
+							s3 += 'ss:StyleID=' + JSON.stringify(hstyle(st));
 						}
 					}
 
@@ -298,11 +309,6 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 						typestyle = typestyle || 'mso-number-format:"\\@";'; // Default type style
 
 						s3 += '<Cell ';
-						/*/*
-if(false) {
-						s += "<td style='" + typestyle+"' " ;	
-}			    		
-*/
 						// Row style fromdefault sheet
 						var st = {};
 						if (typeof cell.style != 'undefined') {
@@ -311,12 +317,12 @@ if(false) {
 							} else {
 								extend(st, cell.style);
 							}
-							s3 += 'ss:StyleID="' + hstyle(st) + '"';
+							s3 += 'ss:StyleID=' + JSON.stringify(hstyle(st));
 						}
 
 						s3 += '>';
 
-						s3 += '<Data ss:Type="' + Type + '">';
+						s3 += '<Data ss:Type=' + JSON.stringify(Type) + '>';
 
 						// TODO Replace with extend...
 						var format = cell.format;
@@ -324,19 +330,19 @@ if(false) {
 							s3 += '';
 						} else if (typeof format != 'undefined') {
 							if (typeof format == 'function') {
-								s3 += format(value);
+								s3 += escapeXML(format(value));
 							} else if (typeof format == 'string') {
-								s3 += value; // TODO - add string format
+								s3 += escapeXML(value); // TODO - add string format
 							} else {
 								throw new Error('Unknown format type. Should be function or string');
 							}
 						} else {
 							if (typeid == 'number' || typeid == 'date') {
-								s3 += value.toString();
+								s3 += escapeXML(value.toString());
 							} else if (typeid == 'money') {
-								s3 += (+value).toFixed(2);
+								s3 += escapeXML((+value).toFixed(2));
 							} else {
-								s3 += value;
+								s3 += escapeXML(value);
 							}
 						}
 

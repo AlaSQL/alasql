@@ -72,12 +72,22 @@ yy.ShowColumns.prototype.toString = function () {
 };
 
 yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[this.databaseid || databaseid];
+	var dbid = this.table.databaseid || this.databaseid || databaseid;
+	var db = alasql.databases[dbid];
+	// A table in a storage engine may not be loaded yet (#1107)
+	if (alasql.options.autocommit && db.engineid && db.tables[this.table.tableid]) {
+		var engine = alasql.engines[db.engineid];
+		if (engine.loadTableData) engine.loadTableData(dbid, this.table.tableid);
+	}
 	var table = db.tables[this.table.tableid];
 
 	if (table && table.columns) {
 		var res = table.columns.map(function (col) {
-			return {columnid: col.columnid, dbtypeid: col.dbtypeid, dbsize: col.dbsize};
+			return {
+				columnid: col.columnid,
+				dbtypeid: col.dbtypeid,
+				dbsize: col.dbsize,
+			};
 		});
 		if (cb) cb(res);
 		return res;
@@ -97,7 +107,7 @@ yy.ShowIndex.prototype.toString = function () {
 	return s;
 };
 yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[this.databaseid || databaseid];
+	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
 	var res = [];
 	if (table && table.indices) {
@@ -119,7 +129,7 @@ yy.ShowCreateTable.prototype.toString = function () {
 	return s;
 };
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
-	var db = alasql.databases[this.databaseid || databaseid];
+	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
 	if (table) {
 		var s = 'CREATE TABLE ' + this.table.tableid + ' (';

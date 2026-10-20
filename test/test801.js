@@ -52,7 +52,7 @@ describe('Test 801 - OUTER JOIN of 4 tables', function () {
 			{id: '9', d: 'i'},
 		];
 
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 		done();
 	});
 });

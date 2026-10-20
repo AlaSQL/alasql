@@ -2,7 +2,10 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test381.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test381.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 /*
@@ -80,7 +83,7 @@ describe('Test 385 - Nested Search (issue #495)', function () {
 			'2',
 		]);
 
-		assert.deepEqual(data1, data2);
+		assert.deepStrictEqual(data1, data2);
 		done();
 	});
 

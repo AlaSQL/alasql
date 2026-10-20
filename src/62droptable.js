@@ -47,7 +47,9 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 			if (!db.tables[tableid]) {
 				if (!alasql.options.dropifnotexists) {
 					throw new Error(
-						"Can not drop table '" + table.tableid + "', because it does not exist in the database."
+						`Can not drop table ${JSON.stringify(
+							table.tableid
+						)} because it does not exist in the database.`
 					);
 				}
 			} else {
@@ -58,6 +60,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 						ifexists,
 						function (res1) {
 							delete db.tables[tableid];
+							schemaChanged(db);
 							res += res1;
 							count++;
 							if (count == tlen && cb) cb(res);
@@ -65,6 +68,8 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 					);
 				} else {
 					delete db.tables[tableid];
+					// The schema changed, so statements in the statement cache must be compiled again
+					schemaChanged(db);
 					res++;
 					count++;
 					if (count == tlen && cb) cb(res);

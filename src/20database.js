@@ -25,7 +25,7 @@ var Database = (alasql.Database = function (databaseid) {
 			alasql.databases[databaseid] = self;
 			//			}
 			if (!self) {
-				throw new Error('Database "' + databaseid + '" not found');
+				throw new Error(`Database ${databaseid} not found`);
 			}
 		} else {
 			// Create new database (or get alasql?)
@@ -67,6 +67,7 @@ var Database = (alasql.Database = function (databaseid) {
 Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements
 	this.sqlCacheSize = 0;
+	this.astCache = {}; // Cache for AST objects
 };
 
 // Main SQL function

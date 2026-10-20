@@ -30,6 +30,12 @@ yy.FuncValue.prototype.toString = function () {
 		}
 		s += ')';
 	}
+
+	// Add OVER clause if present
+	if (this.over) {
+		s += ' ' + this.over.toString();
+	}
+
 	return s;
 };
 
@@ -42,22 +48,6 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
-
-/*/*
-//yy.FuncValue.prototype.compile = function(context, tableid, defcols){
-//	console.log('Expression',this);
-//	if(this.reduced) return returnTrue();
-//	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
-//};
-
-
-// yy.FuncValue.prototype.compile = function(context, tableid, defcols){
-// //	console.log('Expression',this);
-// 	if(this.reduced) return returnTrue();
-// 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
-// };
-
-*/
 
 yy.FuncValue.prototype.findAggregator = function (query) {
 	if (this.args && this.args.length > 0) {
@@ -85,7 +75,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 	} else if (!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
 		if (this.newid) s += 'new ';
 		s += 'alasql.stdfn[' + JSON.stringify(this.funcid.toUpperCase()) + '](';
-		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
 				.map(function (arg) {
@@ -100,7 +89,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		//		var s = '';
 		if (this.newid) s += 'new ';
 		s += 'alasql.fn[' + JSON.stringify(this.funcid) + '](';
-		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
 				.map(function (arg) {
@@ -110,23 +98,9 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		}
 		s += ')';
 	}
-	//console.log('userfn:',s,this);
 	return s;
 };
-
-/*/*
-// // Functions compiler
-// nodes.FunctionValue.prototype.toJS = function (context, tableid) {
-// 	var s = '';
-// 	s += fns[this.name.toUpperCase()].apply(null,this.arguments.map(function(arg){
-// 		if(arg) return arg.toJS(context, tableid);
-// 		else return '';
-// 	}));
-// 	return s;
-// };
-*/
-
-/*/*
+/*
 //
 // SQL FUNCTIONS COMPILERS
 // Based on SQLite functions
@@ -156,16 +130,16 @@ stdlib.EXP = function (a) {
 
 stdlib.IIF = function (a, b, c) {
 	if (arguments.length === 3) {
-		return '((' + a + ')?(' + b + '):(' + c + '))';
+		return `((${a}) ? (${b}) : (${c}))`;
 	} else {
 		throw new Error('Number of arguments of IFF is not equals to 3');
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '((typeof ' + a + ' ==="undefined" || null ===  ' + a + ')?' + b + ':' + a + ')';
+	return `((typeof ${a} === "undefined" || ${a} === null) ? ${b} : ${a})`;
 };
 stdlib.INSTR = function (s, p) {
-	return '((' + s + ').indexOf(' + p + ')+1)';
+	return `((${s}).indexOf(${p}) + 1)`;
 };
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
@@ -218,7 +192,11 @@ stdlib.SUBSTRING =
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
-	return (a || '').search(RegExp(b, c)) > -1;
+	// Convert MySQL word boundaries to JavaScript word boundaries
+	// [[:<:]] -> \b (start of word)
+	// [[:>:]] -> \b (end of word)
+	var pattern = b.replace(/\[\[:<:\]\]/g, '\\b').replace(/\[\[:>:\]\]/g, '\\b');
+	return (a || '').search(RegExp(pattern, c)) > -1;
 };
 
 // Here we uses undefined instead of null
@@ -237,12 +215,12 @@ stdlib.RANDOM = function (r) {
 		return '(Math.random()*(' + r + ')|0)';
 	}
 };
-stdlib.ROUND = function (s, d) {
-	if (arguments.length == 2) {
-		return 'Math.round((' + s + ')*Math.pow(10,(' + d + ')))/Math.pow(10,(' + d + '))';
-	} else {
-		return 'Math.round(' + s + ')';
-	}
+stdfn.ROUND = function (s, d) {
+	if (s == null || (typeof s === 'string' && s.trim() === '')) return undefined;
+	s = Number(s);
+	if (isNaN(s)) return undefined;
+	if (arguments.length < 2) return Math.round(s);
+	return Math.round(s * Math.pow(10, d)) / Math.pow(10, d);
 };
 stdlib.CEIL = stdlib.CEILING = function (s) {
 	return 'Math.ceil(' + s + ')';
@@ -255,6 +233,9 @@ stdlib.ROWNUM = function () {
 	return '1';
 };
 stdlib.ROW_NUMBER = function () {
+	return '1';
+};
+stdlib.GROUP_ROW_NUMBER = function () {
 	return '1';
 };
 
@@ -273,7 +254,7 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	args = args.filter(x => !(x === null || typeof x === 'undefined'));
 	return args.slice(1, args.length).join(args[0] || '');
 };
 
@@ -288,14 +269,76 @@ stdfn.CONCAT_WS = function () {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
-	if (stage === 1) {
-		return '' + v;
-	} else if (stage === 2) {
-		s += ',' + v;
-		return s;
+// Can be called with options: alasql.aggr.GROUP_CONCAT(v, s, stage, separator, orderDirection)
+alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
+	v,
+	s,
+	stage,
+	separator,
+	orderDirection
+) {
+	// Default separator is comma
+	if (separator === undefined) {
+		separator = ',';
 	}
-	return s;
+
+	if (stage === 1) {
+		// Initialize: create array to collect values
+		// Store as object with values array and metadata
+		if (v === null || v === undefined) {
+			return {values: [], separator: separator, orderDirection: orderDirection};
+		}
+		return {values: [v], separator: separator, orderDirection: orderDirection};
+	} else if (stage === 2) {
+		// Accumulate: add to values array, skip null values
+		if (v === null || v === undefined) {
+			return s;
+		}
+		// If accumulator is null/undefined, initialize it
+		if (s === null || s === undefined) {
+			return {values: [v], separator: separator, orderDirection: orderDirection};
+		}
+		// Handle both old string format (for backwards compatibility) and new object format
+		if (typeof s === 'string') {
+			// Old format - convert to new format
+			s = {values: s.split(','), separator: ',', orderDirection: undefined};
+		}
+		s.values.push(v);
+		return s;
+	} else {
+		// Stage 3 (or final): sort if needed and join
+		if (s === null || s === undefined) {
+			return undefined;
+		}
+		// Handle both old string format and new object format
+		if (typeof s === 'string') {
+			return s; // Already formatted
+		}
+
+		let values = s.values;
+
+		// If no values were collected (all nulls), return undefined
+		if (values.length === 0) {
+			return undefined;
+		}
+
+		// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
+		if (s.orderDirection && s.orderDirection !== undefined) {
+			let ascending = s.orderDirection === 'ASC';
+			values = values.slice().sort((a, b) => {
+				if (a === b) return 0;
+				if (a === null || a === undefined) return 1;
+				if (b === null || b === undefined) return -1;
+				if (typeof a === 'string' && typeof b === 'string') {
+					return ascending ? a.localeCompare(b) : b.localeCompare(a);
+				}
+				// For numbers and other types - add parentheses for clarity
+				return ascending ? (a < b ? -1 : 1) : b < a ? -1 : 1;
+			});
+		}
+
+		return values.join(s.separator);
+	}
 };
 
 alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
@@ -314,24 +357,71 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	}
 
 	if (!s.length) {
-		return null;
+		return undefined;
 	}
 
-	var r = s.sort((a, b) => {
+	let r = s.sort((a, b) => {
 		if (a > b) return 1;
 		if (a < b) return -1;
 		return 0;
 	});
 
-	var middle = (r.length + 1) / 2;
-	var middleFloor = middle | 0;
-	var el = r[middleFloor - 1];
+	let middle = (r.length + 1) / 2;
+	let middleFloor = middle | 0;
+	let el = r[middleFloor - 1];
 
 	if (middle === middleFloor || (typeof el !== 'number' && !(el instanceof Number))) {
 		return el;
 	} else {
 		return (el + r[middleFloor]) / 2;
 	}
+};
+
+alasql.aggr.mode = alasql.aggr.MODE = function (v, s, stage) {
+	if (stage === 1) {
+		if (v == null) {
+			return {counts: new Map(), maxCount: 0};
+		}
+		return {counts: new Map([[v, 1]]), maxCount: 1};
+	}
+
+	if (stage === 2) {
+		if (!s || !s.counts) {
+			s = {counts: new Map(), maxCount: 0};
+		}
+		if (v == null) {
+			return s;
+		}
+		const count = (s.counts.get(v) || 0) + 1;
+		s.counts.set(v, count);
+		if (count > s.maxCount) {
+			s.maxCount = count;
+		}
+		return s;
+	}
+
+	if (stage === 3) {
+		if (!s || s.maxCount === 0) {
+			return undefined;
+		}
+
+		let result;
+		let hasResult = false;
+
+		for (const [value, count] of s.counts) {
+			if (count !== s.maxCount) {
+				continue;
+			}
+			if (!hasResult || value < result) {
+				result = value;
+				hasResult = true;
+			}
+		}
+
+		return result;
+	}
+
+	return undefined;
 };
 
 alasql.aggr.QUART = function (v, s, stage, nth) {
@@ -341,32 +431,34 @@ alasql.aggr.QUART = function (v, s, stage, nth) {
 			s.push(v);
 		}
 		return s;
-	} else if (stage === 1) {
+	}
+
+	if (stage === 1) {
 		if (v === null) {
 			return [];
 		}
 		return [v];
-	} else {
-		if (!s.length) {
-			return s;
-		}
-
-		nth = !nth ? 1 : nth;
-		var r = s.sort(function (a, b) {
-			if (a === b) {
-				return 0;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return -1;
-		});
-		var p = (nth * (r.length + 1)) / 4;
-		if (Number.isInteger(p)) {
-			return r[p - 1]; //Integer value
-		}
-		return r[Math.floor(p)]; //Math.ceil -1 or Math.floor
 	}
+	if (!s.length) {
+		return s;
+	}
+
+	nth = !nth ? 1 : nth;
+	var r = s.sort(function (a, b) {
+		if (a === b) return 0;
+
+		if (a > b) return 1;
+
+		return -1;
+	});
+
+	let p = (nth * (r.length + 1)) / 4;
+
+	if (Number.isInteger(p)) {
+		return r[p - 1]; //Integer value
+	}
+
+	return r[Math.floor(p)]; //Math.ceil -1 or Math.floor
 };
 
 alasql.aggr.QUART2 = function (v, s, stage) {
@@ -381,26 +473,25 @@ alasql.aggr.QUART3 = function (v, s, stage) {
 // Standard deviation
 alasql.aggr.VAR = function (v, s, stage) {
 	if (stage === 1) {
-		if (v === null) {
-			return {arr: [], sum: 0};
-		}
-		return {arr: [v], sum: v};
+		// Initialise sum, sum of squares, and count
+		return v === null ? {sum: 0, sumSq: 0, count: 0} : {sum: v, sumSq: v * v, count: 1};
 	} else if (stage === 2) {
-		if (v === null) {
-			return s;
+		// Update sum, sum of squares, and count
+		if (v !== null) {
+			s.sum += v;
+			s.sumSq += v * v;
+			s.count++;
 		}
-		s.arr.push(v);
-		s.sum += v;
 		return s;
 	} else {
-		var N = s.arr.length;
-		var avg = s.sum / N;
-		var std = 0;
-		for (var i = 0; i < N; i++) {
-			std += (s.arr[i] - avg) * (s.arr[i] - avg);
+		// Calculate variance using the formula: variance = (sumSq - (sum^2 / count)) / (count - 1)
+		// This avoids the need to store and iterate over all values
+		if (s.count > 1) {
+			return (s.sumSq - (s.sum * s.sum) / s.count) / (s.count - 1);
+		} else {
+			// Handling for cases with less than 2 values (variance is undefined or zero)
+			return 0;
 		}
-		std = std / (N - 1);
-		return std;
 	}
 };
 
@@ -412,41 +503,33 @@ alasql.aggr.STDEV = function (v, s, stage) {
 	}
 };
 
-// Standard deviation
-// alasql.aggr.VARP = function(v,s,acc){
-// 	if(typeof acc.arr == 'undefined') {
-// 		acc.arr = [v];
-// 		acc.sum = v;
-// 	} else {
-// 		acc.arr.push(v);
-// 		acc.sum += v;
-// 	}
-// 	var N = acc.arr.length;
-// 	var avg = acc.sum / N;
-// 	var std = 0;
-// 	for(var i=0;i<N;i++) {
-// 		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-// 	}
-// 	std = std/N;
-// 	return std;
-// };
-
-alasql.aggr.VARP = function (v, s, stage) {
-	if (stage == 1) {
-		return {arr: [v], sum: v};
-	} else if (stage == 2) {
-		s.arr.push(v);
-		s.sum += v;
-		return s;
+alasql.aggr.STDEV = function (v, s, stage) {
+	if (stage === 1 || stage === 2) {
+		return alasql.aggr.VAR(v, s, stage);
 	} else {
-		var N = s.arr.length;
-		var avg = s.sum / N;
-		var std = 0;
-		for (var i = 0; i < N; i++) {
-			std += (s.arr[i] - avg) * (s.arr[i] - avg);
+		return Math.sqrt(alasql.aggr.VAR(v, s, stage));
+	}
+};
+
+alasql.aggr.VARP = function (value, accumulator, stage) {
+	if (stage === 1) {
+		// Initialise accumulator with count, sum, and sum of squares
+		return {count: 1, sum: value, sumSq: value * value};
+	} else if (stage === 2) {
+		// Update accumulator
+		accumulator.count++;
+		accumulator.sum += value;
+		accumulator.sumSq += value * value;
+		return accumulator;
+	} else {
+		// Final stage: Calculate variance
+		if (accumulator.count > 0) {
+			const mean = accumulator.sum / accumulator.count;
+			const variance = accumulator.sumSq / accumulator.count - mean * mean;
+			return variance;
+		} else {
+			return 0; // Return 0 variance if no values were aggregated
 		}
-		std = std / N;
-		return std;
 	}
 };
 
@@ -472,7 +555,9 @@ Object.keys(alasql._aggrOriginal).forEach(function (k) {
 
 // String functions
 stdfn.REPLACE = function (target, pattern, replacement) {
-	return (target || '').split(pattern).join(replacement);
+	return String(target ?? '')
+		.split(String(pattern ?? ''))
+		.join(String(replacement ?? ''));
 };
 
 // This array is required for fast GUID generation

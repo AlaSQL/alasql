@@ -11,14 +11,13 @@ if (typeof exports === 'object') {
 //
 
 describe('Test 338 EXTRACT', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test338;USE test338');
 		done();
 	});
 
-	it.skip('2. SAMPLE', function (done) {
-		var res = alasql(function () {
-			/*
+	it('2. SAMPLE', function (done) {
+		var res = alasql(`
 
 create table a (col int);
 insert into a (col) values (1), (2), (3), (4), (5), (96), (97), (98), (99), (100);
@@ -29,33 +28,29 @@ insert into b (col) values (1), (98), (2), (99), (3), (100);
 select * from a;
 select * from b;
 
-*/
-		});
+`);
 		//  console.log(res);
 
 		done();
 	});
 
-	it.skip('2. EXCEPT', function (done) {
-		var res = alasql(function () {
-			/*
+	it('2. EXCEPT', function (done) {
+		var res = alasql(`
 
 -- This gives error
 select col from a
 except
 select top 3 b.col from b order by b.col desc;
 
-    */
-		});
+    `);
 
-		console.log(res);
-		//    assert.deepEqual(res,1);
+		// console.log(res);
+		//    assert.deepStrictEqual(res,1);
 		done();
 	});
 
-	it.skip('3. EXCEPT', function (done) {
-		var res = alasql(function () {
-			/*
+	it('3. EXCEPT', function (done) {
+		var res = alasql(`
     
 ;with cte_for_b
 as
@@ -64,30 +59,27 @@ select col from a
 except
 select col from cte_for_b;
 
-    */
-		});
+    `);
 
-		console.log(res);
-		//    assert.deepEqual(res,1);
+		// console.log(res);
+		//    assert.deepStrictEqual(res,1);
 		done();
 	});
 
-	it.skip('3. DROP TABLES', function (done) {
-		var res = alasql(function () {
-			/*
+	it('3. DROP TABLES', function (done) {
+		var res = alasql(`
 
 drop table a;
 drop table b;
 
 
-    */
-		});
+    `);
 		//  console.log(res);
-		assert.deepEqual(res, [1, 1]);
+		assert.deepStrictEqual(res, [1, 1]);
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test338');
 		done();
 	});

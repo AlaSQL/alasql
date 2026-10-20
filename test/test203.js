@@ -14,7 +14,7 @@ describe('Test 203 REQUIRE ASYNC', function () {
 			function () {
 				var res = alasql('SELECT COLUMN myfn(_)+myfn2(_) FROM ?', [data]);
 				//        console.log(res);
-				assert.deepEqual(res, [2, 12, 36, 80]);
+				assert.deepStrictEqual(res, [2, 12, 36, 80]);
 				done();
 			}
 		);
@@ -29,7 +29,7 @@ describe('Test 203 REQUIRE ASYNC', function () {
 		var res = alasql('SELECT COLUMN myfn(_)+myfn2(_) FROM ?', [data]);
 		//        var res = alasql('SELECT COLUMN myfn(_) FROM ?',[data]);
 		//        console.log(res);
-		assert.deepEqual(res, [2, 12, 36, 80]);
+		assert.deepStrictEqual(res, [2, 12, 36, 80]);
 		done();
 		//        console.log(alasql.fn);
 	});

@@ -14,7 +14,7 @@ describe('Test 288 ROWNUM()', function () {
 	it('2. SET', function (done) {
 		var data = [{a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT a, ROWNUM() AS b FROM ?', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 1},
 			{a: 2, b: 2},
 			{a: 3, b: 3},
@@ -31,7 +31,7 @@ describe('Test 288 ROWNUM()', function () {
 			'SELECT * FROM (SELECT a, ROWNUM() AS r FROM one)\
       WHERE r BETWEEN 55 AND 60'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 55, r: 55},
 			{a: 56, r: 56},
 			{a: 57, r: 57},

@@ -11,7 +11,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 		//        var res = alasql('SELECT ROW SUM(a), SUM(a) FROM ?',[data]);
 		var res = alasql('SELECT ROW SUM(a), SUM(a) FROM ?', [data]);
 		//        console.log(res);
-		assert.deepEqual(res, [7, 7]);
+		assert.deepStrictEqual(res, [7, 7]);
 		done();
 	});
 
@@ -19,7 +19,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT ROW COUNT(a), COUNT(DISTINCT a) FROM ?', [data]);
 		//        console.log(res);
-		assert.deepEqual(res, [4, 3]);
+		assert.deepStrictEqual(res, [4, 3]);
 		done();
 	});
 
@@ -27,7 +27,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT ROW SUM(a), SUM(DISTINCT a) FROM ?', [data]);
 		//        console.log(res);
-		assert.deepEqual(res, [7, 6]);
+		assert.deepStrictEqual(res, [7, 6]);
 		done();
 	});
 
@@ -36,7 +36,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 			var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 			var res = alasql('SELECT ROW VAR(a), STDEV(a) FROM ?', [data]);
 			/// console.log(res);
-			assert.deepEqual(res, [1, 2]);
+			assert.deepStrictEqual(res, [1, 2]);
 			done();
 		});
 	}

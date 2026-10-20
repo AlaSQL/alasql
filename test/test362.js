@@ -13,9 +13,9 @@ describe('Test 362 IF() and IIF()', function () {
 
 	it('2. TEST', function (done) {
 		var res = alasql('VALUE OF SELECT IIF(1>2,2,3)');
-		assert.deepEqual(res, 3);
+		assert.deepStrictEqual(res, 3);
 		var res = alasql('VALUE OF SELECT IF(1>2,2,3)');
-		assert.deepEqual(res, 3);
+		assert.deepStrictEqual(res, 3);
 		done();
 	});
 

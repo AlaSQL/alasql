@@ -1,6 +1,8 @@
 if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
+	var DOMStorage = require('dom-storage');
+	global.localStorage = new DOMStorage(null, {strict: false});
 }
 
 describe('Test 607 - TRUNCATE on table in Local Storage', function () {

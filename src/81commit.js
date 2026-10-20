@@ -19,7 +19,7 @@ yy.BeginTransaction.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		// alasql commit!!!
 	}
-	if (cb) cb(res);
+	if (cb) res = cb(res);
 	return res;
 };
 
@@ -37,7 +37,7 @@ yy.CommitTransaction.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		// alasql commit!!!
 	}
-	if (cb) cb(res);
+	if (cb) res = cb(res);
 	return res;
 };
 
@@ -55,6 +55,6 @@ yy.RollbackTransaction.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		// alasql commit!!!
 	}
-	if (cb) cb(res);
+	if (cb) res = cb(res);
 	return res;
 };
