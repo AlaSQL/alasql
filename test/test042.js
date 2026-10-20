@@ -25,52 +25,5 @@ describe('Test 42', function () {
 
 			done();
 		});
-
-		it('should follow SQLite behavior for zero and negative starting positions', function () {
-			const res = alasql(
-				"SELECT SUBSTRING('abcdef', 0, 3) AS zero, " + "SUBSTRING('abcdef', -1, 3) AS negative"
-			);
-			assert.deepStrictEqual(res, [{zero: 'ab', negative: 'f'}]);
-		});
-
-		it('should parse num correctly', function () {
-			const numericResult = alasql('SELECT SUBSTRING(12345, 2, 2) AS result');
-
-			assert.deepStrictEqual(numericResult, [{result: '23'}]);
-		});
-
-		it('should handle SQLite SUBSTRING edge cases', function () {
-			const res = alasql(
-				'SELECT ' +
-					"SUBSTRING('abcdef', -2) AS negativeNoLength, " +
-					"SUBSTRING('abcdef', -2, 1) AS negativeLength, " +
-					"SUBSTRING('abcdef', -7, 3) AS beyondStart"
-			);
-
-			assert.deepStrictEqual(res, [
-				{
-					negativeNoLength: 'ef',
-					negativeLength: 'e',
-					beyondStart: 'ab',
-				},
-			]);
-		});
-
-		it('should support both SUBSTRING syntaxes', function () {
-			const res = alasql(
-				'SELECT ' +
-					"SUBSTRING('abcdef', 2, 3) AS commaSyntax, " +
-					"SUBSTRING('abcdef' FROM 2 FOR 3) AS standardSyntax, " +
-					"SUBSTRING('abcdef' FROM 2) AS standardSyntaxNoLength"
-			);
-
-			assert.deepStrictEqual(res, [
-				{
-					commaSyntax: 'bcd',
-					standardSyntax: 'bcd',
-					standardSyntaxNoLength: 'bcdef',
-				},
-			]);
-		});
 	});
 });

@@ -187,21 +187,57 @@ stdlib.SUBSTRING =
 	stdlib.MID =
 		function (a, b, c) {
 			if (arguments.length == 2) {
-				return und(a, 'String(y).substr((' + b + ') > 0 ? (' + b + ') - 1 : (' + b + '))');
+				return (
+					'(function(s, start) {' +
+					'if (s == null || start == null) return undefined;' +
+					's = String(s);' +
+					'start = +start;' +
+					'var isMySQL = alasql.options.mysql && !alasql.options.sqlite;' +
+					'if (isMySQL) {' +
+					'if (start === 0) return "";' +
+					'if (start < 0) {' +
+					'start = s.length + start;' +
+					'if (start < 0) return "";' +
+					'} else {' +
+					'start = start - 1;' +
+					'}' +
+					'return s.substr(start);' +
+					'}' +
+					'return s.substr(start > 0 ? start - 1 : start);' +
+					'})(' +
+					a +
+					', ' +
+					b +
+					')'
+				);
 			} else if (arguments.length == 3) {
-				return und(
-					a,
+				return (
 					'(function(s, start, len) {' +
-						'if (start === 0) len = len - 1;' +
-						'if (start < 0 && s.length + start < 0) {' +
-						'len = Math.max(0, len + s.length + start);' +
-						'}' +
-						'return s.substr(start > 0 ? start - 1 : start, len);' +
-						'})(String(y), ' +
-						b +
-						', ' +
-						c +
-						')'
+					'if (s == null || start == null || len == null) return undefined;' +
+					's = String(s);' +
+					'var isMySQL = alasql.options.mysql && !alasql.options.sqlite;' +
+					'if (isMySQL) {' +
+					'if (start === 0 || len < 0) return "";' +
+					'if (start < 0) {' +
+					'start = s.length + start;' +
+					'if (start < 0) return "";' +
+					'} else {' +
+					'start = start - 1;' +
+					'}' +
+					'return s.substr(start, len);' +
+					'}' +
+					'if (start === 0) len = len - 1;' +
+					'if (start < 0 && s.length + start < 0) {' +
+					'len = Math.max(0, len + s.length + start);' +
+					'}' +
+					'return s.substr(start > 0 ? start - 1 : start, len);' +
+					'})(' +
+					a +
+					', ' +
+					b +
+					', ' +
+					c +
+					')'
 				);
 			}
 		};

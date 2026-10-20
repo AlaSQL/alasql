@@ -26,3 +26,6 @@ if (alasql.options.mysql || alasql.options.sqlite) {
 		throw new Error('Unknown INFORMATION_SCHEMA table');
 	};
 }
+// MySQL SUBSTRING / SUBSTR / MID dialect behavior
+// Contributed by Yarchik (spoko-dev, https://github.com/AlaSQL/alasql/pull/2521)
+// Dialect behavior is active when alasql.options.sqlite is false
