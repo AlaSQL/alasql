@@ -572,7 +572,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				alasql.executeTrigger(trigger, databaseid, r);
 			}
 		}
-		if (escape) return;
+		// Return false so callers keep the row (INSTEAD OF replaces the delete)
+		if (escape) return false;
 
 		if (this.pk) {
 			var pk = this.pk;
@@ -609,7 +610,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	table.update = function (assignfn, i, params) {
 		// TODO: Analyze the speed
-		var r = cloneDeep(this.data[i]);
+		var oldRow = this.data[i];
+		var r = cloneDeep(oldRow);
 
 		var pk;
 		// PART 1 - PRECHECK
@@ -656,7 +658,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var tr in table.beforeupdate) {
 			var trigger = table.beforeupdate[tr];
 			if (trigger) {
-				if (alasql.executeTrigger(trigger, databaseid, this.data[i], r) === false) {
+				if (alasql.executeTrigger(trigger, databaseid, oldRow, r) === false) {
 					prevent = prevent || true;
 				}
 			}
@@ -669,7 +671,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			escape = true;
 			var trigger = table.insteadofupdate[tr];
 			if (trigger) {
-				alasql.executeTrigger(trigger, databaseid, this.data[i], r);
+				alasql.executeTrigger(trigger, databaseid, oldRow, r);
 			}
 		}
 		if (escape) return;
@@ -720,11 +722,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		this.data[i] = r;
 
-		// Trigger prevent functionality
+		// AFTER UPDATE: pass original old row and the new row
 		for (var tr in table.afterupdate) {
 			var trigger = table.afterupdate[tr];
 			if (trigger) {
-				alasql.executeTrigger(trigger, databaseid, this.data[i], r);
+				alasql.executeTrigger(trigger, databaseid, oldRow, r);
 			}
 		}
 	};
