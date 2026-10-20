@@ -3141,7 +3141,7 @@ case 88:return 270
 break;
 case 89:return 460
 break;
-case 90:return 194
+case 90:yy_.yytext = 'DISTINCT';return 194
 break;
 case 91:return 450
 break;

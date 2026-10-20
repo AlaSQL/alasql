@@ -118,7 +118,7 @@ DATABASE(S)?									return 'DATABASE'
 'DELETED'                                       return 'DELETED'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
-'DISTINCT'                                      return 'DISTINCT'
+'DISTINCT'                                      yytext = 'DISTINCT';return 'DISTINCT'
 /* DOUBLE\s+PRECISION								return 'LITERAL' */
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
