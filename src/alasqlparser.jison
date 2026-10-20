@@ -26,7 +26,7 @@
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
-(["](\\.|[^"]|\\\")*?["])+              return 'STRING'
+(["](\\.|[^"]|\\\")*?["])+              return 'DQSTRING'
 
 
 "--"(.*?)($|\r\n|\r|\n)							return /* its a COMMENT */
@@ -680,7 +680,7 @@ SearchSelector
 		{ $$ = {srchid:"CLASS", args:[$3]}; }
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
-	| STRING
+	| AnyString
 		{ $$ = {srchid:"NAME", args: [$1.substr(1,$1.length-2)]}; }
 	| SLASH
 		{ $$ = {srchid:"CHILD"}; }
@@ -866,7 +866,7 @@ IntoClause
 		{$$ = {into: $2} }
 	| INTO VarValue
 		{$$ = {into: $2} }
-	| INTO STRING
+	| INTO AnyString
 		{
 			var s = $2;
 			s = s.substr(1,s.length-2);
@@ -976,7 +976,7 @@ FromTableAlias
 	;
 
 FromString
-	: STRING
+	: AnyString
 		{
 			var s = $1;
 			s = s.substr(1,s.length-2);
@@ -1515,7 +1515,7 @@ GroupConcatOrderClause
 GroupConcatSeparatorClause
 	:
 		{ $$ = undefined; }
-	| SEPARATOR STRING
+	| SEPARATOR AnyString
 		{ 
 			var str = $2.substring(1, $2.length-1);
 			// Process common escape sequences
@@ -1563,11 +1563,11 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
+	| DATEADD LPAR AnyString COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
 	| DATEDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
+	| DATEDIFF LPAR AnyString COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
 	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
@@ -1594,8 +1594,16 @@ LogicValue
 		{ $$ = new yy.LogicValue({value:false}); }
 	;
 
-StringValue
+/* A string in single or double quotes. Where a name is expected, double quotes make a name (#989) */
+AnyString
 	: STRING
+		{ $$ = $1; }
+	| DQSTRING
+		{ $$ = $1; }
+	;
+
+StringValue
+	: AnyString
 		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	| NSTRING
 		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
@@ -2097,13 +2105,10 @@ CreateTable
 
 /* Double-quoted identifiers as written by SQLite, e.g. CREATE TABLE "t" ("id" INT) (#989) */
 DoubleQuotedIdentifier
-	: STRING
-		{
-			if ($1[0] !== '"') {
-				throw new SyntaxError('Single-quoted string cannot be used as an identifier: ' + $1);
-			}
-			$$ = $1.substr(1, $1.length - 2).replace(/""/g, '"');
-		}
+	: DQSTRING
+		{ $$ = $1.substr(1, $1.length - 2).replace(/""/g, '"'); }
+	| STRING
+		{ throw new SyntaxError('Single-quoted string cannot be used as an identifier: ' + $1); }
 	;
 
 /* A table or column name where a string cannot appear: "name" is a name here (#989) */
@@ -2666,7 +2671,7 @@ Assert
 		{ $$ = new yy.Assert({value:$2}); }
 	| ASSERT PrimitiveValue
 		{ $$ = new yy.Assert({value:$2.value}); }
-	| ASSERT STRING COMMA Json
+	| ASSERT AnyString COMMA Json
 		{ $$ = new yy.Assert({value:$4, message:$2}); }
 	;
 
@@ -2744,13 +2749,13 @@ JsonPropertiesList
 	;
 
 JsonProperty
-	: STRING COLON JsonValue
+	: AnyString COLON JsonValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
 	| Literal COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
-	| STRING COLONDASH NumValue
+	| AnyString COLONDASH NumValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = -$3.value; }
 	| NUMBER COLONDASH NumValue
 		{ $$ = {}; $$[$1] = -$3.value; }
@@ -3199,7 +3204,7 @@ GraphAtClause
 	;
 
 GraphElement2
-	:  Literal? SharpLiteral? STRING? ColonLiteral?
+	:  Literal? SharpLiteral? AnyString? ColonLiteral?
 		{
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
@@ -3207,17 +3212,17 @@ GraphElement2
 	;
 
 GraphElement
-	:  Literal SharpLiteral? STRING? ColonLiteral?
+	:  Literal SharpLiteral? AnyString? ColonLiteral?
 		{
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
 		}
-	|  SharpLiteral STRING? ColonLiteral?
+	|  SharpLiteral AnyString? ColonLiteral?
 		{
 			var s2 = $2;
 			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3};
 		}
-	|  STRING ColonLiteral?
+	|  AnyString ColonLiteral?
 		{
 			var s1 = $1;
 			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2};
