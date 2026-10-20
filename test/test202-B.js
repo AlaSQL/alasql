@@ -149,6 +149,7 @@ describe(`Test ${testId} B - set operation chains are evaluated left to right`, 
 			`((${S('e1')} EXCEPT ${S('e2')}) EXCEPT ${S('e3')}) UNION ${S('e4')}`,
 			`${S('e1')} UNION ${S('e2')} ORDER BY a DESC LIMIT 2`,
 			`(${S('e1')} EXCEPT ${S('e2')}) UNION ${S('e3')} ORDER BY a DESC`,
+			`(${S('e1')} ORDER BY a DESC LIMIT 2) UNION ALL (${S('e2')} ORDER BY a DESC LIMIT 1)`,
 			`SELECT * FROM (${S('e1')} EXCEPT ${S('e2')} EXCEPT ${S('e3')}) AS x`,
 			'SELECT a, b FROM cx EXCEPT CORRESPONDING SELECT b, a FROM cy EXCEPT CORRESPONDING SELECT b, a FROM cz',
 		].forEach(sql => assert.deepStrictEqual(alasql(toSQL(sql)), alasql(sql), sql));
