@@ -76,10 +76,10 @@ describe(`Test ${testId} - CREATE TABLE with double-quoted identifiers`, functio
 	it('F) Single-quoted strings are not accepted as identifiers', function () {
 		assert.throws(function () {
 			alasql("CREATE TABLE 'single' (a INT)");
-		}, /Single-quoted string cannot be used as an identifier/);
+		}, /Parse error/);
 		assert.throws(function () {
 			alasql("CREATE TABLE single2 ('a' INT)");
-		}, /Single-quoted string cannot be used as an identifier/);
+		}, /Parse error/);
 		assert.strictEqual(alasql.databases['test' + testId].tables.single, undefined);
 		assert.strictEqual(alasql.databases['test' + testId].tables.single2, undefined);
 	});
@@ -138,7 +138,7 @@ describe(`Test ${testId} - CREATE TABLE with double-quoted identifiers`, functio
 		}, /Unexpected FOO after REFERENCES clause/);
 		assert.throws(function () {
 			alasql.parse("CREATE TABLE j6 (a INT REFERENCES t3 ('a'))");
-		}, /Single-quoted string cannot be used as an identifier/);
+		}, /Parse error/);
 	});
 
 	it('K) Double-quoted names in a PRIMARY KEY column list', function () {
@@ -179,6 +179,98 @@ describe(`Test ${testId} - CREATE TABLE with double-quoted identifiers`, functio
 			{name: 'Andrey'},
 		]);
 		assert.throws(() => alasql('SELECT * FROM "friends"'), /Unknown string in FROM clause/);
+	});
+
+	it('N) Any text can be a double-quoted name: keywords, spaces, Unicode, "" for a quote', function () {
+		const res = alasql(
+			'CREATE TABLE "order" ("select" INT, "from" INT, "Größe" INT, "say ""hi""" INT);' +
+				'INSERT INTO "order" VALUES (1, 2, 3, 4);' +
+				'SELECT * FROM [order]'
+		);
+		assert.deepStrictEqual(res.pop(), [{select: 1, from: 2, Größe: 3, 'say "hi"': 4}]);
+	});
+
+	it('O) A double-quoted name can be qualified by a database, quoted or not', function () {
+		const db = 'test' + testId;
+		alasql(`CREATE TABLE "${db}"."q1" (a INT)`);
+		alasql(`CREATE TABLE ${db}."q2" (a INT)`);
+		alasql(`CREATE TABLE "${db}".q3 (a INT)`);
+		alasql(`INSERT INTO "${db}"."q1" VALUES (1)`);
+		assert.deepStrictEqual(alasql(`SELECT * FROM ${db}.q1`), [{a: 1}]);
+		alasql(`DROP TABLE "${db}"."q1", ${db}."q2", "${db}".q3`);
+		['q1', 'q2', 'q3'].forEach(t => assert.strictEqual(alasql.databases[db].tables[t], undefined));
+	});
+
+	it('P) An empty name, or one with a single quote or a backslash, is refused', function () {
+		['""', `"it's"`, '"a\\b"'].forEach(function (name) {
+			assert.throws(() => alasql(`CREATE TABLE ${name} (a INT)`), /Not a valid name/, name);
+			assert.throws(() => alasql(`CREATE TABLE p1 (${name} INT)`), /Not a valid name/, name);
+		});
+		assert.strictEqual(alasql.databases['test' + testId].tables.p1, undefined);
+	});
+
+	it('Q) In CHECK, UNIQUE and indexes a double-quoted column name is the column, as in SQLite', function () {
+		alasql(
+			'CREATE TABLE q ("a" INT CHECK ("a" >= 0), "b" STRING, "c" INT,' +
+				' UNIQUE ("a", "b"), CHECK ("b" <> "nope"));' +
+				'CREATE UNIQUE INDEX "q_c" ON "q" ("c")'
+		);
+		alasql('INSERT INTO q VALUES (1, "x", 1), (1, "y", 2)');
+		assert.throws(() => alasql('INSERT INTO q VALUES (-1, "z", 3)'), /CHECK/);
+		assert.throws(() => alasql('INSERT INTO q VALUES (2, "nope", 4)'), /CHECK/);
+		assert.throws(() => alasql('INSERT INTO q VALUES (1, "x", 5)'), /unique/);
+		assert.throws(() => alasql('INSERT INTO q VALUES (3, "w", 2)'), /unique/);
+		assert.strictEqual(alasql('SELECT VALUE COUNT(*) FROM q'), 2);
+	});
+
+	it('R) Outside CHECK, UNIQUE and indexes a double-quoted string stays a string', function () {
+		const res = alasql(
+			'CREATE TABLE r ("a" STRING DEFAULT "a", "b" INT);' +
+				'INSERT INTO r (b) VALUES (1);' +
+				'SELECT "a" AS s, a FROM r'
+		);
+		assert.deepStrictEqual(res.pop(), [{s: 'a', a: 'a'}]);
+	});
+
+	it('S) Index, view and constraint names, and RENAME, take double quotes', function () {
+		const res = alasql(
+			'CREATE TABLE "s 1" ("a" INT, CONSTRAINT "pk s" PRIMARY KEY ("a"));' +
+				'CREATE INDEX "ix s" ON "s 1" ("a");' +
+				'DROP INDEX "ix s";' +
+				'CREATE VIEW "v s" AS SELECT * FROM [s 1];' +
+				'DROP VIEW "v s";' +
+				'ALTER TABLE "s 1" RENAME TO "s 2";' +
+				'INSERT INTO "s 2" VALUES (1);' +
+				'SELECT * FROM [s 2]'
+		);
+		assert.deepStrictEqual(res.pop(), [{a: 1}]);
+		assert.throws(() => alasql('INSERT INTO "s 2" VALUES (1)'), /primary key/);
+	});
+
+	it('T) Schema with unique_together, a positive integer CHECK and an index, as Django writes it', function () {
+		alasql(
+			'CREATE TABLE "app_author" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "name" varchar(50) NOT NULL);' +
+				'CREATE TABLE "app_book" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,' +
+				' "title" varchar(100) NOT NULL,' +
+				' "pages" integer unsigned NOT NULL CHECK ("pages" >= 0),' +
+				' "author_id" integer NOT NULL REFERENCES "app_author" ("id") DEFERRABLE INITIALLY DEFERRED,' +
+				' UNIQUE ("author_id", "title"));' +
+				'CREATE INDEX "app_book_author_id_1a2b3c" ON "app_book" ("author_id")'
+		);
+		alasql("INSERT INTO app_author (name) VALUES ('Ann')");
+		alasql("INSERT INTO app_book (title, pages, author_id) VALUES ('A', 10, 1), ('B', 20, 1)");
+		assert.throws(
+			() => alasql("INSERT INTO app_book (title, pages, author_id) VALUES ('A', 30, 1)"),
+			/unique/
+		);
+		assert.throws(
+			() => alasql("INSERT INTO app_book (title, pages, author_id) VALUES ('C', -1, 1)"),
+			/CHECK/
+		);
+		assert.deepStrictEqual(alasql('SELECT title FROM app_book ORDER BY id'), [
+			{title: 'A'},
+			{title: 'B'},
+		]);
 	});
 });
 

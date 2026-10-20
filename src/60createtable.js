@@ -72,10 +72,33 @@ function columnPrefixToJS(columnid, prefix) {
 }
 
 /**
+ Inside CREATE TABLE and CREATE INDEX a double-quoted string that names a column of the table is
+ that column, as SQLite reads CHECK ("a" >= 0) and UNIQUE ("a", "b"). Elsewhere it stays a string (#989)
+ */
+function quotedColumns(expr, columnids) {
+	if (expr instanceof yy.StringValue) {
+		return expr.doubleQuoted && columnids.indexOf(expr.value) > -1
+			? new yy.Column({columnid: expr.value})
+			: expr;
+	}
+	for (var key in expr) {
+		if (
+			Object.prototype.hasOwnProperty.call(expr, key) &&
+			expr[key] &&
+			typeof expr[key] === 'object'
+		) {
+			expr[key] = quotedColumns(expr[key], columnids);
+		}
+	}
+	return expr;
+}
+
+/**
  JS for one column of a UNIQUE constraint or CREATE INDEX. These take expressions, so a(N)
  is parsed as a function call. When a is a column of the table, it is a prefix (#406)
  */
 function indexColumnToJS(expr, table) {
+	expr = quotedColumns(expr, Object.keys(table.xcolumns || {}));
 	if (
 		expr instanceof yy.FuncValue &&
 		table.xcolumns &&
@@ -102,6 +125,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	var columns = this.columns;
 	var constraints = this.constraints || [];
+	var columnids = (columns || []).map(function (col) {
+		return col.columnid;
+	});
 
 	// IF NOT EXISTS
 	if (this.ifnotexists && db.tables[tableid]) {
@@ -157,7 +183,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (col.check) {
 				table.checks.push({
 					id: col.check.constrantid,
-					fn: new Function('r,params,alasql', 'var y;return ' + col.check.expression.toJS('r', '')),
+					fn: new Function(
+						'r,params,alasql',
+						'var y;return ' + quotedColumns(col.check.expression, columnids).toJS('r', '')
+					),
 				});
 			}
 
@@ -254,7 +283,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			});
 		} else if (con.type === 'CHECK') {
-			checkfn = new Function('r,params,alasql', 'var y;return ' + con.expression.toJS('r', ''));
+			checkfn = new Function(
+				'r,params,alasql',
+				'var y;return ' + quotedColumns(con.expression, columnids).toJS('r', '')
+			);
 		} else if (con.type === 'UNIQUE') {
 			var uk = {};
 			table.uk = table.uk || [];

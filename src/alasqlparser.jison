@@ -1604,7 +1604,10 @@ AnyString
 
 StringValue
 	: AnyString
-		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
+		{
+			$$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
+			if ($1[0] == '"') $$.doubleQuoted = true;
+		}
 	| NSTRING
 		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	;
@@ -2103,27 +2106,26 @@ CreateTable
 		}
 ;
 
-/* Double-quoted identifiers as written by SQLite, e.g. CREATE TABLE "t" ("id" INT) (#989) */
-DoubleQuotedIdentifier
-	: DQSTRING
-		{ $$ = $1.substr(1, $1.length - 2).replace(/""/g, '"'); }
-	| STRING
-		{ throw new SyntaxError('Single-quoted string cannot be used as an identifier: ' + $1); }
-	;
-
-/* A table or column name where a string cannot appear: "name" is a name here (#989) */
-TableName
-	: Table
-		{ $$ = $1; }
-	| DoubleQuotedIdentifier
-		{ $$ = new yy.Table({tableid: $1}); }
-	;
-
-ColumnName
+/*
+ A name where a string cannot appear: a word, [name], `name` or "name", as SQLite writes them (#989).
+ In double quotes it keeps its case and "" stands for one ". Names are placed in generated code,
+ so it cannot be empty or hold ' or \ ([name] and `name` cannot hold ' either).
+*/
+Name
 	: Literal
 		{ $$ = $1; }
-	| DoubleQuotedIdentifier
-		{ $$ = $1; }
+	| DQSTRING
+		{
+			$$ = $1.slice(1, -1).replace(/""/g, '"');
+			if (!$$ || /['\\]/.test($$)) throw new SyntaxError('Not a valid name: ' + $1);
+		}
+	;
+
+TableName
+	: Name
+		{ $$ = new yy.Table({tableid: $1}); }
+	| Name DOT Name
+		{ $$ = new yy.Table({databaseid: $1, tableid: $3}); }
 	;
 
 TableClass
@@ -2194,7 +2196,7 @@ Constraint
 
 ConstraintName
 	:   { $$ = undefined; }
-	| CONSTRAINT Literal
+	| CONSTRAINT Name
 		{ $$ = $2; }
 	;
 
@@ -2277,14 +2279,14 @@ ReferentialAction
 	;
 
 UniqueKey
-	: UNIQUE KEY? Literal? LPAR OrderExpressionsList RPAR
+	: UNIQUE KEY? Name? LPAR OrderExpressionsList RPAR
 		{
 			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}
 	;
 
 IndexKey
-	: INDEX Literal LPAR IndexColsList RPAR
+	: INDEX Name LPAR IndexColsList RPAR
 		{ $$ = {type: 'INDEX', indexid: $2, columns: $4.columns, prefixes: $4.prefixes}; }
 	;
 
@@ -2297,16 +2299,16 @@ IndexColsList
 
 /* A column of an index, with an optional prefix length as in MySQL: a(10) (#406) */
 IndexCol
-	: ColumnName
+	: Name
 		{ $$ = {columnid: $1}; }
-	| ColumnName LPAR NUMBER RPAR
+	| Name LPAR NUMBER RPAR
 		{ $$ = {columnid: $1, prefix: +$3}; }
 	;
 
 ColsList
-	: ColumnName
+	: Name
 		{ $$ = [$1]; }
-	| ColsList COMMA ColumnName
+	| ColsList COMMA Name
 		{ $$ = $1; $1.push($3); }
 	;
 
@@ -2330,11 +2332,11 @@ ColumnDefsList
 	;
 
 ColumnDef
-	: ColumnName ColumnType ColumnConstraintsClause
+	: Name ColumnType ColumnConstraintsClause
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| ColumnName ColumnConstraints
+	| Name ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	| ColumnName
+	| Name
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
@@ -2393,7 +2395,7 @@ ColumnConstraintsList
 	;
 
 ParLiteral
-	: LPAR ColumnName RPAR
+	: LPAR Name RPAR
 		{ $$ = $2; }
 	;
 
@@ -2452,20 +2454,20 @@ IfExists
 /* ALTER TABLE */
 
 AlterTable
-	: ALTER TABLE TableName RENAME TO Literal
+	: ALTER TABLE TableName RENAME TO Name
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
 	| ALTER TABLE TableName ADD COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
 	| ALTER TABLE TableName MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
-	| ALTER TABLE TableName RENAME COLUMN ColumnName TO ColumnName
+	| ALTER TABLE TableName RENAME COLUMN Name TO Name
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| ALTER TABLE TableName DROP COLUMN ColumnName
+	| ALTER TABLE TableName DROP COLUMN Name
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
 
 RenameTable
-	: RENAME TABLE Table TO Literal
+	: RENAME TABLE TableName TO Name
 		{ $$ = new yy.AlterTable({table:$3, renameto: $5});}
 	;
 
@@ -2526,16 +2528,16 @@ DropDatabase
 
 CreateIndex
 	:
-	 CREATE INDEX Literal ON TableName LPAR OrderExpressionsList RPAR
+	 CREATE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
 	|
 
-	CREATE UNIQUE INDEX Literal ON TableName LPAR OrderExpressionsList RPAR
+	CREATE UNIQUE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
 DropIndex
-	: DROP INDEX Literal
+	: DROP INDEX Name
 		{ $$ = new yy.DropIndex({indexid:$3});}
 	;
 
@@ -2585,13 +2587,13 @@ ShowCreateTable
 	;
 
 CreateView
-	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select SubqueryRestriction?
+	:  CREATE TemporaryClause VIEW IfNotExists TableName LPAR ColumnsList RPAR AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7});
 			yy.extend($$,$2);
 			yy.extend($$,$4);
 		}
-	| CREATE TemporaryClause VIEW IfNotExists Table AS Select SubqueryRestriction?
+	| CREATE TemporaryClause VIEW IfNotExists TableName AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$7});
 			yy.extend($$,$2);
@@ -3328,7 +3330,7 @@ DropTrigger
 	;
 
 Reindex
-	: REINDEX Literal
+	: REINDEX Name
 		{ $$ = new yy.Reindex({indexid:$2});}
 	;
 
