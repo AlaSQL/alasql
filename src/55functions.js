@@ -166,11 +166,13 @@ stdlib.RTRIM = function (s) {
 	return und(s, 'y.replace(/[ ]+$/,"")');
 };
 
+// SQL standard: if any argument is NULL (null or undefined), the result is NULL.
+// `x == null` is true for both null and undefined.
 stdlib.MAX = stdlib.GREATEST = function () {
 	return (
 		'[' +
 		Array.prototype.join.call(arguments, ',') +
-		'].reduce(function (a, b) { return a > b ? a : b; })'
+		'].reduce(function (a, b) { return a == null || b == null ? undefined : a > b ? a : b; })'
 	);
 };
 
@@ -178,7 +180,7 @@ stdlib.MIN = stdlib.LEAST = function () {
 	return (
 		'[' +
 		Array.prototype.join.call(arguments, ',') +
-		'].reduce(function (a, b) { return a < b ? a : b; })'
+		'].reduce(function (a, b) { return a == null || b == null ? undefined : a < b ? a : b; })'
 	);
 };
 
