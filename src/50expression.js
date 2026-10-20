@@ -244,7 +244,11 @@
 				return `${leftStr} ${this.op} ${this.right1.toString()} AND ${this.right2.toString()}`;
 			}
 
-			return `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
+			s = `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
+			if (this.escape) {
+				s += ` ESCAPE ${this.escape.toString()}`;
+			}
+			return s;
 		}
 
 		findAggregator(query) {
