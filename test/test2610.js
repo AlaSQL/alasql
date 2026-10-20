@@ -22,6 +22,9 @@ describe(`Test ${testId} - Set operations compare rows correctly when both SELEC
 		return [alasql(sql), alasql(sql)];
 	}
 
+	// UNION does not define the order of the result, so compare the values sorted
+	const values = res => res.map(r => r.a).sort((x, y) => x - y);
+
 	it('A) INTERSECT with ORDER BY and LIMIT on both SELECTs', function () {
 		const sql =
 			'(SELECT a FROM e1 ORDER BY a LIMIT 2) INTERSECT (SELECT a FROM e2 ORDER BY a LIMIT 1)';
@@ -46,14 +49,18 @@ describe(`Test ${testId} - Set operations compare rows correctly when both SELEC
 
 	it('D) UNION with ORDER BY and LIMIT on both SELECTs removes duplicates', function () {
 		const sql = '(SELECT a FROM e1 ORDER BY a LIMIT 2) UNION (SELECT a FROM e2 ORDER BY a LIMIT 1)';
-		const expected = [{a: 1}, {a: 2}];
-		assert.deepStrictEqual(runTwice(sql), [expected, expected]);
+		const [first, second] = runTwice(sql);
+		assert.deepStrictEqual(
+			[values(first), values(second)],
+			[
+				[1, 2],
+				[1, 2],
+			]
+		);
 	});
 
 	it('E) UNION with ORDER BY and no LIMIT on both SELECTs removes duplicates', function () {
 		const sql = '(SELECT a FROM e1 ORDER BY a) UNION (SELECT a FROM e2 ORDER BY a)';
-		// UNION does not define the order of the result, so compare the values sorted
-		const values = res => res.map(r => r.a).sort();
 		const [first, second] = runTwice(sql);
 		assert.deepStrictEqual(
 			[values(first), values(second)],
