@@ -98,6 +98,15 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 	return res;
 };
 
+// The part of a table that is stored in the file, beside its rows
+function fsTableSchema(table) {
+	return {
+		columns: table.columns,
+		defaultfns: table.defaultfns,
+		onupdatefns: table.onupdatefns,
+	};
+}
+
 FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var db = alasql.databases[databaseid];
 	var tb = db.data[tableid];
@@ -107,11 +116,7 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
 	}
 	var table = alasql.databases[databaseid].tables[tableid];
-	db.data.tables[tableid] = {
-		columns: table.columns,
-		defaultfns: table.defaultfns,
-		onupdatefns: table.onupdatefns,
-	};
+	db.data.tables[tableid] = fsTableSchema(table);
 	db.data[tableid] = [];
 
 	FS.updateFile(databaseid);
@@ -175,33 +180,22 @@ FS.intoTable = function (databaseid, tableid, value, columns, cb) {
 
 FS.loadTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
-	db.tables[tableid].data = db.data[tableid];
-};
-
-/**
- * Store full table schema and data (used by ALTER TABLE).
- */
-FS.storeTable = function (databaseid, tableid) {
-	var db = alasql.databases[databaseid];
 	var table = db.tables[tableid];
-	if (!db.data.tables) {
-		db.data.tables = {};
+	// After ATTACH a table is only its stored schema: make it a table that statements can change (#1107)
+	if (!(table instanceof alasql.Table)) {
+		table = db.tables[tableid] = new alasql.Table(fsTableSchema(table));
+		table.indexColumns();
 	}
-	// Prefer live in-memory rows; fall back to already-stored rows to avoid wiping
-	var data = Array.isArray(table.data) ? table.data : db.data[tableid] || [];
-	db.data.tables[tableid] = {
-		columns: table.columns,
-		defaultfns: table.defaultfns,
-		onupdatefns: table.onupdatefns,
-	};
-	db.data[tableid] = data;
-	FS.updateFile(databaseid);
+	table.data = db.data[tableid];
 };
 
 FS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
-	db.data[tableid] = db.tables[tableid].data;
-	db.tables[tableid].data = null;
+	var table = db.tables[tableid];
+	// The schema is saved with the rows, so ALTER TABLE is kept (#1107)
+	db.data.tables[tableid] = fsTableSchema(table);
+	db.data[tableid] = table.data;
+	table.data = null;
 	FS.updateFile(databaseid);
 };
 

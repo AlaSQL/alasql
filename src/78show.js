@@ -72,23 +72,14 @@ yy.ShowColumns.prototype.toString = function () {
 };
 
 yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
-	var tableid = this.table.tableid;
-	var table = db.tables[tableid];
-
-	// With external engines + autocommit, tables may only be stubs until loaded
-	if (
-		db.engineid &&
-		alasql.engines[db.engineid] &&
-		(!table || table === true || !Array.isArray(table.columns))
-	) {
-		if (typeof alasql.engines[db.engineid].restoreTable === 'function') {
-			table = alasql.engines[db.engineid].restoreTable(
-				this.table.databaseid || this.databaseid || databaseid,
-				tableid
-			);
-		}
+	var dbid = this.table.databaseid || this.databaseid || databaseid;
+	var db = alasql.databases[dbid];
+	// A table in a storage engine may not be loaded yet (#1107)
+	if (alasql.options.autocommit && db.engineid && db.tables[this.table.tableid]) {
+		var engine = alasql.engines[db.engineid];
+		if (engine.loadTableData) engine.loadTableData(dbid, this.table.tableid);
 	}
+	var table = db.tables[this.table.tableid];
 
 	if (table && table.columns) {
 		var res = table.columns.map(function (col) {

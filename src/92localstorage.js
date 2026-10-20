@@ -376,7 +376,7 @@ LS.loadTableData = function (databaseid, tableid) {
 LS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-	LS.storeTable(lsdbid, tableid);
+	LS.storeTable(databaseid, tableid);
 	//	LS.set(lsdbid+'.'+tableid,db.tables[tableid].data);
 	db.tables[tableid].data = undefined;
 };
