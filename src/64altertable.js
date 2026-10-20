@@ -18,14 +18,17 @@ yy.AlterTable.prototype.toString = function () {
 };
 
 yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
-	let db = alasql.databases[databaseid];
+	var dbid = this.table.databaseid || databaseid;
+	let db = alasql.databases[dbid];
 	schemaChanged(db);
 
 	if (this.renameto) {
 		var oldtableid = this.table.tableid;
 		var newtableid = this.renameto;
 		var res = 1;
-		if (db.tables[newtableid]) {
+		if (!db.tables[oldtableid]) {
+			throw new Error(`Can not rename a table "${oldtableid}" because it does not exist`);
+		} else if (db.tables[newtableid]) {
 			throw new Error(
 				`Can not rename a table "${oldtableid}" to "${newtableid}" because the table with this name already exists`
 			);
@@ -42,8 +45,6 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 	// A table in a storage engine is loaded before the change and saved after it, as INSERT,
 	// UPDATE and DELETE do. Without this the change is lost on the next statement (#1107)
-	var dbid = this.table.databaseid || databaseid;
-	db = alasql.databases[dbid];
 	var tableid = this.table.tableid;
 	var engine = alasql.options.autocommit && db.engineid && alasql.engines[db.engineid];
 	if (engine && engine.loadTableData) {

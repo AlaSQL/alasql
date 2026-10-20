@@ -129,7 +129,7 @@ yy.ShowCreateTable.prototype.toString = function () {
 	return s;
 };
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
-	var db = alasql.databases[this.databaseid || databaseid];
+	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
 	if (table) {
 		var s = 'CREATE TABLE ' + this.table.tableid + ' (';
