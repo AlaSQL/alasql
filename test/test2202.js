@@ -25,7 +25,7 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 
 		var res = alasql('SELECT * FROM test1 ORDER BY data->value');
 		assert.equal(res.length, 2);
-		assert.deepEqual(res, [{data: {value: 100}}, {data: {value: 200}}]);
+		assert.deepStrictEqual(res, [{data: {value: 100}}, {data: {value: 200}}]);
 	});
 
 	// Note: Using "value" as a STANDALONE column name (not as a JSON property)
@@ -39,7 +39,7 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 		alasql('INSERT INTO test2 VALUES (2, "data2")');
 
 		var res = alasql('SELECT id, values FROM test2 ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, values: 'data1'},
 			{id: 2, values: 'data2'},
 		]);
@@ -70,7 +70,7 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 		alasql('INSERT INTO test5 VALUES (1, "Alice"), (2, "Bob")');
 
 		var res = alasql('SELECT * FROM test5 ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'Alice'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -102,7 +102,7 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 
 		var res = alasql('SELECT * FROM test7 ORDER BY data->values');
 		assert.equal(res.length, 2);
-		assert.deepEqual(res, [{data: {values: 100}}, {data: {values: 200}}]);
+		assert.deepStrictEqual(res, [{data: {values: 100}}, {data: {values: 200}}]);
 	});
 
 	it('H) Should work with the original issue example: data->value in CREATE INDEX', function () {
@@ -118,7 +118,7 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 
 		var res = alasql('SELECT * FROM BOM5 ORDER BY id');
 		assert.equal(res.length, 3);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, data: {value: 100}},
 			{id: 2, data: {value: 100}},
 			{id: 3, data: {value: 200}},
