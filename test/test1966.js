@@ -97,7 +97,7 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 
 		// Test CORR with two columns - exact expected value
 		var res = alasql('SELECT CORR(x, y) as corr FROM correlation_data');
-		assert.deepEqual(res, [{corr: 0.9999999999999999}]);
+		assert.deepStrictEqual(res, [{corr: 0.9999999999999999}]);
 
 		// Clean up
 		delete alasql.aggr.CORR;
@@ -148,7 +148,7 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 
 		var res = alasql('SELECT WEIGHTED_AVG(val, weight, mult) as wavg FROM weighted_data');
 		// Expected: (10*1*2 + 20*2*2 + 30*3*2) / (1+2+3) = (20+80+180)/6 = 280/6 = 46.666...
-		assert.deepEqual(res, [{wavg: 46.666666666666664}]);
+		assert.deepStrictEqual(res, [{wavg: 46.666666666666664}]);
 
 		// Clean up
 		delete alasql.aggr.WEIGHTED_AVG;
@@ -171,8 +171,8 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 		alasql('INSERT INTO simple_data VALUES (1), (2), (3), (4), (5)');
 
 		var res = alasql('SELECT CUSTOM_SUM(x) as sum_result FROM simple_data');
-		assert.deepEqual(res.length, 1);
-		assert.deepEqual(res[0].sum_result, 15);
+		assert.deepStrictEqual(res.length, 1);
+		assert.deepStrictEqual(res[0].sum_result, 15);
 
 		// Clean up
 		delete alasql.aggr.CUSTOM_SUM;
@@ -252,7 +252,7 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 		var res = alasql('SELECT CORR(x, y) as corr FROM null_data');
 		// Should calculate correlation only for non-null pairs: (1,2), (4,5), (5,6)
 		// Correlation = 1 for perfect positive correlation (with floating point precision)
-		assert.deepEqual(res, [{corr: 1.0000000000000002}]);
+		assert.deepStrictEqual(res, [{corr: 1.0000000000000002}]);
 
 		// Clean up
 		delete alasql.aggr.CORR;
@@ -337,7 +337,7 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 
 		// Test CORR with parameterized columns - results should be exact
 		var res = alasql('SELECT CORR(x, y) as corr FROM param_data');
-		assert.deepEqual(res, [{corr: 0.9999999999999999}]);
+		assert.deepStrictEqual(res, [{corr: 0.9999999999999999}]);
 
 		// Clean up
 		delete alasql.aggr.CORR;
@@ -393,7 +393,7 @@ describe('Test 2600 - Multi-column user-defined aggregate functions', function (
 
 		var res = alasql('SELECT MULTI_CALC(a, b, c, d) as result FROM four_col_data');
 		// Expected: ((1*2+3*4) + (2*3+4*5) + (3*4+5*6)) / 3 = (14 + 26 + 42) / 3 = 82/3 = 27.333...
-		assert.deepEqual(res, [{result: 27.333333333333332}]);
+		assert.deepStrictEqual(res, [{result: 27.333333333333332}]);
 
 		// Clean up
 		delete alasql.aggr.MULTI_CALC;
