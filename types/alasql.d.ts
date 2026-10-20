@@ -96,14 +96,7 @@ declare module 'alasql' {
 	}
 
 	export type ExpressionNode =
-		| Op
-		| Column
-		| ParamValue
-		| NumValue
-		| StringValue
-		| LogicValue
-		| UniOp
-		| FuncValue;
+		Op | Column | ParamValue | NumValue | StringValue | LogicValue | UniOp | FuncValue;
 
 	export interface ExpressionWrapper extends AlaSQLExpression {
 		expression: ExpressionNode;
