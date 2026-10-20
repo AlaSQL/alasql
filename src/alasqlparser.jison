@@ -1561,16 +1561,12 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
 	| CURRENT_DATE LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
-	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEADD LPAR AnyString COMMA Expression COMMA Expression RPAR
+	| DATEADD LPAR DatePart COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
-	| DATEDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEDIFF LPAR AnyString COMMA Expression COMMA Expression RPAR
+	| DATEDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
-	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| TIMESTAMPDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[$3,$5,$7]}) }
 	| INTERVAL Expression Literal
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
@@ -1592,6 +1588,14 @@ LogicValue
 		{ $$ = new yy.LogicValue({value:true}); }
 	| FALSE
 		{ $$ = new yy.LogicValue({value:false}); }
+	;
+
+/* The date part of DATEADD, DATEDIFF and TIMESTAMPDIFF: day, 'day' or "day" (#2616) */
+DatePart
+	: Literal
+		{ $$ = new yy.StringValue({value:$1}); }
+	| StringValue
+		{ $$ = $1; }
 	;
 
 /* A string in single or double quotes. Where a name is expected, double quotes make a name (#989) */

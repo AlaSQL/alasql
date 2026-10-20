@@ -148,9 +148,16 @@ var PERIODS = {
 	microsecond: 0.001,
 };
 
+function periodLength(period) {
+	if (!PERIODS.hasOwnProperty(period)) {
+		throw new Error('Unknown date part: ' + period);
+	}
+	return PERIODS[period];
+}
+
 alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 	var interval = newDate(d2).getTime() - newDate(d1).getTime();
-	return (interval / PERIODS[period.toLowerCase()]) | 0;
+	return (interval / periodLength(period.toLowerCase())) | 0;
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
@@ -168,7 +175,7 @@ alasql.stdfn.DATEADD = function (period, interval, d) {
 			nd.setMonth(nd.getMonth() + interval);
 			break;
 		default:
-			nd = new Date(nd.getTime() + interval * PERIODS[period]);
+			nd = new Date(nd.getTime() + interval * periodLength(period));
 			break;
 	}
 
