@@ -87,45 +87,6 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 			}
 		});
 	}
-	// Subqueries in FROM / JOIN have no table definition, so register the named
-	// columns of their SELECT list. Without this, an unqualified column of a joined
-	// subquery used in an expression (e.g. c - b) resolves to the first source (#832).
-	// This is only done when the columns of every source are known (tables with
-	// column definitions, subqueries without *). With a schemaless source (FROM ?,
-	// CSV(), SELECT *) an unqualified name may belong to that source, so the
-	// previous resolution is kept. Only names not defined yet are filled.
-	var hasStar = function (select) {
-		return (select.columns || []).some(function (col) {
-			return col instanceof yy.Column && col.columnid === '*';
-		});
-	};
-	var tableHasColumns = function (tbl) {
-		var db = alasql.databases[tbl.databaseid || databaseid];
-		var table = db && db.tables[tbl.tableid];
-		return !!(table && table.columns && table.columns.length);
-	};
-	var subqueries = [];
-	var allColumnsKnown = true;
-	(this.from || []).forEach(function (fr) {
-		if (fr instanceof yy.Select && !hasStar(fr)) subqueries.push([fr, fr.as]);
-		else if (!(fr instanceof yy.Table && tableHasColumns(fr))) allColumnsKnown = false;
-	});
-	(this.joins || []).forEach(function (jn) {
-		if (jn.select && !hasStar(jn.select)) subqueries.push([jn.select, jn.as]);
-		else if (!(jn.table && tableHasColumns(jn.table))) allColumnsKnown = false;
-	});
-	if (allColumnsKnown) {
-		subqueries.forEach(function ([select, alias]) {
-			if (!alias || !select.columns) return;
-			select.columns.forEach(function (col) {
-				var name = col.as || (col instanceof yy.Column ? col.columnid : undefined);
-				if (name && name !== '_' && !(name in defcols)) {
-					defcols[name] = alias;
-				}
-			});
-		});
-	}
-
 	// for(var k in defcols) {
 	// 	if(defcols[k] == '-') defcols[k] = undefined;
 	// }

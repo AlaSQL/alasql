@@ -78,4 +78,65 @@ describe(`Test ${testId} - unqualified columns of subqueries in expressions`, fu
 			[{v: 1}, {v: 2}]
 		);
 	});
+
+	it('F) Subquery columns in ON, outer joins and GROUP BY', function () {
+		assert.deepStrictEqual(
+			alasql('SELECT b, c FROM one t0 JOIN (SELECT a AS ka, c FROM two) t1 ON t0.a = ka'),
+			[
+				{b: 10, c: 100},
+				{b: 20, c: 200},
+			]
+		);
+		assert.deepStrictEqual(
+			alasql(
+				'SELECT c - b AS bc FROM (SELECT a,b FROM one) t0 LEFT JOIN (SELECT a,c FROM two WHERE a=1) t1 ON t0.a=t1.a'
+			),
+			[{bc: 90}, {bc: undefined}]
+		);
+		assert.deepStrictEqual(
+			alasql(
+				'SELECT c, SUM(b) AS s FROM one t0 JOIN (SELECT a,c FROM two) t1 ON t0.a=t1.a GROUP BY c'
+			),
+			[
+				{c: 100, s: 10},
+				{c: 200, s: 20},
+			]
+		);
+	});
+
+	it('G) Subqueries with *, tables without columns and parameters', function () {
+		alasql('CREATE TABLE nocols');
+		alasql('INSERT INTO nocols VALUES {a:1, z:5}, {a:2, z:6}');
+		assert.deepStrictEqual(
+			alasql('SELECT c - b AS bc FROM one t0 JOIN (SELECT two.* FROM two) t1 ON t0.a = t1.a'),
+			[{bc: 90}, {bc: 180}]
+		);
+		assert.deepStrictEqual(
+			alasql('SELECT z + c AS zc FROM nocols t0 JOIN (SELECT a, c FROM two) t1 ON t0.a = t1.a'),
+			[{zc: 105}, {zc: 206}]
+		);
+		const A = [
+			{id: 1, x: 10},
+			{id: 2, x: 20},
+		];
+		const B = [
+			{id: 1, y: 7},
+			{id: 2, y: 8},
+		];
+		assert.deepStrictEqual(
+			alasql('SELECT y * x AS v FROM ? t0 JOIN (SELECT id, y FROM ?) t1 ON t0.id = t1.id', [A, B]),
+			[{v: 70}, {v: 160}]
+		);
+		assert.deepStrictEqual(
+			alasql('SELECT y * x AS v FROM ? t0 JOIN ? t1 ON t0.id = t1.id', [A, B]),
+			[{v: 70}, {v: 160}]
+		);
+	});
+
+	it('H) A column no source has is still reported', function () {
+		assert.throws(
+			() => alasql('SELECT nme FROM one t0 JOIN (SELECT a, c FROM two) t1 ON t0.a = t1.a'),
+			/Column does not exist: nme/
+		);
+	});
 });
