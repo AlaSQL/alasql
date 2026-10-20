@@ -91,6 +91,18 @@ describe(`Test ${testId} - Compiled SQL is compiled again after a schema change 
 		]);
 	});
 
+	it('F) The properties of a statement from alasql.compile() belong to its latest compile', function () {
+		withCacheOnAndOff(function () {
+			alasql('CREATE TABLE f (x INT)');
+			const st = alasql.compile('SELECT * FROM f');
+			st();
+			const first = st.query;
+			alasql('DROP TABLE f; CREATE TABLE f (x INT, y INT)');
+			st();
+			assert.notStrictEqual(st.query, first);
+		});
+	});
+
 	it('E) Statement from alasql.compile() still has promise()', async function () {
 		alasql('create database test' + testId + 'e');
 		alasql('use test' + testId + 'e');

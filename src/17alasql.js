@@ -477,10 +477,11 @@ alasql.compile = function (sql, databaseid) {
 		if (schemaVersion !== alasql.schemaVersion) {
 			compiled = ast.statements[0].compile(databaseid);
 			schemaVersion = alasql.schemaVersion;
+			Object.assign(statement, compiled);
 		}
 		return compiled(params, cb);
 	};
-	// Keep the properties of the compiled statement on the returned function
+	// Keep the properties of the compiled statement on the returned function, also after a recompile
 	Object.assign(statement, compiled);
 
 	statement.promise = function (params) {
