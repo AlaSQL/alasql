@@ -124,9 +124,9 @@ yy.Select.prototype.compileGroup = function (query) {
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(__alasql_tmp = ${colexp}, (__alasql_tmp instanceof Date) ? undefined : ((__alasql_tmp || typeof __alasql_tmp == 'number') ? __alasql_tmp : undefined)),`;
+							return `'${colas}':(y = ${colexp}, (y instanceof Date) ? undefined : ((y || typeof y == 'number') ? y : undefined)),`;
 						}
-						return `'${colas}':(__alasql_tmp = ${colexp}, (__alasql_tmp instanceof Date) ? undefined : ((__alasql_tmp || typeof __alasql_tmp == 'number') ? __alasql_tmp : undefined)),`;
+						return `'${colas}':(y = ${colexp}, (y instanceof Date) ? undefined : ((y || typeof y == 'number') ? y : undefined)),`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -143,13 +143,13 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
 						}
-						return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
+						return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
 						}
 						return `'${colas}' : (${colexp} !== null && (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint') ? ${colexp} : ${colexp} !== null && typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : undefined : undefined),`;

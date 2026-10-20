@@ -215,24 +215,12 @@ stdlib.RANDOM = function (r) {
 		return '(Math.random()*(' + r + ')|0)';
 	}
 };
-stdlib.ROUND = function (s, d) {
-	if (arguments.length == 2) {
-		return (
-			'(__alasql_tmp = (' +
-			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp*Math.pow(10,(' +
-			d +
-			')))/Math.pow(10,(' +
-			d +
-			'))))'
-		);
-	} else {
-		return (
-			'(__alasql_tmp = (' +
-			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp)))'
-		);
-	}
+stdfn.ROUND = function (s, d) {
+	if (s == null || (typeof s === 'string' && s.trim() === '')) return undefined;
+	s = Number(s);
+	if (isNaN(s)) return undefined;
+	if (arguments.length < 2) return Math.round(s);
+	return Math.round(s * Math.pow(10, d)) / Math.pow(10, d);
 };
 stdlib.CEIL = stdlib.CEILING = function (s) {
 	return 'Math.ceil(' + s + ')';
