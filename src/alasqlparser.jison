@@ -2191,8 +2191,8 @@ Check
 	;
 
 PrimaryKey
-	: PRIMARY KEY Literal? LPAR ColsList RPAR
-		{ $$ = {type: 'PRIMARY KEY', columns: $5, clustered:($3+'').toUpperCase()}; }
+	: PRIMARY KEY Literal? LPAR IndexColsList RPAR
+		{ $$ = {type: 'PRIMARY KEY', columns: $5.columns, prefixes: $5.prefixes, clustered:($3+'').toUpperCase()}; }
 	;
 
 ForeignKey
@@ -2271,9 +2271,27 @@ UniqueKey
 	;
 
 IndexKey
-	: INDEX Literal LPAR ColsList RPAR
-		{ $$ = {type: 'INDEX', indexid: $2, columns: $4}; }
+	: INDEX Literal LPAR IndexColsList RPAR
+		{ $$ = {type: 'INDEX', indexid: $2, columns: $4.columns, prefixes: $4.prefixes}; }
 	;
+
+IndexColsList
+	: IndexCol
+		{ $$ = {columns: [$1.columnid], prefixes: [$1.prefix]}; }
+	| IndexColsList COMMA IndexCol
+		{ $$ = $1; $1.columns.push($3.columnid); $1.prefixes.push($3.prefix); }
+	;
+
+/* A column of an index, with an optional prefix length as in MySQL: a(10) (#406) */
+IndexCol
+	: Literal
+		{ $$ = {columnid: $1}; }
+	| STRING
+		{ $$ = {columnid: $1}; }
+	| Literal LPAR NUMBER RPAR
+		{ $$ = {columnid: $1, prefix: +$3}; }
+	;
+
 ColsList
 	: Literal
 		{ $$ = [$1]; }

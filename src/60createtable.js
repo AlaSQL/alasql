@@ -59,6 +59,36 @@ yy.CreateTable.prototype.toString = function () {
 	return s;
 };
 
+/**
+ JS for a column of an index, or with a prefix length for its first `prefix` characters,
+ as in MySQL's a(N) (#406)
+ */
+function columnPrefixToJS(columnid, prefix) {
+	var col = 'r[' + JSON.stringify(columnid) + ']';
+	if (prefix === undefined) {
+		return col;
+	}
+	return '(' + col + '==null?' + col + ':String(' + col + ').substr(0,' + prefix + '))';
+}
+
+/**
+ JS for one column of a UNIQUE constraint or CREATE INDEX. These take expressions, so a(N)
+ is parsed as a function call. When a is a column of the table, it is a prefix (#406)
+ */
+function indexColumnToJS(expr, table) {
+	if (
+		expr instanceof yy.FuncValue &&
+		table.xcolumns &&
+		table.xcolumns[expr.funcid] &&
+		expr.args &&
+		expr.args.length === 1 &&
+		expr.args[0] instanceof yy.NumValue
+	) {
+		return columnPrefixToJS(expr.funcid, expr.args[0].value);
+	}
+	return expr.toJS('r', '');
+}
+
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
@@ -89,6 +119,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
+	// The schema changed, so statements in the statement cache must be compiled again
+	db.dbversion++;
 	// If this is a class
 	if (this.class) {
 		table.isclass = true;
@@ -208,8 +240,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var pk = (table.pk = {});
 			pk.columns = con.columns;
 			pk.onrightfns = pk.columns
-				.map(function (columnid) {
-					return `r[${JSON.stringify(columnid)}]`;
+				.map(function (columnid, i) {
+					return columnPrefixToJS(columnid, con.prefixes && con.prefixes[i]);
 				})
 				.join("+'`'+");
 			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
@@ -230,12 +262,27 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns
 				.map(function (expr) {
-					return expr.expression.toJS('r', '');
+					return indexColumnToJS(expr.expression, table);
 				})
 				.join("+'`'+");
 			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
+		} else if (con.type === 'INDEX') {
+			// Register the index the way CREATE INDEX does, so INSERT keeps it up to date
+			var rightfns = con.columns
+				.map(function (columnid, i) {
+					var prefix = con.prefixes && con.prefixes[i];
+					if (prefix === undefined) {
+						return new yy.Column({columnid: columnid}).toJS('r', '');
+					}
+					return columnPrefixToJS(columnid, prefix);
+				})
+				.join("+'`'+");
+			var hh = hash(rightfns);
+			table.inddefs[con.indexid] = {rightfns: rightfns, hh: hh};
+			table.indices[hh] = {};
+			db.indices[con.indexid] = tableid;
 		} else if (con.type === 'FOREIGN KEY') {
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {

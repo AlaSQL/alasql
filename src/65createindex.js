@@ -25,10 +25,12 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	var table = db.tables[tableid];
 	var indexid = this.indexid;
 	db.indices[indexid] = tableid;
+	// The schema changed, so statements in the statement cache must be compiled again
+	db.dbversion++;
 
 	var rightfns = this.columns
 		.map(function (expr) {
-			return expr.expression.toJS('r', '');
+			return indexColumnToJS(expr.expression, table);
 		})
 		.join("+'`'+");
 
