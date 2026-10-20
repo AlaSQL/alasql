@@ -181,6 +181,10 @@ function queryfn3(query) {
 	// apply ORDER BY and LIMIT to the first SELECT before combining.
 	// This handles the pattern: SELECT ... ORDER BY ... LIMIT ... UNION ALL SELECT ... ORDER BY ... LIMIT ...
 	// We only do this if the UNION branch also has ORDER BY/LIMIT (pattern 2), not if ORDER BY is at the end (pattern 1).
+	// The compiled query is reused by the statement cache and alasql.compile(), so record
+	// what was already applied in this run instead of clearing it on the query.
+	var orderApplied = false;
+	var limitApplied = false;
 	var unionBranchHasOrder = ['unionallfn', 'unionfn', 'exceptfn', 'intersectfn'].some(
 		function (fnName) {
 			var fn = query[fnName];
@@ -212,15 +216,14 @@ function queryfn3(query) {
 				}
 			}
 			query.data = query.data.sort(query.orderfn);
-			// Clear orderfn so it doesn't get applied again after UNION
-			query.orderfn = null;
+			// Don't apply orderfn again after UNION
+			orderApplied = true;
 		}
 		// Apply limit to first SELECT's data
 		if (query.limit) {
 			doLimit(query);
-			// Clear limit so it doesn't get applied again after UNION
-			query.limit = null;
-			query.offset = null;
+			// Don't apply limit again after UNION
+			limitApplied = true;
 		}
 	}
 
@@ -331,6 +334,7 @@ function queryfn3(query) {
 	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
 	if (
 		query.orderfn &&
+		!orderApplied &&
 		query.orderColumns &&
 		(query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn)
 	) {
@@ -357,7 +361,7 @@ function queryfn3(query) {
 	}
 
 	// Ordering
-	if (query.orderfn) {
+	if (query.orderfn && !orderApplied) {
 		if (query.explain) var ms = Date.now();
 		query.data = query.data.sort(query.orderfn);
 		if (query.explain) {
@@ -370,7 +374,7 @@ function queryfn3(query) {
 	}
 
 	// Reduce to limit and offset
-	doLimit(query);
+	if (!limitApplied) doLimit(query);
 
 	// TODO: Check what artefacts rest from Angular.js
 	if (typeof angular != 'undefined') {
