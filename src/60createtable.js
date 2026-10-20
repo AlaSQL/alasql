@@ -119,6 +119,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
+	// The schema changed, so statements in the statement cache must be compiled again
+	db.dbversion++;
 	// If this is a class
 	if (this.class) {
 		table.isclass = true;

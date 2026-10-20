@@ -19,7 +19,7 @@ yy.AlterTable.prototype.toString = function () {
 
 yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 	let db = alasql.databases[databaseid];
-	db.dbversion = Date.now();
+	db.dbversion++;
 
 	if (this.renameto) {
 		var oldtableid = this.table.tableid;
