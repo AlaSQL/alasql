@@ -18,8 +18,9 @@ yy.AlterTable.prototype.toString = function () {
 };
 
 yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
-	let db = alasql.databases[databaseid];
-	db.dbversion = Date.now();
+	var dbid = this.table.databaseid || databaseid;
+	let db = alasql.databases[dbid];
+	schemaChanged(db);
 
 	if (this.renameto) {
 		var oldtableid = this.table.tableid;
@@ -40,11 +41,26 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		return res;
 	}
 
+	// A table in a storage engine is loaded before the change and saved after it, as INSERT,
+	// UPDATE and DELETE do. Without this the change is lost on the next statement (#1107)
+	var tableid = this.table.tableid;
+	var engine = alasql.options.autocommit && db.engineid && alasql.engines[db.engineid];
+	if (engine && engine.loadTableData) {
+		engine.loadTableData(dbid, tableid);
+	}
+	var res = this.alterColumn(db.tables[tableid], tableid);
+	if (engine && engine.saveTableData) {
+		engine.saveTableData(dbid, tableid);
+	}
+	return cb ? cb(res) : res;
+};
+
+/**
+ Add, modify, rename or drop a column of a table in memory
+ @return {number} 1, or the number of rows for RENAME COLUMN and DROP COLUMN
+ */
+yy.AlterTable.prototype.alterColumn = function (table, tableid) {
 	if (this.addcolumn) {
-		db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
 		var columnid = this.addcolumn.columnid;
 		if (table.xcolumns[columnid]) {
 			throw new Error(
@@ -55,9 +71,9 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		var col = {
 			columnid: columnid,
 			dbtypeid: this.addcolumn.dbtypeid,
-			dbsize: this.dbsize,
-			dbprecision: this.dbprecision,
-			dbenum: this.dbenum,
+			dbsize: this.addcolumn.dbsize,
+			dbprecision: this.addcolumn.dbprecision,
+			dbenum: this.addcolumn.dbenum,
 			defaultfns: null, // TODO defaultfns!!!
 		};
 
@@ -70,14 +86,10 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			table.data[i][columnid] = defaultfn();
 		}
 
-		return cb ? cb(1) : 1;
+		return 1;
 	}
 
 	if (this.modifycolumn) {
-		let db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
 		var columnid = this.modifycolumn.columnid;
 
 		if (!table.xcolumns[columnid]) {
@@ -86,25 +98,19 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			);
 		}
 
-		col = table.xcolumns[columnid];
-		col.dbtypeid = this.dbtypeid;
-		col.dbsize = this.dbsize;
-		col.dbprecision = this.dbprecision;
-		col.dbenum = this.dbenum;
+		var col = table.xcolumns[columnid];
+		col.dbtypeid = this.modifycolumn.dbtypeid;
+		col.dbsize = this.modifycolumn.dbsize;
+		col.dbprecision = this.modifycolumn.dbprecision;
+		col.dbenum = this.modifycolumn.dbenum;
 
-		return cb ? cb(1) : 1;
+		return 1;
 	}
 
 	if (this.renamecolumn) {
-		let db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
 		var columnid = this.renamecolumn;
 		var tocolumnid = this.to;
 
-		var col;
 		if (!table.xcolumns[columnid]) {
 			throw new Error('Column "' + columnid + '" is not found in the table "' + tableid + '"');
 		}
@@ -128,14 +134,10 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			}
 			return table.data.length;
 		}
-		return cb ? cb(0) : 0;
+		return 0;
 	}
 
 	if (this.dropcolumn) {
-		let db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion++;
-		var tableid = this.table.tableid;
-		var table = db.tables[tableid];
 		var columnid = this.dropcolumn;
 
 		var found = false;
@@ -159,7 +161,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			delete table.data[i][columnid];
 		}
 
-		return cb ? cb(table.data.length) : table.data.length;
+		return table.data.length;
 	}
 
 	throw Error('Unknown ALTER TABLE method');

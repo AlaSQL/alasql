@@ -244,7 +244,11 @@
 				return `${leftStr} ${this.op} ${this.right1.toString()} AND ${this.right2.toString()}`;
 			}
 
-			return `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
+			s = `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
+			if (this.escape) {
+				s += ` ESCAPE ${this.escape.toString()}`;
+			}
+			return s;
 		}
 
 		findAggregator(query) {
@@ -589,7 +593,7 @@
 		}
 
 		toString() {
-			return 'ARRAY[]';
+			return `ARRAY[${this.value.map(el => el.toString()).join(', ')}]`;
 		}
 
 		toType() {
@@ -747,6 +751,13 @@
 			return id;
 		}
 
+		// Value of an unqualified column from the first source where it is not null
+		static fromAnySource(context, aliases, columnid) {
+			return (
+				'(' + aliases.map(alias => `${context}['${alias}']?.['${columnid}']`).join(' ?? ') + ')'
+			);
+		}
+
 		toString() {
 			const colNeedsBrackets = Column.needsBrackets(this.columnid);
 			let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
@@ -799,6 +810,10 @@
 					return this.columnid !== '_'
 						? `${context}['${tbid}']['${this.columnid}']`
 						: `${context}['${tbid}']`;
+				} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
+					// Not a column of any table here, so it comes from a subquery, parameter
+					// or table without column definitions (#832)
+					return Column.fromAnySource(context, Object.keys(defcols['.']), this.columnid);
 				} else {
 					return this.columnid !== '_'
 						? `${context}['${this.tableid || tableid}']['${this.columnid}']`
