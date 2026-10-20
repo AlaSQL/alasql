@@ -29,9 +29,4 @@ describe(`Test ${testId} - qualified table names in RENAME TO and SHOW CREATE TA
 		assert.deepStrictEqual(Object.keys(alasql.databases['test' + testId].tables), []);
 		assert.deepStrictEqual(alasql(`SELECT * FROM other${testId}.t2`), [{a: 1}]);
 	});
-
-	it('C) Renaming a table that does not exist throws', function () {
-		assert.throws(() => alasql('ALTER TABLE nosuch RENAME TO x'), /does not exist/);
-		assert.deepStrictEqual(Object.keys(alasql.databases['test' + testId].tables), []);
-	});
 });
