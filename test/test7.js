@@ -90,13 +90,10 @@ describe('Test 7 - ORDER BY on multiple UNIONs', function () {
 		var sql =
 			'SELECT 10 AS a UNION ALL SELECT 20 AS a UNION SELECT 10 AS a UNION ALL SELECT 30 AS a ORDER BY a ASC';
 		var res = alasql(sql);
-		// The UNION operator only applies between adjacent selects in the chain
-		// Structure: ((10 UNION ALL 20) UNION 10) UNION ALL 30
+		// Structure: ((10 UNION ALL 20) UNION 10) UNION ALL 30, evaluated left to right (#202)
 		// First: [10, 20] UNION 10 = [10, 20] (UNION removes duplicate 10)
 		// Then: [10, 20] UNION ALL 30 = [10, 20, 30]
-		// But the actual result shows [10, 10, 20, 30] - the UNION didn't remove the duplicate
-		// This appears to be the current behavior
-		var expected = [{a: 10}, {a: 10}, {a: 20}, {a: 30}];
+		var expected = [{a: 10}, {a: 20}, {a: 30}];
 		assert.deepStrictEqual(res, expected, 'Mixed UNION and UNION ALL with ORDER BY');
 	});
 
@@ -104,11 +101,10 @@ describe('Test 7 - ORDER BY on multiple UNIONs', function () {
 		var sql =
 			'SELECT 10 AS a UNION ALL SELECT 20 AS a INTERSECT SELECT 20 AS a UNION ALL SELECT 30 AS a ORDER BY a DESC';
 		var res = alasql(sql);
-		// Structure: ((10 UNION ALL 20) INTERSECT 20) UNION ALL 30
-		// First: [10, 20] INTERSECT [20] = [20]
-		// Then: [20] UNION ALL [30] = [20, 30]
-		// But ordered DESC, so [20, 10] based on actual result
-		var expected = [{a: 20}, {a: 10}];
+		// INTERSECT binds tighter than UNION (SQL standard, #202)
+		// Structure: (10 UNION ALL (20 INTERSECT 20)) UNION ALL 30 = [10, 20, 30]
+		// Ordered DESC: [30, 20, 10]
+		var expected = [{a: 30}, {a: 20}, {a: 10}];
 		assert.deepStrictEqual(res, expected, 'INTERSECT with ORDER BY');
 	});
 
@@ -116,10 +112,9 @@ describe('Test 7 - ORDER BY on multiple UNIONs', function () {
 		var sql =
 			'SELECT 10 AS a UNION ALL SELECT 20 AS a UNION ALL SELECT 30 AS a EXCEPT SELECT 20 AS a ORDER BY a DESC';
 		var res = alasql(sql);
-		// Structure: (10 UNION ALL 20 UNION ALL 30) EXCEPT 20
-		// First: [10, 20, 30] EXCEPT [20] = [10, 30]... but result shows [30, 20, 10]
-		// It seems EXCEPT isn't working as expected, keeping all values
-		var expected = [{a: 30}, {a: 20}, {a: 10}];
+		// Structure: (10 UNION ALL 20 UNION ALL 30) EXCEPT 20, evaluated left to right (#202)
+		// [10, 20, 30] EXCEPT [20] = [10, 30], ordered DESC: [30, 10]
+		var expected = [{a: 30}, {a: 10}];
 		assert.deepStrictEqual(res, expected, 'EXCEPT with ORDER BY');
 	});
 

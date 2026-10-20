@@ -27,6 +27,19 @@ var yy = {
 	casesensitive: alasql.options.casesensitive,
 	Base,
 
+	// Attach a UNION / UNION ALL / EXCEPT / INTERSECT clause to a parenthesized SELECT.
+	// If the SELECT already has its own set operation, as in (A EXCEPT B) UNION C, the
+	// outer clause is kept apart and applied after the inner one (#202).
+	extendSetOp: function (select, clause) {
+		if (!clause) return select;
+		if (select.union || select.unionall || select.except || select.intersect) {
+			select.outerSetOps = (select.outerSetOps || []).concat([clause]);
+		} else {
+			Object.assign(select, clause);
+		}
+		return select;
+	},
+
 	// Helper for ParamValue handling in UPDATE/DELETE/INSERT
 	compileParamValue: function (paramIndex, operation, needsSync, databaseid, self, refProp) {
 		return function (params, cb) {

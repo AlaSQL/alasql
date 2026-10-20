@@ -105,8 +105,8 @@ insert into c (col) values (1), (2), (5);
       except
       select col from c;
     `);
-		// console.log(res);
-		assert.deepStrictEqual(res.sort(), [1, 2, 3, 4]);
+		// (a UNION b) EXCEPT c, evaluated left to right (#202)
+		assert.deepStrictEqual(res.sort(), [3, 4]);
 		done();
 	});
 
@@ -118,8 +118,8 @@ insert into c (col) values (1), (2), (5);
       union
       select col from c;
     `);
-		// console.log(res);
-		assert.deepStrictEqual(res.sort(), [3]);
+		// (a EXCEPT b) UNION c, evaluated left to right (#202)
+		assert.deepStrictEqual(res.sort(), [1, 2, 3, 5]);
 		done();
 	});
 
@@ -144,8 +144,8 @@ insert into c (col) values (1), (2), (5);
       union
       select col from c;
     `);
-		// console.log(res);
-		assert.deepStrictEqual(res.sort(), [1, 2]);
+		// (a INTERSECT b) UNION c (#202)
+		assert.deepStrictEqual(res.sort(), [1, 2, 5]);
 		done();
 	});
 

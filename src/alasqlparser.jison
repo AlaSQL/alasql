@@ -546,7 +546,7 @@ Select
 	| LPAR Select RPAR UnionClause OrderClause LimitClause
 		{
 			$$ = $2;
-			yy.extend($$,$4);
+			yy.extendSetOp($$,$4);
 			yy.extend($$,$5); yy.extend($$,$6);
 		    if(yy.exists) $$.exists = yy.exists.slice();
 /*		    if(yy.queries) $$.queries = yy.queries;
@@ -554,7 +554,7 @@ Select
 */		}
 	| ParenthesizedSelect UnionClause OrderClause LimitClause
 		{
-			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
+			yy.extend($$,$1); yy.extendSetOp($1,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    $$ = $1;
 		    if(yy.exists) $$.exists = yy.exists.slice();
 		}
@@ -1222,6 +1222,8 @@ UnionableSelect
 				}
 				yy.queries = yy.queriesStack.pop();
 			}
+			// A parenthesized operand keeps its own set operations as a group (#202)
+			$1.parenthesizedOperand = true;
 			$$ = $1;
 		}
 	;
