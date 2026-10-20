@@ -60,7 +60,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 						ifexists,
 						function (res1) {
 							delete db.tables[tableid];
-							db.dbversion++;
+							schemaChanged(db);
 							res += res1;
 							count++;
 							if (count == tlen && cb) cb(res);
@@ -69,7 +69,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 				} else {
 					delete db.tables[tableid];
 					// The schema changed, so statements in the statement cache must be compiled again
-					db.dbversion++;
+					schemaChanged(db);
 					res++;
 					count++;
 					if (count == tlen && cb) cb(res);

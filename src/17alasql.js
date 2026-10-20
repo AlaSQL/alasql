@@ -51,6 +51,24 @@ alasql.databases = {};
 alasql.databasenum = 0;
 
 /**
+	Schema version of all databases. Every schema change in any database increases it, so
+	cached statements, statements from alasql.compile() and views are compiled again
+	@type {number}
+*/
+alasql.schemaVersion = 0;
+
+/**
+	Record a schema change. All compiled code (the statement cache of every database, statements
+	from alasql.compile() and views) is compiled again on its next use. db.dbversion is still
+	increased for the database that changed, as user code reads and increases it too.
+	@param {object} [db] The database that changed, if it still exists
+*/
+function schemaChanged(db) {
+	if (db) db.dbversion++;
+	alasql.schemaVersion++;
+}
+
+/**
 	  Alasql options object
  */
 alasql.options = {
@@ -284,7 +302,11 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	if (alasql.options.cache) {
 		let statement = db.sqlCache[hh];
 		// If database structure was not changed since last time return cache
-		if (statement && db.dbversion === statement.dbversion) {
+		if (
+			statement &&
+			db.dbversion === statement.dbversion &&
+			statement.schemaVersion === alasql.schemaVersion
+		) {
 			var res = statement(params, cb);
 			cleanupCache(statement);
 			return res;
@@ -320,6 +342,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			}
 			statement.sql = sql;
 			statement.dbversion = db.dbversion;
+			statement.schemaVersion = alasql.schemaVersion;
 
 			if (alasql.options.cache) {
 				// Secure sqlCache size
@@ -446,7 +469,20 @@ alasql.compile = function (sql, databaseid) {
 	if (1 !== ast.statements.length)
 		throw new Error('Cannot compile, because number of statements in SQL is not equal to 1');
 
-	var statement = ast.statements[0].compile(databaseid);
+	var compiled = ast.statements[0].compile(databaseid);
+	var schemaVersion = alasql.schemaVersion;
+
+	// Compile again when the schema of any database changed since the last compile
+	var statement = function (params, cb) {
+		if (schemaVersion !== alasql.schemaVersion) {
+			compiled = ast.statements[0].compile(databaseid);
+			schemaVersion = alasql.schemaVersion;
+			Object.assign(statement, compiled);
+		}
+		return compiled(params, cb);
+	};
+	// Keep the properties of the compiled statement on the returned function, also after a recompile
+	Object.assign(statement, compiled);
 
 	statement.promise = function (params) {
 		return new Promise(function (resolve, reject) {
