@@ -97,4 +97,27 @@ describe(`Test ${testId} - Statement cache after DROP TABLE and CREATE TABLE`, f
 			assert.ok(changed(), 'DROP TABLE');
 		});
 	});
+
+	it('E) ALTER TABLE in the same millisecond does not bring back an old cached statement', function () {
+		const now = Date.now;
+		Date.now = () => 1000;
+		try {
+			const res = inNewDatabase(function () {
+				alasql('CREATE TABLE q (z INT)');
+				alasql('CREATE TABLE x (a INT)');
+				alasql('INSERT INTO x VALUES (1)');
+				alasql('ALTER TABLE q RENAME TO q2');
+				alasql('SELECT * FROM x');
+
+				alasql('DROP TABLE x');
+				alasql('CREATE TABLE x (a INT, b INT)');
+				alasql('INSERT INTO x VALUES (1,2)');
+				alasql('ALTER TABLE q2 RENAME TO q');
+				return alasql('SELECT * FROM x');
+			});
+			assert.deepStrictEqual(res, [{a: 1, b: 2}]);
+		} finally {
+			Date.now = now;
+		}
+	});
 });
