@@ -277,7 +277,8 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 
 	// Include joinstar option in cache key because it affects how SELECT * compiles
 	// Without this, changing joinstar would use stale cached queries compiled with old option
-	var hh = hash(sql + '|joinstar:' + alasql.options.joinstar);
+	// The key is the text itself, a hash of it can collide and return another query's statement
+	var hh = sql + '|joinstar:' + alasql.options.joinstar;
 
 	// Create hash
 	if (alasql.options.cache) {

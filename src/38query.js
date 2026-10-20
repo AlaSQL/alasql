@@ -188,6 +188,10 @@ function queryfn3(query) {
 	// apply ORDER BY and LIMIT to the first SELECT before combining.
 	// This handles the pattern: SELECT ... ORDER BY ... LIMIT ... UNION ALL SELECT ... ORDER BY ... LIMIT ...
 	// We only do this if the UNION branch also has ORDER BY/LIMIT (pattern 2), not if ORDER BY is at the end (pattern 1).
+	// The compiled query is reused by the statement cache and alasql.compile(), so record
+	// what was already applied in this run instead of clearing it on the query.
+	var orderApplied = false;
+	var limitApplied = false;
 	var firstSetOp = query.setops && query.setops[0];
 	var unionBranchHasOrder = !!(
 		firstSetOp &&
@@ -219,15 +223,14 @@ function queryfn3(query) {
 				}
 			}
 			query.data = query.data.sort(query.orderfn);
-			// Clear orderfn so it doesn't get applied again after UNION
-			query.orderfn = null;
+			// Don't apply orderfn again after UNION
+			orderApplied = true;
 		}
 		// Apply limit to first SELECT's data
 		if (query.limit) {
 			doLimit(query);
-			// Clear limit so it doesn't get applied again after UNION
-			query.limit = null;
-			query.offset = null;
+			// Don't apply limit again after UNION
+			limitApplied = true;
 		}
 	}
 
@@ -239,7 +242,7 @@ function queryfn3(query) {
 	}
 
 	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
-	if (query.orderfn && query.orderColumns && query.setops && query.setops.length) {
+	if (query.orderfn && !orderApplied && query.orderColumns && query.setops && query.setops.length) {
 		for (i = 0, ilen = query.data.length; i < ilen; i++) {
 			for (var idx = 0; idx < query.orderColumns.length; idx++) {
 				var v = query.orderColumns[idx];
@@ -263,7 +266,7 @@ function queryfn3(query) {
 	}
 
 	// Ordering
-	if (query.orderfn) {
+	if (query.orderfn && !orderApplied) {
 		if (query.explain) var ms = Date.now();
 		query.data = query.data.sort(query.orderfn);
 		if (query.explain) {
@@ -276,7 +279,7 @@ function queryfn3(query) {
 	}
 
 	// Reduce to limit and offset
-	doLimit(query);
+	if (!limitApplied) doLimit(query);
 
 	// TODO: Check what artefacts rest from Angular.js
 	if (typeof angular != 'undefined') {
