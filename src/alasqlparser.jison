@@ -1010,7 +1010,7 @@ Table
 	;
 
 TargetTable
-	: Table
+	: TableName
 		{ $$ = $1; }
 	| ParamValue
 		{ $$ = $1; }
@@ -2077,7 +2077,7 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TableClass IfNotExists CreateTableName LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+	:  CREATE TemporaryClause TableClass IfNotExists TableName LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -2086,7 +2086,7 @@ CreateTable
 			yy.extend($$,$7);
 			yy.extend($$,$9);
 		}
-	| CREATE TemporaryClause TableClass IfNotExists CreateTableName
+	| CREATE TemporaryClause TableClass IfNotExists TableName
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -2106,11 +2106,19 @@ DoubleQuotedIdentifier
 		}
 	;
 
-CreateTableName
+/* A table or column name where a string cannot appear: "name" is a name here (#989) */
+TableName
 	: Table
 		{ $$ = $1; }
 	| DoubleQuotedIdentifier
 		{ $$ = new yy.Table({tableid: $1}); }
+	;
+
+ColumnName
+	: Literal
+		{ $$ = $1; }
+	| DoubleQuotedIdentifier
+		{ $$ = $1; }
 	;
 
 TableClass
@@ -2196,7 +2204,7 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES CreateTableName ParColsList?
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES TableName ParColsList?
 	     OnReferentialActions DeferrableClause?
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; yy.extend($$, $9); }
 	;
@@ -2284,23 +2292,17 @@ IndexColsList
 
 /* A column of an index, with an optional prefix length as in MySQL: a(10) (#406) */
 IndexCol
-	: Literal
+	: ColumnName
 		{ $$ = {columnid: $1}; }
-	| STRING
-		{ $$ = {columnid: $1}; }
-	| Literal LPAR NUMBER RPAR
+	| ColumnName LPAR NUMBER RPAR
 		{ $$ = {columnid: $1, prefix: +$3}; }
 	;
 
 ColsList
-	: Literal
+	: ColumnName
 		{ $$ = [$1]; }
-	| STRING
-		{ $$ = [$1[0] === '"' ? $1.substr(1, $1.length - 2).replace(/""/g, '"') : $1]; }
-	| ColsList COMMA Literal
+	| ColsList COMMA ColumnName
 		{ $$ = $1; $1.push($3); }
-	| ColsList COMMA STRING
-		{ $$ = $1; $1.push($3[0] === '"' ? $3.substr(1, $3.length - 2).replace(/""/g, '"') : $3); }
 	;
 
 /*
@@ -2316,29 +2318,18 @@ OrderedColsList
 	;
 */
 ColumnDefsList
-	: CreateColumnDef
+	: ColumnDef
 		{ $$ = [$1];}
-	| ColumnDefsList COMMA CreateColumnDef
+	| ColumnDefsList COMMA ColumnDef
 		{ $1.push($3); $$ = $1; }
 	;
 
-CreateColumnDef
-	: ColumnDef
-		{ $$ = $1; }
-	| DoubleQuotedIdentifier ColumnType ColumnConstraintsClause
-		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| DoubleQuotedIdentifier ColumnConstraints
-		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	| DoubleQuotedIdentifier
-		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
-	;
-
 ColumnDef
-	: Literal ColumnType ColumnConstraintsClause
+	: ColumnName ColumnType ColumnConstraintsClause
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| Literal ColumnConstraints
+	| ColumnName ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	| Literal
+	| ColumnName
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
@@ -2397,18 +2388,16 @@ ColumnConstraintsList
 	;
 
 ParLiteral
-	: LPAR Literal RPAR
-		{ $$ = $2; }
-	| LPAR DoubleQuotedIdentifier RPAR
+	: LPAR ColumnName RPAR
 		{ $$ = $2; }
 	;
 
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES CreateTableName ParLiteral? OnReferentialActions DeferrableClause?
+	| FOREIGN KEY REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$4, columnid: $5}}; yy.extend($$.foreignkey, $6);}
-	| REFERENCES CreateTableName ParLiteral? OnReferentialActions DeferrableClause?
+	| REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$2, columnid: $3}}; yy.extend($$.foreignkey, $4);}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
@@ -2442,9 +2431,9 @@ DropTable
 	;
 
 TablesList
-	: TablesList COMMA Table
+	: TablesList COMMA TableName
 		{ $1.push($3); $$=$1; }
-	| Table
+	| TableName
 		{ $$ = [$1]; }
 	;
 
@@ -2458,15 +2447,15 @@ IfExists
 /* ALTER TABLE */
 
 AlterTable
-	: ALTER TABLE Table RENAME TO Literal
+	: ALTER TABLE TableName RENAME TO Literal
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
-	| ALTER TABLE Table ADD COLUMN ColumnDef
+	| ALTER TABLE TableName ADD COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
-	| ALTER TABLE Table MODIFY COLUMN ColumnDef
+	| ALTER TABLE TableName MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
-	| ALTER TABLE Table RENAME COLUMN Literal TO Literal
+	| ALTER TABLE TableName RENAME COLUMN ColumnName TO ColumnName
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| ALTER TABLE Table DROP COLUMN Literal
+	| ALTER TABLE TableName DROP COLUMN ColumnName
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
 
@@ -2532,11 +2521,11 @@ DropDatabase
 
 CreateIndex
 	:
-	 CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	 CREATE INDEX Literal ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
 	|
 
-	CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	CREATE UNIQUE INDEX Literal ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
@@ -2980,7 +2969,7 @@ DeclareItem
 	;
 
 TruncateTable
-	: TRUNCATE TABLE Table
+	: TRUNCATE TABLE TableName
 		{ $$ = new yy.TruncateTable({table:$3});}
 	;
 

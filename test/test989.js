@@ -152,6 +152,34 @@ describe(`Test ${testId} - CREATE TABLE with double-quoted identifiers`, functio
 			{a: 1, b: 3},
 		]);
 	});
+
+	it('L) Double-quoted names in the other statements that name a table or column', function () {
+		const res = alasql(
+			'CREATE TABLE "My T" ("id" INT, "name" STRING);' +
+				'INSERT INTO "My T" VALUES (1, "a"), (2, "b");' +
+				'UPDATE "My T" SET name = "z" WHERE id = 2;' +
+				'DELETE FROM "My T" WHERE id = 1;' +
+				'ALTER TABLE "My T" ADD COLUMN "extra" INT;' +
+				'ALTER TABLE "My T" RENAME COLUMN "extra" TO "more";' +
+				'ALTER TABLE "My T" DROP COLUMN "more";' +
+				'CREATE INDEX ix_my_t ON "My T" (id);' +
+				'SELECT * FROM [My T]'
+		);
+		assert.deepStrictEqual(res.pop(), [{id: 2, name: 'z'}]);
+
+		alasql('TRUNCATE TABLE "My T"');
+		assert.deepStrictEqual(alasql('SELECT * FROM [My T]'), []);
+		alasql('DROP TABLE "My T"');
+		assert.strictEqual(alasql.databases['test' + testId].tables['My T'], undefined);
+	});
+
+	it('M) In expressions and FROM, double quotes keep their meaning', function () {
+		alasql('CREATE TABLE friends (name STRING); INSERT INTO friends VALUES ("Andrey")');
+		assert.deepStrictEqual(alasql('SELECT * FROM friends WHERE name = "Andrey"'), [
+			{name: 'Andrey'},
+		]);
+		assert.throws(() => alasql('SELECT * FROM "friends"'), /Unknown string in FROM clause/);
+	});
 });
 
 describe(`Test ${testId} - ATTACH SQLITE DATABASE with double-quoted identifiers`, function () {
