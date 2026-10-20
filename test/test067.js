@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 67 - IndexedDB integration', function() {
+describe('Test 67 - IndexedDB integration', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

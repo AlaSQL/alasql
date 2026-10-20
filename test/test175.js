@@ -7,11 +7,19 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 175 - JOIN USING TEST', function() {
-	it('1. JOIN ON', function(done) {
+describe('Test 175 - JOIN USING TEST', function () {
+	it('1. JOIN ON', function (done) {
 		var data = {
-			COLORS: [[1, 'red'], [2, 'yellow'], [3, 'orange']],
-			FRUITS: [[1, 'apple'], [2, 'banana'], [3, 'orange']],
+			COLORS: [
+				[1, 'red'],
+				[2, 'yellow'],
+				[3, 'orange'],
+			],
+			FRUITS: [
+				[1, 'apple'],
+				[2, 'banana'],
+				[3, 'orange'],
+			],
 		};
 
 		data.NEW_FRUITS = alasql(
@@ -19,7 +27,7 @@ describe('Test 175 - JOIN USING TEST', function() {
 			FROM ? AS COLORS JOIN ? AS FRUITS ON COLORS.[0] = FRUITS.[0]',
 			[data.COLORS, data.FRUITS]
 		);
-		assert.deepEqual(data.NEW_FRUITS, [
+		assert.deepStrictEqual(data.NEW_FRUITS, [
 			[1, 'red', 'apple'],
 			[2, 'yellow', 'banana'],
 			[3, 'orange', 'orange'],
@@ -27,10 +35,18 @@ describe('Test 175 - JOIN USING TEST', function() {
 		done();
 	});
 
-	it('2. JOIN USING', function(done) {
+	it('2. JOIN USING', function (done) {
 		var data = {
-			COLORS: [[1, 'red'], [2, 'yellow'], [3, 'orange']],
-			FRUITS: [[1, 'apple'], [2, 'banana'], [3, 'orange']],
+			COLORS: [
+				[1, 'red'],
+				[2, 'yellow'],
+				[3, 'orange'],
+			],
+			FRUITS: [
+				[1, 'apple'],
+				[2, 'banana'],
+				[3, 'orange'],
+			],
 		};
 
 		data.NEW_FRUITS = alasql(
@@ -39,7 +55,7 @@ describe('Test 175 - JOIN USING TEST', function() {
 			[data.COLORS, data.FRUITS]
 		);
 		//		console.log(data.NEW_FRUITS);
-		assert.deepEqual(data.NEW_FRUITS, [
+		assert.deepStrictEqual(data.NEW_FRUITS, [
 			[1, 'red', 'apple'],
 			[2, 'yellow', 'banana'],
 			[3, 'orange', 'orange'],

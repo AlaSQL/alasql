@@ -3,14 +3,14 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 121 - Views', function() {
-	it('0. Create database', function(done) {
+describe('Test 121 - Views', function () {
+	it('0. Create database', function (done) {
 		alasql('create database test121');
 		alasql('use test121');
 		done();
 	});
 
-	it('1. CREATE VIEW', function(done) {
+	it('1. CREATE VIEW', function (done) {
 		alasql('create table one (a int, b int)');
 		alasql('insert into one values (1,10), (2,20), (3,30)');
 
@@ -25,7 +25,7 @@ describe('Test 121 - Views', function() {
 		done();
 	});
 
-	it('Clear database', function(done) {
+	it('Clear database', function (done) {
 		alasql('drop database test121');
 		done();
 	});

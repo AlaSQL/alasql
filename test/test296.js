@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 296 TestDatabase', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 296 TestDatabase', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test296;USE test296');
 
 		done();
@@ -16,9 +16,8 @@ describe('Test 296 TestDatabase', function() {
 	// Taken from here
 	// http://www.codeproject.com/Tips/326527/Create-a-Sample-SQL-Database-in-Less-Than-Minute
 
-	it.skip('2. CREATE TABLES', function(done) {
-		alasql(function() {
-			/*
+	it.skip('2. CREATE TABLES', function (done) {
+		alasql(`
 -- Fabrics V1.2 
 -- Creating a SQL database from scratch
 USE Fabrics
@@ -365,24 +364,22 @@ GO
 EXECUTE usp_Fabrics
 
 
-  */
-		});
+`);
 		done();
 	});
 
-	it.skip('4. DROP DATABASE', function(done) {
+	it.skip('4. DROP DATABASE', function (done) {
 		alasql('EXECUTE usp_Fabrics');
 		done();
 	});
 
-	it.skip('4. DROP DATABASE', function(done) {
+	it.skip('4. DROP DATABASE', function (done) {
 		alasql('EXECUTE usp_Fabrics @CreateClients= 1000000,  @CreateOrders= 0');
 		done();
 	});
 
-	it.skip('4. DROP DATABASE', function(done) {
-		alasql(function() {
-			/*
+	it.skip('4. DROP DATABASE', function (done) {
+		alasql(`
 
 SELECT TOP 10 FirstName, LastName, _
 OccupationName, City, O.OrderId, ProductName, Qty * Price  FROM Client C
@@ -393,13 +390,12 @@ LEFT JOIN Product P ON P.ProductId = OL.ProductId
 WHERE OrderTotal < 50 AND (SELECT COUNT(1) _
 FROM OrderLine WHERE OrderId = O.OrderId)>1
 
-*/
-		});
+`);
 
 		done();
 	});
 
-	it.skip('4. DROP DATABASE', function(done) {
+	it.skip('4. DROP DATABASE', function (done) {
 		alasql.options.nocount = false;
 		alasql('DROP DATABASE test295');
 		done();

@@ -5,18 +5,22 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 244 Case-insensitive LIKE', function() {
-	it('1. LIKE', function(done) {
-		var data = [{a: 'one', b: 'first'}, {a: 'two', b: 'second'}, {a: 'THREE', b: 'THIRD'}];
+describe('Test 244 Case-insensitive LIKE', function () {
+	it('1. LIKE', function (done) {
+		var data = [
+			{a: 'one', b: 'first'},
+			{a: 'two', b: 'second'},
+			{a: 'THREE', b: 'THIRD'},
+		];
 
 		var res = alasql('SELECT b FROM ? WHERE a LIKE "T%"', [data]);
 
 		//console.log(res);
-		assert(res, [{b: 'second'}, {b: 'THIRD'}]);
+		assert.deepStrictEqual(res, [{b: 'second'}, {b: 'THIRD'}]);
 		done();
 	});
 
-	it('2. LIKE', function(done) {
+	it('2. LIKE', function (done) {
 		var data = [
 			{a: 'Warsaw'},
 			{a: 'Berlin'},
@@ -29,7 +33,7 @@ describe('Test 244 Case-insensitive LIKE', function() {
 
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "m%"', [data]);
 		//console.log(res);
-		assert(res, [{a: 'MOSCOW'}, {a: 'MINSK'}]);
+		assert.deepStrictEqual(res, [{a: 'MOSCOW'}, {a: 'MINSK'}]);
 		done();
 	});
 });

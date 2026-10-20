@@ -5,15 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 347 Efficient Joined Queries Issue #245', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 347 Efficient Joined Queries Issue #245', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test347;USE test347');
 		done();
 	});
 
-	it('2. TEST', function(done) {
-		var res = alasql(function() {
-			/*
+	it('2. TEST', function (done) {
+		var res = alasql(`
       CREATE TABLE students (
         id serial NOT NULL,
         name character varying(50) NOT NULL,
@@ -55,15 +54,13 @@ describe('Test 347 Efficient Joined Queries Issue #245', function() {
         (4 , 2 , 2 , 82),
         (5 , 3 , 1 , 15),
         (8 , 5 , 1 , 10);
-      */
-		});
+      `);
 		done();
 	});
 
-	it('3. TEST', function(done) {
+	it('3. TEST', function (done) {
 		var res = alasql(
-			function() {
-				/*
+			`
       SELECT
         students.name AS student_name,
         students.id AS student_id,
@@ -79,15 +76,14 @@ describe('Test 347 Efficient Joined Queries Issue #245', function() {
       WHERE
         assignments.class_id = $0;
 
-    */
-			},
+    `,
 			[2]
 		);
 		/// console.log(res);
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test347');
 		done();

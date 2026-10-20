@@ -10,13 +10,13 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 390 Export nested array to XLSX', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 390 Export nested array to XLSX', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test390;USE test390');
 		done();
 	});
 
-	it('2. Prepare tables', function(done) {
+	it('2. Prepare tables', function (done) {
 		var data = [
 			{
 				a: 'test',
@@ -51,7 +51,7 @@ describe('Test 390 Export nested array to XLSX', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test390');
 		done();
 	});

@@ -6,13 +6,13 @@ if (typeof exports === 'object') {
 }
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
-describe('Test 231 NIST SQL Example', function() {
-	it('1. Prepare database', function(done) {
+describe('Test 231 NIST SQL Example', function () {
+	it('1. Prepare database', function (done) {
 		alasql('CREATE DATABASE test231; USE test231;');
 		done();
 	});
 
-	it('2. Create STATION table', function(done) {
+	it('2. Create STATION table', function (done) {
 		var res = alasql(
 			'CREATE TABLE STATION \
                 (ID INTEGER PRIMARY KEY, \
@@ -21,7 +21,7 @@ describe('Test 231 NIST SQL Example', function() {
                 LAT_N REAL, \
                 LONG_W REAL);'
 		);
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		var res = alasql(
 			"INSERT INTO STATION VALUES (13, 'Phoenix', 'AZ', 33, 112); \
@@ -29,30 +29,30 @@ describe('Test 231 NIST SQL Example', function() {
                 INSERT INTO STATION VALUES (66, 'Caribou', 'ME', 47, 68);"
 		);
 
-		assert.deepEqual(res, [1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1]);
 
 		var res = alasql('SELECT * FROM STATION;');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 13, CITY: 'Phoenix', STATE: 'AZ', LAT_N: 33, LONG_W: 112},
 			{ID: 44, CITY: 'Denver', STATE: 'CO', LAT_N: 40, LONG_W: 105},
 			{ID: 66, CITY: 'Caribou', STATE: 'ME', LAT_N: 47, LONG_W: 68},
 		]);
 
 		var res = alasql('SELECT * FROM STATION WHERE LAT_N > 39.7;');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 44, CITY: 'Denver', STATE: 'CO', LAT_N: 40, LONG_W: 105},
 			{ID: 66, CITY: 'Caribou', STATE: 'ME', LAT_N: 47, LONG_W: 68},
 		]);
 
 		var res = alasql('SELECT ID, CITY, STATE FROM STATION');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 13, CITY: 'Phoenix', STATE: 'AZ'},
 			{ID: 44, CITY: 'Denver', STATE: 'CO'},
 			{ID: 66, CITY: 'Caribou', STATE: 'ME'},
 		]);
 
 		var res = alasql('SELECT ID, CITY, STATE FROM STATION WHERE LAT_N > 39.7');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 44, CITY: 'Denver', STATE: 'CO'},
 			{ID: 66, CITY: 'Caribou', STATE: 'ME'},
 		]);
@@ -60,7 +60,7 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('3. Create STATS table', function(done) {
+	it('3. Create STATS table', function (done) {
 		var res = alasql(
 			'CREATE TABLE STATS  \
                     (ID INTEGER REFERENCES STATION(ID), \
@@ -69,7 +69,7 @@ describe('Test 231 NIST SQL Example', function() {
                     RAIN_I REAL CHECK (VALUE->RAIN_I BETWEEN 0 AND 100), \
                     PRIMARY KEY (ID, MONTH));'
 		);
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		var res = alasql(
 			'INSERT INTO STATS VALUES (13, 1, 57.4, 0.31);  \
@@ -80,11 +80,11 @@ describe('Test 231 NIST SQL Example', function() {
             INSERT INTO STATS VALUES (66, 7, 65.8, 4.52);'
 		);
 
-		assert.deepEqual(res, [1, 1, 1, 1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1, 1, 1, 1]);
 
 		var res = alasql('SELECT * FROM STATS;');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 13, MONTH: 1, TEMP_F: 57.4, RAIN_I: 0.31},
 			{ID: 13, MONTH: 7, TEMP_F: 91.7, RAIN_I: 5.15},
 			{ID: 44, MONTH: 1, TEMP_F: 27.3, RAIN_I: 0.18},
@@ -96,13 +96,13 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('3. Selects', function(done) {
+	it('3. Selects', function (done) {
 		var res = alasql(
 			'SELECT * FROM STATION, STATS \
                             WHERE STATION.ID = STATS.ID'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				ID: 13,
 				CITY: 'Phoenix',
@@ -171,7 +171,7 @@ describe('Test 231 NIST SQL Example', function() {
             ORDER BY MONTH, RAIN_I DESC;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{MONTH: 1, ID: 66, RAIN_I: 2.1, TEMP_F: 6.7},
 			{MONTH: 1, ID: 13, RAIN_I: 0.31, TEMP_F: 57.4},
 			{MONTH: 1, ID: 44, RAIN_I: 0.18, TEMP_F: 27.3},
@@ -188,7 +188,7 @@ describe('Test 231 NIST SQL Example', function() {
             ORDER BY TEMP_F;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{LAT_N: 47, CITY: 'Caribou', TEMP_F: 65.8},
 			{LAT_N: 40, CITY: 'Denver', TEMP_F: 74.8},
 			{LAT_N: 33, CITY: 'Phoenix', TEMP_F: 91.7},
@@ -200,7 +200,7 @@ describe('Test 231 NIST SQL Example', function() {
             GROUP BY ID;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				'MAX(TEMP_F)': 91.7,
 				'MIN(TEMP_F)': 57.4,
@@ -227,7 +227,7 @@ describe('Test 231 NIST SQL Example', function() {
             WHERE STATION.ID = STATS.ID);'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 13, CITY: 'Phoenix', STATE: 'AZ', LAT_N: 33, LONG_W: 112},
 			{ID: 44, CITY: 'Denver', STATE: 'CO', LAT_N: 40, LONG_W: 105},
 		]);
@@ -237,7 +237,7 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('5. View', function(done) {
+	it('5. View', function (done) {
 		var res = alasql(
 			'CREATE VIEW METRIC_STATS (ID, MONTH, TEMP_C, RAIN_C) AS \
         SELECT ID, \
@@ -246,11 +246,11 @@ describe('Test 231 NIST SQL Example', function() {
         RAIN_I * 0.3937 \
         FROM STATS;'
 		);
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		var res = alasql('SELECT * FROM METRIC_STATS');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 13, MONTH: 1, TEMP_C: 14.11111111111111, RAIN_C: 0.122047},
 			{ID: 13, MONTH: 7, TEMP_C: 33.166666666666664, RAIN_C: 2.027555},
 			{
@@ -275,7 +275,7 @@ describe('Test 231 NIST SQL Example', function() {
             ORDER BY RAIN_C;'
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				ID: 44,
 				MONTH: 1,
@@ -288,10 +288,10 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('8. UPDATE', function(done) {
+	it('8. UPDATE', function (done) {
 		var res = alasql('UPDATE STATS SET RAIN_I = RAIN_I + 0.01');
 
-		assert.deepEqual(res, 6);
+		assert.deepStrictEqual(res, 6);
 
 		var res = alasql(
 			'UPDATE STATS SET TEMP_F = 74.9 \
@@ -299,11 +299,11 @@ describe('Test 231 NIST SQL Example', function() {
             AND MONTH = 7;'
 		);
 
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		var res = alasql('SELECT * FROM STATS;');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{ID: 13, MONTH: 1, TEMP_F: 57.4, RAIN_I: 0.32},
 			{ID: 13, MONTH: 7, TEMP_F: 91.7, RAIN_I: 5.16},
 			{ID: 44, MONTH: 1, TEMP_F: 27.3, RAIN_I: 0.19},
@@ -315,11 +315,11 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('9. Commits', function(done) {
+	it('9. Commits', function (done) {
 		//alasql('COMMIT WORK');
 
 		var res1 = alasql('SELECT * FROM STATS');
-		assert.deepEqual(res1, [
+		assert.deepStrictEqual(res1, [
 			{ID: 13, MONTH: 1, TEMP_F: 57.4, RAIN_I: 0.32},
 			{ID: 13, MONTH: 7, TEMP_F: 91.7, RAIN_I: 5.16},
 			{ID: 44, MONTH: 1, TEMP_F: 27.3, RAIN_I: 0.19},
@@ -329,14 +329,16 @@ describe('Test 231 NIST SQL Example', function() {
 		]);
 
 		var res = alasql('BEGIN WORK');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
-		var res = alasql('UPDATE STATS SET RAIN_I = 4.50 \
-            WHERE ID = 44');
-		assert.deepEqual(res, 2);
+		var res = alasql(
+			'UPDATE STATS SET RAIN_I = 4.50 \
+            WHERE ID = 44'
+		);
+		assert.deepStrictEqual(res, 2);
 
 		var res2 = alasql('SELECT * FROM STATS');
-		assert.deepEqual(res2, [
+		assert.deepStrictEqual(res2, [
 			{ID: 13, MONTH: 1, TEMP_F: 57.4, RAIN_I: 0.32},
 			{ID: 13, MONTH: 7, TEMP_F: 91.7, RAIN_I: 5.16},
 			{ID: 44, MONTH: 1, TEMP_F: 27.3, RAIN_I: 4.5},
@@ -349,17 +351,17 @@ describe('Test 231 NIST SQL Example', function() {
 			assert(!alasql.utils.deepEqual(res1, res2));
 
 			var res = alasql('ROLLBACK WORK;');
-			assert.deepEqual(res, 1);
+			assert.deepStrictEqual(res, 1);
 
 			var res3 = alasql('SELECT * FROM STATS');
 			/// console.log(res3);
-			assert.deepEqual(res1, res3);
+			assert.deepStrictEqual(res1, res3);
 		}
 		var res = alasql('UPDATE STATS SET RAIN_I = 4.50 WHERE ID = 44 AND MONTH = 7');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		//        console.log(res4);
 		var res = alasql('COMMIT WORK');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		//        console.log(res4);
 
 		// TODO: Transactions
@@ -369,33 +371,33 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('10. Delete', function(done) {
+	it('10. Delete', function (done) {
 		var res = alasql(
 			'DELETE FROM STATS \
             WHERE MONTH = 7 \
             OR ID IN (SELECT ID FROM STATION \
             WHERE LONG_W < 90)'
 		);
-		assert.deepEqual(res, 4);
+		assert.deepStrictEqual(res, 4);
 
 		var res = alasql('DELETE FROM STATION WHERE LONG_W < 90');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		var res1 = alasql('SELECT * FROM STATION');
-		assert.deepEqual(res1, [
+		assert.deepStrictEqual(res1, [
 			{ID: 13, CITY: 'Phoenix', STATE: 'AZ', LAT_N: 33, LONG_W: 112},
 			{ID: 44, CITY: 'Denver', STATE: 'CO', LAT_N: 40, LONG_W: 105},
 		]);
 		//        console.log(res1);
 		var res2 = alasql('SELECT * FROM STATS');
 		//        console.log(res2);
-		assert.deepEqual(res2, [
+		assert.deepStrictEqual(res2, [
 			{ID: 13, MONTH: 1, TEMP_F: 57.4, RAIN_I: 0.32},
 			{ID: 44, MONTH: 1, TEMP_F: 27.3, RAIN_I: 4.5},
 		]);
 		var res3 = alasql('SELECT * FROM METRIC_STATS');
 		//        console.log(res3);
-		assert.deepEqual(res3, [
+		assert.deepStrictEqual(res3, [
 			{ID: 13, MONTH: 1, TEMP_C: 14.11111111111111, RAIN_C: 0.125984},
 			{ID: 44, MONTH: 1, TEMP_C: -2.6111111111111107, RAIN_C: 1.77165},
 		]);
@@ -403,33 +405,33 @@ describe('Test 231 NIST SQL Example', function() {
 		done();
 	});
 
-	it('11. Insert with constraints', function(done) {
-		assert.throws(function() {
+	it('11. Insert with constraints', function (done) {
+		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (33,8,27.4,.19)');
 		}, Error);
-		assert.throws(function() {
+		assert.throws(function () {
 			var res = alasql('UPDATE STATS SET TEMP_F = -100 WHERE ID = 44 AND MONTH = 1');
 		}, Error);
-		assert.throws(function() {
+		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (44,8,27.4,-.03)');
 		}, Error);
-		assert.throws(function() {
+		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (44,13,27.4,.19)');
 		}, Error);
-		assert.throws(function() {
+		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (44,8,160,.19)');
 		}, Error);
 		var res = alasql('INSERT INTO STATS VALUES (44,8,27.4,.10)');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		var res = alasql('SELECT * FROM STATS');
-		assert.throws(function() {
+		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (44,8,160,.19)');
 		}, Error);
 		done();
 	});
 
-	it('99. DROP', function(done) {
+	it('99. DROP', function (done) {
 		alasql('DROP DATABASE test231');
 		done();
 	});

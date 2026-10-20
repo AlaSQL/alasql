@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('375. Problem with UPDATE (https://github.com/agershun/alasql/issues/479)', function() {
-	it('1. ', function(done) {
+describe('375. Problem with UPDATE (https://github.com/alasql/alasql/issues/479)', function () {
+	it('1. ', function (done) {
 		alasql(
 			'CREATE TABLE RpdAssignments (' +
 				'Id INT PRIMARY KEY AUTOINCREMENT NOT NULL,' +
@@ -23,7 +23,7 @@ describe('375. Problem with UPDATE (https://github.com/agershun/alasql/issues/47
 		alasql('UPDATE RpdAssignments SET Name="id2" WHERE Id=1');
 
 		var res = alasql('SELECT * FROM RpdAssignments');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				Id: 1,
 				Name: 'id2',

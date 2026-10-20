@@ -2,11 +2,14 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test429.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test429.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
-describe.skip('Test 429', function() {
-	it('Localstorage DELETE with WHERE clause', function(done) {
+describe.skip('Test 429', function () {
+	it('Localstorage DELETE with WHERE clause', function (done) {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ls429');
 		alasql('ATTACH LOCALSTORAGE DATABASE ls429');
@@ -19,7 +22,7 @@ describe.skip('Test 429', function() {
 		alasql("INSERT INTO ls429.one VALUES ('b')");
 		alasql("DELETE FROM ls429.one WHERE str = 'a'");
 		var res = alasql('SELECT * FROM ls429.one');
-		assert.deepEqual(res, [{str: 'b'}]);
+		assert.deepStrictEqual(res, [{str: 'b'}]);
 		done();
 	});
 });

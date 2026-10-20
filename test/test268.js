@@ -7,25 +7,37 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage(__dirname + '/restest267.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage(__dirname + '/restest267.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
-describe('Test 268 INNER JOIN stress test', function() {
-	it('1. Create database', function(done) {
+describe('Test 268 INNER JOIN stress test', function () {
+	it('1. Create database', function (done) {
 		alasql('CREATE DATABASE test268; USE test268');
 		done();
 	});
 
-	var data1 = [{a: 1, b: 10}, {a: 2, b: 20}];
-	var data2 = [{b: 10, c: 100}, {b: 20, c: 200}];
+	var data1 = [
+		{a: 1, b: 10},
+		{a: 2, b: 20},
+	];
+	var data2 = [
+		{b: 10, c: 100},
+		{b: 20, c: 200},
+	];
 
-	it('2. INNER JOIN on Array', function(done) {
+	it('2. INNER JOIN on Array', function (done) {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 USING b', [data1, data2]);
-		assert.deepEqual(res, [{a: 1, b: 10, c: 100}, {a: 2, b: 20, c: 200}]);
+		assert.deepStrictEqual(res, [
+			{a: 1, b: 10, c: 100},
+			{a: 2, b: 20, c: 200},
+		]);
 		done();
 	});
 
-	it('3. INNER JOIN on Tables', function(done) {
+	it('3. INNER JOIN on Tables', function (done) {
 		alasql('CREATE TABLE table1(a INT, b INT);');
 		alasql('SELECT * INTO table1 FROM ?', [data1]);
 		alasql('CREATE TABLE table2(b INT, c INT);');
@@ -34,7 +46,10 @@ describe('Test 268 INNER JOIN stress test', function() {
 			data1,
 			data2,
 		]);
-		assert.deepEqual(res, [{a: 1, b: 10, c: 100}, {a: 2, b: 20, c: 200}]);
+		assert.deepStrictEqual(res, [
+			{a: 1, b: 10, c: 100},
+			{a: 2, b: 20, c: 200},
+		]);
 		done();
 	});
 
@@ -59,8 +74,7 @@ describe('Test 268 INNER JOIN stress test', function() {
   */
 	//console.log(t2);
 
-	it('4. INNER JOIN on Big Array', function(done) {
-		this.timeout(10000);
+	it('4. INNER JOIN on Big Array', function (done) {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('INNER =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 LEFT JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
@@ -69,13 +83,13 @@ describe('Test 268 INNER JOIN stress test', function() {
 		/// console.log('RIGHT =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('OUTER =',res.length);
-		// assert.deepEqual(res.,
+		// assert.deepStrictEqual(res.,
 		//   [ { a: 1, b: 10, c: 100 }, { a: 2, b: 20, c: 200 } ]
 		// );
 		done();
 	});
 
-	it('99. Drop phase', function(done) {
+	it('99. Drop phase', function (done) {
 		alasql('DROP DATABASE test268');
 		done();
 	});

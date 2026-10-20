@@ -8,9 +8,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 109 - DELETE', function() {
-	it('DELETE without conditions', function(done) {
-		var db = alasql.newDatabase();
+describe('Test 109 - DELETE', function () {
+	it('DELETE without conditions', function (done) {
+		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('INSERT INTO test VALUES (1,1)');
@@ -20,12 +20,12 @@ describe('Test 109 - DELETE', function() {
 
 		var res = db.exec('DELETE FROM test');
 
-		assert.deepEqual([], db.tables.test.data);
+		assert.deepStrictEqual([], db.tables.test.data);
 		done();
 	});
 
-	it('DELETE with conditions', function(done) {
-		var db = alasql.newDatabase();
+	it('DELETE with conditions', function (done) {
+		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
 		//		console.log(db);

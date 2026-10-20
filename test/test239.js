@@ -5,14 +5,17 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-if (typeof exports == 'object') {
+if (typeof exports === 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test239.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test239.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
-describe('Test 239 AUTOCOMMIT OFF test', function() {
+describe('Test 239 AUTOCOMMIT OFF test', function () {
 	if (false) {
-		it('1. Create database', function(done) {
+		it('1. Create database', function (done) {
 			alasql('SET AUTOCOMMIT OFF');
 			//    console.log(1);
 			alasql('DROP LOCALSTORAGE DATABASE IF EXISTS ls239');
@@ -28,14 +31,18 @@ describe('Test 239 AUTOCOMMIT OFF test', function() {
 			alasql('insert into one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 			//    console.log(6);
 			var res = alasql('select * from one');
-			assert.deepEqual(res, [{a: 1, b: 'Moscow'}, {a: 2, b: 'Kyiv'}, {a: 3, b: 'Minsk'}]);
+			assert.deepStrictEqual(res, [
+				{a: 1, b: 'Moscow'},
+				{a: 2, b: 'Kyiv'},
+				{a: 3, b: 'Minsk'},
+			]);
 
 			var res = alasql('COMMIT TRANSACTION');
 			//    console.log(7);
 			//    var res = alasql('BEGIN TRANSACTION');
 			alasql('insert into one VALUES (4,"Sochi"), (5, "Vancouver")');
 			var res = alasql('select * from one');
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
@@ -51,22 +58,24 @@ describe('Test 239 AUTOCOMMIT OFF test', function() {
 			var res = alasql('select * from one');
 			//    console.log(9);
 			//      console.log(res);
-			assert.deepEqual(res, [{a: 1, b: 'Moscow'}, {a: 2, b: 'Kyiv'}, {a: 3, b: 'Minsk'}]);
+			assert.deepStrictEqual(res, [
+				{a: 1, b: 'Moscow'},
+				{a: 2, b: 'Kyiv'},
+				{a: 3, b: 'Minsk'},
+			]);
 			alasql('DROP TABLE one');
 			//    console.log(10);
 			done();
 		});
 
-		it('3.Complex test', function(done) {
-			alasql(function() {
-				/*
+		it('3.Complex test', function (done) {
+			alasql(`
     DROP LOCALSTORAGE DATABASE IF EXISTS test001;
     CREATE LOCALSTORAGE DATABASE test001;
     ATTACH LOCALSTORAGE DATABASE test001;
     USE test001;
     CREATE TABLE one(a int, b string);
-    */
-			});
+    `);
 
 			var tm = Date.now();
 			for (var i = 0; i < 10000; i++) {
@@ -84,7 +93,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function() {
 			done();
 		});
 
-		it('8.Drop localStorage table', function(done) {
+		it('8.Drop localStorage table', function (done) {
 			alasql('DETACH DATABASE test239');
 			alasql('DROP LOCALSTORAGE DATABASE ls239');
 			done();

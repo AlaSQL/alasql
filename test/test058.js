@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 58 - Indices', function() {
+describe('Test 58 - Indices', function () {
 	/*	it('SELECT - CREATE INDEX "', function(done){
 		var test1 = [{a:1},{a:2},{a:3},{a:4}];
 		alasql("DROP TABLE IF EXISTS test1");

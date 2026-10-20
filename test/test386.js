@@ -2,7 +2,10 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test381.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test381.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 /*
@@ -11,7 +14,7 @@ if (typeof exports === 'object') {
   https://jira.mongodb.org/browse/SERVER-831
 */
 
-describe('Test 386 - Nested Search (issue #495)', function() {
+describe('Test 386 - Nested Search (issue #495)', function () {
 	var data = [
 		{
 			_id: 1,
@@ -25,12 +28,12 @@ describe('Test 386 - Nested Search (issue #495)', function() {
 						{
 							id: 13,
 							quantity: 60,
-							started: 2009 - 01 - 01,
+							started: '2009 - 01 - 01',
 						},
 						{
 							id: 77,
 							quantity: 45,
-							started: 2009 - 02 - 01,
+							started: '2009 - 02 - 01',
 						},
 					],
 				},
@@ -54,12 +57,12 @@ describe('Test 386 - Nested Search (issue #495)', function() {
 						{
 							id: 131,
 							quantity: 601,
-							started: 2009 - 01 - 01,
+							started: '2009 - 01 - 01',
 						},
 						{
 							id: 771,
 							quantity: 451,
-							started: 2009 - 02 - 01,
+							started: '2009 - 02 - 01',
 						},
 					],
 				},
@@ -72,27 +75,27 @@ describe('Test 386 - Nested Search (issue #495)', function() {
 		},
 	];
 
-	before(function() {
+	before(function () {
 		alasql('CREATE DATABASE test386;USE test386');
 	});
 
-	after(function() {
+	after(function () {
 		alasql('DROP DATABASE test386');
 	});
 
-	it('1. Change property', function(done) {
+	it('1. Change property', function (done) {
 		alasql('SEARCH /medications/prescriptions/WHERE(id=77) SET(quantity=30) FROM ?', [data]);
 		assert.equal(data[0].medications[0].prescriptions[1].quantity, 30);
 		done();
 	});
 
-	it('2. Change property in all levels', function(done) {
+	it('2. Change property in all levels', function (done) {
 		alasql('SEARCH /+ WHERE(id=77) SET(quantity=31) FROM ?', [data]);
 		assert.equal(data[0].medications[0].prescriptions[1].quantity, 31);
 		done();
 	});
 
-	it('3. Change property in all levels', function(done) {
+	it('3. Change property in all levels', function (done) {
 		alasql('SEARCH / * WHERE(id=77) SET(quantity=32) FROM ?', [data]);
 		assert.equal(data[0].medications[0].prescriptions[1].quantity, 32);
 		done();

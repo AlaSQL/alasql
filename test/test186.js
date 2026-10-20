@@ -7,50 +7,42 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 if (false) {
-	describe('Test 186 - Linq Syntax', function() {
-		it('1. empty alasql()', function(done) {
-			var data1 = [{a: 1, b: 10}, {a: 2, b: 20}, {a: 0, b: 20}];
-			var data2 = [{a: -1, b: -10}, {a: -2, b: -20}];
-			var data3 = [{x: -1, y: -10}, {x: -2, y: -20}];
+	describe('Test 186 - Linq Syntax', function () {
+		it('1. empty alasql()', function (done) {
+			var data1 = [
+				{a: 1, b: 10},
+				{a: 2, b: 20},
+				{a: 0, b: 20},
+			];
+			var data2 = [
+				{a: -1, b: -10},
+				{a: -2, b: -20},
+			];
+			var data3 = [
+				{x: -1, y: -10},
+				{x: -2, y: -20},
+			];
 
-			var res = alasql()
-				.Select('a')
-				.exec([data1]);
+			var res = alasql().Select('a').exec([data1]);
 			//      console.log(1,res);
 
-			var res = alasql()
-				.Select('a')
-				.exec([data2]);
+			var res = alasql().Select('a').exec([data2]);
 			//      console.log(2,res);
 
-			var sel = alasql(data1)
-				.Select('a')
-				.exec();
+			var sel = alasql(data1).Select('a').exec();
 			//      console.log(3,res);
 
-			var res = alasql(data1)
-				.Select('a', 'b', 'x', 'y')
-				.From(data3)
-				.exec();
+			var res = alasql(data1).Select('a', 'b', 'x', 'y').From(data3).exec();
 			//      console.log(4,res);
 
 			var res1 = alasql('SELECT * FROM ? ORDER BY a', [data1]);
-			var res2 = alasql(data1)
-				.OrderBy('a')
-				.exec();
+			var res2 = alasql(data1).OrderBy('a').exec();
 			//      console.log(5,res1,res2);
 
-			var res3 = alasql(data1)
-				.Select('b')
-				.GroupBy('b')
-				.exec();
+			var res3 = alasql(data1).Select('b').GroupBy('b').exec();
 			//      console.log(5,res3);
 
-			var res3 = alasql(data1)
-				.Select('a', 'b')
-				.GroupBy('b', 'a')
-				.OrderBy('b', 'a')
-				.exec();
+			var res3 = alasql(data1).Select('a', 'b').GroupBy('b', 'a').OrderBy('b', 'a').exec();
 			//      console.log(5,res3);
 
 			//      alasql().Select(function(x){return x.Max("index")},'id').GroupBy("id").exec();
@@ -75,13 +67,13 @@ if (false) {
 		for (var i = 0; i < 200; i++) {
 			alasql.databases.alasql.resetSqlCache();
 			var res1 = alasql(myList)
-				.Where(function(p) {
+				.Where(function (p) {
 					return p[undefined].FirstName >= 'Josh';
 				})
-				.Select(function(item) {
+				.Select(function (item) {
 					return item.FirstName;
 				})
-				.OrderBy(function(name) {
+				.OrderBy(function (name) {
 					return name;
 				})
 				.Top(2)
@@ -93,13 +85,13 @@ if (false) {
 		for (var i = 0; i < 200; i++) {
 			//        alasql.databases.alasql.resetSqlCache();
 			var res1 = alasql(myList)
-				.Where(function(p) {
+				.Where(function (p) {
 					return p[undefined].FirstName >= 'Josh';
 				})
-				.Select(function(item) {
+				.Select(function (item) {
 					return item.FirstName;
 				})
-				.OrderBy(function(name) {
+				.OrderBy(function (name) {
 					return name;
 				})
 				.Top(2)

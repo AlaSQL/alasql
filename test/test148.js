@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 148 - EXPLAIN SELECT', function() {
-	it('1. Simple Select', function(done) {
+describe('Test 148 - EXPLAIN SELECT', function () {
+	it('1. Simple Select', function (done) {
 		alasql('CREATE DATABASE test148; USE test148');
 		alasql('CREATE TABLE one (a INT)');
 		alasql('INSERT INTO one VALUES (1),(2),(3)');
@@ -15,7 +15,7 @@ describe('Test 148 - EXPLAIN SELECT', function() {
 		done();
 	});
 
-	it('99. Detach database', function(done) {
+	it('99. Detach database', function (done) {
 		alasql('DROP DATABASE test148');
 		done();
 	});

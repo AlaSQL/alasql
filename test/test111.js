@@ -8,9 +8,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test from jsFiddle', function() {
-	it('Simple select test (http://jsfiddle.net/agershun/38hj2uwy/3/)', function(done) {
-		var db = alasql.newDatabase();
+describe('Test from jsFiddle', function () {
+	it('Simple select test (http://jsfiddle.net/agershun/38hj2uwy/3/)', function (done) {
+		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
 
@@ -19,7 +19,7 @@ describe('Test from jsFiddle', function() {
 			{name: 'sara', sex: 'F', income: 100000},
 		];
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			[{name: 'sara', sex: 'F', income: 100000}],
 			db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000")
 		);

@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 81 - Hierarchies', function() {
+describe('Test 81 - Hierarchies', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 007', function() {
-	it('UPDATE WHERE test ', function(done) {
-		var db = alasql.newDatabase('test007');
+describe('Test 007', function () {
+	it('UPDATE WHERE test ', function (done) {
+		var db = new alasql.Database('test007');
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
 		db.exec('INSERT INTO test VALUES (1,10,100)');

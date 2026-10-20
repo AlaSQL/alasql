@@ -3,19 +3,19 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 60 - Other minor', function() {
-	it('DEAFAULT', function(done) {
+describe('Test 60 - Other minor', function () {
+	it('DEAFAULT', function (done) {
 		alasql('DROP TABLE IF EXISTS test');
 		alasql('CREATE TABLE test (a INT, b INT DEFAULT 100)');
 		done();
 	});
 
-	it('USE DATABASE', function(done) {
+	it('USE DATABASE', function (done) {
 		alasql('INSERT INTO test (a) VALUES (5)');
 		done();
 	});
 
-	it('SELECT INTO and INTO SELECT', function(done) {
+	it('SELECT INTO and INTO SELECT', function (done) {
 		alasql('drop table if exists cities');
 		alasql('create table cities (name string)');
 		alasql('insert into cities values ("Moscow"),("Roma"),("Minsk")');

@@ -5,11 +5,11 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 210 WHILE BREAK CONTINUE', function() {
+describe('Test 210 WHILE BREAK CONTINUE', function () {
 	/** @todo Add CONTINUE operator */
 
 	// please let done depend on output
-	it.skip('1. WHILE BREAK', function(done) {
+	it.skip('1. WHILE BREAK', function (done) {
 		alasql(
 			'SET @i = 1; \
             WHILE @i < 5 \
@@ -21,7 +21,7 @@ describe('Test 210 WHILE BREAK CONTINUE', function() {
                 ;\
              END',
 			[],
-			function() {
+			function () {
 				/// console.log('ok');
 				done();
 			}

@@ -2,7 +2,10 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test380.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test380.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 /*
@@ -12,15 +15,14 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 380 - PIVOT', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 380 - PIVOT', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test380;USE test380');
 		done();
 	});
 
-	it('1. Create table', function(done) {
-		alasql(function() {
-			/*
+	it('1. Create table', function (done) {
+		alasql(`
 
 			create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int);
 
@@ -53,17 +55,18 @@ describe('Test 380 - PIVOT', function() {
 			insert into DailyIncome values ('FREDS', 'THU', 800);
 			insert into DailyIncome values ('JOHNS', 'TUE', 600);
 
-		*/
-		});
+		`);
 
 		done();
 	});
 
-	it('2. Simple pivot without IN', function(done) {
-		var res = alasql('select * from DailyIncome  \
-		pivot (AVG(IncomeAmount) for IncomeDay)');
+	it('2. Simple pivot without IN', function (done) {
+		var res = alasql(
+			'select * from DailyIncome  \
+		pivot (AVG(IncomeAmount) for IncomeDay)'
+		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				VendorId: 'SPIKE',
 				FRI: 200,
@@ -98,60 +101,57 @@ describe('Test 380 - PIVOT', function() {
 		done();
 	});
 
-	it('3. Simple pivot with IN', function(done) {
+	it('3. Simple pivot with IN', function (done) {
 		var res = alasql(
 			'RECORDSET OF SELECT * FROM DailyIncome  \
 		PIVOT (AVG(IncomeAmount) FOR IncomeDay IN ([MON],[TUE]))'
 		);
 
-		assert.deepEqual(
-			res,
+		var expected = {
+			data: [
+				{VendorId: 'SPIKE', MON: 600, TUE: 150},
+				{VendorId: 'JOHNS', MON: 300, TUE: 600},
+				{VendorId: 'FREDS', TUE: 350, MON: 500},
+			],
+			columns: [
+				{
+					columnid: 'VendorId',
+					dbtypeid: 'NVARCHAR',
+					dbsize: 10,
+					dbprecision: undefined,
+					dbenum: undefined,
+				},
+				{
+					columnid: 'MON',
+					dbtypeid: 'INT',
+					dbsize: undefined,
+					dbprecision: undefined,
+					dbenum: undefined,
+				},
+				{
+					columnid: 'TUE',
+					dbtypeid: 'INT',
+					dbsize: undefined,
+					dbprecision: undefined,
+					dbenum: undefined,
+				},
+			],
+		};
 
-			{
-				data: [
-					{VendorId: 'SPIKE', MON: 600, TUE: 150},
-					{VendorId: 'JOHNS', MON: 300, TUE: 600},
-					{VendorId: 'FREDS', TUE: 350, MON: 500},
-				],
-				columns: [
-					{
-						columnid: 'VendorId',
-						dbtypeid: 'NVARCHAR',
-						dbsize: 10,
-						dbprecision: undefined,
-						dbenum: undefined,
-					},
-					{
-						columnid: 'MON',
-						dbtypeid: 'INT',
-						dbsize: undefined,
-						dbprecision: undefined,
-						dbenum: undefined,
-					},
-					{
-						columnid: 'TUE',
-						dbtypeid: 'INT',
-						dbsize: undefined,
-						dbprecision: undefined,
-						dbenum: undefined,
-					},
-				],
-			}
-		);
+		assert.deepStrictEqual(res.columns, expected.columns);
+		assert.deepStrictEqual(res.data, expected.data);
 		done();
 	});
 
-	it('4. PIVOT and WHERE', function(done) {
-		var res = alasql(function() {
-			/*
+	it('4. PIVOT and WHERE', function (done) {
+		var res = alasql(`
 		select * from DailyIncome
 		pivot (max (IncomeAmount) for IncomeDay in ([MON],[TUE],[WED],[THU],[FRI],[SAT],[SUN])) as MaxIncomePerDay
 		where VendorId in ('SPIKE')
 
-		*/
-		});
+		`);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				VendorId: 'SPIKE',
 				FRI: 300,
@@ -167,7 +167,7 @@ describe('Test 380 - PIVOT', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test380');
 		done();

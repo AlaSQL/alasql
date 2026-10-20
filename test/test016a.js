@@ -4,8 +4,8 @@ if (typeof exports === 'object') {
 }
 
 if (false) {
-	describe('Test 16b', function() {
-		it('Grouping', function(done) {
+	describe('Test 16b', function () {
+		it('Grouping', function (done) {
 			alasql('create database test16;use test16');
 
 			alasql.tables.students = new alasql.Table({

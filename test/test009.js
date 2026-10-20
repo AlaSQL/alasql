@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 09', function() {
-	it('Test LEFT JOIN', function(done) {
+describe('Test 09', function () {
+	it('Test LEFT JOIN', function (done) {
 		alasql.exec('DROP TABLE IF EXISTS test');
 		alasql.exec('CREATE TABLE test (a int, b int)');
 		alasql.exec('INSERT INTO test VALUES (1,1)');

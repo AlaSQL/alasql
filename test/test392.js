@@ -10,18 +10,18 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 392 Observable (issue #499)', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 392 Observable (issue #499)', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test392;USE test392');
 		done();
 	});
 
-	it.skip('2. Prepare test data', function(done) {
+	it.skip('2. Prepare test data', function (done) {
 		//    var test = 0;
 
 		alasql('CREATE TABLE one (a INT, b STRING)');
 
-		Array.observe(alasql.databases.test392.tables.one.data, function(args) {
+		Array.observe(alasql.databases.test392.tables.one.data, function (args) {
 			//      test++;
 			//      console.log('changed',arguments);
 		});
@@ -34,7 +34,7 @@ describe('Test 392 Observable (issue #499)', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test392');
 		done();
 	});

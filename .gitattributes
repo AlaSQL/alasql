@@ -1,6 +1,7 @@
 
 *.xlsx binary
 *.xls binary
+yarn.lock binary 
 
 /dist/* binary merge=ours
 *.min.js binary
@@ -11,4 +12,7 @@
 # paths that don't start with / are relative to the .gitattributes folder
 #relative/path/*.txt text eol=lf
 
+src/alasqlparser.js binary
 
+
+src/alasqlparser.js merge=ours

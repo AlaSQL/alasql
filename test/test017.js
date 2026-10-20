@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 17', function() {
-	it('UNION ', function(done) {
-		var db = alasql.newDatabase('db');
+describe('Test 17', function () {
+	it('UNION ', function (done) {
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');
 		db.exec('INSERT INTO test VALUES (2)');
@@ -21,8 +21,8 @@ describe('Test 17', function() {
 		done();
 	});
 
-	it('UNION ALL', function(done) {
-		var db = alasql.newDatabase('db');
+	it('UNION ALL', function (done) {
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');
 		db.exec('INSERT INTO test VALUES (2)');
@@ -32,9 +32,7 @@ describe('Test 17', function() {
 		db.exec('INSERT INTO test VALUES (6)');
 		db.exec('INSERT INTO test VALUES (7)');
 
-		var res = db.exec(
-			'SELECT a FROM test WHERE a<4 UNION SELECT a FROM test WHERE a>2 ORDER BY a'
-		);
+		var res = db.exec('SELECT a FROM test WHERE a<4 UNION SELECT a FROM test WHERE a>2 ORDER BY a');
 		assert.equal(7, res.length);
 
 		done();

@@ -3,12 +3,12 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 12', function() {
-	it('store and restore - test not ready yet! ', function(done) {
+describe('Test 12', function () {
+	it('store and restore - test not ready yet! ', function (done) {
 		if (false) {
 			var db = alasql.restore('mydb');
 			//	console.log(!!db);
-			if (!db) db = alasql.newDatabase('mydb');
+			if (!db) db = new alasql.Database('mydb');
 			//	console.log(db);
 
 			db.exec('CREATE TABLE IF NOT EXISTS students (studentid INT, studentname STRING)');

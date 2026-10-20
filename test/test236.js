@@ -8,12 +8,11 @@ if (typeof exports === 'object') {
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
-describe('Test 236 MERGE', function() {
-	it('1. Prepare database and tables', function(done) {
+describe('Test 236 MERGE', function () {
+	it('1. Prepare database and tables', function (done) {
 		alasql('CREATE DATABASE test236; USE test236;');
 
-		var sql = function() {
-			/*
+		var sql = `
             CREATE TABLE [Target](EmployeeID int, EmployeeName varchar(10), 
                  CONSTRAINT Target_PK PRIMARY KEY(EmployeeID));
             CREATE TABLE [Source](EmployeeID int, EmployeeName varchar(10), 
@@ -25,21 +24,19 @@ describe('Test 236 MERGE', function() {
 
             INSERT [Source](EmployeeID, EmployeeName) Values(103, 'Bob');
             INSERT [Source](EmployeeID, EmployeeName) Values(104, 'Steve');
-
-        */
-		};
+			`;
 
 		alasql(sql);
 		var res = alasql('SELECT * FROM [Target]');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{EmployeeID: 100, EmployeeName: 'Mary'},
 			{EmployeeID: 101, EmployeeName: 'Sara'},
 			{EmployeeID: 102, EmployeeName: 'Stefano'},
 		]);
 		//        console.log(res);
 
-		var res = alasql('SELECT * FROM [Source]');
-		assert.deepEqual(res, [
+		res = alasql('SELECT * FROM [Source]');
+		assert.deepStrictEqual(res, [
 			{EmployeeID: 103, EmployeeName: 'Bob'},
 			{EmployeeID: 104, EmployeeName: 'Steve'},
 		]);
@@ -48,8 +45,8 @@ describe('Test 236 MERGE', function() {
 		done();
 	});
 
-	it('2. Merge', function(done) {
-		var sql = function() {
+	it('2. Merge', function (done) {
+		var sql = function () {
 			/*
 
         MERGE [Target] AS T
@@ -72,7 +69,7 @@ describe('Test 236 MERGE', function() {
 		done();
 	});
 
-	it('99. DROP', function(done) {
+	it('99. DROP', function (done) {
 		alasql('DROP DATABASE test236');
 		done();
 	});

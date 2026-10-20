@@ -1,5 +1,5 @@
 var alasql = require('../../alasql.js'),
-	adb = alasql.newDatabase(),
+	adb = new alasql.Database(),
 	samplecoll = null,
 	arraySize = 100000, // how large of a dataset to generate
 	totalIterations = 200, // how many times we search it
@@ -14,8 +14,7 @@ function genRandomVal() {
 	var text = '';
 	var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-	for (var i = 0; i < 20; i++)
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	for (var i = 0; i < 20; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
 }
@@ -41,7 +40,7 @@ function initializeDB() {
 				val2: v2,
 				val3: 'more data 1234567890',
 			},
-			function(newDoc) {
+			function (newDoc) {
 				// Callback is optional
 				if (++gAsyncCount == arraySize) {
 					endTime = process.hrtime(startTime);
@@ -90,7 +89,7 @@ function testperfFind() {
 	for (var idx = 0; idx < loopIterations; idx++) {
 		var customidx = Math.floor(Math.random() * arraySize) + 1;
 
-		alafind({customid: customidx}, function(docs) {
+		alafind({customid: customidx}, function (docs) {
 			++gAsyncCount;
 
 			if (
@@ -101,9 +100,7 @@ function testperfFind() {
 				var totalMS = endTime[0] * 1e3 + endTime[1] / 1e6;
 				var rate = ((isIndexed ? totalIterations * 200 : totalIterations) * 1000) / totalMS;
 				rate = rate.toFixed(2);
-				console.log(
-					'find (indexed : ' + isIndexed + ') : ' + totalMS + 'ms (' + rate + ') ops/s'
-				);
+				console.log('find (indexed : ' + isIndexed + ') : ' + totalMS + 'ms (' + rate + ') ops/s');
 
 				if (!isIndexed) {
 					isIndexed = true;

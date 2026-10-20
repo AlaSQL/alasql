@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 117 - Table name resolution', function() {
-	before(function() {
+describe('Test 117 - Table name resolution', function () {
+	before(function () {
 		alasql('create database test117');
 		alasql('use test117');
 		alasql('create table one (a int, b int)');
@@ -13,29 +13,29 @@ describe('Test 117 - Table name resolution', function() {
 		alasql('insert into two values (10,1,1), (20,2,2), (30,3,3)');
 	});
 
-	after(function() {
+	after(function () {
 		alasql('drop database test117');
 	});
 
-	it('1. One table', function(done) {
+	it('1. One table', function (done) {
 		var res = alasql('select value sum(c) from one join two using a');
 		assert(res == 6);
 		done();
 	});
 
-	it.skip('2. One table', function(done) {
+	it.skip('2. One table', function (done) {
 		var res = alasql('select value sum(b) from one join two using a');
 		assert(res == 600);
 		done();
 	});
 
-	it.skip('3. One table', function(done) {
+	it.skip('3. One table', function (done) {
 		var res = alasql('select value sum(one.b) from one join two using a');
 		assert(res == 600);
 		done();
 	});
 
-	it.skip('4. One table', function(done) {
+	it.skip('4. One table', function (done) {
 		var res = alasql('select value sum(two.b) from one join two using a');
 		assert(res == 6);
 		done();

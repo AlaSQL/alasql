@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 311 Special SEARCHors', function() {
-	it.skip('0. Create database ', function(done) {
+describe('Test 311 Special SEARCHors', function () {
+	it.skip('0. Create database ', function (done) {
 		alasql('CREATE DATABASE test311;USE test311');
 		done();
 	});
 
-	it.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function(done) {
+	it.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function (done) {
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var data = [
 			{a: 1, b: 10},
@@ -22,15 +22,15 @@ describe('Test 311 Special SEARCHors', function() {
 			{a: 5, b: 50},
 		];
 		var res = alasql('SEARCH DISTINCT(/b) FROM ?', [data]);
-		assert.deepEqual(res, [10, 20, 30, 40, 50]);
+		assert.deepStrictEqual(res, [10, 20, 30, 40, 50]);
 		var res = alasql('SEARCH UNION ALL(/a,/b) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 5, 10, 20, 30, 40, 50, 50]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 5, 10, 20, 30, 40, 50, 50]);
 		// Ala UNION
 		var res = alasql('SEARCH DISTINCT(UNION ALL(/a,/b)) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
 
 		var res = alasql('SEARCH UNION(/a,/b) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
 
 		//
 		/*
@@ -58,7 +58,7 @@ describe('Test 311 Special SEARCHors', function() {
 		done();
 	});
 
-	it.skip('99. Drop database ', function(done) {
+	it.skip('99. Drop database ', function (done) {
 		alasql('DROP DATABASE test311');
 		done();
 	});

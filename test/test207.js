@@ -5,15 +5,15 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 207 WHILE', function() {
-	it('1. FALSE WHILE', function(done) {
+describe('Test 207 WHILE', function () {
+	it('1. FALSE WHILE', function (done) {
 		var res = alasql('WHILE FALSE SELECT VALUE 1; SELECT VALUE 2');
 		//        console.log(res);
-		assert.deepEqual(res, [[], 2]);
+		assert.deepStrictEqual(res, [[], 2]);
 		done();
 	});
 
-	it('2. ONE WHILE ASYNC', function(done) {
+	it('2. ONE WHILE ASYNC', function (done) {
 		alasql(
 			' \
             SET @cnt = 0; \
@@ -21,15 +21,15 @@ describe('Test 207 WHILE', function() {
                 SET @cnt = @cnt+1; \
             ',
 			[],
-			function(res) {
+			function (res) {
 				//                console.log("ASYNC:",res);
-				assert.deepEqual(res, [1, [1, 1, 1]]);
+				assert.deepStrictEqual(res, [1, [1, 1, 1]]);
 				done();
 			}
 		);
 	});
 
-	it('3. ONE WHILE SYNC', function(done) {
+	it('3. ONE WHILE SYNC', function (done) {
 		var res = alasql(
 			' \
             SET @cnt = 0; \
@@ -38,7 +38,7 @@ describe('Test 207 WHILE', function() {
             '
 		);
 		// console.log("SYNC:",res);
-		assert.deepEqual(res, [1, [1, 1, 1]]);
+		assert.deepStrictEqual(res, [1, [1, 1, 1]]);
 		done();
 	});
 });

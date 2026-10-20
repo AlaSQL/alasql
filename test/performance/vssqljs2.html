@@ -8,7 +8,7 @@
   <body>
 
     <script src="../../alasql.js"></script>
-    <script src="../../lib/sqljs/sql.js"></script>
+    <script src="../../lib/sqljs/sql.min.js"></script>
 <!--    <script src="../../lib/sqlike/SQLike.js"></script> -->
 
 	<h1>alasql.js - Performance Tests vs sql.js and WebSQL</h1>
@@ -43,7 +43,7 @@ var tres = {alasql:[], sqljs:[], websql:[]};
 // ALASQL
 
 var tm11 = Date.now();
-var adb = alasql.newDatabase();
+var adb = new alasql.Database();
 sql1.forEach(function(sql){adb.exec(sql);});
 tres.alasql.push(Date.now()-tm11); 
 

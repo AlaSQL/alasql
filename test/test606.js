@@ -5,17 +5,17 @@ if (typeof exports === 'object') {
 
 var test = 606;
 
-describe('Test ' + test + ' - get autoval', function() {
-	before(function() {
+describe('Test ' + test + ' - get autoval', function () {
+	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);
 	});
 
-	after(function() {
+	after(function () {
 		alasql('drop database test' + test);
 	});
 
-	it('A) complex SEARCH query', function() {
+	it('A) complex SEARCH query', function () {
 		const data = {
 			kind: 'PodList',
 			apiVersion: 'v1',
@@ -88,6 +88,6 @@ describe('Test ' + test + ' - get autoval', function() {
 	        ) FROM ?',
 			[data]
 		);
-		assert.deepEqual(res, [{name: 'chosen-pod', namespace: 'namespace3'}]);
+		assert.deepStrictEqual(res, [{name: 'chosen-pod', namespace: 'namespace3'}]);
 	});
 });

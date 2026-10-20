@@ -6,26 +6,14 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports == 'object') {
-	describe('Test 262 Leaking of "key" variable to global scope', function() {
-		it('1. Sqllogic', function(done) {
-			mytable = [{name: 'Hello'}, {name: 'Wolrd'}];
+	describe('Test 262 Leaking of "key" variable to global scope', function () {
+		it('1. Sqllogic', function (done) {
+			const mytable = [{name: 'Hello'}, {name: 'Wolrd'}];
 
-			assert(typeof global.key == 'undefined'); // undefined
-
-			// To catch
-			if (false) {
-				Object.defineProperty(global, 'key', {
-					get: function() {
-						assert(false);
-					},
-					set: function(newValue) {
-						assert(false);
-					},
-				});
-			}
+			assert(typeof global.key === 'undefined'); // undefined
 
 			alasql('SELECT * FROM ?', [mytable]);
-			assert(typeof global.key == 'undefined'); // undefined
+			assert(typeof global.key === 'undefined'); // undefined
 
 			done();
 		});

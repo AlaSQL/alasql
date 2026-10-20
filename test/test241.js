@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 241 :: type casting operator and Ranges', function() {
-	it(':: operator', function(done) {
+describe('Test 241 :: type casting operator and Ranges', function () {
+	it(':: operator', function (done) {
 		var res = alasql('select value 10::string');
 		assert(res === '10');
 		done();

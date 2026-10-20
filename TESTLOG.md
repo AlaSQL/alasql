@@ -1,6 +1,6 @@
 # Testlog for AlaSQL
 
-List of final results from [different test runs](https://github.com/agershun/alasql/tree/develop/test/!testlog/) to keep track on progres.  
+List of final results from [different test runs](https://github.com/alasql/alasql/tree/develop/test/!testlog/) to keep track on progres.  
 
 
 ## SQLlogic
@@ -15,14 +15,14 @@ to verify that SQL database engine computes correct results by comparing the res
 * Skipped tests: 53,316
 * Final score: 88 % was OK
 
-See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/SQLlogic.md)
+See full result [here](https://github.com/alasql/alasql/tree/develop/test/!testlog/SQLlogic.md)
 
 ### Chakra
 It has not yet been possible to run the SQLlogic tests on the Chrakra engine. 
 
 
 ## Regression test
-The [regression tests for AlaSQL](https://github.com/agershun/alasql/tree/develop/test/) consists of more than 1000 test casescovering [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html) of the functionality in the library. The regression test is ran everytime the library is compiled from `src/` to `dist/` and must always be 100% OK on Node before releaseing a new version. 
+The [regression tests for AlaSQL](https://github.com/alasql/alasql/tree/develop/test/) consists of more than 1000 test casescovering [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html) of the functionality in the library. The regression test is ran everytime the library is compiled from `src/` to `dist/` and must always be 100% OK on Node before releaseing a new version. 
 
 By executing `npm test` the regression test will run via Node. By executing `npm run test:browser` it will run in a browser. 
 
@@ -34,7 +34,7 @@ By executing `npm test` the regression test will run via Node. By executing `npm
 - Failures: 47
 - Passes 1080
 
-See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/Chrome.md)
+See full result [here](https://github.com/alasql/alasql/tree/develop/test/!testlog/Chrome.md)
 
 _It needs more investigations, but as Chrome uses the same V8 engine as Node the errors are likely caused by how some of the tests loads or stores test data. The amount of Chrome errors will be therefor (probably) also be represented in other browsers._ 
 
@@ -43,7 +43,7 @@ _It needs more investigations, but as Chrome uses the same V8 engine as Node the
 - Failures: 63
 - Passes 1064
 
-See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/Safari.md)
+See full result [here](https://github.com/alasql/alasql/tree/develop/test/!testlog/Safari.md)
 
 
 ### Firefox 47
@@ -51,7 +51,7 @@ See full result [here](https://github.com/agershun/alasql/tree/develop/test/!tes
 - Failures: 58
 - Passes 1069
 
-See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/Firefox.md)
+See full result [here](https://github.com/alasql/alasql/tree/develop/test/!testlog/Firefox.md)
 
 ### Edge
 - `alasql@0.2.3-develop-1206`
@@ -70,7 +70,7 @@ See full result [here](https://github.com/agershun/alasql/tree/develop/test/!tes
 -  66 pending
 -  22 failing
 
-See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/Chakra.md)
+See full result [here](https://github.com/alasql/alasql/tree/develop/test/!testlog/Chakra.md)
 
 
 ### Node

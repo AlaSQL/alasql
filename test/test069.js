@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 69 - CSV and TAB database', function() {
+describe('Test 69 - CSV and TAB database', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

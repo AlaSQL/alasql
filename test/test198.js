@@ -5,19 +5,19 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 198 - MS SQL compatibility', function() {
-	it('1. Create tables', function(done) {
+describe('Test 198 - MS SQL compatibility', function () {
+	it('1. Create tables', function (done) {
 		alasql('CREATE DATABASE test198; USE test198');
 		alasql('SOURCE "' + __dirname + '/test198-1.sql"');
 		var res = alasql('SELECT * FROM Customers');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA', city: 'Madrid'},
 			{customerid: 'FRNDO', city: 'Madrid'},
 			{customerid: 'KRLOS', city: 'Madrid'},
 			{customerid: 'MRPHS', city: 'Zion'},
 		]);
 		var res = alasql('SELECT * FROM Orders');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{orderid: 1, customerid: 'FRNDO'},
 			{orderid: 2, customerid: 'FRNDO'},
 			{orderid: 3, customerid: 'KRLOS'},
@@ -29,23 +29,23 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('2. Select', function(done) {
+	it('2. Select', function (done) {
 		var res = alasql('SOURCE "' + __dirname + '/test198-2.sql"');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA', numorders: 0},
 			{customerid: 'FRNDO', numorders: 2},
 		]);
 		done();
 	});
 
-	it('3. CROSS JOIN', function(done) {
+	it('3. CROSS JOIN', function (done) {
 		var res = alasql('SELECT * FROM Customers AS C JOIN Orders AS O');
 		assert(res.length == 28);
 		//        console.log(res);
 		done();
 	});
 
-	it('4. ON', function(done) {
+	it('4. ON', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	JOIN Orders AS O ON C.customerid = O.customerid'
@@ -55,7 +55,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('5. LEFT OUTER JOIN ', function(done) {
+	it('5. LEFT OUTER JOIN ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid'
@@ -65,7 +65,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('6. LEFT OUTER JOIN ', function(done) {
+	it('6. LEFT OUTER JOIN ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid \
@@ -76,7 +76,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('7. GROUP BY ', function(done) {
+	it('7. GROUP BY ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid \
@@ -84,7 +84,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 			GROUP BY C.customerid'
 		);
 		//        assert(res.length == 6);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA'},
 			{customerid: 'FRNDO'},
 			{customerid: 'KRLOS'},
@@ -92,7 +92,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('8. HAVING ', function(done) {
+	it('8. HAVING ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid \
@@ -100,11 +100,11 @@ describe('Test 198 - MS SQL compatibility', function() {
 			GROUP BY C.customerid \
 			HAVING COUNT(O.orderid) < 3'
 		);
-		assert.deepEqual(res, [{customerid: 'FISSA'}, {customerid: 'FRNDO'}]);
+		assert.deepStrictEqual(res, [{customerid: 'FISSA'}, {customerid: 'FRNDO'}]);
 		done();
 	});
 
-	it('9. SELECT ', function(done) {
+	it('9. SELECT ', function (done) {
 		var res = alasql(
 			'SELECT C.customerid, COUNT(O.orderid) AS numorders \
         	FROM Customers AS C \
@@ -113,20 +113,20 @@ describe('Test 198 - MS SQL compatibility', function() {
 			GROUP BY C.customerid \
 			HAVING COUNT(O.orderid) < 3'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FISSA', numorders: 0},
 			{customerid: 'FRNDO', numorders: 2},
 		]);
 		done();
 	});
 
-	it('10. ORDER BY ', function(done) {
+	it('10. ORDER BY ', function (done) {
 		var res = alasql(
 			'SELECT orderid, customerid FROM Orders \
           ORDER BY customerid, orderid;'
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{orderid: 7, customerid: undefined},
 			{orderid: 1, customerid: 'FRNDO'},
 			{orderid: 2, customerid: 'FRNDO'},
@@ -138,7 +138,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('11. SELECT ', function(done) {
+	it('11. SELECT ', function (done) {
 		var res = alasql(
 			'SELECT C.customerid, COUNT(O.orderid) AS numorders \
         	FROM Customers AS C \
@@ -148,20 +148,20 @@ describe('Test 198 - MS SQL compatibility', function() {
 			HAVING COUNT(O.orderid) < 3 \
 			ORDER BY numorders DESC'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{customerid: 'FRNDO', numorders: 2},
 			{customerid: 'FISSA', numorders: 0},
 		]);
 		done();
 	});
 
-	it('12. TOP ', function(done) {
+	it('12. TOP ', function (done) {
 		var res = alasql(
 			'SELECT TOP 50 PERCENT orderid, customerid \
           FROM Orders ORDER BY customerid, orderid;'
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{orderid: 7, customerid: undefined},
 			{orderid: 1, customerid: 'FRNDO'},
 			{orderid: 2, customerid: 'FRNDO'},
@@ -170,7 +170,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 	});
 
 	if (false) {
-		it('13. CROSS APPLY ', function(done) {
+		it('13. CROSS APPLY ', function (done) {
 			var res = alasql(
 				'SELECT C.customerid, city, orderid \
 			FROM Customers AS C \
@@ -183,7 +183,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 			done();
 		});
 
-		it('14. OUTER APPLY ', function(done) {
+		it('14. OUTER APPLY ', function (done) {
 			var res = alasql(
 				'SELECT C.customerid, city, orderid \
 			FROM Customers AS C \
@@ -196,7 +196,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 			done();
 		});
 
-		it('15. OVER PARTITION in SELECT', function(done) {
+		it('15. OVER PARTITION in SELECT', function (done) {
 			var res = alasql(
 				'SELECT orderid, customerid, \
   			COUNT(*) OVER(PARTITION BY customerid) AS num_orders \
@@ -207,7 +207,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 			done();
 		});
 
-		it('16. OVER PARTITION in WHERE', function(done) {
+		it('16. OVER PARTITION in WHERE', function (done) {
 			var res = alasql(
 				'SELECT orderid, customerid \
 			FROM Orders \
@@ -218,7 +218,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 			done();
 		});
 	}
-	it('17. UNION ALL ', function(done) {
+	it('17. UNION ALL ', function (done) {
 		var res = alasql(
 			"SELECT 'O' AS letter, customerid, orderid \
         		FROM Orders \
@@ -228,7 +228,7 @@ describe('Test 198 - MS SQL compatibility', function() {
          		WHERE customerid LIKE '%S%' \
          	ORDER BY letter, customerid, orderid"
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{letter: 'O', customerid: 'FRNDO', orderid: 1},
 			{letter: 'O', customerid: 'FRNDO', orderid: 2},
 			{letter: 'O', customerid: 'KRLOS', orderid: 3},
@@ -243,7 +243,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('18. Complex Statement', function(done) {
+	it('18. Complex Statement', function (done) {
 		var res = alasql(
 			"SELECT C.customerid, city,/*COUNT(orderid),*/ \
            CASE \
@@ -257,7 +257,7 @@ describe('Test 198 - MS SQL compatibility', function() {
          GROUP BY C.customerid, city"
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				customerid: 'FISSA',
 				city: 'Madrid',
@@ -286,7 +286,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 		done();
 	});
 
-	it('99. Drop database', function(done) {
+	it('99. Drop database', function (done) {
 		alasql('DROP DATABASE test198');
 		done();
 	});

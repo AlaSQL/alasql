@@ -3,13 +3,13 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('378. Primary key with DELETE ALL', function() {
-	it('1. ', function(done) {
+describe('378. Primary key with DELETE ALL', function () {
+	it('1. ', function (done) {
 		function range(i) {
 			return i ? range(i - 1).concat({id: i}) : [];
 		}
 		var data = range(100);
-		var db = alasql.newDatabase('db');
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test (id INT NOT NULL PRIMARY KEY)');
 		db.exec('INSERT INTO test SELECT * FROM ?', [data]);
 		//console.log(db.exec("SELECT * FROM test"));

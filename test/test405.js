@@ -10,8 +10,8 @@ if (typeof exports === 'object') {
 */
 
 if (typeof exports !== 'object') {
-	describe('Test 405. IndexDB problem (issue #512)', function() {
-		it('1. Parse SQL', function(done) {
+	describe('Test 405. IndexDB problem (issue #512)', function () {
+		it('1. Parse SQL', function (done) {
 			//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
 			alasql(
 				'CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;\
@@ -21,7 +21,7 @@ if (typeof exports !== 'object') {
         CREATE TABLE cities;\
       ',
 				[],
-				function() {
+				function () {
 					done();
 				}
 			);

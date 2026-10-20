@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 188 - Calculation of PI', function() {
-	it('1. EMPTY', function(done) {
+describe('Test 188 - Calculation of PI', function () {
+	it('1. EMPTY', function (done) {
 		// var n = 10;
 		//      var res = alasql('SELECT COUNT(*) as cnt, VALUE AGGR(cnt/$[0]*4) as pi FROM (SELECT random() as x, random() as y FROM RANGE(1,$[0])) WHERE x*x+y*y<1',
 		//          [n]);

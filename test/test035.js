@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 35 - LIMIT OFFSET', function() {
-	it('1. Test 1', function(done) {
-		var db = alasql.newDatabase('db');
+describe('Test 35 - LIMIT OFFSET', function () {
+	it('1. Test 1', function (done) {
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');
@@ -16,20 +16,20 @@ describe('Test 35 - LIMIT OFFSET', function() {
 
 		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
 		var res = db.exec(sql);
-		assert.deepEqual([1, 2], res);
+		assert.deepStrictEqual([1, 2], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3';
 		var res = db.exec(sql);
-		assert.deepEqual([1, 2, 3], res);
+		assert.deepStrictEqual([1, 2, 3], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3 OFFSET 2';
 		var res = db.exec(sql);
-		assert.deepEqual([3, 4, 5], res);
+		assert.deepStrictEqual([3, 4, 5], res);
 
 		done();
 	});
 
-	it('2. Test 1', function(done) {
+	it('2. Test 1', function (done) {
 		alasql('CREATE DATABASE test35; use test35');
 		alasql('CREATE TABLE test1 (a int)');
 
@@ -39,15 +39,15 @@ describe('Test 35 - LIMIT OFFSET', function() {
 
 		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
 		var res = alasql(sql);
-		assert.deepEqual([1, 2], res);
+		assert.deepStrictEqual([1, 2], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 5';
 		var res = alasql(sql);
-		assert.deepEqual([1, 2, 3, 4, 5], res);
+		assert.deepStrictEqual([1, 2, 3, 4, 5], res);
 
 		var sql = 'SELECT COLUMN a FROM test1 LIMIT 5 OFFSET 2';
 		var res = alasql(sql);
-		assert.deepEqual([3, 4, 5, 6, 7], res);
+		assert.deepStrictEqual([3, 4, 5, 6, 7], res);
 
 		alasql('drop database test35');
 		done();

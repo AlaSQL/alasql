@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 61 - Increment', function() {
-	it('AUTO_INCREMENT', function(done) {
+describe('Test 61 - Increment', function () {
+	it('AUTO_INCREMENT', function (done) {
 		alasql('DROP TABLE IF EXISTS test');
 		alasql('CREATE TABLE test (a INT AUTO_INCREMENT, b INT)');
 		alasql('insert into test (b) values (10),(20),(30)');
@@ -12,7 +12,7 @@ describe('Test 61 - Increment', function() {
 		done();
 	});
 
-	it('IDENTITY', function(done) {
+	it('IDENTITY', function (done) {
 		alasql('DROP TABLE IF EXISTS test');
 		alasql('CREATE TABLE test (a INT IDENTITY(1,1), b INT)');
 		alasql('insert into test (b) values (10),(20),(30)');

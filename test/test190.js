@@ -7,14 +7,14 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function() {
-	it('1. From ?', function(done) {
+describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function () {
+	it('1. From ?', function (done) {
 		var data = [];
 		for (var i = 0; i < 200; i++) {
 			data.push({a: i});
 		}
 		var res = alasql('SELECT TOP 5 PERCENT * FROM ? ORDER BY a DESC ', [data]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 199},
 			{a: 198},
 			{a: 197},
@@ -29,13 +29,13 @@ describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function() {
 		done();
 	});
 
-	it('2. From ?', function(done) {
+	it('2. From ?', function (done) {
 		var data = [];
 		for (var i = 0; i < 200; i++) {
 			data.push(i);
 		}
 		var res = alasql('SELECT COLUMN TOP 5 PERCENT _ FROM ? ORDER BY _ DESC ', [data]);
-		assert.deepEqual(res, [199, 198, 197, 196, 195, 194, 193, 192, 191, 190]);
+		assert.deepStrictEqual(res, [199, 198, 197, 196, 195, 194, 193, 192, 191, 190]);
 		done();
 	});
 });

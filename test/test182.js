@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 182 - ARRAY aggregator', function() {
-	it('1. ARRAY()', function(done) {
+describe('Test 182 - ARRAY aggregator', function () {
+	it('1. ARRAY()', function (done) {
 		var data = [
 			{
 				userId: 1,
@@ -57,7 +57,7 @@ describe('Test 182 - ARRAY aggregator', function() {
 
 		assert(res.length == 2);
 		//     console.log(res);
-		//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
+		//      assert.deepStrictEqual(res,[1,2,3,4,5,6,7,8,9,10]);
 		done();
 	});
 });

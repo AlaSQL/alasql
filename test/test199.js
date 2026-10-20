@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 199 IF statement', function() {
-	it('1. Simple Variant', function(done) {
+describe('Test 199 IF statement', function () {
+	it('1. Simple Variant', function (done) {
 		//        alasql('CREATE DATABASE test199;USE test199');
 		var res = alasql('IF TRUE SELECT VALUE 100');
 		assert(res == 100);
