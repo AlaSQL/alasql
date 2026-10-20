@@ -1,0 +1,41 @@
+{
+	"meta": {
+		"dist": "npm alasql@0.1.6",
+		"version": "0.1.6",
+		"runtime": "node v22.23.3",
+		"rows": 100000,
+		"rounds": 5,
+		"date": "2026-10-20",
+		"reportedVersion": "0.1.6",
+		"runs": 5,
+		"machine": "Apple M1 Pro, 8 cores, 16 GB, darwin 24.6.0"
+	},
+	"results": {
+		"where filter 100k": 6.6535875,
+		"group by 100k": 3.3074292000000014,
+		"join 100k x 50": 13.517916600000012,
+		"order by limit 100k": 9.8938584,
+		"scalar functions 100k": 11.882024999999976,
+		"like 100k": 30.307408400000032,
+		"insert 10k rows": 2.1992360000000795,
+		"parse mid-size select": 0.25637525000000005,
+		"tiny query, cache miss": 0.1090725820000007,
+		"tiny query, cache hit": 0.003093499999999949,
+		"LET clause 100k (PR 2535)": null,
+		"LAG() OVER 100k (window PRs)": null
+	},
+	"spread": {
+		"where filter 100k": 0.032,
+		"group by 100k": 0.075,
+		"join 100k x 50": 0.025,
+		"order by limit 100k": 0.334,
+		"scalar functions 100k": 0.09,
+		"like 100k": 0.03,
+		"insert 10k rows": 0.161,
+		"parse mid-size select": 0.041,
+		"tiny query, cache miss": 0.068,
+		"tiny query, cache hit": 0.098,
+		"LET clause 100k (PR 2535)": null,
+		"LAG() OVER 100k (window PRs)": null
+	}
+}

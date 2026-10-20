@@ -20,7 +20,7 @@ Notes:
 
 ## Historical numbers
 
-`historical/` holds `bench.js --json` output for the latest patch of every minor release on npm, from 0.0.51 to 4.20.1, and for the `develop` baseline, on Bun and on Node. Versions before 0.2 do not run on Bun, so all their Bun values are `null`. The files are named `<version>.<runtime>.json` and `develop-<commit>.<runtime>.json`, and `compare.js` reads them directly:
+`historical/` holds `bench.js --json` output for every release on npm that can run the benchmark, from 0.0.16 to 4.20.1 (198 releases), and for the `develop` baseline, on Bun and on Node. Left out: the three 0.0.1-4.x prereleases and 0.0.3 to 0.0.15, which cannot read `FROM ?`, and 1.7.1, which was published without a build. Versions before 0.2.3 do not run on Bun, so all their Bun values are `null`; a case a version cannot run is `null` too. The files are named `<version>.<runtime>.json` and `develop-<commit>.<runtime>.json`, and `compare.js` reads them directly:
 
 ```sh
 bun test/performance/compare.js test/performance/historical/develop-787cb25d.bun.json /tmp/pr.json

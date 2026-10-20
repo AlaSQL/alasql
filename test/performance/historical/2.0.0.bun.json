@@ -1,0 +1,41 @@
+{
+	"meta": {
+		"dist": "npm alasql@2.0.0",
+		"version": "2.0.0",
+		"runtime": "bun 1.4.3",
+		"rows": 100000,
+		"rounds": 5,
+		"date": "2026-10-20",
+		"reportedVersion": "2.0.0-develop-e1af3440undefined",
+		"runs": 5,
+		"machine": "Apple M1 Pro, 8 cores, 16 GB, darwin 24.6.0"
+	},
+	"results": {
+		"where filter 100k": 3.699674999999999,
+		"group by 100k": 1.9067833000000007,
+		"join 100k x 50": 18.889191800000003,
+		"order by limit 100k": 8.024350000000004,
+		"scalar functions 100k": 11.03488339999999,
+		"like 100k": 38.108025,
+		"insert 10k rows": 3.975152666666721,
+		"parse mid-size select": 0.19151966600000014,
+		"tiny query, cache miss": 0.06923049999999967,
+		"tiny query, cache hit": 0.004165041500000143,
+		"LET clause 100k (PR 2535)": null,
+		"LAG() OVER 100k (window PRs)": null
+	},
+	"spread": {
+		"where filter 100k": 0.224,
+		"group by 100k": 0.077,
+		"join 100k x 50": 0.023,
+		"order by limit 100k": 0.036,
+		"scalar functions 100k": 0.102,
+		"like 100k": 0.032,
+		"insert 10k rows": 0.184,
+		"parse mid-size select": 0.114,
+		"tiny query, cache miss": 0.232,
+		"tiny query, cache hit": 0.085,
+		"LET clause 100k (PR 2535)": null,
+		"LAG() OVER 100k (window PRs)": null
+	}
+}
