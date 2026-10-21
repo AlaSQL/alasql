@@ -85,6 +85,7 @@ import fromFile from './formats/from.js';
 import xml from './formats/xml.js';
 import gexf from './formats/gexf.js';
 import print from './statements/print.js';
+import source from './statements/source.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -164,6 +165,7 @@ fromFile(instance, internal);
 xml(instance, internal);
 gexf(instance, internal);
 print(instance, internal);
+source(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
