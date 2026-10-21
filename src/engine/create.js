@@ -17,16 +17,7 @@
 	UMD envelope for AlaSQL
 */
 
-(function (root, factory) {
-	if (typeof define === 'function' && define.amd) {
-		define([], factory);
-	} else if (typeof exports === 'object') {
-		/** alasql main function */
-		module.exports = factory();
-	} else {
-		root.alasql = factory();
-	}
-}(this, function () {
+
 
 	/**
 		AlaSQL - Main Alasql class
@@ -57,6 +48,8 @@
 		alasql().From(data).Where(function(x){return x.a == 10}).exec();
 	 */
 
+export function create() {
+
 	let alasql = function (sql, params, cb, scope) {
 
 		params = params || [];
@@ -70,9 +63,9 @@
 
 		if (arguments.length === 0) {
 			// Without arguments - Fluent interface
-			return new yy.Select({
-				columns: [new yy.Column({ columnid: '*' })],
-				from: [new yy.ParamValue({ param: 0 })]
+			return new alasql.yy.Select({
+				columns: [new alasql.yy.Column({ columnid: '*' })],
+				from: [new alasql.yy.ParamValue({ param: 0 })]
 			});
 		} else if (arguments.length === 1) {
 			// Access promise notation without using `.promise(...)`
@@ -124,3 +117,6 @@
 var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" references to
 var __dirname = '';
 //*/
+
+	return alasql;
+}
