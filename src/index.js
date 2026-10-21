@@ -80,6 +80,7 @@ import sqlite from './dialects/sqlite.js';
 import into from './formats/into.js';
 import xls from './formats/xls.js';
 import xlsxml from './formats/xlsxml.js';
+import intoXlsx from './formats/xlsx.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -154,6 +155,7 @@ sqlite(instance, internal);
 into(instance, internal);
 xls(instance, internal);
 xlsxml(instance, internal);
+intoXlsx(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);

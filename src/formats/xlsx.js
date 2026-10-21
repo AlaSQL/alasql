@@ -1,3 +1,9 @@
+import {deepEqual} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var utils = alasql.utils;
+	var getXLSX = internal.getXLSX;
+	var saveAs = internal.saveAs;
 /**
 	Export to XLSX function
 	@function
@@ -204,3 +210,4 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 */
 	}
 };
+}
