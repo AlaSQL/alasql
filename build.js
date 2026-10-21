@@ -72,6 +72,7 @@ export const EXTERNALS = [
 // names its files reach by bare name (tools/free-variables.js lists them).
 export const LEGACY_IMPORTS = [
 	"import {escapeq, returnTrue, n2u, und} from '../utils/helpers.js';",
+	"import {re_invalidFnNameChars} from '../functions/functions.js';",
 ];
 export const LEGACY_BINDINGS = [
 	'var yy = alasql.yy;',
@@ -95,6 +96,7 @@ export const LEGACY_BINDINGS = [
 	'var loadFile = utils.loadFile;',
 	'var getXLSX = internal.getXLSX;',
 	'var Query = alasql.Query;',
+	'var stdfn = alasql.stdfn;',
 	'var Database = alasql.Database;',
 	'var Table = alasql.Table;',
 	'var queryfn = internal.queryfn;',

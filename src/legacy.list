@@ -20,7 +20,6 @@ src/46apply.js
 src/47over.js
 src/expression/expression.js
 src/52linq.js
-src/functions/functions.js
 src/expression/case.js
 src/expression/json.js
 src/expression/convert.js
