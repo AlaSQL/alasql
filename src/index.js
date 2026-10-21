@@ -74,6 +74,7 @@ import pretty from './console/pretty.js';
 import alasqlConsole from './console/console.js';
 import tsql from './dialects/tsql.js';
 import mysql from './dialects/mysql.js';
+import postgres from './dialects/postgres.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -142,6 +143,7 @@ pretty(instance, internal);
 alasqlConsole(instance, internal);
 tsql(instance, internal);
 mysql(instance, internal);
+postgres(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
