@@ -1,5 +1,5 @@
 export default function install(alasql) {
-	const alasqlparser = alasql.parser;
+	var alasqlparser = alasql.parser;
 /*
 //
 // Parser helper for Alasql.js

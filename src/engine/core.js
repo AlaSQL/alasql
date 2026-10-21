@@ -1,7 +1,7 @@
 import makeParser from '../generated/parser.js';
 
 export default function install(alasql) {
-	const alasqlparser = makeParser(alasql);
+	var alasqlparser = makeParser(alasql);
 /**
 	Database class for Alasql.js
 */

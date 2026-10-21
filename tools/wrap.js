@@ -9,8 +9,11 @@
 	the moved file. What is added, from the free-variable analysis (tools/free-variables.js) of
 	the file as it was in the legacy scope:
 
-	- a binding line, const {name} = alasql, for a name a module installed earlier declares and
-	  puts on the alasql object (yy, utils); the wrapped module must be installed after them;
+	- a binding line, var name = alasql.name, for a name a module installed earlier declares and
+	  puts on the alasql object (yy, utils); the wrapped module must be installed after them. var,
+	  not const: V8 checks a const of an enclosing scope for initialisation at every access from
+	  an inner function, and yy is read in every compile (measured: compile 10 to 25 percent
+	  slower on Node with const, the same speed with var);
 	- for alasqlparser: the module that sets alasql.parser imports the generated parser wrapper
 	  and makes the parser for this alasql object; every other module reads alasql.parser;
 	- the wrapper, export default function install(alasql) { ... };
@@ -65,16 +68,16 @@ const bindings = [];
 {
 	for (const n of names) {
 		if (n === 'alasql') continue;
-		if (n === 'schemaChanged') bindings.push('const {schemaChanged} = alasql.private;');
+		if (n === 'schemaChanged') bindings.push('var schemaChanged = alasql.private.schemaChanged;');
 		else if (n === 'alasqlparser') {
 			// The grammar reads alasql.options, alasql.fn and alasql.aggr, so the parser is made
 			// for the alasql object (src/generated/parser.js). The module that sets alasql.parser
 			// makes it; every other module reads it from there.
 			if (text.includes('alasql.parser = alasqlparser')) {
 				imports.push("import makeParser from '../generated/parser.js';");
-				bindings.push('const alasqlparser = makeParser(alasql);');
-			} else bindings.push('const alasqlparser = alasql.parser;');
-		} else if (ON_ALASQL[n]) bindings.push(`const {${ON_ALASQL[n]}} = alasql;`);
+				bindings.push('var alasqlparser = makeParser(alasql);');
+			} else bindings.push('var alasqlparser = alasql.parser;');
+		} else if (ON_ALASQL[n]) bindings.push(`var ${n} = alasql.${ON_ALASQL[n]};`);
 		else throw new Error(`${file} uses ${n}, which no module provides yet`);
 	}
 }

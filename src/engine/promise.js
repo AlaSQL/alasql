@@ -1,5 +1,5 @@
 export default function install(alasql) {
-	const {utils} = alasql;
+	var utils = alasql.utils;
 //
 // Promises for AlaSQL
 //
