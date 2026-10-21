@@ -18,6 +18,7 @@ if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
 //*/
 
 
+};
 
 // Create default database
 new Database("alasql");
