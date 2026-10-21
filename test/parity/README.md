@@ -3,11 +3,16 @@
 Does a build behave the same as the reference build, or as the build before this change? The ES6 conversion (`context/roadmap-phase-1.md`, step 0) promises the same behaviour, and the suite alone cannot show that: it has 2,447 passing tests, 213 skipped, and the browser, worker, CLI and ESM paths are hardly covered. The dialect test in `test/dialect/` stays what it is: alasql against SQLite, the reference engine.
 
 ```sh
-yarn build-only
+yarn test-parity          # record the reference, record the current build, compare; exit code 1 on any difference
+yarn test-parity-smoke    # the smokes, including --pack, on the node in PATH
+```
+
+`yarn test-parity` runs these three; run them by hand to use another reference (below):
+
+```sh
 bun test/parity/run.js record ref --ref      # the published 4.21.0 in dist/, recorded, then dist/ rebuilt
 bun test/parity/run.js record new            # the current dist/
 bun test/parity/run.js compare ref new       # exit code 1 on any difference
-node test/parity/smoke.js --node=$(which node)
 ```
 
 Record the build before a change and the build after it, and compare. When a step claims "no behaviour change", the compare says so or shows the statement that changed.
