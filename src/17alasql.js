@@ -272,6 +272,33 @@ alasql.exec = function (sql, params, cb, scope) {
  * Clears any unneeded properties from a given AST statement closure used for caching
  * @param {Object} statement the statement to cleanup
  */
+// Run a compiled statement and mark it as running until it has finished, also when it
+// finishes later through the callback. The cached result data is cleaned up then.
+function runStatement(statement, params, cb, scope) {
+	statement.running = (statement.running || 0) + 1;
+	var finished = false;
+	var finish = function () {
+		if (!finished) {
+			finished = true;
+			statement.running--;
+			cleanupCache(statement);
+		}
+	};
+	var done = cb
+		? function (res, err) {
+				finish();
+				return cb(res, err);
+			}
+		: cb;
+	try {
+		return statement(params, done, scope);
+	} finally {
+		if (!cb) {
+			finish();
+		}
+	}
+}
+
 function cleanupCache(statement) {
 	if (!statement) {
 		return;
@@ -307,14 +334,20 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			db.dbversion === statement.dbversion &&
 			statement.schemaVersion === alasql.schemaVersion
 		) {
-			var res = statement(params, cb);
-			cleanupCache(statement);
-			return res;
+			// A compiled statement keeps the state of one run. While a run of it is still
+			// going (a nested call or an unfinished asynchronous run), this call compiles
+			// its own copy instead of sharing it (#1953)
+			if (!statement.running) {
+				return runStatement(statement, params, cb);
+			}
+			var inUse = true;
 		}
 	}
 
-	let ast = db.astCache[hh];
-	if (alasql.options.cache && !ast) {
+	let ast = inUse ? undefined : db.astCache[hh];
+	if (inUse) {
+		ast = alasql.parse(sql);
+	} else if (alasql.options.cache && !ast) {
 		// Create AST cache
 		ast = alasql.parse(sql);
 		if (ast) {
@@ -344,7 +377,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			statement.dbversion = db.dbversion;
 			statement.schemaVersion = alasql.schemaVersion;
 
-			if (alasql.options.cache) {
+			if (alasql.options.cache && !inUse) {
 				// Secure sqlCache size
 				if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
 					db.resetSqlCache();
@@ -352,9 +385,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 				db.sqlCacheSize++;
 				db.sqlCache[hh] = statement;
 			}
-			var res = (alasql.res = statement(params, cb, scope));
-			cleanupCache(statement);
-			return res;
+			return (alasql.res = runStatement(statement, params, cb, scope));
 		}
 		alasql.precompile(ast.statements[0], alasql.useid, params);
 		var res = (alasql.res = ast.statements[0].execute(databaseid, params, cb, scope));
