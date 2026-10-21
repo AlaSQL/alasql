@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.20.0",
+	"version": "4.20.1",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -29,6 +29,8 @@
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
 		"build-only": "sh build.sh",
+		"test-perf": "bun test/performance/vs-npm.js",
+		"test-perf-mini": "bun test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
 		"release": "yarn version",
 		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
@@ -51,6 +53,7 @@
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
 		"prepare": "husky",
 		"preversion": "yarn && yarn test && npm login",
+		"prepublishOnly": "sh build.sh </dev/null",
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
@@ -69,7 +72,7 @@
 		"husky": "9.1.7",
 		"jison": "^0.4.18",
 		"open": "11.0.4",
-		"prettier": "3.9.9",
+		"prettier": "3.9.10",
 		"react-native-fetch-blob": "^0.10.8",
 		"rexreplace": "7.1.14",
 		"strftime": "0.10.3",

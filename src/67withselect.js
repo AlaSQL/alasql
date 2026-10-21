@@ -92,8 +92,25 @@ function executeRecursiveCTE(w, databaseid, params) {
 		columnNames = anchorColumnNames;
 	}
 
+	// With UNION (not UNION ALL) a row already in the result is not added again,
+	// so the recursion stops on cycles in the data, as in SQLite
+	var seen = select.unionall ? null : new Set();
+	var addNew = function (rows) {
+		if (!seen) return rows;
+		return rows.filter(function (row) {
+			var key = JSON.stringify(
+				columnNames.map(function (c) {
+					return row[c];
+				})
+			);
+			if (seen.has(key)) return false;
+			seen.add(key);
+			return true;
+		});
+	};
+
 	// Map anchor data to target column names (handles both object format and column renaming)
-	var anchorData = mapColumnsToNames(anchorDetails.data, anchorColumnNames, columnNames);
+	var anchorData = addNew(mapColumnsToNames(anchorDetails.data, anchorColumnNames, columnNames));
 	tb.data = anchorData.slice();
 
 	// Iterate with the recursive part
@@ -128,7 +145,8 @@ function executeRecursiveCTE(w, databaseid, params) {
 		var recursiveData = mapColumnsToNames(recursiveDetails.data, recursiveColumnNames, columnNames);
 
 		// Add new rows to the result
-		newRows = recursiveData;
+		newRows = addNew(recursiveData);
+		if (newRows.length === 0) break;
 		for (var i = 0; i < newRows.length; i++) {
 			allData.push(newRows[i]);
 		}

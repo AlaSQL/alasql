@@ -1,0 +1,2805 @@
+# Expected differences between alasql and SQLite in the dialect test (#2593).
+# Each entry: the case, the answer alasql gives today, SQLite 3.43.2's answer, and why they differ.
+# The test fails when alasql gives another answer for a listed case. After an intended change,
+# run `bun test/dialect/run.js --update`: it rewrites the answers and keeps every "why".
+# Rows of a statement without ORDER BY are shown sorted.
+
+SELECT 'a' || NULL
+  alasql: [["a"]]
+  sqlite: [[null]]
+  why: Three-valued logic: || with NULL gives NULL in SQLite. 5.0 (#2597).
+
+SELECT a, b, c FROM ni ORDER BY id
+  alasql: [[NaN, NaN, NaN], [1, 1.5, 2]]
+  sqlite: [[null, null, null], [1, 1.5, 2]]
+  why: Fault: NULL into an INT, FLOAT or NUMBER column is stored as NaN (#2590). 5.0, breaking.md.
+
+SELECT id FROM ni WHERE a IS NULL
+  alasql: []
+  sqlite: [[1]]
+  why: Fault: NULL into an INT column is stored as NaN, so IS NULL misses it (#2590). 5.0, breaking.md.
+
+SELECT NOT (NULL = 1)
+  alasql: [[true]]
+  sqlite: [[null]]
+  why: Three-valued logic: alasql treats NULL as false here. SQLite's answer in 5.0 (#2597).
+
+SELECT NULL AND FALSE
+  alasql: [[undefined]]
+  sqlite: [[0]]
+  why: Three-valued logic: alasql treats NULL as false here. SQLite's answer in 5.0 (#2597).
+
+SELECT NULL OR FALSE
+  alasql: [[false]]
+  sqlite: [[null]]
+  why: Three-valued logic: alasql treats NULL as false here. SQLite's answer in 5.0 (#2597).
+
+SELECT 2 IN (1, NULL)
+  alasql: [[false]]
+  sqlite: [[null]]
+  why: Three-valued logic: alasql treats NULL as false here. SQLite's answer in 5.0 (#2597).
+
+SELECT 2 NOT IN (1, NULL)
+  alasql: [[true]]
+  sqlite: [[null]]
+  why: Three-valued logic: alasql treats NULL as false here. SQLite's answer in 5.0 (#2597).
+
+SELECT id FROM t WHERE NOT (n = 5) ORDER BY id
+  alasql: [[2], [3], [4], [5]]
+  sqlite: [[2], [4], [5]]
+  why: Three-valued logic: alasql treats NULL as false here. SQLite's answer in 5.0 (#2597).
+
+SELECT ja.id AS a, jb.id AS b FROM ja JOIN jb ON ja.g = jb.g ORDER BY a, b
+  alasql: [[1, 1], [1, 2], [2, 3], [3, 4], [4, 4]]
+  sqlite: [[1, 1], [1, 2], [2, 3]]
+  why: Three-valued logic: NULL = NULL joins rows. 5.0 (#2597).
+
+SELECT ja.id AS a, jb.id AS b FROM ja LEFT JOIN jb ON ja.g = jb.g ORDER BY a, b
+  alasql: [[1, 1], [1, 2], [2, 3], [3, 4], [4, 4]]
+  sqlite: [[1, 1], [1, 2], [2, 3], [3, null], [4, null]]
+  why: Three-valued logic: NULL = NULL joins rows. 5.0 (#2597).
+
+SELECT MAX(s) FROM t
+  alasql: [[undefined]]
+  sqlite: [["c"]]
+  why: Fault: MAX over text gives undefined (#2595, #2696).
+
+SELECT MIN(s) FROM t
+  alasql: [[undefined]]
+  sqlite: [["10"]]
+  why: Fault: MIN over text gives undefined (#2595, #2696).
+
+SELECT GREATEST(NULL, 1)
+  alasql: [[1]]
+  sqlite: [[null]]
+  why: alasql gives PostgreSQL's answer (GREATEST ignores NULL); SQLite's max() returns NULL (#2593).
+
+SELECT GREATEST(10, '9')
+  alasql: [[10]]
+  sqlite: [["9"]]
+  why: alasql gives PostgreSQL's answer; SQLite sorts every number before every string (#2593).
+
+SELECT UPPER('straße')
+  alasql: [["STRASSE"]]
+  sqlite: [["STRAßE"]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT LENGTH(123)
+  alasql: [[undefined]]
+  sqlite: [[3]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT SUBSTR('abcdef', 0, 3)
+  alasql: [["f"]]
+  sqlite: [["ab"]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT SUBSTR('abcdef', -1, 3)
+  alasql: [["ef"]]
+  sqlite: [["f"]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT SUBSTR('abcdef', -2)
+  alasql: [["def"]]
+  sqlite: [["ef"]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT SUBSTR('abcdef', -7, 3)
+  alasql: [["abc"]]
+  sqlite: [["ab"]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT SUBSTR('abcdef', 2, -1)
+  alasql: [[""]]
+  sqlite: [["a"]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT SUBSTR(12345, 2, 2)
+  alasql: error: y.substr is not a function. (In 'y.substr(2-1,2)', 'y.substr' is undefined)
+  sqlite: [["23"]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT 1 / 2
+  alasql: [[0.5]]
+  sqlite: [[0]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT 7 / 2
+  alasql: [[3.5]]
+  sqlite: [[3]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT -7 / 2
+  alasql: [[-3.5]]
+  sqlite: [[-3]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT 1 / 0
+  alasql: [[Infinity]]
+  sqlite: [[null]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT '5' + 3
+  alasql: [["53"]]
+  sqlite: [[8]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT 'abc' + 1
+  alasql: [["abc1"]]
+  sqlite: [[1]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT '5' < 10
+  alasql: [[true]]
+  sqlite: [[0]]
+  why: alasql gives PostgreSQL's answer; SQLite sorts every number before every string (#2593).
+
+SELECT 10 < '9'
+  alasql: [[false]]
+  sqlite: [[1]]
+  why: alasql gives PostgreSQL's answer; SQLite sorts every number before every string (#2593).
+
+SELECT ROUND(-2.5)
+  alasql: [[-2]]
+  sqlite: [[-3]]
+  why: JavaScript arithmetic, kept by the alasql dialect (#2593, rule 1).
+
+SELECT CAST('12abc' AS INT)
+  alasql: [[0]]
+  sqlite: [[12]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT CAST(NULL AS INT)
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Fault: wrong under any reference (#2593).
+
+SELECT CAST(12 AS TEXT)
+  alasql: [[12]]
+  sqlite: [["12"]]
+  why: Fault: CAST to TEXT keeps the number.
+
+SELECT CAST('1.5' AS REAL)
+  alasql: [["1.5"]]
+  sqlite: [[1.5]]
+  why: Fault: CAST to REAL keeps the text.
+
+SELECT SUM(n) FROM e
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: SUM over no rows gives 0; SQLite gives NULL. 5.0, breaking.md (#2722).
+
+SELECT g, MAX(s) FROM t GROUP BY g
+  alasql: [[1, undefined], [2, undefined], [undefined, undefined]]
+  sqlite: [[1, "b"], [2, "10"], [null, "c"]]
+  why: Fault: MAX over text gives undefined (#2595, #2696).
+
+SELECT n FROM t ORDER BY n
+  alasql: [[-3], [undefined], [0], [2], [5]]
+  sqlite: [[null], [-3], [0], [2], [5]]
+  why: NULL sorts between negative and positive numbers (#2720). NULL placement as SQLite in 5.0, breaking.md.
+
+SELECT n FROM t ORDER BY n DESC
+  alasql: [[5], [2], [undefined], [0], [-3]]
+  sqlite: [[5], [2], [0], [-3], [null]]
+  why: NULL sorts between negative and positive numbers (#2720). NULL placement as SQLite in 5.0, breaking.md.
+
+SELECT gb.k, gb2.k, COUNT(*), SUM(gb.num) FROM gb JOIN gb2 ON gb2.id = gb.id WHERE gb.k = 1 GROUP BY gb.k, gb2.k
+  alasql: [[1, 1, -3, 20], [1, 1, 5, 10]]
+  sqlite: [[1, 10, 1, 5], [1, 20, 1, -3]]
+  why: Not reviewed yet.
+
+SELECT gb.k, gb2.k, COUNT(*), SUM(gb.num) FROM gb JOIN gb2 ON gb2.id = gb.id WHERE gb.k = 1 GROUP BY gb.k, gb2.k HAVING SUM(gb.num) > 0
+  alasql: [[1, 1, 5, 10]]
+  sqlite: [[1, 10, 1, 5]]
+  why: Not reviewed yet.
+
+SELECT gb.k, gb2.k, COUNT(*), SUM(gb.num) FROM gb JOIN gb2 ON gb2.id = gb.id WHERE gb.k = 1 GROUP BY gb.k, gb2.k ORDER BY gb.k, gb2.k
+  alasql: [[1, 1, 5, 10], [1, 1, -3, 20]]
+  sqlite: [[1, 10, 1, 5], [1, 20, 1, -3]]
+  why: Not reviewed yet.
+
+SELECT gb.k, gb2.k, COUNT(*), SUM(gb.num) FROM gb JOIN gb2 ON gb2.id = gb.id GROUP BY gb.k, gb2.k
+  alasql: [[1, 1, -3, 20], [1, 1, 5, 10], [2, 1, 2, 20], [2, 1, undefined, 10], [3, 1, 4, undefined], [3, 1, undefined, 10], [undefined, 1, 0, 10]]
+  sqlite: [[1, 10, 1, 5], [1, 20, 1, -3], [2, 10, 1, null], [2, 20, 1, 2], [3, 10, 1, null], [3, null, 1, 4], [null, 10, 1, 0]]
+  why: Not reviewed yet.
+
+SELECT gb.k, gb2.k, COUNT(*), SUM(gb.num) FROM gb JOIN gb2 ON gb2.id = gb.id GROUP BY gb.k, gb2.k HAVING SUM(gb.num) > 0
+  alasql: [[1, 1, 5, 10], [2, 1, 2, 20], [3, 1, 4, undefined]]
+  sqlite: [[1, 10, 1, 5], [2, 20, 1, 2], [3, null, 1, 4]]
+  why: Not reviewed yet.
+
+SELECT gb.k, gb2.k, COUNT(*), SUM(gb.num) FROM gb JOIN gb2 ON gb2.id = gb.id GROUP BY gb.k, gb2.k ORDER BY gb.k, gb2.k
+  alasql: [[undefined, 1, 0, 10], [1, 1, 5, 10], [1, 1, -3, 20], [2, 1, undefined, 10], [2, 1, 2, 20], [3, 1, 4, undefined], [3, 1, undefined, 10]]
+  sqlite: [[null, 10, 1, 0], [1, 10, 1, 5], [1, 20, 1, -3], [2, 10, 1, null], [2, 20, 1, 2], [3, null, 1, 4], [3, 10, 1, null]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 ORDER BY k % 2
+  alasql: [[1, 4, 6], [0, 2, 2], [undefined, 1, 0]]
+  sqlite: [[null, 1, 0], [0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2 HAVING SUM(gb.num) > 0
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2 HAVING COUNT(*) > 1
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2 ORDER BY k % 2
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2
+  alasql: [[undefined, 1, 0], [undefined, 2, 2], [undefined, 4, 6]]
+  sqlite: [[0, 2, 2], [1, 4, 6], [null, 1, 0]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 HAVING SUM(gb.num) > 0
+  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
+  sqlite: [[0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 HAVING COUNT(*) > 1
+  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
+  sqlite: [[0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 ORDER BY k % 2
+  alasql: [[undefined, 4, 6], [undefined, 2, 2], [undefined, 1, 0]]
+  sqlite: [[null, 1, 0], [0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2)
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2) HAVING SUM(gb.num) > 0
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2) HAVING COUNT(*) > 1
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2) ORDER BY (k % 2)
+  alasql: [[undefined, 2, 2]]
+  sqlite: [[1, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2)
+  alasql: [[undefined, 1, 0], [undefined, 2, 2], [undefined, 4, 6]]
+  sqlite: [[0, 2, 2], [1, 4, 6], [null, 1, 0]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2) HAVING SUM(gb.num) > 0
+  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
+  sqlite: [[0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2) HAVING COUNT(*) > 1
+  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
+  sqlite: [[0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2) ORDER BY (k % 2)
+  alasql: [[undefined, 4, 6], [undefined, 2, 2], [undefined, 1, 0]]
+  sqlite: [[null, 1, 0], [0, 2, 2], [1, 4, 6]]
+  why: Not reviewed yet.
+
+SELECT k, COUNT(*), SUM(gb.num) FROM gb GROUP BY 1
+  alasql: [[1, 7, 8]]
+  sqlite: [[1, 2, 2], [2, 2, 2], [3, 2, 4], [null, 1, 0]]
+  why: Not reviewed yet.
+
+SELECT k, COUNT(*), SUM(gb.num) FROM gb GROUP BY 1 HAVING SUM(gb.num) > 0
+  alasql: [[1, 7, 8]]
+  sqlite: [[1, 2, 2], [2, 2, 2], [3, 2, 4]]
+  why: Not reviewed yet.
+
+SELECT k, COUNT(*), SUM(gb.num) FROM gb GROUP BY 1 HAVING COUNT(*) > 1
+  alasql: [[1, 7, 8]]
+  sqlite: [[1, 2, 2], [2, 2, 2], [3, 2, 4]]
+  why: Not reviewed yet.
+
+SELECT k, COUNT(*), SUM(gb.num) FROM gb GROUP BY 1 ORDER BY 1
+  alasql: [[1, 7, 8]]
+  sqlite: [[null, 1, 0], [1, 2, 2], [2, 2, 2], [3, 2, 4]]
+  why: Not reviewed yet.
+
+SELECT SUM(num) FROM gb WHERE gb.id < 0
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT num) FROM gb WHERE gb.id < 0
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Not reviewed yet.
+
+SELECT SUM(txt) FROM gb WHERE gb.id < 0
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT txt) FROM gb WHERE gb.id < 0
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Not reviewed yet.
+
+SELECT SUM(d) FROM gb WHERE gb.id < 0
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT d) FROM gb WHERE gb.id < 0
+  alasql: [[0]]
+  sqlite: [[null]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(txt) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, 0]]
+  why: Not reviewed yet.
+
+SELECT SUM(txt) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [[0]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(DISTINCT txt) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, 0]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT txt) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [[0]]
+  why: Not reviewed yet.
+
+SELECT k, AVG(txt) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, 0]]
+  why: Not reviewed yet.
+
+SELECT AVG(txt) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [[0]]
+  why: Not reviewed yet.
+
+SELECT k, MIN(txt) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, "a"]]
+  why: Not reviewed yet.
+
+SELECT MIN(txt) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [["a"]]
+  why: Not reviewed yet.
+
+SELECT k, MAX(txt) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, "b"]]
+  why: Not reviewed yet.
+
+SELECT MAX(txt) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [["b"]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(d) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, 4047]]
+  why: Not reviewed yet.
+
+SELECT SUM(d) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [[4047]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(DISTINCT d) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, 4047]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT d) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [[4047]]
+  why: Not reviewed yet.
+
+SELECT k, AVG(d) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, 2023.5]]
+  why: Not reviewed yet.
+
+SELECT AVG(d) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [[2023.5]]
+  why: Not reviewed yet.
+
+SELECT k, MIN(d) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, "2023-12-31"]]
+  why: Not reviewed yet.
+
+SELECT MIN(d) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [["2023-12-31"]]
+  why: Not reviewed yet.
+
+SELECT k, MAX(d) FROM gb WHERE gb.k = 1 GROUP BY k
+  alasql: [[1, undefined]]
+  sqlite: [[1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT MAX(d) FROM gb WHERE gb.k = 1
+  alasql: [[undefined]]
+  sqlite: [["2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(txt) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, "a"]]
+  sqlite: [[1, 0], [2, 0], [3, 10], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT SUM(txt) FROM gb
+  alasql: [[undefined]]
+  sqlite: [[10]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(DISTINCT txt) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, "c"], [3, "10"], [undefined, "a"]]
+  sqlite: [[1, 0], [2, 0], [3, 10], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT txt) FROM gb
+  alasql: [[undefined]]
+  sqlite: [[10]]
+  why: Not reviewed yet.
+
+SELECT k, AVG(txt) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, 100], [undefined, "a"]]
+  sqlite: [[1, 0], [2, 0], [3, 10], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT AVG(txt) FROM gb
+  alasql: [[undefined]]
+  sqlite: [[2]]
+  why: Not reviewed yet.
+
+SELECT k, MIN(txt) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, undefined]]
+  sqlite: [[1, "a"], [2, "c"], [3, "10"], [null, "a"]]
+  why: Not reviewed yet.
+
+SELECT MIN(txt) FROM gb
+  alasql: [[undefined]]
+  sqlite: [["10"]]
+  why: Not reviewed yet.
+
+SELECT k, MAX(txt) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, undefined]]
+  sqlite: [[1, "b"], [2, "c"], [3, "10"], [null, "a"]]
+  why: Not reviewed yet.
+
+SELECT MAX(txt) FROM gb
+  alasql: [[undefined]]
+  sqlite: [["c"]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(d) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, "2024-01-02"]]
+  sqlite: [[1, 4047], [2, 2024], [3, 2022], [null, 2024]]
+  why: Not reviewed yet.
+
+SELECT SUM(d) FROM gb
+  alasql: [[undefined]]
+  sqlite: [[10117]]
+  why: Not reviewed yet.
+
+SELECT k, SUM(DISTINCT d) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, "2024-01-15"], [3, "2022-06-30"], [undefined, "2024-01-02"]]
+  sqlite: [[1, 4047], [2, 2024], [3, 2022], [null, 2024]]
+  why: Not reviewed yet.
+
+SELECT SUM(DISTINCT d) FROM gb
+  alasql: [[undefined]]
+  sqlite: [[10117]]
+  why: Not reviewed yet.
+
+SELECT k, AVG(d) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, "2024-01-02"]]
+  sqlite: [[1, 2023.5], [2, 2024], [3, 2022], [null, 2024]]
+  why: Not reviewed yet.
+
+SELECT AVG(d) FROM gb
+  alasql: [[undefined]]
+  sqlite: [[2023.4]]
+  why: Not reviewed yet.
+
+SELECT k, MIN(d) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, undefined]]
+  sqlite: [[1, "2023-12-31"], [2, "2024-01-15"], [3, "2022-06-30"], [null, "2024-01-02"]]
+  why: Not reviewed yet.
+
+SELECT MIN(d) FROM gb
+  alasql: [[undefined]]
+  sqlite: [["2022-06-30"]]
+  why: Not reviewed yet.
+
+SELECT k, MAX(d) FROM gb GROUP BY k
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [undefined, undefined]]
+  sqlite: [[1, "2024-03-01"], [2, "2024-01-15"], [3, "2022-06-30"], [null, "2024-01-02"]]
+  why: Not reviewed yet.
+
+SELECT MAX(d) FROM gb
+  alasql: [[undefined]]
+  sqlite: [["2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num COLLATE NOCASE, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num COLLATE NOCASE DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o ORDER BY k, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o ORDER BY k DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o ORDER BY k NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o ORDER BY k COLLATE NOCASE, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o ORDER BY k COLLATE NOCASE DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 2, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 2 DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 2 COLLATE NOCASE, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 2 COLLATE NOCASE DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY "num", id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY "num" DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY "num" NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY "num" COLLATE NOCASE, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY "num" COLLATE NOCASE DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY [num], id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY [num] DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY [num] NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY [num] COLLATE NOCASE, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY [num] COLLATE NOCASE DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 0 - num, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 3], [6, 3], [3, 0], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 0 - num DESC, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[2, -2], [3, 0], [5, 3], [6, 3], [1, 10], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 0 - num NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 3], [6, 3], [3, 0], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 0 - num COLLATE NOCASE, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 3], [6, 3], [3, 0], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY 0 - num COLLATE NOCASE DESC, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[2, -2], [3, 0], [5, 3], [6, 3], [1, 10], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY ?, id  params: ["num"]
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[1, 10], [2, -2], [3, 0], [4, null], [5, 3], [6, 3], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY ? DESC, id  params: ["num"]
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [2, -2], [3, 0], [4, null], [5, 3], [6, 3], [7, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY num, id
+  alasql: [[2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY num DESC, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [2, -2, "B", "2023-12-31", "9"]]
+  sqlite: [[1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [2, -2, "B", "2023-12-31", "9"], [4, null, null, null, null], [7, null, null, null, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY num NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 2, id
+  alasql: [[2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 2 DESC, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [2, -2, "B", "2023-12-31", "9"]]
+  sqlite: [[1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [2, -2, "B", "2023-12-31", "9"], [4, null, null, null, null], [7, null, null, null, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 0 - num, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [2, -2, "B", "2023-12-31", "9"]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [2, -2, "B", "2023-12-31", "9"]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 0 - num DESC, id
+  alasql: [[2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10]]
+  sqlite: [[2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10], [4, null, null, null, null], [7, null, null, null, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 0 - num NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [2, -2, "B", "2023-12-31", "9"]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY num, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY num DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY num NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY 2, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY 2 DESC, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[1, 10], [5, 3], [6, 3], [3, 0], [2, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2], [3, 0], [5, 3], [6, 3], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY 0 - num, id
+  alasql: [[1, 10], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 3], [6, 3], [3, 0], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY 0 - num DESC, id
+  alasql: [[2, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [1, 10]]
+  sqlite: [[2, -2], [3, 0], [5, 3], [6, 3], [1, 10], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM (SELECT * FROM o) AS z ORDER BY 0 - num NULLS FIRST, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 3], [6, 3], [3, 0], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY num
+  alasql: [[-2, 1], [0, 1], [undefined, 2], [3, 2], [10, 1]]
+  sqlite: [[null, 2], [-2, 1], [0, 1], [3, 2], [10, 1]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY num DESC
+  alasql: [[10, 1], [3, 2], [0, 1], [undefined, 2], [-2, 1]]
+  sqlite: [[10, 1], [3, 2], [0, 1], [-2, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY num NULLS FIRST
+  alasql: [[10, 1], [-2, 1], [0, 1], [undefined, 2], [3, 2]]
+  sqlite: [[null, 2], [-2, 1], [0, 1], [3, 2], [10, 1]]
+  why: Not reviewed yet.
+
+SELECT num AS k, COUNT(*) FROM o GROUP BY num ORDER BY k
+  alasql: [[-2, 1], [0, 1], [undefined, 2], [3, 2], [10, 1]]
+  sqlite: [[null, 2], [-2, 1], [0, 1], [3, 2], [10, 1]]
+  why: Not reviewed yet.
+
+SELECT num AS k, COUNT(*) FROM o GROUP BY num ORDER BY k DESC
+  alasql: [[10, 1], [3, 2], [0, 1], [undefined, 2], [-2, 1]]
+  sqlite: [[10, 1], [3, 2], [0, 1], [-2, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT num AS k, COUNT(*) FROM o GROUP BY num ORDER BY k NULLS FIRST
+  alasql: [[10, 1], [-2, 1], [0, 1], [undefined, 2], [3, 2]]
+  sqlite: [[null, 2], [-2, 1], [0, 1], [3, 2], [10, 1]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY 1
+  alasql: [[-2, 1], [0, 1], [undefined, 2], [3, 2], [10, 1]]
+  sqlite: [[null, 2], [-2, 1], [0, 1], [3, 2], [10, 1]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY 1 DESC
+  alasql: [[10, 1], [3, 2], [0, 1], [undefined, 2], [-2, 1]]
+  sqlite: [[10, 1], [3, 2], [0, 1], [-2, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY 1 NULLS FIRST
+  alasql: [[10, 1], [-2, 1], [0, 1], [undefined, 2], [3, 2]]
+  sqlite: [[null, 2], [-2, 1], [0, 1], [3, 2], [10, 1]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY 0 - num
+  alasql: [[10, 1], [3, 2], [0, 1], [undefined, 2], [-2, 1]]
+  sqlite: [[null, 2], [10, 1], [3, 2], [0, 1], [-2, 1]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY 0 - num DESC
+  alasql: [[-2, 1], [0, 1], [undefined, 2], [3, 2], [10, 1]]
+  sqlite: [[-2, 1], [0, 1], [3, 2], [10, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT num, COUNT(*) FROM o GROUP BY num ORDER BY 0 - num NULLS FIRST
+  alasql: [[10, 1], [-2, 1], [0, 1], [undefined, 2], [3, 2]]
+  sqlite: [[null, 2], [10, 1], [3, 2], [0, 1], [-2, 1]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY num, id
+  alasql: [[2, -2], [9, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [8, 7], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [9, -2], [3, 0], [5, 3], [6, 3], [8, 7], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY num DESC, id
+  alasql: [[1, 10], [8, 7], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2], [9, -2]]
+  sqlite: [[1, 10], [8, 7], [5, 3], [6, 3], [3, 0], [2, -2], [9, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY num COLLATE NOCASE, id
+  alasql: [[2, -2], [9, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [8, 7], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [9, -2], [3, 0], [5, 3], [6, 3], [8, 7], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o UNION SELECT id, num FROM o2 ORDER BY k, id
+  alasql: [[2, -2], [9, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [8, 7], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [9, -2], [3, 0], [5, 3], [6, 3], [8, 7], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o UNION SELECT id, num FROM o2 ORDER BY k DESC, id
+  alasql: [[1, 10], [8, 7], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2], [9, -2]]
+  sqlite: [[1, 10], [8, 7], [5, 3], [6, 3], [3, 0], [2, -2], [9, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num AS k FROM o UNION SELECT id, num FROM o2 ORDER BY k COLLATE NOCASE, id
+  alasql: [[2, -2], [9, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [8, 7], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [9, -2], [3, 0], [5, 3], [6, 3], [8, 7], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY 2, id
+  alasql: [[2, -2], [9, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [8, 7], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [9, -2], [3, 0], [5, 3], [6, 3], [8, 7], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY 2 DESC, id
+  alasql: [[1, 10], [8, 7], [5, 3], [6, 3], [3, 0], [4, undefined], [7, undefined], [2, -2], [9, -2]]
+  sqlite: [[1, 10], [8, 7], [5, 3], [6, 3], [3, 0], [2, -2], [9, -2], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY 2 COLLATE NOCASE, id
+  alasql: [[2, -2], [9, -2], [3, 0], [4, undefined], [7, undefined], [5, 3], [6, 3], [8, 7], [1, 10]]
+  sqlite: [[4, null], [7, null], [2, -2], [9, -2], [3, 0], [5, 3], [6, 3], [8, 7], [1, 10]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY 0 - num, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined], [8, 7], [9, -2]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY 0 - num DESC, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined], [8, 7], [9, -2]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, num FROM o UNION SELECT id, num FROM o2 ORDER BY 0 - num COLLATE NOCASE, id
+  alasql: [[1, 10], [2, -2], [3, 0], [4, undefined], [5, 3], [6, 3], [7, undefined], [8, 7], [9, -2]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num, id LIMIT 3
+  alasql: [[2, -2], [3, 0], [4, undefined]]
+  sqlite: [[4, null], [7, null], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num, id LIMIT 3 OFFSET 2
+  alasql: [[4, undefined], [7, undefined], [5, 3]]
+  sqlite: [[2, -2], [3, 0], [5, 3]]
+  why: Not reviewed yet.
+
+SELECT id, num FROM o ORDER BY num DESC, id LIMIT 3 OFFSET 2
+  alasql: [[6, 3], [3, 0], [4, undefined]]
+  sqlite: [[6, 3], [3, 0], [2, -2]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY txt NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt AS k FROM o ORDER BY k NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY "txt" NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY [txt] NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY LOWER(txt) NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [3, "a"], [6, "A"], [1, "b"], [2, "B"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY ?, id  params: ["txt"]
+  alasql: [[4, undefined], [7, undefined], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  sqlite: [[1, "b"], [2, "B"], [3, "a"], [4, null], [5, "10"], [6, "A"], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o ORDER BY ? DESC, id  params: ["txt"]
+  alasql: [[1, "b"], [3, "a"], [2, "B"], [6, "A"], [5, "10"], [4, undefined], [7, undefined]]
+  sqlite: [[1, "b"], [2, "B"], [3, "a"], [4, null], [5, "10"], [6, "A"], [7, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY txt NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 3 NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY LOWER(txt) NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [3, 0, "a", "2024-01-15", "a"], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM (SELECT * FROM o) AS z ORDER BY txt NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM (SELECT * FROM o) AS z ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [6, "A"], [2, "B"], [3, "a"], [1, "b"]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM (SELECT * FROM o) AS z ORDER BY LOWER(txt) NULLS FIRST, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "10"], [3, "a"], [6, "A"], [1, "b"], [2, "B"]]
+  why: Not reviewed yet.
+
+SELECT txt, COUNT(*) FROM o GROUP BY txt ORDER BY txt NULLS FIRST
+  alasql: [["b", 1], ["B", 1], ["a", 1], [undefined, 2], ["10", 1], ["A", 1]]
+  sqlite: [[null, 2], ["10", 1], ["A", 1], ["B", 1], ["a", 1], ["b", 1]]
+  why: Not reviewed yet.
+
+SELECT txt AS k, COUNT(*) FROM o GROUP BY txt ORDER BY k NULLS FIRST
+  alasql: [["b", 1], ["B", 1], ["a", 1], [undefined, 2], ["10", 1], ["A", 1]]
+  sqlite: [[null, 2], ["10", 1], ["A", 1], ["B", 1], ["a", 1], ["b", 1]]
+  why: Not reviewed yet.
+
+SELECT txt, COUNT(*) FROM o GROUP BY txt ORDER BY 1 NULLS FIRST
+  alasql: [["b", 1], ["B", 1], ["a", 1], [undefined, 2], ["10", 1], ["A", 1]]
+  sqlite: [[null, 2], ["10", 1], ["A", 1], ["B", 1], ["a", 1], ["b", 1]]
+  why: Not reviewed yet.
+
+SELECT txt, COUNT(*) FROM o GROUP BY txt ORDER BY LOWER(txt)
+  alasql: [[undefined, 2], ["10", 1], ["a", 1], ["A", 1], ["b", 1], ["B", 1]]
+  sqlite: [[null, 2], ["10", 1], ["A", 1], ["a", 1], ["B", 1], ["b", 1]]
+  why: Not reviewed yet.
+
+SELECT txt, COUNT(*) FROM o GROUP BY txt ORDER BY LOWER(txt) NULLS FIRST
+  alasql: [["b", 1], ["B", 1], ["a", 1], [undefined, 2], ["10", 1], ["A", 1]]
+  sqlite: [[null, 2], ["10", 1], ["A", 1], ["a", 1], ["B", 1], ["b", 1]]
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o UNION SELECT id, txt FROM o2 ORDER BY LOWER(txt), id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined], [8, "c"], [9, "b"]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o UNION SELECT id, txt FROM o2 ORDER BY LOWER(txt) DESC, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined], [8, "c"], [9, "b"]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, txt FROM o UNION SELECT id, txt FROM o2 ORDER BY LOWER(txt) COLLATE NOCASE, id
+  alasql: [[1, "b"], [2, "B"], [3, "a"], [4, undefined], [5, "10"], [6, "A"], [7, undefined], [8, "c"], [9, "b"]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY d NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d AS k FROM o ORDER BY k NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY "d" NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY [d] NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY SUBSTR(d, 6) NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"], [6, "2022-06-30"], [2, "2023-12-31"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY ?, id  params: ["d"]
+  alasql: [[4, undefined], [7, undefined], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  sqlite: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, null], [5, "2024-01-02"], [6, "2022-06-30"], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o ORDER BY ? DESC, id  params: ["d"]
+  alasql: [[1, "2024-03-01"], [3, "2024-01-15"], [5, "2024-01-02"], [2, "2023-12-31"], [6, "2022-06-30"], [4, undefined], [7, undefined]]
+  sqlite: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, null], [5, "2024-01-02"], [6, "2022-06-30"], [7, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY d NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"], [5, 3, "10", "2024-01-02", 2.5], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 4 NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"], [5, 3, "10", "2024-01-02", 2.5], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY SUBSTR(d, 6) NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM (SELECT * FROM o) AS z ORDER BY d NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM (SELECT * FROM o) AS z ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [6, "2022-06-30"], [2, "2023-12-31"], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM (SELECT * FROM o) AS z ORDER BY SUBSTR(d, 6) NULLS FIRST, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, "2024-01-02"], [3, "2024-01-15"], [1, "2024-03-01"], [6, "2022-06-30"], [2, "2023-12-31"]]
+  why: Not reviewed yet.
+
+SELECT d, COUNT(*) FROM o GROUP BY d ORDER BY d NULLS FIRST
+  alasql: [["2024-03-01", 1], ["2023-12-31", 1], ["2024-01-15", 1], [undefined, 2], ["2024-01-02", 1], ["2022-06-30", 1]]
+  sqlite: [[null, 2], ["2022-06-30", 1], ["2023-12-31", 1], ["2024-01-02", 1], ["2024-01-15", 1], ["2024-03-01", 1]]
+  why: Not reviewed yet.
+
+SELECT d AS k, COUNT(*) FROM o GROUP BY d ORDER BY k NULLS FIRST
+  alasql: [["2024-03-01", 1], ["2023-12-31", 1], ["2024-01-15", 1], [undefined, 2], ["2024-01-02", 1], ["2022-06-30", 1]]
+  sqlite: [[null, 2], ["2022-06-30", 1], ["2023-12-31", 1], ["2024-01-02", 1], ["2024-01-15", 1], ["2024-03-01", 1]]
+  why: Not reviewed yet.
+
+SELECT d, COUNT(*) FROM o GROUP BY d ORDER BY 1 NULLS FIRST
+  alasql: [["2024-03-01", 1], ["2023-12-31", 1], ["2024-01-15", 1], [undefined, 2], ["2024-01-02", 1], ["2022-06-30", 1]]
+  sqlite: [[null, 2], ["2022-06-30", 1], ["2023-12-31", 1], ["2024-01-02", 1], ["2024-01-15", 1], ["2024-03-01", 1]]
+  why: Not reviewed yet.
+
+SELECT d, COUNT(*) FROM o GROUP BY d ORDER BY SUBSTR(d, 6) NULLS FIRST
+  alasql: [["2024-03-01", 1], ["2023-12-31", 1], ["2024-01-15", 1], [undefined, 2], ["2024-01-02", 1], ["2022-06-30", 1]]
+  sqlite: [[null, 2], ["2024-01-02", 1], ["2024-01-15", 1], ["2024-03-01", 1], ["2022-06-30", 1], ["2023-12-31", 1]]
+  why: Not reviewed yet.
+
+SELECT id, d FROM o UNION SELECT id, d FROM o2 ORDER BY SUBSTR(d, 6), id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined], [8, "2025-01-01"], [9, "2023-12-31"]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, d FROM o UNION SELECT id, d FROM o2 ORDER BY SUBSTR(d, 6) DESC, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined], [8, "2025-01-01"], [9, "2023-12-31"]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, d FROM o UNION SELECT id, d FROM o2 ORDER BY SUBSTR(d, 6) COLLATE NOCASE, id
+  alasql: [[1, "2024-03-01"], [2, "2023-12-31"], [3, "2024-01-15"], [4, undefined], [5, "2024-01-02"], [6, "2022-06-30"], [7, undefined], [8, "2025-01-01"], [9, "2023-12-31"]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix DESC NULLS LAST, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix COLLATE NOCASE DESC, id
+  alasql: [[6, "B"], [3, "a"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[6, "B"], [3, "a"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o ORDER BY k, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o ORDER BY k DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o ORDER BY k NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o ORDER BY k DESC NULLS LAST, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o ORDER BY k COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o ORDER BY k COLLATE NOCASE DESC, id
+  alasql: [[6, "B"], [3, "a"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[6, "B"], [3, "a"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY 2, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY 2 DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY 2 DESC NULLS LAST, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY 2 COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY 2 COLLATE NOCASE DESC, id
+  alasql: [[6, "B"], [3, "a"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[6, "B"], [3, "a"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY "mix", id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY "mix" DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY "mix" NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY "mix" DESC NULLS LAST, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY "mix" COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY "mix" COLLATE NOCASE DESC, id
+  alasql: [[6, "B"], [3, "a"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[6, "B"], [3, "a"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY [mix], id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY [mix] DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY [mix] NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY [mix] DESC NULLS LAST, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY [mix] COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY [mix] COLLATE NOCASE DESC, id
+  alasql: [[6, "B"], [3, "a"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[6, "B"], [3, "a"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix || '' NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 2.5], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY ?, id  params: ["mix"]
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[1, 10], [2, "9"], [3, "a"], [4, null], [5, 2.5], [6, "B"], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY ? DESC, id  params: ["mix"]
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[1, 10], [2, "9"], [3, "a"], [4, null], [5, 2.5], [6, "B"], [7, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY mix, id
+  alasql: [[4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY mix DESC, id
+  alasql: [[3, 0, "a", "2024-01-15", "a"], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [5, 3, "10", "2024-01-02", 2.5], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[3, 0, "a", "2024-01-15", "a"], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"], [1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [4, null, null, null, null], [7, null, null, null, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY mix NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 5, id
+  alasql: [[4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"], [1, 10, "b", "2024-03-01", 10]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 5 DESC, id
+  alasql: [[3, 0, "a", "2024-01-15", "a"], [6, 3, "A", "2022-06-30", "B"], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [5, 3, "10", "2024-01-02", 2.5], [4, undefined, undefined, undefined, undefined], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[3, 0, "a", "2024-01-15", "a"], [6, 3, "A", "2022-06-30", "B"], [2, -2, "B", "2023-12-31", "9"], [1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [4, null, null, null, null], [7, null, null, null, null]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY 5 NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [5, 3, "10", "2024-01-02", 2.5], [1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"]]
+  why: Not reviewed yet.
+
+SELECT * FROM o ORDER BY mix || '' NULLS FIRST, id
+  alasql: [[1, 10, "b", "2024-03-01", 10], [2, -2, "B", "2023-12-31", "9"], [3, 0, "a", "2024-01-15", "a"], [4, undefined, undefined, undefined, undefined], [5, 3, "10", "2024-01-02", 2.5], [6, 3, "A", "2022-06-30", "B"], [7, undefined, undefined, undefined, undefined]]
+  sqlite: [[4, null, null, null, null], [7, null, null, null, null], [1, 10, "b", "2024-03-01", 10], [5, 3, "10", "2024-01-02", 2.5], [2, -2, "B", "2023-12-31", "9"], [6, 3, "A", "2022-06-30", "B"], [3, 0, "a", "2024-01-15", "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY mix, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY mix DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY mix NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY 2, id
+  alasql: [[4, undefined], [7, undefined], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY 2 DESC, id
+  alasql: [[3, "a"], [6, "B"], [1, 10], [2, "9"], [5, 2.5], [4, undefined], [7, undefined]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [4, null], [7, null]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY 2 NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM (SELECT * FROM o) AS z ORDER BY mix || '' NULLS FIRST, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined]]
+  sqlite: [[4, null], [7, null], [1, 10], [5, 2.5], [2, "9"], [6, "B"], [3, "a"]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY mix
+  alasql: [[undefined, 2], [2.5, 1], ["9", 1], ["B", 1], ["a", 1], [10, 1]]
+  sqlite: [[null, 2], [2.5, 1], [10, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY mix DESC
+  alasql: [["a", 1], ["B", 1], [10, 1], ["9", 1], [2.5, 1], [undefined, 2]]
+  sqlite: [["a", 1], ["B", 1], ["9", 1], [10, 1], [2.5, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY mix NULLS FIRST
+  alasql: [[10, 1], ["9", 1], ["a", 1], [undefined, 2], [2.5, 1], ["B", 1]]
+  sqlite: [[null, 2], [2.5, 1], [10, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY mix DESC NULLS LAST
+  alasql: [["a", 1], ["B", 1], [10, 1], ["9", 1], [2.5, 1], [undefined, 2]]
+  sqlite: [["a", 1], ["B", 1], ["9", 1], [10, 1], [2.5, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT mix AS k, COUNT(*) FROM o GROUP BY mix ORDER BY k
+  alasql: [[undefined, 2], [2.5, 1], ["9", 1], ["B", 1], ["a", 1], [10, 1]]
+  sqlite: [[null, 2], [2.5, 1], [10, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT mix AS k, COUNT(*) FROM o GROUP BY mix ORDER BY k DESC
+  alasql: [["a", 1], ["B", 1], [10, 1], ["9", 1], [2.5, 1], [undefined, 2]]
+  sqlite: [["a", 1], ["B", 1], ["9", 1], [10, 1], [2.5, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT mix AS k, COUNT(*) FROM o GROUP BY mix ORDER BY k NULLS FIRST
+  alasql: [[10, 1], ["9", 1], ["a", 1], [undefined, 2], [2.5, 1], ["B", 1]]
+  sqlite: [[null, 2], [2.5, 1], [10, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT mix AS k, COUNT(*) FROM o GROUP BY mix ORDER BY k DESC NULLS LAST
+  alasql: [["a", 1], ["B", 1], [10, 1], ["9", 1], [2.5, 1], [undefined, 2]]
+  sqlite: [["a", 1], ["B", 1], ["9", 1], [10, 1], [2.5, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY 1
+  alasql: [[undefined, 2], [2.5, 1], ["9", 1], ["B", 1], ["a", 1], [10, 1]]
+  sqlite: [[null, 2], [2.5, 1], [10, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY 1 DESC
+  alasql: [["a", 1], ["B", 1], [10, 1], ["9", 1], [2.5, 1], [undefined, 2]]
+  sqlite: [["a", 1], ["B", 1], ["9", 1], [10, 1], [2.5, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY 1 NULLS FIRST
+  alasql: [[10, 1], ["9", 1], ["a", 1], [undefined, 2], [2.5, 1], ["B", 1]]
+  sqlite: [[null, 2], [2.5, 1], [10, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY 1 DESC NULLS LAST
+  alasql: [["a", 1], ["B", 1], [10, 1], ["9", 1], [2.5, 1], [undefined, 2]]
+  sqlite: [["a", 1], ["B", 1], ["9", 1], [10, 1], [2.5, 1], [null, 2]]
+  why: Not reviewed yet.
+
+SELECT mix, COUNT(*) FROM o GROUP BY mix ORDER BY mix || '' NULLS FIRST
+  alasql: [[10, 1], ["9", 1], ["a", 1], [undefined, 2], [2.5, 1], ["B", 1]]
+  sqlite: [[null, 2], [10, 1], [2.5, 1], ["9", 1], ["B", 1], ["a", 1]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix, id
+  alasql: [[4, undefined], [7, undefined], [9, 1], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10], [8, "c"]]
+  sqlite: [[4, null], [7, null], [9, 1], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"], [8, "c"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix DESC, id
+  alasql: unstable
+  sqlite: [[8, "c"], [3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [9, 1], [4, null], [7, null]]
+  why: alasql's answer varies between runs in one process: the comparator for numbers against text is not a consistent order, so the result depends on the engine's sort (#2720, point 3). Not checked.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [9, 1], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10], [8, "c"]]
+  sqlite: [[4, null], [7, null], [9, 1], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"], [8, "c"]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o UNION SELECT id, mix FROM o2 ORDER BY k, id
+  alasql: [[4, undefined], [7, undefined], [9, 1], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10], [8, "c"]]
+  sqlite: [[4, null], [7, null], [9, 1], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"], [8, "c"]]
+  why: Not reviewed yet.
+
+SELECT id, mix AS k FROM o UNION SELECT id, mix FROM o2 ORDER BY k DESC, id
+  alasql: unstable
+  sqlite: [[8, "c"], [3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [9, 1], [4, null], [7, null]]
+  why: alasql's answer varies between runs in one process: the comparator for numbers against text is not a consistent order, so the result depends on the engine's sort (#2720, point 3). Not checked.
+
+SELECT id, mix AS k FROM o UNION SELECT id, mix FROM o2 ORDER BY k COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [9, 1], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10], [8, "c"]]
+  sqlite: [[4, null], [7, null], [9, 1], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"], [8, "c"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY 2, id
+  alasql: [[4, undefined], [7, undefined], [9, 1], [5, 2.5], [2, "9"], [6, "B"], [3, "a"], [1, 10], [8, "c"]]
+  sqlite: [[4, null], [7, null], [9, 1], [5, 2.5], [1, 10], [2, "9"], [6, "B"], [3, "a"], [8, "c"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY 2 DESC, id
+  alasql: unstable
+  sqlite: [[8, "c"], [3, "a"], [6, "B"], [2, "9"], [1, 10], [5, 2.5], [9, 1], [4, null], [7, null]]
+  why: alasql's answer varies between runs in one process: the comparator for numbers against text is not a consistent order, so the result depends on the engine's sort (#2720, point 3). Not checked.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY 2 COLLATE NOCASE, id
+  alasql: [[4, undefined], [7, undefined], [9, 1], [5, 2.5], [2, "9"], [3, "a"], [6, "B"], [1, 10], [8, "c"]]
+  sqlite: [[4, null], [7, null], [9, 1], [5, 2.5], [1, 10], [2, "9"], [3, "a"], [6, "B"], [8, "c"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix || '', id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined], [8, "c"], [9, 1]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix || '' DESC, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined], [8, "c"], [9, 1]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix || '' COLLATE NOCASE, id
+  alasql: [[1, 10], [2, "9"], [3, "a"], [4, undefined], [5, 2.5], [6, "B"], [7, undefined], [8, "c"], [9, 1]]
+  sqlite: error: 1st ORDER BY term does not match any column in the result set
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix, id LIMIT 3 OFFSET 2
+  alasql: [[5, 2.5], [2, "9"], [6, "B"]]
+  sqlite: [[5, 2.5], [1, 10], [2, "9"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix DESC, id LIMIT 3
+  alasql: [[3, "a"], [6, "B"], [1, 10]]
+  sqlite: [[3, "a"], [6, "B"], [2, "9"]]
+  why: Not reviewed yet.
+
+SELECT id, mix FROM o ORDER BY mix DESC, id LIMIT 3 OFFSET 2
+  alasql: [[1, 10], [2, "9"], [5, 2.5]]
+  sqlite: [[2, "9"], [1, 10], [5, 2.5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q
+  alasql: [[1], [2], [3], [3], [4], [undefined]]
+  sqlite: [[1], [2], [3], [4], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q ORDER BY v
+  alasql: [[undefined], [1], [2], [3], [3], [4]]
+  sqlite: [[null], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q)
+  alasql: [[1], [2], [3], [3], [4], [undefined]]
+  sqlite: [[1], [2], [3], [4], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) ORDER BY v
+  alasql: [[undefined], [1], [2], [3], [3], [4]]
+  sqlite: [[null], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION (SELECT v FROM q)
+  alasql: [[3], [4]]
+  sqlite: [[2], [3], [4], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION (SELECT v FROM q) ORDER BY v
+  alasql: [[undefined], [1]]
+  sqlite: [[null], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q WHERE v IN (SELECT v FROM r)
+  alasql: [[1], [2], [3], [3], [4], [undefined]]
+  sqlite: [[1], [2], [3], [4], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q WHERE v IN (SELECT v FROM r) ORDER BY v
+  alasql: [[undefined], [1], [2], [3], [3], [4]]
+  sqlite: [[null], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q WHERE v IN (SELECT v FROM r))
+  alasql: [[1], [2], [3], [3], [4], [undefined]]
+  sqlite: [[1], [2], [3], [4], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q WHERE v IN (SELECT v FROM r)) ORDER BY v
+  alasql: [[undefined], [1], [2], [3], [3], [4]]
+  sqlite: [[null], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION (SELECT v FROM q WHERE v IN (SELECT v FROM r))
+  alasql: [[3], [4]]
+  sqlite: [[2], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION (SELECT v FROM q WHERE v IN (SELECT v FROM r)) ORDER BY v
+  alasql: [[undefined], [1]]
+  sqlite: [[2], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION ALL (SELECT v FROM q)
+  alasql: [[3], [4]]
+  sqlite: [[2], [2], [3], [3], [3], [4], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION ALL (SELECT v FROM q) ORDER BY v
+  alasql: [[undefined], [undefined]]
+  sqlite: [[null], [2], [2], [3], [3], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION ALL (SELECT v FROM q WHERE v IN (SELECT v FROM r))
+  alasql: [[3], [4]]
+  sqlite: [[2], [3], [3], [3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) UNION ALL (SELECT v FROM q WHERE v IN (SELECT v FROM r)) ORDER BY v
+  alasql: [[undefined], [1]]
+  sqlite: [[2], [3], [3], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q
+  alasql: [[2], [2], [3], [undefined]]
+  sqlite: [[2], [3], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q ORDER BY v
+  alasql: [[undefined], [2], [2], [3]]
+  sqlite: [[null], [2], [3]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q ORDER BY v LIMIT 2 OFFSET 1
+  alasql: [[2], [2]]
+  sqlite: [[2], [3]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q)
+  alasql: [[2], [2], [3], [undefined]]
+  sqlite: [[2], [3], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) ORDER BY v
+  alasql: [[undefined], [2], [2], [3]]
+  sqlite: [[null], [2], [3]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) ORDER BY v LIMIT 2 OFFSET 1
+  alasql: [[2], [2]]
+  sqlite: [[2], [3]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) INTERSECT (SELECT v FROM q) ORDER BY v
+  alasql: [[undefined], [2]]
+  sqlite: [[2], [3]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) EXCEPT (SELECT v FROM q)
+  alasql: [[1]]
+  sqlite: []
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q ORDER BY v DESC LIMIT 2)
+  alasql: [[1], [2], [2], [undefined]]
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) EXCEPT (SELECT v FROM q) ORDER BY v
+  alasql: [[1]]
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q WHERE v IN (SELECT v FROM r)
+  alasql: [[1], [2], [2], [undefined]]
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q WHERE v IN (SELECT v FROM r) ORDER BY v
+  alasql: [[undefined], [1], [2], [2]]
+  sqlite: [[null], [1], [2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q WHERE v IN (SELECT v FROM r))
+  alasql: [[1], [2], [2], [undefined]]
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q WHERE v IN (SELECT v FROM r)) ORDER BY v
+  alasql: [[undefined], [1], [2], [2]]
+  sqlite: [[null], [1], [2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) EXCEPT (SELECT v FROM q WHERE v IN (SELECT v FROM r))
+  alasql: [[2], [2]]
+  sqlite: [[2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q WHERE v IN (SELECT v FROM r) ORDER BY v DESC LIMIT 2)
+  alasql: [[1], [2], [2], [undefined]]
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p ORDER BY v DESC LIMIT 2) EXCEPT (SELECT v FROM q WHERE v IN (SELECT v FROM r)) ORDER BY v
+  alasql: [[undefined], [1]]
+  sqlite: [[2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) UNION (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [2], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) UNION (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q UNION ALL SELECT v FROM r
+  alasql: [[1], [2], [3], [3], [3], [4], [4], [5], [undefined]]
+  sqlite: [[1], [2], [3], [3], [4], [4], [5], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q UNION ALL SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [1], [2], [3], [3], [3], [4], [4], [5]]
+  sqlite: [[null], [1], [2], [3], [3], [4], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) UNION ALL (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [2], [3], [3], [4], [4], [5], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) UNION ALL (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [1], [2], [3], [3], [4], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q INTERSECT SELECT v FROM r
+  alasql: [[1], [2], [3], [3], [4], [undefined]]
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q INTERSECT SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [1], [2], [3], [3], [4]]
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) INTERSECT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) INTERSECT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q EXCEPT SELECT v FROM r
+  alasql: [[1], [2], [3], [undefined]]
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION SELECT v FROM q EXCEPT SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [1], [2], [3]]
+  sqlite: [[null], [1], [2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) EXCEPT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION (SELECT v FROM q) EXCEPT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [1], [2]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION ALL SELECT v FROM q UNION SELECT v FROM r
+  alasql: [[1], [2], [2], [2], [3], [3], [4], [5], [undefined], [undefined]]
+  sqlite: [[1], [2], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION ALL SELECT v FROM q UNION SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [undefined], [1], [2], [2], [2], [3], [3], [4], [5]]
+  sqlite: [[null], [1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) UNION (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [2], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) UNION (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) UNION ALL (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [2], [2], [2], [3], [3], [3], [3], [4], [4], [5], [null], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) UNION ALL (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [null], [1], [2], [2], [2], [3], [3], [3], [3], [4], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION ALL SELECT v FROM q INTERSECT SELECT v FROM r
+  alasql: [[1], [2], [2], [3], [3], [3], [4], [undefined]]
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION ALL SELECT v FROM q INTERSECT SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [1], [2], [2], [3], [3], [3], [4]]
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) INTERSECT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) INTERSECT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[3], [4]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION ALL SELECT v FROM q EXCEPT SELECT v FROM r
+  alasql: [[1], [2], [2], [2], [3], [undefined], [undefined]]
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p UNION ALL SELECT v FROM q EXCEPT SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [undefined], [1], [2], [2], [2], [3]]
+  sqlite: [[null], [1], [2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) EXCEPT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [2], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) UNION ALL (SELECT v FROM q) EXCEPT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [1], [2]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q UNION SELECT v FROM r
+  alasql: [[2], [2], [3], [undefined]]
+  sqlite: [[2], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q UNION SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [2], [2], [3]]
+  sqlite: [[null], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) UNION (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[2], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) UNION (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q UNION ALL SELECT v FROM r
+  alasql: [[2], [2], [3], [undefined]]
+  sqlite: [[2], [3], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q UNION ALL SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [2], [2], [3]]
+  sqlite: [[null], [2], [3], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) UNION ALL (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[2], [3], [3], [4], [5], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) UNION ALL (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [2], [3], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) INTERSECT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[3]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) INTERSECT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[3]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q EXCEPT SELECT v FROM r
+  alasql: [[2], [2], [undefined]]
+  sqlite: [[2], [null]]
+  why: Not reviewed yet.
+
+SELECT v FROM p INTERSECT SELECT v FROM q EXCEPT SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [2], [2]]
+  sqlite: [[null], [2]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) EXCEPT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[2], [null]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) INTERSECT (SELECT v FROM q) EXCEPT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[null], [2]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q UNION SELECT v FROM r
+  alasql: [[1]]
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q UNION SELECT v FROM r ORDER BY v
+  alasql: [[1]]
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) UNION (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) UNION (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q UNION ALL SELECT v FROM r
+  alasql: [[1]]
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q UNION ALL SELECT v FROM r ORDER BY v
+  alasql: [[1]]
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) UNION ALL (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) UNION ALL (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[1], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q INTERSECT SELECT v FROM r
+  alasql: [[1], [2], [2], [undefined]]
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q INTERSECT SELECT v FROM r ORDER BY v
+  alasql: [[undefined], [1], [2], [2]]
+  sqlite: []
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) INTERSECT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: []
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) INTERSECT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q EXCEPT SELECT v FROM r
+  alasql: [[1], [3]]
+  sqlite: [[1]]
+  why: Not reviewed yet.
+
+SELECT v FROM p EXCEPT SELECT v FROM q EXCEPT SELECT v FROM r ORDER BY v
+  alasql: [[1], [3]]
+  sqlite: [[1]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) EXCEPT (SELECT v FROM r)
+  alasql: error: Parse error on line 1:
+  sqlite: [[1]]
+  why: Not reviewed yet.
+
+(SELECT v FROM p) EXCEPT (SELECT v FROM q) EXCEPT (SELECT v FROM r) ORDER BY v
+  alasql: error: Parse error on line 1:
+  sqlite: [[1]]
+  why: Not reviewed yet.
+
+SELECT id, (SELECT MAX(u.un) FROM u WHERE ug = g) FROM t ORDER BY id
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [4, undefined], [5, undefined]]
+  sqlite: [[1, 6], [2, 6], [3, -3], [4, -3], [5, null]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, (SELECT MAX(u.un) FROM u WHERE ug = g) FROM t
+  alasql: [[-1, -1], [1, undefined], [2, undefined], [3, undefined], [4, undefined], [5, undefined]]
+  sqlite: [[-1, -1], [1, 6], [2, 6], [3, -3], [4, -3], [5, null]]
+  why: Not reviewed yet.
+
+SELECT id, (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t ORDER BY id
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [4, undefined], [5, undefined]]
+  sqlite: [[1, 6], [2, 6], [3, 2], [4, 2], [5, null]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t
+  alasql: [[-1, -1], [1, undefined], [2, undefined], [3, undefined], [4, undefined], [5, undefined]]
+  sqlite: [[-1, -1], [1, 6], [2, 6], [3, 2], [4, 2], [5, null]]
+  why: Not reviewed yet.
+
+SELECT id, (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t ORDER BY id
+  alasql: [[1, undefined], [2, undefined], [3, undefined], [4, undefined], [5, undefined]]
+  sqlite: [[1, 2], [2, 2], [3, 6], [4, 6], [5, null]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t
+  alasql: [[-1, -1], [1, undefined], [2, undefined], [3, undefined], [4, undefined], [5, undefined]]
+  sqlite: [[-1, -1], [1, 2], [2, 2], [3, 6], [4, 6], [5, null]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) FROM t ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) FROM t
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) FROM t ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) FROM t
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) FROM t ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) FROM t
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) FROM t ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) FROM t
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE ug = g) FROM t ORDER BY id
+  alasql: [[1, false], [2, false], [3, false], [4, false], [5, false]]
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE ug = g) FROM t
+  alasql: [[-1, -1], [1, false], [2, false], [3, false], [4, false], [5, false]]
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT id, n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t ORDER BY id
+  alasql: [[1, false], [2, false], [3, undefined], [4, false], [5, false]]
+  sqlite: [[1, 0], [2, 0], [3, null], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT id, n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t
+  alasql: [[-1, -1], [1, false], [2, false], [3, undefined], [4, false], [5, false]]
+  sqlite: [[-1, -1], [1, 0], [2, 0], [3, null], [4, 1], [5, 0]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE n < (SELECT MAX(u.un) FROM u WHERE ug = g) ORDER BY id
+  alasql: []
+  sqlite: [[1], [2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE n < (SELECT MAX(u.un) FROM u WHERE ug = g)
+  alasql: [[-1]]
+  sqlite: [[-1], [1], [2]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE n < (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY id
+  alasql: []
+  sqlite: [[1], [2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE n < (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: [[-1]]
+  sqlite: [[-1], [1], [2]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE n < (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY id
+  alasql: []
+  sqlite: [[2], [4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE n < (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
+  alasql: [[-1]]
+  sqlite: [[-1], [2], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY id
+  alasql: []
+  sqlite: [[4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: [[-1]]
+  sqlite: [[-1], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE n NOT IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY id
+  alasql: [[1], [2], [4], [5]]
+  sqlite: [[1], [2], [5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE n NOT IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: [[-1], [1], [2], [4], [5]]
+  sqlite: [[-1], [1], [2], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [1], [2], [3], [4], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE ug = g) ORDER BY id
+  alasql: []
+  sqlite: [[1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE ug = g)
+  alasql: [[-1]]
+  sqlite: [[-1], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [1], [2], [3], [4]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE ug = g) ORDER BY id
+  alasql: [[1], [2], [3], [4], [5]]
+  sqlite: [[5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE ug = g)
+  alasql: [[-1], [1], [2], [3], [4], [5]]
+  sqlite: [[-1], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [5]]
+  why: Not reviewed yet.
+
+SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY id
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[5]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1 UNION ALL SELECT id FROM t WHERE NOT EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1], [5]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING COUNT(*) <= (SELECT COUNT(*) FROM u WHERE ug = g) ORDER BY g
+  alasql: []
+  sqlite: [[1, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING COUNT(*) <= (SELECT COUNT(*) FROM u WHERE ug = g)
+  alasql: [[-1, -1]]
+  sqlite: [[-1, -1], [1, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING COUNT(*) <= (SELECT COUNT(*) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY g
+  alasql: []
+  sqlite: [[2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING COUNT(*) <= (SELECT COUNT(*) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: [[-1, -1]]
+  sqlite: [[-1, -1], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.ug = t.g) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.ug = t.g)
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[-1, -1], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY g
+  alasql: []
+  sqlite: [[2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: [[-1, -1]]
+  sqlite: [[-1, -1], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 2], [2, 2], [null, 1]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 2], [2, 2], [null, 1]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.ug = t.g)
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[-1, -1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE ug = g) ORDER BY g
+  alasql: []
+  sqlite: [[1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE ug = g)
+  alasql: [[-1, -1]]
+  sqlite: [[-1, -1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug IS NOT NULL) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug IS NOT NULL)
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug = t.g)
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE ug = g) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE ug = g)
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
+  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug IS NOT NULL) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 1], [2, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug IS NOT NULL)
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[2, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [2, 2], [2, 2]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug = t.g) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug = t.g)
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE ug = g) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE ug = g)
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY t.id, p.v
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: []
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE ug = g) FROM t GROUP BY g ORDER BY g
+  alasql: [[undefined, 1, undefined], [1, 2, undefined], [2, 2, undefined]]
+  sqlite: [[null, 1, null], [1, 2, 6], [2, 2, -3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2, -1 AS c3 UNION ALL SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE ug = g) FROM t GROUP BY g
+  alasql: [[-1, -1, -1], [1, 2, undefined], [2, 2, undefined], [undefined, 1, undefined]]
+  sqlite: [[-1, -1, -1], [1, 2, 6], [2, 2, -3], [null, 1, null]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t GROUP BY g ORDER BY g
+  alasql: [[undefined, 1, undefined], [1, 2, undefined], [2, 2, undefined]]
+  sqlite: [[null, 1, null], [1, 2, 6], [2, 2, 2]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2, -1 AS c3 UNION ALL SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t GROUP BY g
+  alasql: [[-1, -1, -1], [1, 2, undefined], [2, 2, undefined], [undefined, 1, undefined]]
+  sqlite: [[-1, -1, -1], [1, 2, 6], [2, 2, 2], [null, 1, null]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t GROUP BY g ORDER BY g
+  alasql: [[undefined, 1, undefined], [1, 2, undefined], [2, 2, undefined]]
+  sqlite: [[null, 1, null], [1, 2, 2], [2, 2, 6]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2, -1 AS c3 UNION ALL SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t GROUP BY g
+  alasql: [[-1, -1, -1], [1, 2, undefined], [2, 2, undefined], [undefined, 1, undefined]]
+  sqlite: [[-1, -1, -1], [1, 2, 2], [2, 2, 6], [null, 1, null]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 1], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 1]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 1], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 1]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[null, 0], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 0], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 0], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE ug = g) FROM t GROUP BY g ORDER BY g
+  alasql: [[undefined, false], [1, false], [2, false]]
+  sqlite: [[null, 0], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE ug = g) FROM t GROUP BY g
+  alasql: [[-1, -1], [1, false], [2, false], [undefined, false]]
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 0], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t GROUP BY g ORDER BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[null, 0], [1, 1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) FROM t GROUP BY g
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
+  why: Not reviewed yet.
+
+SELECT g, COUNT(*) FROM t WHERE n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) GROUP BY g ORDER BY g
+  alasql: []
+  sqlite: [[2, 1]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t WHERE n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) GROUP BY g
+  alasql: [[-1, -1]]
+  sqlite: [[-1, -1], [2, 1]]
+  why: Not reviewed yet.
+
+SELECT t.id, q.un FROM t JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) AS q ON q.ug = t.g ORDER BY t.id, q.un
+  alasql: [[1, 6], [2, 6], [3, -3], [4, -3], [5, 2]]
+  sqlite: [[1, 6], [2, 6], [3, -3], [4, -3]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, q.un FROM t JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) AS q ON q.ug = t.g
+  alasql: [[-1, -1], [1, 6], [2, 6], [3, -3], [4, -3], [5, 2]]
+  sqlite: [[-1, -1], [1, 6], [2, 6], [3, -3], [4, -3]]
+  why: Not reviewed yet.
+
+SELECT t.id, q.un FROM t JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) AS q ON q.ug = t.g ORDER BY t.id, q.un
+  alasql: [[1, 6], [2, 6], [5, 2]]
+  sqlite: [[1, 6], [2, 6]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, q.un FROM t JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) AS q ON q.ug = t.g
+  alasql: [[-1, -1], [1, 6], [2, 6], [5, 2]]
+  sqlite: [[-1, -1], [1, 6], [2, 6]]
+  why: Not reviewed yet.
+
+SELECT t.id, q.un FROM t LEFT JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) AS q ON q.ug = t.g ORDER BY t.id, q.un
+  alasql: [[1, 6], [2, 6], [3, -3], [4, -3], [5, 2]]
+  sqlite: [[1, 6], [2, 6], [3, -3], [4, -3], [5, null]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, q.un FROM t LEFT JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) AS q ON q.ug = t.g
+  alasql: [[-1, -1], [1, 6], [2, 6], [3, -3], [4, -3], [5, 2]]
+  sqlite: [[-1, -1], [1, 6], [2, 6], [3, -3], [4, -3], [5, null]]
+  why: Not reviewed yet.
+
+SELECT t.id, q.un FROM t LEFT JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) AS q ON q.ug = t.g ORDER BY t.id, q.un
+  alasql: [[1, 6], [2, 6], [3, undefined], [4, undefined], [5, 2]]
+  sqlite: [[1, 6], [2, 6], [3, null], [4, null], [5, null]]
+  why: Not reviewed yet.
+
+SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, q.un FROM t LEFT JOIN (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) AS q ON q.ug = t.g
+  alasql: [[-1, -1], [1, 6], [2, 6], [3, undefined], [4, undefined], [5, 2]]
+  sqlite: [[-1, -1], [1, 6], [2, 6], [3, null], [4, null], [5, null]]
+  why: Not reviewed yet.
+
+WITH q AS (SELECT u.un FROM u WHERE u.ug IS NOT NULL) SELECT id FROM t WHERE n IN (SELECT un FROM q) ORDER BY id
+  alasql: error: Column does not exist: un
+  sqlite: [[1], [2]]
+  why: Not reviewed yet.
+
+WITH q AS (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) SELECT id FROM t WHERE n IN (SELECT un FROM q) ORDER BY id
+  alasql: error: Column does not exist: un
+  sqlite: [[2], [4]]
+  why: Not reviewed yet.
+
+WITH q AS (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) SELECT id FROM t WHERE n IN (SELECT un FROM q) ORDER BY id
+  alasql: error: Column does not exist: un
+  sqlite: [[4]]
+  why: Not reviewed yet.
+
+WITH q AS (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) SELECT t.id, q.un FROM t JOIN q ON q.ug = t.g ORDER BY t.id, q.un
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 6], [2, 6], [3, -3], [4, -3]]
+  why: Not reviewed yet.
+
+WITH q AS (SELECT u.ug, u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) SELECT t.id, q.un FROM t JOIN q ON q.ug = t.g ORDER BY t.id, q.un
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
+  sqlite: [[1, 6], [2, 6]]
+  why: Not reviewed yet.

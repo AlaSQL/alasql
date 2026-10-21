@@ -254,15 +254,19 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
 
 							if (needsRuntimeResolution) {
-								// Try each table until column is found
-								var aliases = Object.keys(query.aliases);
-								var searchExpr = aliases
-									.map(function (alias) {
-										return "p['" + alias + "']['" + col.columnid + "']";
-									})
-									.join(' ?? ');
-
-								ss.push("'" + escapeq(col.as || col.columnid) + "':(" + searchExpr + ')');
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':" +
+										yy.Column.fromAnySource('p', Object.keys(query.aliases), col.columnid)
+								);
+								// Only check it against the default table if no other source can have it
+								var inOtherSource = query.sources.some(
+									src =>
+										src.alias !== tbid &&
+										(!src.columns?.length || src.columns.some(c => c.columnid === col.columnid))
+								);
+								if (inOtherSource) tbid = undefined;
 							} else {
 								ss.push(
 									"'" +
