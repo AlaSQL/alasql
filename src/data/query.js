@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /*
 //
 // Query class for Alasql.js
@@ -37,3 +38,4 @@ class Recordset {
 
 alasql.Recordset = Recordset;
 alasql.Query = Query;
+}
