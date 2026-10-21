@@ -15,7 +15,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('drop database test' + test);
 	});
 
-	// NOTE: Tests should use assert.deepEqual to verify the complete expected output
+	// NOTE: Tests should use assert.deepStrictEqual to verify the complete expected output
 	// against the actual result object. This ensures comprehensive validation and
 	// makes test failures more informative by showing the full diff.
 

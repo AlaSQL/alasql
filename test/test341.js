@@ -12,8 +12,7 @@ describe('Test 341 Intellectual DOT operator', function () {
 	});
 
 	it('2. Create tables', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
       CREATE TABLE cities (city STRING PRIMARY KEY, population INT);
       INSERT INTO cities VALUES 
@@ -23,8 +22,7 @@ describe('Test 341 Intellectual DOT operator', function () {
 
       CREATE TABLE persons (id INT PRIMARY KEY, name STRING, city STRING REFERENCES cities);
       INSERT INTO persons VALUES (1,"Andrey","Krasnodar"), (2,"Valery","Prague"), (3,"Michael","New York");
-  */
-		});
+  `);
 		assert.deepStrictEqual(res, [1, 3, 1, 3]);
 		done();
 	});

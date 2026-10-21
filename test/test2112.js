@@ -21,10 +21,10 @@ describe('Test 2112 - load binary file', function () {
 
 	it('C) Loads HTTPS binary file (async)', function (done) {
 		alasql.utils.loadBinaryFile(
-			'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg',
+			'https://github.com/AlaSQL/alasql/raw/refs/heads/develop/test/test2112.dat',
 			true,
 			function (data) {
-				assert.equal(data.slice(0, 3), 'ÿØÿ');
+				assert.equal(data, 'ï¿½');
 				done();
 			}
 		);

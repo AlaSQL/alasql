@@ -20,11 +20,11 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
 
 	it('1. Test', function (done) {
 		// prettier-ignore
-		var res = alasql(function(){/*
+		var res = alasql(`
 	create table data( id INTEGER PRIMARY KEY, grp INTEGER);
 	insert into data select range._ as id , range._ % 3 as grp  from RANGE(0,9)as range;
 	matrix of select id, id +1 from data group by id;
-  */});
+  `);
 
 		assert.deepStrictEqual(res[2], [
 			[0, 1],
@@ -65,14 +65,12 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
 	});
 
 	it('3. Test Modified', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
   drop table if exists data;
 	create table data( id INTEGER PRIMARY KEY, grp INTEGER);
 	insert into data select range._ as id , range._ % 3 as grp  from RANGE(0,9)as range;
 	matrix of select id, (id +1), CAST(id AS INTEGER) +1 from data as a, data as b where a.id < b.id and a.grp = b.grp group by a.id order by a.id
-  */
-		});
+  `);
 
 		assert.deepStrictEqual(
 			res[3],

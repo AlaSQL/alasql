@@ -18,8 +18,7 @@ describe('Test 355 PIVOT', function () {
 	it('2. Prepare Data', function (done) {
 		alasql('CREATE TABLE Product(Cust VARCHAR(25), Product VARCHAR(20), QTY INT)');
 
-		alasql(function () {
-			/*
+		alasql(`
     INSERT INTO Product(Cust, Product, QTY)
       VALUES('KATE','VEG',2);
     INSERT INTO Product(Cust, Product, QTY)
@@ -34,32 +33,27 @@ describe('Test 355 PIVOT', function () {
       VALUES('FRED','BEER',24);
     INSERT INTO Product(Cust, Product, QTY)
       VALUES('KATE','VEG',3);
-  */
-		});
+  `);
 
 		done();
 	});
 
 	it('3. Select Query', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     SELECT *
     FROM Product  
-  */
-		});
+  `);
 
 		assert.equal(res.length, 7);
 		done();
 	});
 
 	it('4. Pivot Table ordered by PRODUCT', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     SELECT * FROM Product
     PIVOT (SUM(QTY) FOR Cust IN (FRED, KATE))
     ORDER BY Product
- */
-		});
+ `);
 
 		assert.deepStrictEqual(res, [
 			{Product: 'BEER', FRED: 24, KATE: 12},
@@ -72,13 +66,11 @@ describe('Test 355 PIVOT', function () {
 	});
 
 	it('5. Pivot Table ordered by CUST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     SELECT * FROM Product
     PIVOT (SUM(QTY) FOR Product IN (VEG, SODA, MILK, BEER, CHIPS))
     ORDER BY Cust
- */
-		});
+ `);
 
 		assert.deepStrictEqual(res, [
 			{Cust: 'FRED', MILK: 3, BEER: 24},
@@ -95,13 +87,11 @@ describe('Test 355 PIVOT', function () {
 			'INSERT INTO pivoted SELECT * FROM Product PIVOT (SUM(QTY) FOR Product IN (VEG, SODA, MILK, BEER, CHIPS))'
 		);
 
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     SELECT *
     FROM pivoted
     UNPIVOT (QTY FOR Product IN (VEG, SODA, MILK, BEER, CHIPS))
-  */
-		});
+  `);
 
 		// Should have 10 rows (2 custs * 5 products)
 		assert.equal(res.length, 10);

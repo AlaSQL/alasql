@@ -6,6 +6,57 @@
 
 var SQLITE = (alasql.engines.SQLITE = function () {});
 
+function getSqlJs(cb, errorcb) {
+	let sqljs = SQLITE.sqljs;
+	let sqljsPromise = SQLITE.sqljsPromise;
+	const globalSQL = alasql.utils.global.SQL;
+
+	if (sqljs && sqljs.Database) {
+		cb(sqljs);
+		return;
+	}
+
+	if (globalSQL && globalSQL.Database) {
+		SQLITE.sqljs = sqljs = globalSQL;
+		cb(sqljs);
+		return;
+	}
+
+	const initSqlJs = (typeof globalSQL === 'function' && globalSQL) || alasql.utils.global.initSqlJs;
+
+	if (!initSqlJs) {
+		const err = new Error('SQL.js library is not loaded');
+		if (errorcb) {
+			errorcb(err);
+			return;
+		}
+		throw err;
+	}
+
+	if (!sqljsPromise) {
+		const initResult = initSqlJs();
+		const initPromise =
+			initResult && typeof initResult.then === 'function'
+				? initResult
+				: Promise.resolve(initResult);
+		SQLITE.sqljsPromise = sqljsPromise = initPromise
+			.then(function (sqljsModule) {
+				if (!sqljsModule || !sqljsModule.Database) {
+					throw new Error('SQL.js library did not expose a Database constructor');
+				}
+				SQLITE.sqljs = sqljs = sqljsModule;
+				return sqljsModule;
+			})
+			.catch(function (err) {
+				SQLITE.sqljs = null;
+				SQLITE.sqljsPromise = null;
+				throw err;
+			});
+	}
+
+	sqljsPromise.then(cb, errorcb);
+}
+
 SQLITE.createDatabase = function (wdbid, args, ifnotexists, dbid, cb) {
 	throw new Error('Connot create SQLITE database in memory. Attach it.');
 };
@@ -21,38 +72,48 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 	}
 
 	if ((args[0] && args[0] instanceof yy.StringValue) || args[0] instanceof yy.ParamValue) {
+		let value;
 		if (args[0] instanceof yy.StringValue) {
-			var value = args[0].value;
+			value = args[0].value;
 		} else if (args[0] instanceof yy.ParamValue) {
-			var value = params[args[0].param];
+			value = params[args[0].param];
 		}
 		alasql.utils.loadBinaryFile(
 			value,
 			true,
 			function (data) {
-				var db = new alasql.Database(dbid || sqldbid);
-				db.engineid = 'SQLITE';
-				db.sqldbid = sqldbid;
-				var sqldb = (db.sqldb = new SQL.Database(data));
-				db.tables = [];
-				var tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
+				getSqlJs(
+					function (SQL) {
+						const db = new alasql.Database(dbid || sqldbid);
+						db.engineid = 'SQLITE';
+						db.sqldbid = sqldbid;
+						const sqldb = (db.sqldb = new SQL.Database(data));
+						db.tables = [];
+						const tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
 
-				tables.forEach(function (tbl) {
-					db.tables[tbl[1]] = {};
-					var columns = (db.tables[tbl[1]].columns = []);
-					var ast = alasql.parse(tbl[4]);
-					var coldefs = ast.statements[0].columns;
-					if (coldefs && coldefs.length > 0) {
-						coldefs.forEach(function (cd) {
-							columns.push(cd);
+						tables.forEach(function (tbl) {
+							db.tables[tbl[1]] = {};
+							const columns = (db.tables[tbl[1]].columns = []);
+							const ast = alasql.parse(tbl[4]);
+							const coldefs = ast.statements[0].columns;
+							if (coldefs && coldefs.length > 0) {
+								coldefs.forEach(function (cd) {
+									columns.push(cd);
+								});
+							}
 						});
-					}
-				});
 
-				cb(1);
+						cb(1);
+					},
+					function (err) {
+						cb(null, err);
+					}
+				);
 			},
 			function (err) {
-				throw new Error('Cannot open SQLite database file "' + args[0].value + '"');
+				const fileError = new Error('Cannot open SQLite database file "' + args[0].value + '"');
+				fileError.cause = err;
+				cb(null, fileError);
 			}
 		);
 		return res;

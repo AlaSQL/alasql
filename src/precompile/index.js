@@ -40,8 +40,11 @@ export function compileToJS(sql, databaseid) {
 		const orderfn = ${orderfnStr};
 		const removeKeys = ${JSON.stringify(query.removeKeys || [])};
 		const distinct = ${JSON.stringify(query.distinct)};
-		const limit = ${JSON.stringify(query.limit)};
-		const offset = ${JSON.stringify(query.offset)};
+		const fixedLimit = ${JSON.stringify(query.limit)};
+		const fixedOffset = ${JSON.stringify(query.offset)};
+		const limitParam = ${JSON.stringify(query.limitParam)};
+		const offsetParam = ${JSON.stringify(query.offsetParam)};
+		const percent = ${JSON.stringify(query.percent)};
 		const alias = ${alias};
 		
 		// Get data from source (either params or database table)
@@ -58,6 +61,8 @@ export function compileToJS(sql, databaseid) {
 		}
 		
 		// Execute query
+		const limit = typeof limitParam !== 'undefined' ? (params ? params[limitParam] : undefined) : fixedLimit;
+		const offset = typeof offsetParam !== 'undefined' ? (params ? params[offsetParam] : undefined) : fixedOffset;
 		let result = [];
 		for (let i = 0; i < data.length; i++) {
 			const p = {};
@@ -92,11 +97,15 @@ export function compileToJS(sql, databaseid) {
 		}
 		
 		// Apply OFFSET and LIMIT
-		if (offset) {
-			result = result.slice(offset);
-		}
 		if (limit) {
-			result = result.slice(0, limit);
+			let start = offset | 0 || 0;
+			start = start < 0 ? 0 : start;
+			const end = percent ? (((result.length * limit) / 100) | 0) + start : (limit | 0) + start;
+			result = result.slice(start, end);
+		} else if (offset) {
+			let start = offset | 0 || 0;
+			start = start < 0 ? 0 : start;
+			result = result.slice(start);
 		}
 		
 		if (cb) cb(result);

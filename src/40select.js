@@ -31,7 +31,7 @@ yy.Select = class Select {
 			s += 'DISTINCT ';
 		}
 		if (this.top) {
-			s += 'TOP ' + this.top.value + ' ';
+			s += 'TOP ' + this.top.toString() + ' ';
 			if (this.percent) {
 				s += 'PERCENT ';
 			}
@@ -115,10 +115,10 @@ yy.Select = class Select {
 					.join(', ');
 		}
 		if (this.limit) {
-			s += ' LIMIT ' + this.limit.value;
+			s += ' LIMIT ' + this.limit.toString();
 		}
 		if (this.offset) {
-			s += ' OFFSET ' + this.offset.value;
+			s += ' OFFSET ' + this.offset.toString();
 		}
 		if (this.union) {
 			s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
@@ -139,14 +139,15 @@ yy.Select = class Select {
 	 Select statement in expression
 	 */
 	toJS(context) {
-		var s =
+		let outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
+		let s =
 			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
 			'](this.params,null,' +
-			context +
+			outerContext +
 			'))[0]';
 
-		//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
+		//	let s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 		return s;
 	}
 
@@ -244,11 +245,23 @@ yy.Select = class Select {
 
 		// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 		if (this.top) {
-			query.limit = this.top.value;
+			if (this.top instanceof yy.ParamValue) {
+				query.limitParam = this.top.param;
+			} else {
+				query.limit = this.top.value;
+			}
 		} else if (this.limit) {
-			query.limit = this.limit.value;
+			if (this.limit instanceof yy.ParamValue) {
+				query.limitParam = this.limit.param;
+			} else {
+				query.limit = this.limit.value;
+			}
 			if (this.offset) {
-				query.offset = this.offset.value;
+				if (this.offset instanceof yy.ParamValue) {
+					query.offsetParam = this.offset.param;
+				} else {
+					query.offset = this.offset.value;
+				}
 			}
 		}
 
@@ -381,6 +394,12 @@ yy.Select = class Select {
 		// Now, compile all togeather into one function with query object in scope
 		var statement = function (params, cb, oldscope) {
 			query.params = params;
+			if (typeof query.limitParam !== 'undefined') {
+				query.limit = params ? params[query.limitParam] : undefined;
+			}
+			if (typeof query.offsetParam !== 'undefined') {
+				query.offset = params ? params[query.offsetParam] : undefined;
+			}
 			// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
 			// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
 			// the (data, err) standard is maintained here.
@@ -575,7 +594,11 @@ yy.Select = class Select {
 			return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
 		};
 
-		query.queriesfn = this.queries.map(function (q, idx) {
+		// Compile each subquery. Nested scalar subqueries such as
+		// SELECT (SELECT (SELECT 1 AS c) AS b) AS a share one statement-level
+		// queries list (see #1025), so every compiled subquery must be able to
+		// resolve queriesidx against the same queriesfn array at runtime.
+		query.queriesfn = this.queries.map(function (q) {
 			var nq = q.compile(query.database.databaseid);
 			nq.query.modifier = 'RECORDSET';
 
@@ -583,8 +606,8 @@ yy.Select = class Select {
 			nq.query.isCorrelated = isCorrelated(q, query);
 
 			// If the nested query has its own queries, ensure they're compiled too
-			// This handles nested subqueries properly
-			if (q.queries && q.queries.length > 0) {
+			// (e.g. IN/ALL/ANY subqueries that captured a nested queries list)
+			if (q.queries && q.queries.length > 0 && !nq.query.queriesfn) {
 				nq.query.queriesfn = q.queries.map(function (qq) {
 					var nnq = qq.compile(query.database.databaseid);
 					nnq.query.modifier = 'RECORDSET';
@@ -593,6 +616,21 @@ yy.Select = class Select {
 			}
 			return nq;
 		});
+
+		// Share compiled subquery functions down the tree. Without this,
+		// multi-level scalar subqueries fail with
+		// "Cannot read properties of undefined (reading '0')" when the
+		// inner select expression evaluates this.queriesfn[queriesidx-1].
+		(function shareQueriesfn(queriesfn) {
+			if (!queriesfn) return;
+			queriesfn.forEach(function (nq) {
+				if (!nq.query.queriesfn) {
+					nq.query.queriesfn = queriesfn;
+				} else if (nq.query.queriesfn !== queriesfn) {
+					shareQueriesfn(nq.query.queriesfn);
+				}
+			});
+		})(query.queriesfn);
 	}
 };
 

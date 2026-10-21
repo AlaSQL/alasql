@@ -123,12 +123,12 @@ alasql.executeTrigger = function (trigger, databaseid, ...args) {
 		// Direct function ID (older syntax: CREATE TRIGGER ... tablename funcname)
 		return alasql.fn[trigger.funcid](...args);
 	} else if (trigger.statement) {
-		// CALL syntax: CREATE TRIGGER ... CALL funcname()
-		if (trigger.statement.expression && trigger.statement.expression.funcid) {
-			return alasql.fn[trigger.statement.expression.funcid](...args);
-		} else {
-			// Fallback: execute statement without parameters (for non-CALL statements)
-			return trigger.statement.execute(databaseid);
+		// CALL funcname() without arguments gets the row data, like the older syntax
+		const call = trigger.statement.expression;
+		if (call && call.funcid && !call.args?.length) {
+			return alasql.fn[call.funcid](...args);
 		}
+		// Otherwise run the statement as written, with its own arguments
+		return trigger.statement.execute(databaseid);
 	}
 };

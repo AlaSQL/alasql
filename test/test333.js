@@ -18,12 +18,10 @@ describe('Test 333 Check for NULLs', function () {
 	});
 
 	it('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       CREATE TABLE test (name STRING);
       INSERT INTO test VALUES ("Ben"),("Jim"),("Simon"),(NULL),(NULL),("Ye"),(""),(""),("Dave"),("");
-    */
-		});
+    `);
 		assert.deepStrictEqual(res.length, 2);
 		done();
 	});
@@ -34,8 +32,7 @@ describe('Test 333 Check for NULLs', function () {
 		var res = alasql('SELECT COUNT(*) FROM test WHERE LEN(test.name) = 0');
 		/// console.log(res);
 
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
       SELECT
           (
@@ -73,8 +70,7 @@ describe('Test 333 Check for NULLs', function () {
                   t.name NOT LIKE '_%'
           ) AS combo_count
 
-    */
-		});
+    `);
 		/// console.log(res);
 		//    assert.deepStrictEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
 

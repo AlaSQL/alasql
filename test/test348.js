@@ -12,39 +12,33 @@ describe('Test 347 Undescores in names Issue #245', function () {
 	});
 
 	it('2. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       CREATE TABLE students_a (
         _id serial NOT NULL,
         na_me nvarchar(50) NOT NULL,
         CONSTRAINT students_pkey PRIMARY KEY (_id)
       );
-      */
-		});
+      `);
 		done();
 	});
 
 	it('3. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       INSERT INTO students_a VALUES
         (1 , 'John Doe'),
         (2 , 'Larry Loe');
 
-      */
-		});
+      `);
 		done();
 	});
 
 	it('4. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT
         _id, na_me
       FROM
         students_a
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [
 			{_id: 1, na_me: 'John Doe'},
 			{_id: 2, na_me: 'Larry Loe'},

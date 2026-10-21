@@ -8,6 +8,24 @@
 
 /* global yy, alasql, Mongo, returnTrue */
 
+// Rows of a subquery in FROM or JOIN, also when the subquery reads a file
+function subqueryDatafn(source) {
+	return (query, params, cb, idx, alasql) => {
+		// Subqueries parsed inside this subselect (e.g. a scalar subquery in its
+		// column list) are hoisted to the statement-level queries list, so share
+		// the compiled list with the subselect
+		if (!source.subquery.query.queriesfn && query.queriesfn) {
+			source.subquery.query.queriesfn = query.queriesfn;
+		}
+		let res;
+		source.subquery(query.params, data => {
+			res = data.data;
+			if (cb) res = cb(res, idx, query);
+		});
+		return res;
+	};
+}
+
 yy.Select.prototype.compileFrom = function (query) {
 	const self = this;
 	query.sources = [];
@@ -72,9 +90,13 @@ yy.Select.prototype.compileFrom = function (query) {
 			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
 				source.datafn = (query, params, cb, idx, alasql) => {
 					let table = alasql.databases[source.databaseid].tables[source.tableid];
-					// Lazily compile the view's select on first use
-					if (!table.select && table.viewSelect) {
+					// Lazily compile the view's select on first use, and again after a schema change
+					if (
+						table.viewSelect &&
+						(!table.select || table.selectSchemaVersion !== alasql.schemaVersion)
+					) {
 						table.select = table.viewSelect.compile(table.viewDatabaseid);
+						table.selectSchemaVersion = alasql.schemaVersion;
 					}
 					let res = table.select(params);
 					if (cb) res = cb(res, idx, query);
@@ -92,16 +114,12 @@ yy.Select.prototype.compileFrom = function (query) {
 			if (typeof source.subquery.query.modifier === 'undefined') {
 				source.subquery.query.modifier = 'RECORDSET';
 			}
-			source.columns = source.subquery.query.columns;
+			// If the subquery could not resolve all its columns at compile time
+			// (e.g. SELECT * over parameter data), its columns list is incomplete,
+			// so leave the columns unknown and let SELECT * expand from the data
+			source.columns = source.subquery.query.dirtyColumns ? [] : source.subquery.query.columns;
 
-			source.datafn = (query, params, cb, idx, alasql) => {
-				let res;
-				source.subquery(query.params, data => {
-					res = data.data;
-					if (cb) res = cb(res, idx, query);
-				});
-				return res;
-			};
+			source.datafn = subqueryDatafn(source);
 		} else if (tq instanceof yy.Search) {
 			source.subsearch = tq;
 			source.columns = [];

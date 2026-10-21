@@ -17,8 +17,7 @@ describe('Test 331 SLT#2 - test', function () {
 	});
 
 	it('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(NULL,102,NULL,101,104);
     INSERT INTO t1(a,c,d,e,b) VALUES(107,106,108,109,105);
@@ -51,16 +50,14 @@ describe('Test 331 SLT#2 - test', function () {
     INSERT INTO t1(e,c,b,a,d) VALUES(NULL,244,240,243,NULL);
     INSERT INTO t1(e,d,c,b,a) VALUES(246,248,247,249,245);
 
-    */
-		});
+    `);
 		assert.deepStrictEqual(res.length, 31);
 		done();
 	});
 
 	it('2a. SELECT 126', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT a,
              (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b),
              a+b*2+c*3+d*4+e*5,
@@ -68,8 +65,7 @@ describe('Test 331 SLT#2 - test', function () {
         FROM t1
        WHERE a IS NULL
 
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [
 			[undefined, 1, undefined, 114],
@@ -79,11 +75,9 @@ describe('Test 331 SLT#2 - test', function () {
 	});
 	it('3. SELECT AVG', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT avg(c) FROM t1
-  */
-		});
+  `);
 		/// console.log(res);
 		//    assert.deepStrictEqual(res.length,30);
 		done();
@@ -91,12 +85,10 @@ describe('Test 331 SLT#2 - test', function () {
 
 	it('3. SELECT 97', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT CASE WHEN c>(SELECT avg(c) FROM t1) THEN a*2 ELSE b*10 END
       FROM t1
-  */
-		});
+  `);
 		//    console.log(res.length);
 		assert.deepStrictEqual(res.length, 30);
 		done();
@@ -104,13 +96,11 @@ describe('Test 331 SLT#2 - test', function () {
 
 	it('4. SELECT 97', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT b-c,
              c
         FROM t1
-       WHERE (e>a AND e<b)  */
-		});
+       WHERE (e>a AND e<b)  `);
 		/// console.log(res.sort());
 		//    assert.deepStrictEqual(res.length,30);
 		done();

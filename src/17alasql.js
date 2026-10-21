@@ -51,6 +51,24 @@ alasql.databases = {};
 alasql.databasenum = 0;
 
 /**
+	Schema version of all databases. Every schema change in any database increases it, so
+	cached statements, statements from alasql.compile() and views are compiled again
+	@type {number}
+*/
+alasql.schemaVersion = 0;
+
+/**
+	Record a schema change. All compiled code (the statement cache of every database, statements
+	from alasql.compile() and views) is compiled again on its next use. db.dbversion is still
+	increased for the database that changed, as user code reads and increases it too.
+	@param {object} [db] The database that changed, if it still exists
+*/
+function schemaChanged(db) {
+	if (db) db.dbversion++;
+	alasql.schemaVersion++;
+}
+
+/**
 	  Alasql options object
  */
 alasql.options = {
@@ -261,11 +279,10 @@ function cleanupCache(statement) {
 	if (!alasql.options.cache) {
 		return;
 	}
-	// NOTE: Do NOT mutate statement.query.data on the cached statement object.
-	// The compiled statement is shared across concurrent executions via sqlCache.
-	// Mutating it here clears data that another concurrent Promise.all call
-	// may still be reading, causing empty results with no error thrown.
-	// See: https://github.com/AlaSQL/alasql/issues/1953
+	// cleanup the table data to prevent storing this information in the SQL cache
+	if (statement && statement.query && statement.query.data) {
+		statement.query.data = [];
+	}
 }
 
 /**
@@ -278,16 +295,19 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 
 	// Include joinstar option in cache key because it affects how SELECT * compiles
 	// Without this, changing joinstar would use stale cached queries compiled with old option
-	var hh = hash(sql + '|joinstar:' + alasql.options.joinstar);
+	// The key is the text itself, a hash of it can collide and return another query's statement
+	var hh = sql + '|joinstar:' + alasql.options.joinstar;
 
 	// Create hash
 	if (alasql.options.cache) {
 		let statement = db.sqlCache[hh];
 		// If database structure was not changed since last time return cache
-		if (statement && db.dbversion === statement.dbversion) {
-			// Clone params to prevent concurrent executions from sharing
-			// the same params reference when called via Promise.all
-			var res = statement(Array.isArray(params) ? params.slice() : Object.assign({}, params), cb);
+		if (
+			statement &&
+			db.dbversion === statement.dbversion &&
+			statement.schemaVersion === alasql.schemaVersion
+		) {
+			var res = statement(params, cb);
 			cleanupCache(statement);
 			return res;
 		}
@@ -322,6 +342,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			}
 			statement.sql = sql;
 			statement.dbversion = db.dbversion;
+			statement.schemaVersion = alasql.schemaVersion;
 
 			if (alasql.options.cache) {
 				// Secure sqlCache size
@@ -448,7 +469,20 @@ alasql.compile = function (sql, databaseid) {
 	if (1 !== ast.statements.length)
 		throw new Error('Cannot compile, because number of statements in SQL is not equal to 1');
 
-	var statement = ast.statements[0].compile(databaseid);
+	var compiled = ast.statements[0].compile(databaseid);
+	var schemaVersion = alasql.schemaVersion;
+
+	// Compile again when the schema of any database changed since the last compile
+	var statement = function (params, cb) {
+		if (schemaVersion !== alasql.schemaVersion) {
+			compiled = ast.statements[0].compile(databaseid);
+			schemaVersion = alasql.schemaVersion;
+			Object.assign(statement, compiled);
+		}
+		return compiled(params, cb);
+	};
+	// Keep the properties of the compiled statement on the returned function, also after a recompile
+	Object.assign(statement, compiled);
 
 	statement.promise = function (params) {
 		return new Promise(function (resolve, reject) {

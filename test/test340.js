@@ -12,8 +12,7 @@ describe('Test 340 SET PARAMS', function () {
 	});
 
 	it.skip('2. SET PARAMS', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
     SET PARAMS = {
         foo:'bar',
@@ -23,8 +22,7 @@ describe('Test 340 SET PARAMS', function () {
 
     SELECT VALUE $foo;
 
-*/
-		});
+`);
 
 		// console.log(res);
 		assert.deepStrictEqual(res, [1, 'bar']);

@@ -100,8 +100,6 @@ yy.Select.prototype.compileOrder = function (query, params) {
 						dg = '.valueOf()';
 				}
 			}
-			// COLLATE NOCASE
-			if (ord.nocase) dg += '.toUpperCase()';
 
 			if (ord.nullsOrder) {
 				if (ord.nullsOrder == 'FIRST') {
@@ -113,18 +111,15 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				sk += '}';
 			}
 
-			s +=
-				"if((a['" +
-				key +
-				"']||'')" +
-				dg +
-				(ord.direction == 'ASC' ? '>' : '<') +
-				"(b['" +
-				key +
-				"']||'')" +
-				dg +
-				')return 1;';
-			s += "if((a['" + key + "']||'')" + dg + "==(b['" + key + "']||'')" + dg + '){';
+			var va = "(a['" + key + "']||'')" + dg;
+			var vb = "(b['" + key + "']||'')" + dg;
+			// COLLATE NOCASE ignores case in text; numbers and other values compare as they are
+			if (ord.nocase) {
+				va = '(typeof (y=' + va + ")=='string'?y.toUpperCase():y)";
+				vb = '(typeof (y=' + vb + ")=='string'?y.toUpperCase():y)";
+			}
+			s += 'if(' + va + (ord.direction == 'ASC' ? '>' : '<') + vb + ')return 1;';
+			s += 'if(' + va + '==' + vb + '){';
 			//console.log(37,s);
 
 			/*

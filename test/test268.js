@@ -75,7 +75,6 @@ describe('Test 268 INNER JOIN stress test', function () {
 	//console.log(t2);
 
 	it('4. INNER JOIN on Big Array', function (done) {
-		this.timeout(10000);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('INNER =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 LEFT JOIN ? t2 ON t1.b = t2.b', [t1, t2]);

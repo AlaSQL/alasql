@@ -1194,9 +1194,14 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
 /* * Tests if a given value matches a pattern with optional escape character.
  * Supports SQL-like syntax with % and _ as wildcards and custom escape character.
  */
-var patternCache = {};
+var patternCache = new Map(); // escape character -> pattern -> RegExp
 var like = (utils.like = function (pattern, value, escape = '') {
-	if (!patternCache[pattern]) {
+	var cache = patternCache.get(escape);
+	if (!cache) patternCache.set(escape, (cache = new Map()));
+	var re = cache.get(pattern);
+	if (!re) {
+		// SQL allows exactly one escape character (SQLite raises the same error)
+		if (escape.length > 1) throw new Error('ESCAPE expression must be a single character');
 		var regexStr = '^'; // Start regex pattern to match from the beginning.
 		var i = 0; // Index for traversing the pattern string.
 
@@ -1239,11 +1244,12 @@ var like = (utils.like = function (pattern, value, escape = '') {
 
 		regexStr += '$'; // End regex pattern to match until the end.
 		// Compile and cache the regex pattern for future use.
-		patternCache[pattern] = RegExp(regexStr, 'i');
+		re = RegExp(regexStr, 'i');
+		cache.set(pattern, re);
 	}
 
 	// Convert value to string (handling null/undefined) and test against compiled pattern.
-	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
+	return ('' + (value ?? '')).search(re) > -1;
 });
 
 /**

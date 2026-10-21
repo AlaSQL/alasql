@@ -92,8 +92,25 @@ function executeRecursiveCTE(w, databaseid, params) {
 		columnNames = anchorColumnNames;
 	}
 
+	// With UNION (not UNION ALL) a row already in the result is not added again,
+	// so the recursion stops on cycles in the data, as in SQLite
+	var seen = select.unionall ? null : new Set();
+	var addNew = function (rows) {
+		if (!seen) return rows;
+		return rows.filter(function (row) {
+			var key = JSON.stringify(
+				columnNames.map(function (c) {
+					return row[c];
+				})
+			);
+			if (seen.has(key)) return false;
+			seen.add(key);
+			return true;
+		});
+	};
+
 	// Map anchor data to target column names (handles both object format and column renaming)
-	var anchorData = mapColumnsToNames(anchorDetails.data, anchorColumnNames, columnNames);
+	var anchorData = addNew(mapColumnsToNames(anchorDetails.data, anchorColumnNames, columnNames));
 	tb.data = anchorData.slice();
 
 	// Iterate with the recursive part
@@ -128,7 +145,8 @@ function executeRecursiveCTE(w, databaseid, params) {
 		var recursiveData = mapColumnsToNames(recursiveDetails.data, recursiveColumnNames, columnNames);
 
 		// Add new rows to the result
-		newRows = recursiveData;
+		newRows = addNew(recursiveData);
+		if (newRows.length === 0) break;
 		for (var i = 0; i < newRows.length; i++) {
 			allData.push(newRows[i]);
 		}
@@ -152,40 +170,61 @@ function mapColumnsToNames(data, sourceColumns, targetColumns) {
 
 yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
-	// Create temporary tables
 	var savedTables = [];
-	self.withs.forEach(function (w) {
+
+	// Restore tables shadowed by the temporary CTE tables
+	function restoreTables() {
+		self.withs.forEach(function (w, idx) {
+			if (savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx];
+			else delete alasql.databases[databaseid].tables[w.name];
+		});
+	}
+
+	// Create temporary tables one after another. Each non-recursive CTE is
+	// executed with a callback, so sources that load data asynchronously
+	// (like CSV() or XLSX() reading a file) are fully loaded before the
+	// next CTE or the main select reads the temporary table.
+	function executeWith(idx) {
+		if (idx >= self.withs.length) {
+			return self.select.execute(databaseid, params, function (data, err) {
+				restoreTables();
+				if (cb) data = cb(data, err);
+				return data;
+			});
+		}
+
+		var w = self.withs[idx];
 		savedTables.push(alasql.databases[databaseid].tables[w.name]);
 
 		if (w.recursive) {
 			// Execute recursive CTE
 			executeRecursiveCTE(w, databaseid, params);
-		} else {
-			// Non-recursive CTE - original behavior
-			var tb = (alasql.databases[databaseid].tables[w.name] = new Table({
-				tableid: w.name,
-			}));
-			tb.data = w.select.execute(databaseid, params);
+			return executeWith(idx + 1);
+		}
+
+		// Non-recursive CTE
+		var tb = (alasql.databases[databaseid].tables[w.name] = new Table({
+			tableid: w.name,
+		}));
+		// The statement returns its own result, so keep the result of the rest
+		// of the chain (available right away when all sources are synchronous)
+		var res;
+		w.select.execute(databaseid, params, function (data, err) {
+			if (err) {
+				restoreTables();
+				if (cb) return cb(null, err);
+				throw err;
+			}
+			tb.data = data;
 			if (w.columns) {
 				tb.data = renameColumns(tb.data, w.columns);
 			}
-		}
-	});
-
-	var res = 1;
-	res = this.select.execute(databaseid, params, function (data) {
-		// Clear temporary tables
-		//		setTimeout(function(){
-		self.withs.forEach(function (w, idx) {
-			if (savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx];
-			else delete alasql.databases[databaseid].tables[w.name];
+			res = executeWith(idx + 1);
 		});
-		//		},0);
+		return res;
+	}
 
-		if (cb) data = cb(data);
-		return data;
-	});
-	return res;
+	return executeWith(0);
 };
 
 /*/*

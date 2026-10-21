@@ -153,22 +153,32 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	//console.log('cb',cb);
 	//console.log('JSON');
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
-	(alasql.utils.loadFile(filename, !!cb, function (data) {
-		//		console.log('DATA:'+data);
-		//		res = [{a:1}];
-		res = JSON.parse(data);
-		if (cb) {
-			res = cb(res, idx, query);
+	const errorHandler = err => {
+		const error = err instanceof Error ? err : new Error(err);
+		if (query && query.cb) {
+			query.cb(null, error);
+			return;
 		}
-	}),
-		err => {
-			const error = err instanceof Error ? err : new Error(err);
-			if (query && query.cb) {
-				query.cb(null, error);
+		throw error;
+	};
+	alasql.utils.loadFile(
+		filename,
+		!!cb,
+		function (data) {
+			//		console.log('DATA:'+data);
+			//		res = [{a:1}];
+			try {
+				res = JSON.parse(data);
+			} catch (error) {
+				errorHandler(error);
 				return;
 			}
-			throw error;
-		});
+			if (cb) {
+				res = cb(res, idx, query);
+			}
+		},
+		errorHandler
+	);
 	return res;
 };
 
@@ -256,8 +266,8 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
-	// Determine once whether to auto-convert: not raw mode and not SELECT INTO
-	const shouldAutoConvert = !opt.raw && !query?.intofns;
+	// Determine once whether to auto-convert: not raw mode, not SELECT INTO, and csvStringToNumber option is set
+	const shouldAutoConvert = !opt.raw && !query?.intofns && alasql.options.csvStringToNumber;
 
 	function potentialAutoConvert(val) {
 		if (shouldAutoConvert && val !== undefined && val.length !== 0 && val == +val) {

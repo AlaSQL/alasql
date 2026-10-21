@@ -12,21 +12,18 @@ describe('Test 327 FOREIGN KEYS', function () {
 	});
 
 	it('2. CREATE TABLES Parts', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE dbo.Parts
       (
         partid   INT         NOT NULL PRIMARY KEY,
         partname VARCHAR(25) NOT NULL
       );
-    */
-		});
+    `);
 		done();
 	});
 
 	it('3. INSERT VALUES INTO Parts', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       INSERT INTO dbo.Parts(partid, partname) VALUES
         ( 1, 'Black Tea'      ),
         ( 2, 'White Tea'      ),
@@ -45,15 +42,13 @@ describe('Test 327 FOREIGN KEYS', function () {
         (15, 'Sugar Bag'      ),
         (16, 'Ground Coffee'  ),
         (17, 'Coffee Beans'   );
-    */
-		});
+    `);
 		done();
 	});
 
 	it('4. CREATE TABLE BOM', function (done) {
 		if (false) {
-			alasql(function () {
-				/*
+			alasql(`
       CREATE TABLE dbo.BOM
       (
         partid     INT           NOT NULL REFERENCES dbo.Parts,
@@ -63,11 +58,9 @@ describe('Test 327 FOREIGN KEYS', function () {
         UNIQUE(partid, assemblyid),
         CHECK (partid <> assemblyid)
       );
-    */
-			});
+    `);
 		}
-		alasql(function () {
-			/*
+		alasql(`
       CREATE TABLE dbo.BOM
       (
         partid     INT           NOT NULL,
@@ -79,15 +72,13 @@ describe('Test 327 FOREIGN KEYS', function () {
         FOREIGN KEY (partid) REFERENCES dbo.Parts,
         CONSTRAINT assembly_fk FOREIGN KEY (assemblyid) REFERENCES dbo.Parts (partid)
       );
-    */
-		});
+    `);
 
 		done();
 	});
 
 	it('5. INSERT VALUES INTO BOM', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
       INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES
         ( 1, NULL, 'EA',   1.00),
         ( 2, NULL, 'EA',   1.00),
@@ -116,8 +107,7 @@ describe('Test 327 FOREIGN KEYS', function () {
         (14,   12, 'mL',  20.00),
         (16,   12, 'g' ,  15.00),
         (17,   16, 'g' ,  15.00);
-      */
-		});
+      `);
 		done();
 	});
 

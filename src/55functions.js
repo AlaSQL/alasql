@@ -215,24 +215,12 @@ stdlib.RANDOM = function (r) {
 		return '(Math.random()*(' + r + ')|0)';
 	}
 };
-stdlib.ROUND = function (s, d) {
-	if (arguments.length == 2) {
-		return (
-			'(__alasql_tmp = (' +
-			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp*Math.pow(10,(' +
-			d +
-			')))/Math.pow(10,(' +
-			d +
-			'))))'
-		);
-	} else {
-		return (
-			'(__alasql_tmp = (' +
-			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp)))'
-		);
-	}
+stdfn.ROUND = function (s, d) {
+	if (s == null || (typeof s === 'string' && s.trim() === '')) return undefined;
+	s = Number(s);
+	if (isNaN(s)) return undefined;
+	if (arguments.length < 2) return Math.round(s);
+	return Math.round(s * Math.pow(10, d)) / Math.pow(10, d);
 };
 stdlib.CEIL = stdlib.CEILING = function (s) {
 	return 'Math.ceil(' + s + ')';
@@ -387,6 +375,53 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	} else {
 		return (el + r[middleFloor]) / 2;
 	}
+};
+
+alasql.aggr.mode = alasql.aggr.MODE = function (v, s, stage) {
+	if (stage === 1) {
+		if (v == null) {
+			return {counts: new Map(), maxCount: 0};
+		}
+		return {counts: new Map([[v, 1]]), maxCount: 1};
+	}
+
+	if (stage === 2) {
+		if (!s || !s.counts) {
+			s = {counts: new Map(), maxCount: 0};
+		}
+		if (v == null) {
+			return s;
+		}
+		const count = (s.counts.get(v) || 0) + 1;
+		s.counts.set(v, count);
+		if (count > s.maxCount) {
+			s.maxCount = count;
+		}
+		return s;
+	}
+
+	if (stage === 3) {
+		if (!s || s.maxCount === 0) {
+			return undefined;
+		}
+
+		let result;
+		let hasResult = false;
+
+		for (const [value, count] of s.counts) {
+			if (count !== s.maxCount) {
+				continue;
+			}
+			if (!hasResult || value < result) {
+				result = value;
+				hasResult = true;
+			}
+		}
+
+		return result;
+	}
+
+	return undefined;
 };
 
 alasql.aggr.QUART = function (v, s, stage, nth) {

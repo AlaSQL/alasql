@@ -17,11 +17,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	it.skip('2. SEARCH RANGE', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH FROM RANGE(1,8)
-    */
-		});
+    `);
 
 		//console.log(res);
 		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
@@ -29,11 +27,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	it.skip('3. SEARCH ^ ', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / FROM RANGE(1,8)
-    */
-		});
+    `);
 
 		//console.log(res);
 		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
@@ -41,11 +37,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	it.skip('4. SEARCH / ', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / FROM RANGE(1,8)
-    */
-		});
+    `);
 
 		//console.log(res);
 		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8]);
@@ -53,21 +47,17 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	it.skip('5. SEARCH WHERE ', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / WHERE(_ <= 2) ^ / WHERE(_ >= 7) FROM RANGE(1,8)
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [7, 8, 7, 8]);
 		done();
 	});
 
 	it.skip('6. SEARCH AS and RETURN ', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / WHERE(_ <= 2) AS @a ^ / WHERE(_ >= 7) AS @b RETURNS(@a AS a,@b AS b) FROM RANGE(1,8)
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [
 			{a: 1, b: 7},
 			{a: 1, b: 8},
@@ -78,11 +68,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	it.skip('7. SEARCH ROW', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / WHERE(_ <= 2) AS @a ^ / WHERE(_ >= 7) AS @b ROW(@a,@b) FROM RANGE(1,8)
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [
 			[1, 7],
 			[1, 8],
@@ -94,11 +82,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('8. SEARCH TO', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / ex(1) TO @b ex(2) TO @b @b FROM RANGE(1,8)
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [
 			[1, 2],
@@ -115,11 +101,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('9. SEARCH SET variable', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / set(@a=9) @a FROM RANGE(1,8)
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [9, 9, 9, 9, 9, 9, 9, 9]);
 		done();
@@ -137,11 +121,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('11. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH repeat(/,1,1) FROM @[@[1,2],3]
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [[1, 2], 3]);
 		done();
@@ -167,11 +149,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('14. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH repeat(/,0,3) FROM @[@[1,2],3]
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [[[1, 2], 3], [1, 2], 3, 1, 2]);
 		done();
@@ -179,11 +159,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('15. SEARCH REPEAT with index', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH repeat(/,0,3,@i) @i FROM @[@[1,2],3]
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [0, 1, 1, 2, 2]);
 		done();
@@ -192,11 +170,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 	it.skip('16. SEARCH REPEAT with index', function (done) {
 		alasql.vars.b = [];
 		alasql.vars.a = [1, 2];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH / ex(_ IN @a) FROM @[1,2,3]
-    */
-		});
+    `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [true, true, false]);
 		done();
@@ -240,26 +216,21 @@ describe('Test 337 SEARCH 8 queens', function () {
 	if (false) {
 		it.skip('17. SEARCH REPEAT with index', function (done) {
 			alasql.vars.b = [];
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
       SEARCH repeat(/,1,2,@i) FROM @[@[1,2],3]
-    */
-			});
+    `);
 			console.log(res);
 
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
       SEARCH repeat(/ @i,1,2,@i) FROM @[@[1,2],3]
-    */
-			});
+    `);
 			console.log(res);
 			assert.deepStrictEqual(res, [1, 1, 2, 2]);
 			done();
 		});
 
 		it.skip('90. SEARCH 8 queens', function (done) {
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
     
     search 
       set(@h=@[])
@@ -270,8 +241,7 @@ describe('Test 337 SEARCH 8 queens', function () {
         1,4,@i)
     from range(1,4)
 
-    */
-			});
+    `);
 			console.log(res);
 			//    assert.deepStrictEqual(res,1);
 			done();

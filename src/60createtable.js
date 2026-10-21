@@ -59,6 +59,59 @@ yy.CreateTable.prototype.toString = function () {
 	return s;
 };
 
+/**
+ JS for a column of an index, or with a prefix length for its first `prefix` characters,
+ as in MySQL's a(N) (#406)
+ */
+function columnPrefixToJS(columnid, prefix) {
+	var col = 'r[' + JSON.stringify(columnid) + ']';
+	if (prefix === undefined) {
+		return col;
+	}
+	return '(' + col + '==null?' + col + ':String(' + col + ').substr(0,' + prefix + '))';
+}
+
+/**
+ Inside CREATE TABLE and CREATE INDEX a double-quoted string that names a column of the table is
+ that column, as SQLite reads CHECK ("a" >= 0) and UNIQUE ("a", "b"). Elsewhere it stays a string (#989)
+ */
+function quotedColumns(expr, columnids) {
+	if (expr instanceof yy.StringValue) {
+		return expr.doubleQuoted && columnids.indexOf(expr.value) > -1
+			? new yy.Column({columnid: expr.value})
+			: expr;
+	}
+	for (var key in expr) {
+		if (
+			Object.prototype.hasOwnProperty.call(expr, key) &&
+			expr[key] &&
+			typeof expr[key] === 'object'
+		) {
+			expr[key] = quotedColumns(expr[key], columnids);
+		}
+	}
+	return expr;
+}
+
+/**
+ JS for one column of a UNIQUE constraint or CREATE INDEX. These take expressions, so a(N)
+ is parsed as a function call. When a is a column of the table, it is a prefix (#406)
+ */
+function indexColumnToJS(expr, table) {
+	expr = quotedColumns(expr, Object.keys(table.xcolumns || {}));
+	if (
+		expr instanceof yy.FuncValue &&
+		table.xcolumns &&
+		table.xcolumns[expr.funcid] &&
+		expr.args &&
+		expr.args.length === 1 &&
+		expr.args[0] instanceof yy.NumValue
+	) {
+		return columnPrefixToJS(expr.funcid, expr.args[0].value);
+	}
+	return expr.toJS('r', '');
+}
+
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
@@ -72,6 +125,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	var columns = this.columns;
 	var constraints = this.constraints || [];
+	var columnids = (columns || []).map(function (col) {
+		return col.columnid;
+	});
 
 	// IF NOT EXISTS
 	if (this.ifnotexists && db.tables[tableid]) {
@@ -89,6 +145,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
+	// The schema changed, so statements in the statement cache must be compiled again
+	schemaChanged(db);
 	// If this is a class
 	if (this.class) {
 		table.isclass = true;
@@ -125,7 +183,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (col.check) {
 				table.checks.push({
 					id: col.check.constrantid,
-					fn: new Function('r,params,alasql', 'var y;return ' + col.check.expression.toJS('r', '')),
+					fn: new Function(
+						'r,params,alasql',
+						'var y;return ' + quotedColumns(col.check.expression, columnids).toJS('r', '')
+					),
 				});
 			}
 
@@ -208,8 +269,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var pk = (table.pk = {});
 			pk.columns = con.columns;
 			pk.onrightfns = pk.columns
-				.map(function (columnid) {
-					return `r[${JSON.stringify(columnid)}]`;
+				.map(function (columnid, i) {
+					return columnPrefixToJS(columnid, con.prefixes && con.prefixes[i]);
 				})
 				.join("+'`'+");
 			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
@@ -222,7 +283,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			});
 		} else if (con.type === 'CHECK') {
-			checkfn = new Function('r,params,alasql', 'var y;return ' + con.expression.toJS('r', ''));
+			checkfn = new Function(
+				'r,params,alasql',
+				'var y;return ' + quotedColumns(con.expression, columnids).toJS('r', '')
+			);
 		} else if (con.type === 'UNIQUE') {
 			var uk = {};
 			table.uk = table.uk || [];
@@ -230,12 +294,27 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns
 				.map(function (expr) {
-					return expr.expression.toJS('r', '');
+					return indexColumnToJS(expr.expression, table);
 				})
 				.join("+'`'+");
 			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
+		} else if (con.type === 'INDEX') {
+			// Register the index the way CREATE INDEX does, so INSERT keeps it up to date
+			var rightfns = con.columns
+				.map(function (columnid, i) {
+					var prefix = con.prefixes && con.prefixes[i];
+					if (prefix === undefined) {
+						return new yy.Column({columnid: columnid}).toJS('r', '');
+					}
+					return columnPrefixToJS(columnid, prefix);
+				})
+				.join("+'`'+");
+			var hh = hash(rightfns);
+			table.inddefs[con.indexid] = {rightfns: rightfns, hh: hh};
+			table.indices[hh] = {};
+			db.indices[con.indexid] = tableid;
 		} else if (con.type === 'FOREIGN KEY') {
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {
@@ -250,7 +329,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			fk.columns = con.columns;
 
 			if (fk.fkcolumns.length > fk.columns.length) {
-				throw new Error('Invalid foreign key on table ' + table.tableid);
+				throw new Error('Invalid foreign key on table ' + tableid);
 			}
 
 			// Mark columns with foreignkey property
@@ -281,7 +360,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return true;
 				}
 				if (Object.keys(rr).length !== fk.columns.length) {
-					throw new Error('Invalid foreign key on table ' + table.tableid);
+					throw new Error('Invalid foreign key on table ' + tableid);
 				}
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];

@@ -39,8 +39,7 @@ describe('Test 324 Roads samples', function () {
 	});
 
 	it('3. CREATE TABLE with constraints', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       CREATE TABLE dbo.Employees
       (
         empid   INT         NOT NULL PRIMARY KEY,
@@ -49,21 +48,18 @@ describe('Test 324 Roads samples', function () {
         salary  MONEY       NOT NULL,
         CHECK (empid <> mgrid)
       );
-  */
-		});
+  `);
 		assert(res == 1);
 		assert(alasql.databases.dbo.tables.Employees);
 		done();
 	});
 
 	it('4. INSERT INTO table with constraints', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 	  INSERT INTO dbo.Employees(empid, mgrid, empname, salary) VALUES
 		(1,  NULL, 'David'  , 10000.00),
 		(2,  1,    'Eitan'  ,  7000.00)
-  */
-		});
+  `);
 		assert(res == 2);
 		assert.deepStrictEqual(alasql('SELECT * FROM dbo.Employees'), [
 			{empid: 1, mgrid: undefined, empname: 'David', salary: 10000},
@@ -74,25 +70,21 @@ describe('Test 324 Roads samples', function () {
 
 	it('5. INSERT INTO table with same primary key', function (done) {
 		assert.throws(function () {
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
 		INSERT INTO dbo.Employees(empid, mgrid, empname, salary) VALUES
 		  (1,  NULL, 'David'  , 10000.00),
 		  (2,  1,    'Eitan'  ,  7000.00)
-	  */
-			});
+	  `);
 		}, Error);
 		done();
 	});
 
 	it('6. INSERT INTO wrong NULL in NOT NULL column', function (done) {
 		assert.throws(function () {
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
 		INSERT INTO dbo.Employees(empid, mgrid, empname, salary) VALUES
 		  (NULL,  3, 'Samson'  , 45000.00)
-	  */
-			});
+	  `);
 		}, Error);
 		done();
 	});

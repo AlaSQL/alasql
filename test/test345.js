@@ -14,19 +14,16 @@ describe('Test 345 Speed test', function () {
 	});
 
 	it.skip('2. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       DECLARE @Loops INT; 
       SET @Loops = 1;
       DECLARE @CPU INT; 
-    */
-		});
+    `);
 		done();
 	});
 
 	it.skip('3. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       DECLARE @Loops INT; 
       SET @Loops = 1;
       DECLARE @CPU INT; 
@@ -67,8 +64,7 @@ describe('Test 345 Speed test', function () {
       GO
 
 
-    */
-		});
+    `);
 		done();
 	});
 

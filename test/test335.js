@@ -17,8 +17,7 @@ describe('Test 335 WITH RECURSIVE CTE', function () {
 	});
 
 	it('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       -- Create an Employee table.
       CREATE TABLE dbo.MyEmployees
       (
@@ -40,15 +39,13 @@ describe('Test 335 WITH RECURSIVE CTE', function () {
       ,(286, N'Lynn', N'Tsoflias', N'Sales Representative',3,285)
       ,(16,  N'David',N'Bradley', N'Marketing Manager', 4, 273)
       ,(23,  N'Mary', N'Gibson', N'Marketing Specialist', 4, 16);
-    */
-		});
+    `);
 		assert.deepStrictEqual(res, [1, 9]);
 		done();
 	});
 
 	it('3. WITH SELECT', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
 WITH RECURSIVE DirectReports(ManagerID, EmployeeID, Title, EmployeeLevel) AS 
 (
@@ -65,8 +62,7 @@ SELECT ManagerID, EmployeeID, Title, EmployeeLevel
 FROM DirectReports
 ORDER BY ManagerID;
 
-    */
-		});
+    `);
 		// Verify all 9 employees are in the result
 		assert.equal(res.length, 9);
 		// Verify CEO is at level 0

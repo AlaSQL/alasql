@@ -17,8 +17,7 @@ describe('Test 338 EXTRACT', function () {
 	});
 
 	it('2. SAMPLE', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
 create table a (col int);
 insert into a (col) values (1), (2), (3), (4), (5), (96), (97), (98), (99), (100);
@@ -29,24 +28,21 @@ insert into b (col) values (1), (98), (2), (99), (3), (100);
 select * from a;
 select * from b;
 
-*/
-		});
+`);
 		//  console.log(res);
 
 		done();
 	});
 
 	it('2. EXCEPT', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
 -- This gives error
 select col from a
 except
 select top 3 b.col from b order by b.col desc;
 
-    */
-		});
+    `);
 
 		// console.log(res);
 		//    assert.deepStrictEqual(res,1);
@@ -54,8 +50,7 @@ select top 3 b.col from b order by b.col desc;
 	});
 
 	it('3. EXCEPT', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     
 ;with cte_for_b
 as
@@ -64,8 +59,7 @@ select col from a
 except
 select col from cte_for_b;
 
-    */
-		});
+    `);
 
 		// console.log(res);
 		//    assert.deepStrictEqual(res,1);
@@ -73,15 +67,13 @@ select col from cte_for_b;
 	});
 
 	it('3. DROP TABLES', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
 drop table a;
 drop table b;
 
 
-    */
-		});
+    `);
 		//  console.log(res);
 		assert.deepStrictEqual(res, [1, 1]);
 		done();

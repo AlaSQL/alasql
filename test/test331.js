@@ -14,8 +14,7 @@ describe('Test 331 SLT#1 - test', function () {
 	});
 
 	it('2. CREATE TABLES', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(103,102,100,101,104);
     INSERT INTO t1(a,c,d,e,b) VALUES(107,106,108,109,105);
@@ -48,15 +47,13 @@ describe('Test 331 SLT#1 - test', function () {
     INSERT INTO t1(e,c,b,a,d) VALUES(242,244,240,243,241);
     INSERT INTO t1(e,d,c,b,a) VALUES(246,248,247,249,245);
 
-  */
-		});
+  `);
 		done();
 	});
 
 	it('2. SELECT 673', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
     SELECT a,
            c-d,
            d
@@ -65,8 +62,7 @@ describe('Test 331 SLT#1 - test', function () {
        AND a>b
        AND (a>b-2 AND a<b+2)
      ORDER BY 1,2,3
-  */
-		});
+  `);
 		//    console.log(res);
 		assert.deepStrictEqual(res, [
 			[131, 1, 133],
@@ -92,8 +88,7 @@ describe('Test 331 SLT#1 - test', function () {
 /// console.log('***');    
 /// console.log(res.statements[0].where.expression.left);
 */
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT a-b,
              CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222
               WHEN a<b+3 THEN 333 ELSE 444 END
@@ -102,8 +97,7 @@ describe('Test 331 SLT#1 - test', function () {
          AND b>c
          AND (a>b-2 AND a<b+2)
        ORDER BY 1,2
-  */
-		});
+  `);
 		assert.deepStrictEqual(res, [
 			[-1, 222],
 			[-1, 222],
@@ -133,8 +127,7 @@ SELECT a+b*2, \
 		//    console.log(res.statements[0].where.expression);
 
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 
 SELECT a+b*2,
        d,
@@ -147,8 +140,7 @@ SELECT a+b*2,
    AND d NOT BETWEEN 110 AND 150
    AND e+d BETWEEN a+b-10 AND c+130
  ORDER BY 1,2,4,5,3
-   */
-		});
+   `);
 
 		assert.deepStrictEqual(res, [[317, 108, 107, -1, 333]]);
 

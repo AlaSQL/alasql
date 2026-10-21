@@ -22,8 +22,7 @@ describe('Test 380 - PIVOT', function () {
 	});
 
 	it('1. Create table', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
 
 			create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int);
 
@@ -56,8 +55,7 @@ describe('Test 380 - PIVOT', function () {
 			insert into DailyIncome values ('FREDS', 'THU', 800);
 			insert into DailyIncome values ('JOHNS', 'TUE', 600);
 
-		*/
-		});
+		`);
 
 		done();
 	});
@@ -146,14 +144,12 @@ describe('Test 380 - PIVOT', function () {
 	});
 
 	it('4. PIVOT and WHERE', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
 		select * from DailyIncome
 		pivot (max (IncomeAmount) for IncomeDay in ([MON],[TUE],[WED],[THU],[FRI],[SAT],[SUN])) as MaxIncomePerDay
 		where VendorId in ('SPIKE')
 
-		*/
-		});
+		`);
 
 		assert.deepStrictEqual(res, [
 			{
