@@ -2,14 +2,22 @@
 	One number for "did develop get slower?": the local build against the latest release on npm.
 
 	Usage:
-	  yarn perf                                      # builds dist/, then runs this
+	  yarn test-perf                                 # runs on whatever is in dist/ (about 7 minutes)
+	  yarn test-perf --scale=0.2 --runs=2 --runtime=node   # a quick check, about 2 minutes
 	  node test/performance/vs-npm.js [options]
 
 	Options:
+	  --scale=<x>         multiply every loop in bench.js by x (0.2 runs about 5 times fewer
+	                      queries; each case keeps at least 1 query per round and 3 rounds).
+	                      Below 1 only the score is reliable: single cases get too few queries
 	  --runs=<n>          runs per build and runtime, interleaved (default 3)
-	  --runtimes=bun,node (default: both when Bun is installed, else node)
+	  --runtime=<list>    bun, node or bun,node (default: both when Bun is installed, else node)
 	  --group=<name>      only some groups (repeatable; default every group)
 	  --fail-above=<n>    exit with code 1 when the score is above n (for CI)
+	  --target=<path>     the build to test (default dist/alasql.fs.js; nothing is built first)
+	  --base=<path>       compare against another build instead of npm latest (for example the
+	                      dist/alasql.fs.js of develop, to check a PR; or the same build, to see
+	                      the noise)
 	  --json              print the numbers as JSON
 
 	The score: npm latest is 100. For every timed case, local time divided by npm time; the score
@@ -33,6 +41,11 @@ for (const a of process.argv.slice(2)) {
 	else opt[m[1]] = m[2] === undefined ? true : m[2];
 }
 const RUNS = +(opt.runs || 3);
+const SCALE = opt.scale ? +opt.scale : 1;
+const extra = SCALE === 1 ? [] : ['--scale=' + SCALE];
+// develop against itself moves a dimension by up to about 10 percent at scale 1 (more on Bun
+// for small cases), and by far more with fewer loops
+const MARK = SCALE >= 1 ? 10 : 25;
 const hasBun = (() => {
 	try {
 		sh('bun', ['--version']);
@@ -41,7 +54,7 @@ const hasBun = (() => {
 		return false;
 	}
 })();
-const runtimes = (opt.runtimes || (hasBun ? 'bun,node' : 'node')).split(',');
+const runtimes = (opt.runtime || (hasBun ? 'bun,node' : 'node')).split(',');
 const log = s => process.stderr.write(s + '\n');
 
 const cases = benchCases();
@@ -50,16 +63,20 @@ const timed = new Set(cases.filter(c => c.unit === 'ms').map(c => c.name));
 
 const cache = path.join(os.homedir(), '.cache', 'alasql-history');
 fs.mkdirSync(cache, {recursive: true});
-const latest = sh('npm', ['view', 'alasql', 'version']).trim();
-const local = path.resolve(__dirname, '../../dist/alasql.fs.js');
-if (!fs.existsSync(local)) throw new Error('No build at ' + local + ': run yarn build-only first');
+const latest = opt.base ? path.resolve(opt.base) : sh('npm', ['view', 'alasql', 'version']).trim();
+const local = path.resolve(opt.target || path.join(__dirname, '../../dist/alasql.fs.js'));
+if (!fs.existsSync(local))
+	throw new Error('No build at ' + local + ': build it first (yarn build-only)');
+const built = fs.statSync(local).mtime.toISOString().slice(0, 16).replace('T', ' ');
 let commit = '';
 try {
-	commit = sh('git', ['rev-parse', '--short=8', 'HEAD'], {cwd: __dirname}).trim();
+	commit = sh('git', ['rev-parse', '--short=8', 'HEAD'], {cwd: path.dirname(local)}).trim();
 } catch (e) {}
 const builds = [
-	{label: 'npm', name: 'npm alasql@' + latest, entry: unpack(cache, latest)},
-	{label: 'local', name: 'local build' + (commit ? ' at ' + commit : ''), entry: local},
+	opt.base
+		? {label: 'npm', name: latest, entry: latest}
+		: {label: 'npm', name: 'npm alasql@' + latest, entry: unpack(cache, latest)},
+	{label: 'local', name: path.relative(process.cwd(), local) || local, entry: local},
 ];
 for (const b of builds)
 	for (const rt of runtimes)
@@ -76,7 +93,7 @@ for (let r = 0; r < RUNS; r++)
 				n++;
 				let res = null;
 				try {
-					res = measure(rt, b.entry, g);
+					res = measure(rt, b.entry, g, extra);
 				} catch (e) {
 					log(`FAIL ${b.label} ${rt} ${g}: ${String(e.message).split('\n')[0]}`);
 				}
@@ -142,20 +159,23 @@ if (opt.json) {
 } else {
 	const pct = p => (p === null ? '   n/a' : (p > 0 ? '+' : '') + p + '%');
 	const flag = row =>
-		runtimes.some(rt => row[rt] !== null && row[rt] >= 10)
+		runtimes.some(rt => row[rt] !== null && row[rt] >= MARK)
 			? '  << slower'
-			: runtimes.some(rt => row[rt] !== null && row[rt] <= -10)
+			: runtimes.some(rt => row[rt] !== null && row[rt] <= -MARK)
 				? '  faster'
 				: '';
-	console.log(`\nalasql performance: ${builds[1].name} against npm alasql@${latest}`);
+	console.log(`\nalasql performance: ${builds[1].name} against ${builds[0].name}`);
 	console.log(
-		`${RUNS} run${RUNS > 1 ? 's' : ''} per build on ${runtimes.map(runtimeName).join(' and ')}, ${all.length} timed cases\n`
+		`Tested build: ${local}, built ${built} UTC${commit ? ', checkout at ' + commit : ''}`
 	);
-	console.log(`Score: ${score}   (npm ${latest} = 100; higher is slower)`);
+	console.log(
+		`${RUNS} run${RUNS > 1 ? 's' : ''} per build${SCALE === 1 ? '' : ', loops scaled by ' + SCALE} on ${runtimes.map(runtimeName).join(' and ')}, ${all.length} timed cases\n`
+	);
+	console.log(`Score: ${score}   (${builds[0].name} = 100; higher is slower)`);
 	console.log(
 		'  ' + runtimes.map(rt => `${runtimeName(rt).split(' ')[0]} ${perRt[rt]}`).join(', ') + '\n'
 	);
-	console.log('Change per dimension against npm ' + latest + ':');
+	console.log('Change per dimension against ' + builds[0].name + ':');
 	console.log(
 		'  ' +
 			'dimension'.padEnd(20) +
@@ -174,7 +194,7 @@ if (opt.json) {
 			`  ${pct(Math.round((x.r - 1) * 100)).padStart(7)}  ${runtimeName(x.rt).split(' ')[0].padEnd(5)} ${x.key}`
 		);
 	console.log(
-		'\nDifferences under about 5 percent are noise; a dimension at 10 percent or more is marked.'
+		`\nThe score moves by about 2 between identical builds. A dimension at ${MARK} percent or more is marked${SCALE < 1 ? '; below scale 1 single cases get too few queries to compare' : ''}.`
 	);
 }
 if (opt['fail-above'] && score > +opt['fail-above']) process.exit(1);

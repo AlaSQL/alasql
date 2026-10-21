@@ -17,7 +17,9 @@
 	  bun test/performance/compare.js base.json other.json
 
 	Every case reports the median of ROUNDS rounds; each round runs the query ITERS times
-	and reports ms per query. Cases that cannot parse on the given build (feature not present)
+	and reports ms per query. --scale=<x> multiplies every loop (0.2 runs about 5 times fewer
+	queries; rounds never go below 3) for a quick check; `queries` in the output says how many
+	queries each case timed. Numbers from a scaled run are not comparable with historical/. Cases that cannot parse on the given build (feature not present)
 	are reported as "n/a" so the same script runs on any branch.
 	Not picked up by `bun test` (the test glob is test/test[0-9]* and test/test-*).
 
@@ -41,6 +43,11 @@ const dimensions = require('./dimensions/list');
 const expectedFile = require('path').join(__dirname, 'expected.json');
 
 const ROUNDS = 5;
+const scaleArg = args.find(a => a.startsWith('--scale='));
+const SCALE = scaleArg ? +scaleArg.slice(8) : 1;
+if (!(SCALE > 0)) throw new Error('--scale needs a number above 0');
+// rounds shrink with the scale too, but never below 3, so a median stays a median
+const roundsFor = n => Math.max(3, Math.round(n * Math.min(1, SCALE)));
 const ROWS = 100000;
 
 // the core data is only built when core runs, so a dimension's process holds only its own data
@@ -200,7 +207,9 @@ function median(xs) {
 }
 
 const results = {};
-for (const [name, sql, params, iters] of selected) {
+const queries = {};
+for (const [name, sql, params, fixedIters] of selected) {
+	const iters = Math.max(1, Math.round(fixedIters * SCALE));
 	let supported = true;
 	try {
 		runOnce(name, sql, params); // warm-up and feature check
@@ -212,12 +221,13 @@ for (const [name, sql, params, iters] of selected) {
 		continue;
 	}
 	const rounds = [];
-	for (let r = 0; r < ROUNDS; r++) {
+	for (let r = 0, n = SCALE === 1 ? ROUNDS : roundsFor(ROUNDS); r < n; r++) {
 		const t = performance.now();
 		for (let i = 0; i < iters; i++) runOnce(name, sql, params);
 		rounds.push((performance.now() - t) / iters);
 	}
 	results[name] = median(rounds);
+	queries[name] = iters * rounds.length;
 }
 
 // dimensions
@@ -231,7 +241,8 @@ if (wantDims.length) {
 	const record = args.includes('--record');
 	let sink = 0;
 	for (const d of wantDims) {
-		const r = run(alasql, d, record ? null : store.digests, onlyCases);
+		const r = run(alasql, d, record ? null : store.digests, onlyCases, SCALE);
+		Object.assign(queries, r.queries);
 		Object.assign(results, r.results);
 		Object.assign(status, r.status);
 		sink ^= r.sink;
@@ -257,12 +268,17 @@ const meta = {
 	runtime: typeof Bun !== 'undefined' ? 'bun ' + Bun.version : 'node ' + process.version,
 	rows: ROWS,
 	rounds: ROUNDS,
+	scale: SCALE,
 	date: new Date().toISOString().slice(0, 10),
 };
 
 if (json) {
 	console.log(
-		JSON.stringify(Object.keys(status).length ? {meta, results, status} : {meta, results}, null, 2)
+		JSON.stringify(
+			Object.keys(status).length ? {meta, results, status, queries} : {meta, results, queries},
+			null,
+			2
+		)
 	);
 } else {
 	console.log(

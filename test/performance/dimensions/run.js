@@ -109,7 +109,13 @@ function describe(dim) {
 }
 
 // only: texts from --case=; a case runs when its name contains one of them
-function run(alasql, dim, expected, only) {
+// scale: multiplies the time per round (TARGET) and the thresholds, as bench.js --scale does
+function run(alasql, dim, expected, only, scale = 1) {
+	const target = TARGET * scale;
+	const slow = SLOW * scale;
+	const fewer = 250 * scale;
+	const roundsN = Math.max(3, Math.round(ROUNDS * Math.min(1, scale)));
+	const queries = {};
 	const ctx = dim.setup ? dim.setup(generator(dim.group), alasql) : {};
 	const results = {};
 	const status = {};
@@ -135,17 +141,18 @@ function run(alasql, dim, expected, only) {
 				continue;
 			}
 			if (!expected || !(key in expected)) status[key] = 'unchecked';
-			if (first > SLOW) {
+			if (first > slow) {
 				results[key] = first;
 				status[key] = 'single run';
+				queries[key] = 1;
 			} else {
 				const iters = Math.max(
 					1,
-					Math.min(c.maxIters || 2000, Math.round(TARGET / Math.max(first, 0.001)))
+					Math.min(c.maxIters || 2000, Math.round(target / Math.max(first, 0.001)))
 				);
 				// a slow case gets fewer rounds, so the whole history stays measurable in one night
 				const rounds = [];
-				for (let r = 0, n = first > 250 ? 3 : ROUNDS; r < n; r++) {
+				for (let r = 0, n = first > fewer ? 3 : roundsN; r < n; r++) {
 					let t = 0;
 					for (let i = 0; i < iters; i++) {
 						if (c.prepare) c.prepare(alasql, ctx);
@@ -157,6 +164,7 @@ function run(alasql, dim, expected, only) {
 					rounds.push(t / iters);
 				}
 				results[key] = median(rounds);
+				queries[key] = iters * rounds.length;
 			}
 			if (c.heap) {
 				// what one run leaves on the heap while its answer is still held (null without a GC to call)
@@ -181,7 +189,7 @@ function run(alasql, dim, expected, only) {
 			if (c.extra) results[`${key} [${c.extra.name}]`] = null;
 		}
 	}
-	return {results, status, digests, sink};
+	return {results, status, digests, sink, queries};
 }
 
 module.exports = {run, describe};

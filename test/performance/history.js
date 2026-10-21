@@ -13,7 +13,7 @@
 	  --develop[=<path>]   also measure a develop build (default ../../dist/alasql.fs.js); the
 	                       numbers go into the baseline file historical/develop-*.json
 	  --runs=<n>           runs per build and runtime, interleaved across builds (default 5)
-	  --runtimes=bun,node  (default both)
+	  --runtime=<list>     bun, node or bun,node (default both)
 	  --cache=<dir>        where npm packages are unpacked (default ~/.cache/alasql-history)
 	  --historical=<dir>   read and write another folder than historical/ (also for page)
 
@@ -172,11 +172,12 @@ function installMissing(pkg, message) {
 
 // One bench.js process for one group: {results, status}, or null when the process fails.
 // Dimensions get --expose-gc on Node for their heap numbers; core runs exactly as before.
-function measure(rt, entry, group) {
+// extra: more bench.js options, such as --scale=0.2
+function measure(rt, entry, group, extra = []) {
 	const flags = rt === 'node' && group !== 'core' ? ['--expose-gc'] : [];
 	for (let attempt = 0; attempt < 2; attempt++) {
 		// from the build's own folder, so no runtime finds modules of the folder history.js runs in
-		const out = sh(rt, [...flags, bench, entry, '--json', '--group=' + group], {
+		const out = sh(rt, [...flags, bench, entry, '--json', '--group=' + group, ...extra], {
 			timeout: 600000,
 			cwd: path.dirname(entry),
 		});
@@ -219,7 +220,7 @@ function run() {
 	const cache = path.resolve(opt.cache || path.join(os.homedir(), '.cache', 'alasql-history'));
 	fs.mkdirSync(cache, {recursive: true});
 	const RUNS = +(opt.runs || 5);
-	const runtimes = (opt.runtimes || 'bun,node').split(',');
+	const runtimes = (opt.runtime || 'bun,node').split(',');
 	const cases = benchCases();
 	const allGroups = [...new Set(cases.map(c => c.group))];
 	const groups = opt.group || allGroups;

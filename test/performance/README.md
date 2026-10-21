@@ -5,10 +5,22 @@
 ## Did develop get slower?
 
 ```sh
-yarn perf
+yarn test-perf                                        # about 7 minutes
+yarn test-perf --scale=0.5 --runs=2 --runtime=node    # about 2 minutes, for CI
 ```
 
-It builds `dist/`, downloads the latest release from npm and runs every group on both builds, 3 runs each, interleaved, on Bun and Node (about 7 minutes). It prints one number: npm latest is 100, and the score is 100 times the geometric mean of local time divided by npm time over all timed cases. 104 means develop takes about 4 percent longer; below 100 is faster. Below the score it prints the change per runtime and per dimension, and the cases that changed most, so a spike in one dimension shows even when the score barely moves. Differences under about 5 percent are noise. Options: `--runs=<n>`, `--group=<name>`, `--runtimes=node`, `--fail-above=<n>` (exit code 1 above that score) and `--json` (see the top of `vs-npm.js`).
+It runs on whatever is in `dist/` (it does not build), downloads the latest release from npm, and runs every group on both builds, interleaved, on Bun and Node. It prints one number: the base build (npm latest) is 100, and the score is 100 times the geometric mean of target time divided by base time over all timed cases. 104 means the target takes about 4 percent longer; below 100 is faster. Below the score it prints the change per runtime and per dimension, and the cases that changed most, so a spike in one dimension shows even when the score barely moves.
+
+How much to trust it, measured with develop against itself: the score moves by about 2, a dimension by up to about 10 percent (some small Bun cases more), single cases by up to 70 percent. So read the score first, then the marked dimensions, then the cases.
+
+Options (see the top of `vs-npm.js`):
+
+- `--base=<path>` and `--target=<path>`: the two builds (defaults: npm latest and `dist/alasql.fs.js`). With `--base` set to develop's build, it checks a PR; with both the same, it shows the noise.
+- `--scale=<x>`: multiplies every loop in `bench.js` (0.5 runs half the queries; every case keeps at least 1 query per round and 3 rounds). `bench.js` reports in `queries` how many queries each case timed. Below 1 the score stays reliable but single cases do not, so dimensions are marked only from 25 percent.
+- `--runs=<n>` (default 3), `--runtime=bun`, `node` or `bun,node`, `--group=<name>`.
+- `--fail-above=<n>`: exit code 1 when the score is above n, for CI. `--json` prints the numbers.
+
+Most of the time is starting a process per group and building its data, not the loops: 23 groups per build, runtime and run. So `--runs` and `--runtime` save more time than `--scale`.
 
 ## Comparing two builds
 

@@ -29,7 +29,7 @@
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
 		"build-only": "sh build.sh",
-		"perf": "sh build.sh </dev/null && node test/performance/vs-npm.js",
+		"test-perf": "node test/performance/vs-npm.js",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
 		"release": "yarn version",
 		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
