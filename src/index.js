@@ -57,6 +57,7 @@ import altertable from './statements/altertable.js';
 import createindex from './statements/createindex.js';
 import dropindex from './statements/dropindex.js';
 import withSelect from './statements/with.js';
+import ifStatement from './statements/if.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -108,6 +109,7 @@ altertable(instance, internal);
 createindex(instance, internal);
 dropindex(instance, internal);
 withSelect(instance, internal);
+ifStatement(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
