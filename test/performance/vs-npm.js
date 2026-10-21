@@ -173,9 +173,12 @@ if (opt.json) {
 		`${RUNS} run${RUNS > 1 ? 's' : ''} per build${SCALE === 1 ? '' : ', loops scaled by ' + SCALE} on ${runtimes.map(runtimeName).join(' and ')}, ${all.length} timed cases\n`
 	);
 	console.log(`Score: ${score}   (${builds[0].name} = 100; higher is slower)`);
-	console.log(
-		'  ' + runtimes.map(rt => `${runtimeName(rt).split(' ')[0]} ${perRt[rt]}`).join(', ') + '\n'
-	);
+	// the score per runtime, when there is more than one (with one it is the score itself)
+	if (runtimes.length > 1)
+		console.log(
+			'  ' + runtimes.map(rt => `${runtimeName(rt).split(' ')[0]} ${perRt[rt]}`).join(', ')
+		);
+	console.log('');
 	console.log('Change per dimension against ' + builds[0].name + ':');
 	console.log(
 		'  ' +

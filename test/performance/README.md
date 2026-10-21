@@ -20,6 +20,8 @@ Options (see the top of `vs-npm.js`):
 - `--runs=<n>` (default 3), `--runtime=bun`, `node` or `bun,node`, `--group=<name>`.
 - `--fail-above=<n>`: exit code 1 when the score is above n, for CI. `--json` prints the numbers.
 
+It is not part of CI: on GitHub's shared runners the numbers are too noisy to fail a build on. Run it on a quiet machine.
+
 Most of the time is starting a process per group and building its data, not the loops: 23 groups per build, runtime and run. So `--runs` and `--runtime` save more time than `--scale`.
 
 ## Comparing two builds
