@@ -589,7 +589,7 @@
 		}
 
 		toString() {
-			return `ARRAY[${this.value.map(el => el.toString()).join(', ')}]`;
+			return 'ARRAY[]';
 		}
 
 		toType() {
