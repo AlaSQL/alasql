@@ -95,6 +95,7 @@ export const LEGACY_BINDINGS = [
 	'var returnTrue = alasql.private.returnTrue;',
 	'var n2u = alasql.private.n2u;',
 	'var und = alasql.private.und;',
+	'var getXLSX = alasql.private.getXLSX;',
 ];
 
 const UMD_FIRST = '(function (root, factory) {';

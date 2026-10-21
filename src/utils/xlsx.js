@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var utils = alasql.utils;
 /*
 	The XLSX loader: the SheetJS library found or handed in, split from src/15utility.js (docs/src-map.md). Same functions, same bodies.
 */
@@ -22,3 +24,6 @@ var getXLSX = function () {
 
 	return XLSX;
 };
+
+	alasql.private.getXLSX = getXLSX;
+}
