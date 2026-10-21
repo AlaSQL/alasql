@@ -17,7 +17,7 @@ src/select/rollup.js
 src/select/defcols.js
 src/select/union.js
 src/select/apply.js
-src/47over.js
+src/select/window.js
 src/52linq.js
 src/60createtable.js
 src/62droptable.js
