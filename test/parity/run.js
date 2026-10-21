@@ -20,7 +20,7 @@
 	into the branch; from then on it is develop at the commit last merged forward, built with
 	build.sh (roadmap-phase-1.md, step 0). --ref <version> downloads that version from npm once;
 	--ref <commit> (a sha, a branch or a tag) extracts the commit with git archive and runs its own
-	build.sh once; both are kept under test/parity/.ref/. The reference dist is put in place of
+	build once (build.js when the commit has it, else build.sh); both are kept under test/parity/.ref/. The reference dist is put in place of
 	./dist for the recording, and ./dist is rebuilt afterwards with the project's build-only
 	script. --dist does the same with the given folder. Add --no-rebuild to leave the other dist
 	in place.
@@ -103,7 +103,10 @@ function buildCommit(spec) {
 	const tar = spawnSync('tar', ['x', '-C', dir], {input: archive.stdout});
 	if (tar.status) throw new Error('tar failed: ' + tar.stderr);
 	fs.symlinkSync(path.join(root, 'node_modules'), path.join(dir, 'node_modules'));
-	if (sh('sh', ['build.sh'], {cwd: dir})) throw new Error('build.sh of ' + spec + ' failed');
+	// a commit of the conversion has build.js; develop builds with build.sh
+	const withBun = fs.existsSync(path.join(dir, 'build.js'));
+	const status = withBun ? sh('bun', ['build.js'], {cwd: dir}) : sh('sh', ['build.sh'], {cwd: dir});
+	if (status) throw new Error(`the build of ${spec} failed`);
 	fs.writeFileSync(path.join(dir, 'PARITY_REF'), `${spec} ${sha}\n`);
 	return dist;
 }
