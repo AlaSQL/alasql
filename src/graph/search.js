@@ -1,3 +1,8 @@
+import {cloneDeep, distinctArray} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
+	var modify = internal.modify;
 /* global alasql */
 /* global yy */
 /*
@@ -1190,3 +1195,4 @@ var compileSearchOrder = function (order) {
 		return new Function('a,b', s);
 	}
 };
+}
