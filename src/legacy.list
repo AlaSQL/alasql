@@ -8,7 +8,7 @@ src/24view.js
 src/data/query.js
 src/30statements.js
 src/35search.js
-src/38query.js
+src/select/queryfn.js
 src/39dojoin.js
 src/40select.js
 src/41exists.js
