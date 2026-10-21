@@ -1,3 +1,8 @@
+import {cloneDeep, hash} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
+	var yy = alasql.yy;
 /*
 //
 // CREATE TABLE for Alasql.js
@@ -785,3 +790,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+
+	internal.indexColumnToJS = indexColumnToJS;
+}
