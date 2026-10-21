@@ -1,3 +1,18 @@
+// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+
+export var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
+
+export function newDate(d) {
+	if (typeof d === 'string') {
+		if (dateRegexp.test(d)) {
+			d = d.replace('.', '-').replace('.', '-');
+		}
+	}
+	return new Date(d);
+}
+
+export default function install(alasql) {
+	var stdfn = alasql.stdfn;
 //
 // Date functions
 //
@@ -196,12 +211,4 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	return new Date(nd);
 };
 
-var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
-function newDate(d) {
-	if (typeof d === 'string') {
-		if (dateRegexp.test(d)) {
-			d = d.replace('.', '-').replace('.', '-');
-		}
-	}
-	return new Date(d);
 }

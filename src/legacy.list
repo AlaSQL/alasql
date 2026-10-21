@@ -24,7 +24,6 @@ src/expression/case.js
 src/expression/json.js
 src/expression/convert.js
 src/60createtable.js
-src/functions/date.js
 src/62droptable.js
 src/63createvertex.js
 src/64altertable.js
