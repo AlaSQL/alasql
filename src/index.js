@@ -70,6 +70,7 @@ import declare from './statements/declare.js';
 import show from './statements/show.js';
 import setStatement from './statements/set.js';
 import commit from './statements/commit.js';
+import pretty from './console/pretty.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -134,6 +135,7 @@ declare(instance, internal);
 show(instance, internal);
 setStatement(instance, internal);
 commit(instance, internal);
+pretty(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);

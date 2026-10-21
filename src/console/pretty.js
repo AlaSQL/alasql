@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /**
    12prettyflag.js - prettify
    @todo move this functionality to plugin
@@ -25,3 +26,4 @@ alasql.pretty = function (sql, flag) {
 	alasql.prettyflag = pf;
 	return s;
 };
+}
