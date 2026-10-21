@@ -30,7 +30,7 @@
 		"build": "yarn format && yarn build-only",
 		"build-only": "sh build.sh",
 		"test-perf": "node test/performance/vs-npm.js",
-		"test-perf-ci": "node test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
+		"test-perf-mini": "node test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
 		"release": "yarn version",
 		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",

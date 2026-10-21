@@ -3,7 +3,7 @@
 
 	Usage:
 	  yarn test-perf                                 # runs on whatever is in dist/ (about 7 minutes)
-	  yarn test-perf-ci                              # for CI, about 2 minutes: --scale=0.5 --runs=2
+	  yarn test-perf-mini                            # a quick check, about 2 minutes: --scale=0.5 --runs=2
 	                                                 # --runtime=node --fail-above=105
 	  node test/performance/vs-npm.js [options]
 
@@ -185,7 +185,9 @@ if (opt.json) {
 			'dimension'.padEnd(20) +
 			runtimes.map(rt => runtimeName(rt).split(' ')[0].padStart(8)).join('')
 	);
-	for (const row of perGroup)
+	// slowest first: by the largest change on any runtime, so a spike on one runtime comes first
+	const worst = row => Math.max(...runtimes.map(rt => (row[rt] === null ? -Infinity : row[rt])));
+	for (const row of [...perGroup].sort((a, b) => worst(b) - worst(a)))
 		console.log(
 			'  ' +
 				row.group.padEnd(20) +
