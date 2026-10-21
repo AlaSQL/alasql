@@ -2,6 +2,9 @@
 # this list (context/roadmap-phase-1.md). build.js reads it.
 src/12pretty.js
 src/utils/helpers.js
+src/utils/env.js
+src/utils/fileio.js
+src/utils/xlsx.js
 src/16comments.js
 src/20database.js
 src/21transaction.js
