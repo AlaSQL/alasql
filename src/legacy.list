@@ -13,7 +13,7 @@ src/select/columns.js
 src/select/having.js
 src/select/orderby.js
 src/select/pivot.js
-src/43rollup.js
+src/select/rollup.js
 src/44defcols.js
 src/45union.js
 src/46apply.js
