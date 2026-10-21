@@ -59,6 +59,30 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/78show.js` | `src/statements/show.js` | `install(alasql)`: SHOW | after declare | `var yy = alasql.yy` | 98% |
 | `src/79set.js` | `src/statements/set.js` | `install(alasql)`: SET | after show | `var yy = alasql.yy` | 97% |
 | `src/81commit.js` | `src/statements/commit.js` | `install(alasql)`: BEGIN, COMMIT and ROLLBACK TRANSACTION | after set | `var yy = alasql.yy` | 95% |
+| `src/FileSaver.js` | `src/utils/filesaver.js` | `install(alasql, internal)`: FileSaver's `saveAs`, inside the same `if (utils.isBrowser && !utils.isWebWorker)` block that 97saveas.js opens in the legacy module, and the `alasql.utils.saveAs = saveAs` registration that 98finish.js held; `internal.saveAs` | after uncomment | `var utils = alasql.utils`; the `if` line, the registration and the closing brace; the `internal` line | 96% |
+| `src/97saveas.js` | still legacy; its `if` goes with 99worker.js in step 9 | its one line is the `if (utils.isBrowser && !utils.isWebWorker)` that wrapped 99worker.js and FileSaver.js; 98finish.js closes it | - | filesaver.js has the same line; 98finish.js lost the registration | - |
+| `src/12pretty.js` | `src/console/pretty.js` | `install(alasql)`: `alasql.pretty`, `alasql.prettyflag` | after commit | nothing beyond the wrapper | 92% |
+| `src/80console.js` | `src/console/console.js` | `install(alasql, internal)`: `alasql.con`, the console output | after pretty | `var utils = alasql.utils`, `var JSONtoString = internal.JSONtoString` | 98% |
+| `src/821tsql.js` | `src/dialects/tsql.js` | `install(alasql)`: `OBJECT_ID` under `alasql.options.tsql` | after console | nothing beyond the wrapper | 95% |
+| `src/822mysql.js` | `src/dialects/mysql.js` | `install(alasql)`: under `alasql.options.mysql` | after tsql | nothing beyond the wrapper | 95% |
+| `src/823postgres.js` | `src/dialects/postgres.js` | `install(alasql)`: an empty `if (alasql.options.postgres)` | after mysql | nothing beyond the wrapper; two lines, under git's rename threshold, so git shows a deleted and a new file | stub |
+| `src/824oracle.js` | `src/dialects/oracle.js` | `install(alasql)`: an empty `if (alasql.options.oracle)` | after postgres | as postgres.js | stub |
+| `src/825sqlite.js` | `src/dialects/sqlite.js` | `install(alasql)`: an empty `if (alasql.options.sqlite)` | after oracle | as postgres.js | stub |
+| `src/830into.js` | `src/formats/into.js` | `install(alasql)`: INTO SQL, TXT, TAB, CSV, JSON and HTML | after sqlite | `import {escapeqq} from '../utils/helpers.js'` | 98% |
+| `src/831xls.js` | `src/formats/xls.js` | `install(alasql)`: INTO XLS | after into | `import {extend} from '../utils/helpers.js'` | 98% |
+| `src/832xlsxml.js` | `src/formats/xlsxml.js` | `install(alasql)`: INTO XLSXML | after xls | `import {extend, hash} from '../utils/helpers.js'` | 99% |
+| `src/833xlsx.js` | `src/formats/xlsx.js` | `install(alasql, internal)`: INTO XLSX | after xlsxml | `import {deepEqual} from '../utils/helpers.js'`; `var utils = alasql.utils`, `var getXLSX = internal.getXLSX`, `var saveAs = internal.saveAs` | 96% |
+| `src/84from.js` | `src/formats/from.js` | `install(alasql, internal)`: FROM CSV, TXT, TAB, JSON, XLS, XLSX, HTML, FILE and the rest | after xlsx | `var getXLSX = internal.getXLSX` | 99% |
+| `src/843xml.js` | `src/formats/xml.js` | `install(alasql)`: XML | after from | nothing beyond the wrapper | 98% |
+| `src/844gexf.js` | `src/formats/gexf.js` | `install(alasql)`: GEXF | after xml | nothing beyond the wrapper | 83% |
+| `src/86print.js` | `src/statements/print.js` | `install(alasql, internal)`: PRINT | after gexf | `var yy = alasql.yy`, `var JSONtoString = internal.JSONtoString` | 92% |
+| `src/87source.js` | `src/statements/source.js` | `install(alasql)`: SOURCE | after print | `var yy = alasql.yy` | 89% |
+| `src/88require.js` | `src/statements/require.js` | `install(alasql)`: REQUIRE | after source | `var yy = alasql.yy` | 96% |
+| `src/89assert.js` | `src/statements/assert.js` | `install(alasql)`: ASSERT | after require | `import {deepEqual} from '../utils/helpers.js'`; `var yy = alasql.yy` | 83% |
+| `src/91indexeddb.js` | `src/storage/indexeddb.js` | `install(alasql)`: the IndexedDB engine | after assert | nothing beyond the wrapper | 99% |
+| `src/92localstorage.js` | `src/storage/localstorage.js` | `install(alasql)`: the localStorage engine | after indexeddb | `import {extend} from '../utils/helpers.js'` | 99% |
+| `src/93sqljs.js` | `src/storage/sqljs.js` | `install(alasql)`: the sql.js engine | after localstorage | `var yy = alasql.yy` | 98% |
+| `src/94filestorage.js` | `src/storage/filestorage.js` | `install(alasql, internal)`: the file storage engine | after sqljs | `import {extend} from '../utils/helpers.js'`; `var schemaChanged = internal.schemaChanged`, `var loadFile = alasql.utils.loadFile` | 97% |
 | `src/18promise.js` | `src/engine/promise.js` | `install(alasql)`: `alasql.promise` and the global `Promise` check | after the legacy module, which makes `utils` | `var utils = alasql.utils` | 96% |
 
 ## How one module reaches another's internals (decided 2026-10-22, step 4)
@@ -67,7 +91,7 @@ Every `install` takes a second parameter, `internal`: an object made in `src/ind
 
 Plain imports are for stateless helpers the old code used by bare name, as `src/utils/helpers.js` exports them; a call through `alasql.utils.x` stays as it is, because a user's override of that function reaches the engine today.
 
-38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6. Step 7 put the statements under `src/statements/`, the graph statements (SEARCH, CREATE VERTEX) under `src/graph/`, and `yy.Statements` beside `yy` in `src/engine/`.
+38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6. Step 7 put the statements under `src/statements/`, the graph statements (SEARCH, CREATE VERTEX) under `src/graph/`, and `yy.Statements` beside `yy` in `src/engine/`. Step 8 put the console and `alasql.pretty` under `src/console/`, the dialect files under `src/dialects/`, INTO and FROM with the spreadsheet, XML and GEXF code under `src/formats/`, PRINT, SOURCE, REQUIRE and ASSERT under `src/statements/`, the storage engines under `src/storage/`, and FileSaver.js under `src/utils/`; after it the legacy module holds 97saveas.js (the browser-only `if`), 99worker.js and 98finish.js.
 
 Still in the legacy module: every file in `src/legacy.list`, in that order, wrapped by `build.js` into `src/generated/legacy.js` as `install(alasql)`.
 
@@ -82,6 +106,10 @@ Names the legacy files reach by bare name from converted modules (`tools/free-va
 | `modify` | `src/select/select.js` | `var modify = internal.modify` (35search.js until step 7) |
 | `indexColumnToJS` | `src/statements/createtable.js` | `var indexColumnToJS = internal.indexColumnToJS` (65createindex.js until step 7) |
 | `extend`, `distinctArray` | `src/utils/helpers.js` | on the same import line (stateless, exported since step 7) |
+| `escapeqq` | `src/utils/helpers.js` | on the same import line (stateless, exported since step 8; it is `utils.undoubleq`) |
+| `saveAs` | `src/utils/filesaver.js` | `var saveAs = internal.saveAs` (833xlsx.js until step 8); `src/utils/fileio.js` keeps its forwarder, since it installs first |
+| `getXLSX` | `src/utils/xlsx.js` | `var getXLSX = internal.getXLSX` (833xlsx.js and 84from.js until step 8) |
+| `loadFile` | `src/utils/fileio.js` | `var loadFile = alasql.utils.loadFile` (94filestorage.js until step 8), read once at install as the legacy module did |
 | `arrayUnion`, `arrayDiff`, `arrayIntersect` | `src/utils/helpers.js` | on the same import line (stateless, exported since step 6) |
 | `JSONtoJS`, `JSONtoString` | `src/expression/json.js` | `var JSONtoJS = internal.JSONtoJS`, `var JSONtoString = internal.JSONtoString` |
 | `schemaChanged` | `src/engine/core.js` | `var schemaChanged = internal.schemaChanged` |
