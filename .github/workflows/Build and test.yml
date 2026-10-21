@@ -2,9 +2,9 @@ name: 'CI build & test'
 
 on:
   push:
-    branches: '*'
+    branches: '**'
   pull_request:
-    branches: '*'
+    branches: '**'
 
 permissions: read-all
 
