@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /*
 //
 // View class for Alasql.js
@@ -32,3 +33,4 @@ alasql.View = View;
 
 // alasql.View = View;
 */
+}
