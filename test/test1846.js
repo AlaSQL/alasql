@@ -98,4 +98,64 @@ describe(`Test ${testId} - REFERENCES in memory`, function () {
 		res.push(alasql('SELECT * FROM pigs'));
 		assert.deepStrictEqual(res, [1, 1, 1, 1, [{id: 'pig1', bank: 'Bank1'}]]);
 	});
+
+	it('D) REFERENCES to another column name still checks the primary key, as before', function () {
+		let res = [];
+		res.push(alasql('CREATE TABLE owners (id INT PRIMARY KEY)'));
+		res.push(alasql('INSERT INTO owners VALUES (1)'));
+		res.push(alasql('CREATE TABLE cats (owner INT REFERENCES owners(Id))'));
+		res.push(alasql('CREATE TABLE dogs (owner INT REFERENCES owners(owner_id))'));
+		res.push(alasql('INSERT INTO cats VALUES (1)'));
+		res.push(alasql('INSERT INTO dogs VALUES (1)'));
+		assert.throws(() => alasql('INSERT INTO cats VALUES (2)'), /Foreign key "2" not found/);
+		assert.deepStrictEqual(res, [1, 1, 1, 1, 1, 1]);
+	});
+});
+
+describe(`Test ${testId} - FILESTORAGE with autocommit off`, function () {
+	const fsdbid = 'test' + testId + 'nc';
+	const filename = 'test' + testId + 'nc.db';
+	let autocommit;
+
+	function attach(done) {
+		alasql('ATTACH FILESTORAGE DATABASE ' + fsdbid + '("' + filename + '")', function () {
+			alasql('USE ' + fsdbid);
+			done();
+		});
+	}
+
+	before(function (done) {
+		autocommit = alasql.options.autocommit;
+		alasql.options.autocommit = false;
+		if (fs.existsSync(filename)) fs.unlinkSync(filename);
+		alasql('CREATE FILESTORAGE DATABASE ' + fsdbid + '("' + filename + '")', function () {
+			attach(done);
+		});
+	});
+
+	after(function (done) {
+		alasql('USE alasql');
+		alasql('DETACH DATABASE ' + fsdbid);
+		alasql.options.autocommit = autocommit;
+		alasql('DROP FILESTORAGE DATABASE ' + fsdbid, function () {
+			done();
+		});
+	});
+
+	it('E) INSERT and SELECT work, also after the database is attached again', function (done) {
+		let res = [];
+		res.push(alasql('CREATE TABLE banks (name STRING PRIMARY KEY)'));
+		res.push(alasql('CREATE TABLE pigs (id STRING, bank STRING REFERENCES banks(name))'));
+		res.push(alasql("INSERT INTO banks VALUES ('Bank1')"));
+		res.push(alasql("INSERT INTO pigs VALUES ('pig1', 'Bank1')"));
+		res.push(alasql('SELECT * FROM pigs'));
+		res.push(alasql('COMMIT TRANSACTION'));
+		assert.deepStrictEqual(res, [1, 1, 1, 1, [{id: 'pig1', bank: 'Bank1'}], 1]);
+		alasql('USE alasql');
+		alasql('DETACH DATABASE ' + fsdbid);
+		attach(function () {
+			assert.deepStrictEqual(alasql('SELECT * FROM pigs'), [{id: 'pig1', bank: 'Bank1'}]);
+			done();
+		});
+	});
 });

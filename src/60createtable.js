@@ -219,15 +219,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			// UNIQUE clause
 			if (col.foreignkey) {
 				var fk = col.foreignkey.table;
-				// REFERENCES table(column) names the column, else it is the primary key (#1846)
+				// The check uses the primary key of the referenced table, as in 4.x; a named
+				// column is used only when that table has no primary key in memory (#1846)
 				var fkcolumnid = col.foreignkey.columnid;
-				if (typeof fkcolumnid === 'undefined') {
-					var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
-					if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
-						fkcolumnid = fktable.pk.columns[0];
-					} else {
-						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
-					}
+				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
+				if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
+					fkcolumnid = fktable.pk.columns[0];
+				} else if (typeof fkcolumnid === 'undefined') {
+					throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
 				}
 				// Store foreignkey property in column for later access
 				newcol.foreignkey = {
