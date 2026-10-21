@@ -3,7 +3,6 @@
 src/12pretty.js
 src/30statements.js
 src/35search.js
-src/select/where.js
 src/select/groupby.js
 src/select/columns.js
 src/select/having.js
