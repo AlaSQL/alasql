@@ -11,7 +11,7 @@ src/select/where.js
 src/select/groupby.js
 src/select/columns.js
 src/select/having.js
-src/426orderby.js
+src/select/orderby.js
 src/427pivot.js
 src/43rollup.js
 src/44defcols.js
