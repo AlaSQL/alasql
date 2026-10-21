@@ -7,12 +7,12 @@ One row per step of `context/roadmap-phase-1.md`: the size of every `dist` file 
 | 4.21.0, the reference | 38bf3c39 | build.sh | 840,681 / 167,149 | 840,681 / 167,158 | 520,504 / 113,536 | 3,950 / 1,888 | 4,656 / 1,671 | yes; the tarball on npm is the same file apart from the build string | 100, the base |
 | 1. Bun build, zero files converted | cdff98f0 | build.js, Bun 1.4.3 | 895,182 / 134,258 | 890,572 / 133,798 | 523,895 / 113,127 | 4,093 / 1,924 | 5,446 / 1,811 | yes | 99 (Bun 98, Node 99) against 4.21.0, 3 runs, 172 cases; set-ops and coercion 19 and 11 percent faster on Bun, driven by single cases |
 | 1b. esbuild instead of Bun.build, zero files converted | 7c1557a9 | build.js, esbuild 0.28.2 | 917,088 / 139,831 | 912,664 / 139,324 | 522,127 / 113,955 | 4,090 / 1,929 | 4,915 / 1,762 | yes | compile against 4.21.0, 7 runs: 101 with keepNames (Bun 101, Node 101) and 100 without (Bun 102, Node 99), so keepNames stays; the full run was not made, the bundler change is measured at the end of the phase |
-| 2a. ES module entry, parser module, codemod; nothing moved | 45733ef0 | build.js, esbuild | 917,070 / 139,817 | 912,646 / 139,313 | 522,109 / 113,946 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run; the move commits leave every byte of `dist` as it was |
-| 2b. `src/engine/create.js` wrapped | 295bca05 | build.js, esbuild | 917,197 / 140,001 | 912,765 / 139,512 | 522,344 / 113,997 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
-| 2c. `src/engine/core.js` wrapped, the parser made per alasql object | a2b31358 | build.js, esbuild | 917,428 / 140,169 | 912,996 / 139,626 | 522,389 / 114,238 | 4,081 / 1,924 | 4,915 / 1,762 | yes | not run |
-| 2d. `src/engine/yy.js` wrapped | b2d3e894 | build.js, esbuild | 917,552 / 140,201 | 913,120 / 139,623 | 522,299 / 114,216 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
-| 2e. `src/engine/promise.js` wrapped | 8fe3d9c2 | build.js, esbuild | 917,677 / 140,240 | 913,245 / 139,685 | 521,906 / 114,202 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
-| 2f. bindings as `var`; step 2 complete | 79307a17 | build.js, esbuild | 917,673 / 140,233 | 913,241 / 139,679 | 521,905 / 114,195 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
+| 2a. ES module entry, parser module, codemod; nothing moved | d55398cb | build.js, esbuild | 917,070 / 139,817 | 912,646 / 139,313 | 522,109 / 113,946 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run; the move commits leave every byte of `dist` as it was |
+| 2b. `src/engine/create.js` wrapped | abb9065d | build.js, esbuild | 917,197 / 140,001 | 912,765 / 139,512 | 522,344 / 113,997 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
+| 2c. `src/engine/core.js` wrapped, the parser made per alasql object | d49cef15 | build.js, esbuild | 917,428 / 140,169 | 912,996 / 139,626 | 522,389 / 114,238 | 4,081 / 1,924 | 4,915 / 1,762 | yes | not run |
+| 2d. `src/engine/yy.js` wrapped | 2647c00b | build.js, esbuild | 917,552 / 140,201 | 913,120 / 139,623 | 522,299 / 114,216 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
+| 2e. `src/engine/promise.js` wrapped | d71fce17 | build.js, esbuild | 917,677 / 140,240 | 913,245 / 139,685 | 521,906 / 114,202 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
+| 2f. bindings as `var`; step 2 complete | e2d1df94 | build.js, esbuild | 917,673 / 140,233 | 913,241 / 139,679 | 521,905 / 114,195 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
 
 Notes
 
