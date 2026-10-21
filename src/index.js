@@ -34,6 +34,7 @@ import dojoin from './select/dojoin.js';
 import queryfn from './select/queryfn.js';
 import select from './select/select.js';
 import exists from './select/exists.js';
+import from from './select/from.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -62,6 +63,7 @@ dojoin(instance, internal);
 queryfn(instance, internal);
 select(instance, internal);
 exists(instance, internal);
+from(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
