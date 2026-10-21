@@ -14,12 +14,14 @@
 import {create} from './engine/create.js';
 import core from './engine/core.js';
 import yy from './engine/yy.js';
+import helpers from './utils/helpers.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
 const instance = create();
 core(instance);
 yy(instance);
+helpers(instance);
 legacy(instance);
 // after the legacy module: it reads utils when it is installed
 promise(instance);

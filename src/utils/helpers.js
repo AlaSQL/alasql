@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /*jshint unused:false*/
 /*
 	Utilities for Alasql.js
@@ -680,3 +681,10 @@ utils.typeConverter = function (value, dbtypeid) {
 	// Unknown type, return as is
 	return value;
 };
+
+	alasql.private.returnTrue = returnTrue;
+
+	alasql.private.n2u = n2u;
+
+	alasql.private.und = und;
+}
