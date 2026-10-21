@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // DROP TABLE for Alasql.js
@@ -20,3 +22,4 @@ yy.DropIndex.prototype.compile = function (db) {
 		return 1;
 	};
 };
+}

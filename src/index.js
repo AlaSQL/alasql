@@ -55,6 +55,7 @@ import droptable from './statements/droptable.js';
 import graphCreate from './graph/create.js';
 import altertable from './statements/altertable.js';
 import createindex from './statements/createindex.js';
+import dropindex from './statements/dropindex.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -104,6 +105,7 @@ droptable(instance, internal);
 graphCreate(instance, internal);
 altertable(instance, internal);
 createindex(instance, internal);
+dropindex(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
