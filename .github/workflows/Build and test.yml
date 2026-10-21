@@ -124,6 +124,48 @@ jobs:
       - name: Run test suite
         run: yarn test-only
 
+  performance:
+    name: Performance against the latest npm release
+    permissions:
+      contents: read
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 'latest'
+
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+        with:
+          name: dist
+          path: dist/
+
+      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+        with:
+          name: node_modules
+          path: ./
+
+      - name: Unpack node_modules
+        run: tar -xf node_modules.tar
+
+      # Score: npm latest = 100, higher is slower; the job fails above 105 (see test/performance/README.md)
+      - name: Compare with the latest npm release
+        shell: bash
+        run: |
+          set +e
+          yarn -s test-perf-ci | tee perf.txt
+          status=${PIPESTATUS[0]}
+          { echo '```'; cat perf.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit $status
+
   test-suite-browser:
     name: Test suite for Browser
     permissions:
