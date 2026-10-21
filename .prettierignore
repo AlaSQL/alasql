@@ -18,3 +18,6 @@ build/
 
 test/lib/
 src/generated/
+
+# Converted modules keep their old indentation until the end of Phase 1 (context/roadmap-phase-1.md)
+src/engine/
