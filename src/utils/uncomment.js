@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /**
 	  Strip all comments.
 	  @function
@@ -79,3 +80,4 @@ alasql.utils.uncomment = function (str) {
 
 	return str;
 };
+}

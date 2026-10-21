@@ -17,6 +17,7 @@ One row per step of `context/roadmap-phase-1.md`: the size of every `dist` file 
 | 3b. `src/utils/env.js` wrapped | ed8c309f | build.js, esbuild | 918,609 / 140,397 | 914,177 / 139,833 | 520,785 / 114,218 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
 | 3c. `src/utils/fileio.js` wrapped | 86093bbb | build.js, esbuild | 918,877 / 140,465 | 914,445 / 139,882 | 519,797 / 114,320 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
 | 3d. `src/utils/xlsx.js` wrapped | ecae9df6 | build.js, esbuild | 919,082 / 140,491 | 914,650 / 139,912 | 519,871 / 114,329 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
+| 3e. `src/utils/uncomment.js` wrapped; step 3 complete | fix/utils-files | build.js, esbuild | 919,183 / 140,510 | 914,751 / 139,927 | 519,924 / 114,345 | 4,092 / 1,930 | 4,915 / 1,762 | yes | not run yet |
 
 Notes
 
