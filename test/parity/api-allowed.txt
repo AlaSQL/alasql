@@ -3,7 +3,3 @@
 # constructor. Everything the conversion adds to the alasql object on purpose goes here, so
 # that the API snapshot keeps catching what was not on purpose.
 alasql.private.schemaChanged   # step 2: the legacy files reach schemaChanged, declared in src/engine/core.js, through alasql.private (context/roadmap-phase-1.md, step 4 settles the general mechanism)
-alasql.private.returnTrue   # step 3: pure helpers of src/utils/helpers.js that legacy files call by bare name and that were never on alasql.utils
-alasql.private.n2u          # step 3: as above (nanToUndefined)
-alasql.private.und          # step 3: as above (undefinedOrValue)
-alasql.private.getXLSX      # step 3: the XLSX loader of src/utils/xlsx.js, called by bare name from 833xlsx.js and 84from.js

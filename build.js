@@ -74,28 +74,6 @@ export const LEGACY_IMPORTS = [];
 export const LEGACY_BINDINGS = [
 	'var yy = alasql.yy;',
 	'var schemaChanged = alasql.private.schemaChanged;',
-	'var utils = alasql.utils;',
-	...[
-		'cloneDeep',
-		'hash',
-		'extend',
-		'escapeq',
-		'deepEqual',
-		'distinctArray',
-		'arrayExceptDeep',
-		'arrayIntersectDeep',
-		'arrayUnionDeep',
-		'flatArray',
-		'arrayIntersect',
-		'arrayDiff',
-		'arrayUnion',
-	].map(n => `var ${n} = utils.${n};`),
-	'var escapeqq = utils.undoubleq;',
-	'var loadFile = utils.loadFile;',
-	'var returnTrue = alasql.private.returnTrue;',
-	'var n2u = alasql.private.n2u;',
-	'var und = alasql.private.und;',
-	'var getXLSX = alasql.private.getXLSX;',
 ];
 
 const UMD_FIRST = '(function (root, factory) {';
