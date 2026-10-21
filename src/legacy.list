@@ -16,7 +16,7 @@ src/select/pivot.js
 src/select/rollup.js
 src/select/defcols.js
 src/select/union.js
-src/46apply.js
+src/select/apply.js
 src/47over.js
 src/52linq.js
 src/60createtable.js
