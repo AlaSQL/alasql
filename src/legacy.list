@@ -2,7 +2,6 @@
 # this list (context/roadmap-phase-1.md). build.js reads it.
 src/12pretty.js
 src/80console.js
-src/81commit.js
 src/821tsql.js
 src/822mysql.js
 src/823postgres.js
