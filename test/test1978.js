@@ -65,12 +65,17 @@ describe(`Test ${testId} - LIKE ESCAPE`, function () {
 		]);
 	});
 
-	it('E) ESCAPE longer than one character throws', function () {
-		const msg = /ESCAPE expression must be a single character/;
-		assert.throws(() => alasql.utils.like('%\\%%', '100%', '\\\\'), msg);
-		assert.throws(() => alasql.utils.like('%^%%', '100%', '^^'), msg);
-		assert.throws(() => alasql("SELECT * FROM cities WHERE city LIKE '%^%%' ESCAPE '^^'"), msg);
-		assert.throws(() => alasql("SELECT * FROM cities WHERE city LIKE '%\\%%' ESCAPE '\\\\'"), msg);
+	it('E) ESCAPE longer than one character is ignored, as in 4.20.1 (an error comes in 5.0)', function () {
+		assert.strictEqual(alasql.utils.like('%\\%%', '100%', '\\\\'), false);
+		assert.strictEqual(alasql.utils.like('%^%%', '100%', '^^'), true);
+		assert.strictEqual(
+			alasql("SELECT * FROM cities WHERE city LIKE '%^%%' ESCAPE '^^'").length,
+			7 // every row
+		);
+		assert.deepStrictEqual(
+			alasql("SELECT * FROM cities WHERE city LIKE '%\\%%' ESCAPE '\\\\'"),
+			[]
+		);
 	});
 
 	it('F) Same pattern with and without ESCAPE', function () {
