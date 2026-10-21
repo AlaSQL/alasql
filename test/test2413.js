@@ -10,7 +10,7 @@ describe('Test 2413 - GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR', funct
 	it('A) Basic GROUP_CONCAT (existing functionality)', function () {
 		data = [{country: 'USA'}, {country: 'Canada'}, {country: 'Mexico'}];
 		res = alasql('SELECT GROUP_CONCAT(country) as countries FROM ?', [data]);
-		assert.deepEqual(res, [{countries: 'USA,Canada,Mexico'}]);
+		assert.deepStrictEqual(res, [{countries: 'USA,Canada,Mexico'}]);
 	});
 
 	it('B) GROUP_CONCAT with DISTINCT', function () {
@@ -28,13 +28,13 @@ describe('Test 2413 - GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR', funct
 	it('C) GROUP_CONCAT with ORDER BY', function () {
 		data = [{country: 'USA'}, {country: 'Canada'}, {country: 'Mexico'}];
 		res = alasql('SELECT GROUP_CONCAT(country ORDER BY country ASC) as countries FROM ?', [data]);
-		assert.deepEqual(res, [{countries: 'Canada,Mexico,USA'}]);
+		assert.deepStrictEqual(res, [{countries: 'Canada,Mexico,USA'}]);
 	});
 
 	it('D) GROUP_CONCAT with SEPARATOR', function () {
 		data = [{country: 'USA'}, {country: 'Canada'}, {country: 'Mexico'}];
 		res = alasql("SELECT GROUP_CONCAT(country SEPARATOR ';') as countries FROM ?", [data]);
-		assert.deepEqual(res, [{countries: 'USA;Canada;Mexico'}]);
+		assert.deepStrictEqual(res, [{countries: 'USA;Canada;Mexico'}]);
 	});
 
 	it('E) GROUP_CONCAT with DISTINCT and ORDER BY', function () {
@@ -42,7 +42,7 @@ describe('Test 2413 - GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR', funct
 		res = alasql('SELECT GROUP_CONCAT(DISTINCT country ORDER BY country ASC) as countries FROM ?', [
 			data,
 		]);
-		assert.deepEqual(res, [{countries: 'Canada,Mexico,USA'}]);
+		assert.deepStrictEqual(res, [{countries: 'Canada,Mexico,USA'}]);
 	});
 
 	it('F) GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR (full MySQL syntax)', function () {
@@ -57,13 +57,13 @@ describe('Test 2413 - GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR', funct
 			"SELECT GROUP_CONCAT(DISTINCT country ORDER BY country ASC SEPARATOR ';') as countries FROM ?",
 			[data]
 		);
-		assert.deepEqual(res, [{countries: 'Canada;Mexico;USA'}]);
+		assert.deepStrictEqual(res, [{countries: 'Canada;Mexico;USA'}]);
 	});
 
 	it('G) GROUP_CONCAT with ORDER BY DESC', function () {
 		data = [{country: 'USA'}, {country: 'Canada'}, {country: 'Mexico'}];
 		res = alasql('SELECT GROUP_CONCAT(country ORDER BY country DESC) as countries FROM ?', [data]);
-		assert.deepEqual(res, [{countries: 'USA,Mexico,Canada'}]);
+		assert.deepStrictEqual(res, [{countries: 'USA,Mexico,Canada'}]);
 	});
 
 	it('H) GROUP_CONCAT with GROUP BY clause', function () {
@@ -78,7 +78,7 @@ describe('Test 2413 - GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR', funct
 			"SELECT region, GROUP_CONCAT(country ORDER BY country ASC SEPARATOR '\\n') as countries FROM ? GROUP BY region ORDER BY region",
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{region: 'EU', countries: 'France\nGermany'},
 			{region: 'NA', countries: 'Canada\nMexico\nUSA'},
 		]);

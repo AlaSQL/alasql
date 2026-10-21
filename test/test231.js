@@ -348,7 +348,7 @@ describe('Test 231 NIST SQL Example', function () {
 		]);
 
 		if (false) {
-			assert(!alasql.utils.deepEqual(res1, res2));
+			assert(!alasql.utils.deepStrictEqual(res1, res2));
 
 			var res = alasql('ROLLBACK WORK;');
 			assert.deepStrictEqual(res, 1);
@@ -366,7 +366,7 @@ describe('Test 231 NIST SQL Example', function () {
 
 		// TODO: Transactions
 		if (false) {
-			assert(!alasql.utils.deepEqual(res3, res4));
+			assert(!alasql.utils.deepStrictEqual(res3, res4));
 		}
 		done();
 	});

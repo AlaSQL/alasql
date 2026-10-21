@@ -44,7 +44,7 @@ describe(`Test ${testId} - UNION with nested SELECT`, function () {
 			'SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ? T1 UNION CORRESPONDING SELECT * FROM ?',
 			[t1, t1, t2]
 		);
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('B) UNION CORRESPONDING with a scalar subquery column, nested in FROM', function () {
@@ -52,7 +52,7 @@ describe(`Test ${testId} - UNION with nested SELECT`, function () {
 			'SELECT * FROM (SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ? T1 UNION CORRESPONDING SELECT * FROM ?)',
 			[t1, t1, t2]
 		);
-		assert.deepEqual(res, expected);
+		assert.deepStrictEqual(res, expected);
 	});
 
 	it('C) UNION ALL CORRESPONDING with a scalar subquery column, nested in FROM', function () {
@@ -60,7 +60,7 @@ describe(`Test ${testId} - UNION with nested SELECT`, function () {
 			'SELECT * FROM (SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ? T1 UNION ALL CORRESPONDING SELECT * FROM ?)',
 			[t1, t1, t2]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: '1', a: 'one', c: 4},
 			{id: '2', a: 'two', c: 4},
 			{id: '3', a: 'three', c: 4},
@@ -77,7 +77,7 @@ describe(`Test ${testId} - UNION with nested SELECT`, function () {
 			'SELECT * FROM (SELECT * FROM ? UNION CORRESPONDING SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ?)',
 			[t2, t1, t1]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: '1', a: 'one', c: 4},
 			{id: '2', a: 'two', c: 4},
 			{id: '3', a: 'three', c: 4},
@@ -91,7 +91,7 @@ describe(`Test ${testId} - UNION with nested SELECT`, function () {
 
 	it('E) scalar subquery column in a FROM subselect without UNION', function () {
 		var res = alasql('SELECT * FROM (SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ?)', [t1, t1]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: '1', a: 'one', c: 4},
 			{id: '2', a: 'two', c: 4},
 			{id: '3', a: 'three', c: 4},
@@ -111,6 +111,8 @@ describe(`Test ${testId} - UNION with nested SELECT`, function () {
 				"(SELECT FAILURELIST FROM ? WHERE FAILURECODE = '234' AND TYPE = '' AND PARENT = ''))",
 			[data, data, data]
 		);
-		assert.deepEqual(res, [{TYPE: 'CAUSE', PARENT: 'FL1', FAILURECODE: '999', FAILURELIST: 'FLX'}]);
+		assert.deepStrictEqual(res, [
+			{TYPE: 'CAUSE', PARENT: 'FL1', FAILURECODE: '999', FAILURELIST: 'FLX'},
+		]);
 	});
 });
