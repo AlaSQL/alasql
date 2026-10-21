@@ -19,7 +19,6 @@ src/45union.js
 src/46apply.js
 src/47over.js
 src/52linq.js
-src/expression/case.js
 src/expression/json.js
 src/expression/convert.js
 src/60createtable.js
