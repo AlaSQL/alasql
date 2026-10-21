@@ -19,3 +19,7 @@ test*.json
 
 # Local planning notes, not part of the repository
 context/
+
+# Parity check: downloaded reference build and recordings (test/parity/README.md)
+test/parity/.ref/
+test/parity/recordings/
