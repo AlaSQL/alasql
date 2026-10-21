@@ -125,7 +125,10 @@ if (create) {
 		text.slice(at).replace(/\s*$/, '\n') +
 		'\n\treturn alasql;\n}\n';
 } else {
-	const withInternal = internals.length || binds.some(([, e]) => e.startsWith('internal.'));
+	const withInternal =
+		internals.length ||
+		binds.some(([, e]) => e.startsWith('internal.')) ||
+		bindings.some(b => b.includes('= internal.'));
 	out =
 		[...importLines, ...imports].map(i => i + '\n').join('') +
 		(importLines.length + imports.length ? '\n' : '') +

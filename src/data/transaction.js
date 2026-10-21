@@ -1,3 +1,5 @@
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
 /*
 //
 // Transaction class for Alasql.js
@@ -79,3 +81,4 @@ Transaction.prototype.executeSQL = Transaction.prototype.exec;
 // Transaction.prototype.run = Database.prototype.exec;
 
 alasql.Transaction = Transaction;
+}

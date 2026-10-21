@@ -97,6 +97,8 @@ export const LEGACY_BINDINGS = [
 	'var und = internal.und;',
 	'var getXLSX = internal.getXLSX;',
 	'var Query = alasql.Query;',
+	'var Database = alasql.Database;',
+	'var Table = alasql.Table;',
 	'var queryfn = internal.queryfn;',
 ];
 

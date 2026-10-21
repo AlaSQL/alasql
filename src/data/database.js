@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /*
 //
 // Database class for Alasql.js
@@ -147,3 +148,4 @@ Database.prototype.compile = function(sql, kind) {
 };
 
 */
+}

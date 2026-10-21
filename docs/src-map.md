@@ -12,6 +12,10 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/25queryclass.js` | `src/data/query.js` | `install(alasql, internal)`: the `Query` and `Recordset` classes, set on `alasql` | after uncomment, before the legacy module | the wrapper only | 92% |
 | `src/39dojoin.js` | `src/select/dojoin.js` | `install(alasql, internal)`: `doJoin` and `swapSources`; `internal.doJoin = doJoin` | after query | the wrapper and the `internal` line | 98% |
 | `src/38query.js` | `src/select/queryfn.js` | `install(alasql, internal)`: `queryfn`, `queryfn2`, `queryfn3`, `doDistinct`, `doLimit`, `preIndex`; `internal.queryfn = queryfn` | after dojoin | `import {arrayUnionDeep, arrayExceptDeep, arrayIntersectDeep, cloneDeep, hash} from '../utils/helpers.js'`; `var yy = alasql.yy`, `var doJoin = internal.doJoin`, `var flatArray = alasql.utils.flatArray`; the `internal` line | 98% |
+| `src/20database.js` | `src/data/database.js` | `install(alasql, internal)`: the `Database` class, set on `alasql` | after query | the wrapper only | 98% |
+| `src/23table.js` | `src/data/table.js` | `install(alasql, internal)`: the `Table` class, set on `alasql` | after database | the wrapper only | 96% |
+| `src/24view.js` | `src/data/view.js` | `install(alasql, internal)`: the `View` class, set on `alasql` | after table | the wrapper only | 91% |
+| `src/21transaction.js` | `src/data/transaction.js` | `install(alasql, internal)`: the `Transaction` class, set on `alasql` | after view | `var schemaChanged = internal.schemaChanged` | 94% |
 | `src/18promise.js` | `src/engine/promise.js` | `install(alasql)`: `alasql.promise` and the global `Promise` check | after the legacy module, which makes `utils` | `var utils = alasql.utils` | 96% |
 
 ## How one module reaches another's internals (decided 2026-10-22, step 4)
@@ -34,6 +38,7 @@ Names the legacy files reach by bare name from converted modules (`tools/free-va
 | `returnTrue`, `n2u`, `und` | `src/utils/helpers.js` | `var name = alasql.private.name` |
 | `schemaChanged` | `src/engine/core.js` | `var schemaChanged = alasql.private.schemaChanged` |
 | `Query` | `src/data/query.js` | `var Query = alasql.Query` |
+| `Database`, `Table` | `src/data/database.js`, `src/data/table.js` | `var Database = alasql.Database`, `var Table = alasql.Table` |
 | `queryfn` | `src/select/queryfn.js` | `var queryfn = internal.queryfn` |
 
 A converted module that needs the parser binds `var alasqlparser = alasql.parser` (yy.js); core.js makes it.
