@@ -2,8 +2,8 @@
 	Benchmark history: run bench.js on npm releases and keep the numbers in historical/.
 
 	Usage:
-	  node test/performance/history.js run [options]   # measure and merge into historical/
-	  node test/performance/history.js page            # rebuild the data block of results.html
+	  bun test/performance/history.js run [options]   # measure and merge into historical/
+	  bun test/performance/history.js page            # rebuild the data block of results.html
 
 	Options for run:
 	  --group=<name>       group(s) from bench.js to measure (repeatable; default: every group)
@@ -18,9 +18,9 @@
 	  --historical=<dir>   read and write another folder than historical/ (also for page)
 
 	Examples:
-	  node test/performance/history.js run --group=union --develop   # a new case on every release
-	  node test/performance/history.js run --versions=new             # a new release, every group
-	  node test/performance/history.js run --group=core --versions=4.17.0,4.17.1
+	  bun test/performance/history.js run --group=union --develop   # a new case on every release
+	  bun test/performance/history.js run --versions=new             # a new release, every group
+	  bun test/performance/history.js run --group=core --versions=4.17.0,4.17.1
 
 	Each group runs in its own process (see "Groups" in bench.js), so a group can be added later
 	and compared along its own versions. The other groups in a file stay as they are. Every file
@@ -82,7 +82,8 @@ const baselineFile = rt =>
 		.map(f => path.join(histDir, f))[0];
 
 function benchCases() {
-	return sh('node', [bench, '--list', '--json']).trim().split('\n').map(JSON.parse);
+	// the tool's own runtime (Bun in development); the list does not depend on a build
+	return sh(process.execPath, [bench, '--list', '--json']).trim().split('\n').map(JSON.parse);
 }
 
 // ---- npm packages ----
@@ -320,7 +321,10 @@ function run() {
 			if (isNew) {
 				let reported = null;
 				try {
-					reported = sh('node', ['-p', `require(${JSON.stringify(b.entry)}).version`]).trim();
+					reported = sh(process.execPath, [
+						'-e',
+						`console.log(require(${JSON.stringify(b.entry)}).version)`,
+					]).trim();
 				} catch (e) {}
 				j.meta = {
 					dist: b.develop ? 'develop build ' + b.commit : 'npm alasql@' + b.version,
@@ -344,7 +348,9 @@ function run() {
 
 function prettier(target) {
 	try {
-		sh('npx', ['prettier', '--write', target], {cwd: path.join(here, '../..')});
+		sh(process.versions.bun ? 'bunx' : 'npx', ['prettier', '--write', target], {
+			cwd: path.join(here, '../..'),
+		});
 	} catch (e) {
 		log('prettier failed; run yarn format');
 	}
@@ -359,7 +365,8 @@ function page() {
 	const D = JSON.parse(src.match(re)[2]);
 	const benchList = benchCases();
 	const builds = {};
-	for (const f of fs.readdirSync(histDir)) {
+	// sorted, so the page is the same whichever runtime builds it
+	for (const f of fs.readdirSync(histDir).sort()) {
 		const m = f.match(/^(.+)\.(bun|node)\.json$/);
 		if (!m) continue;
 		const [, label, rt] = m;
@@ -445,7 +452,7 @@ else if (cmd === 'run') run();
 else if (cmd === 'page') page();
 else {
 	console.error(
-		'usage: node test/performance/history.js run|page [options] (see the top of this file)'
+		'usage: bun test/performance/history.js run|page [options] (see the top of this file)'
 	);
 	process.exit(1);
 }

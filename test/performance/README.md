@@ -108,12 +108,12 @@ Measured on an Apple M1 Pro (8 cores, 16 GB, macOS 15.8.1) with Bun 1.4.3 and No
 
 ```sh
 # a new dimension on every release and on develop:
-node test/performance/history.js run --group=<name> --develop --runs=3
+bun test/performance/history.js run --group=<name> --develop --runs=3
 # a new release, every group:
-node test/performance/history.js run --versions=new
+bun test/performance/history.js run --versions=new
 # measure some versions again:
-node test/performance/history.js run --group=core --versions=4.17.0,4.17.1
-node test/performance/history.js page   # then rebuild results.html
+bun test/performance/history.js run --group=core --versions=4.17.0,4.17.1
+bun test/performance/history.js page   # then rebuild results.html
 ```
 
 One run of every dimension takes about 30 seconds per build and runtime, so all 198 releases with 3 runs take about 10 hours; the core cases take about 2 hours. Keep the machine idle meanwhile. An interrupted run continues where it stopped when started again with the same options. The options are listed at the top of `history.js`.

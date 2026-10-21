@@ -5,7 +5,7 @@
 	  yarn test-perf                                 # runs on whatever is in dist/ (about 7 minutes)
 	  yarn test-perf-mini                            # a quick check, about 2 minutes: --scale=0.5 --runs=2
 	                                                 # --runtime=node --fail-above=105
-	  node test/performance/vs-npm.js [options]
+	  bun test/performance/vs-npm.js [options]
 
 	Options:
 	  --scale=<x>         multiply every loop in bench.js by x (0.2 runs about 5 times fewer
@@ -140,7 +140,9 @@ const biggest = all
 	.slice(0, 8);
 
 const runtimeName = rt =>
-	rt === 'bun' ? 'Bun ' + sh('bun', ['--version']).trim() : 'Node ' + process.version.slice(1);
+	rt === 'bun'
+		? 'Bun ' + sh('bun', ['--version']).trim()
+		: 'Node ' + sh('node', ['--version']).trim().slice(1);
 if (opt.json) {
 	console.log(
 		JSON.stringify(
