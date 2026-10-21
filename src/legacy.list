@@ -3,7 +3,6 @@
 src/12pretty.js
 src/30statements.js
 src/35search.js
-src/select/columns.js
 src/select/having.js
 src/select/orderby.js
 src/select/pivot.js
