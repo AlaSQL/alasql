@@ -24,3 +24,5 @@ src/engine/
 src/utils/
 src/data/
 src/select/
+src/expression/
+src/functions/

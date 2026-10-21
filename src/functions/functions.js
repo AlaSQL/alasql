@@ -1,3 +1,11 @@
+import {und} from '../utils/helpers.js';
+
+// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+
+export let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // Functions for Alasql.js
@@ -10,7 +18,6 @@ yy.FuncValue = function (params) {
 	return Object.assign(this, params);
 };
 
-let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 yy.FuncValue.prototype.toString = function () {
 	let s = '';
 
@@ -597,3 +604,4 @@ stdfn.NEWID =
 				lut[(d3 >> 24) & 0xff]
 			);
 		};
+}

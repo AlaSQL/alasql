@@ -123,26 +123,7 @@ export var deepEqual = function (x, y) {
 	return false;
 };
 
-export default function install(alasql, internal) {
-/*jshint unused:false*/
-/*
-	Utilities for Alasql.js
-
-	@todo Review the list of utilities
-	@todo Find more effective utilities
-*/
-
-/**
- Alasql utility functions
- @type {object}
- */
-var utils = (alasql.utils = {});
-utils.hash = hash;
-utils.arrayUnionDeep = arrayUnionDeep;
-utils.arrayExceptDeep = arrayExceptDeep;
-utils.arrayIntersectDeep = arrayIntersectDeep;
-utils.cloneDeep = cloneDeep;
-utils.deepEqual = deepEqual;
+// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
 
 /**
   Convert NaN to undefined
@@ -157,11 +138,12 @@ utils.deepEqual = deepEqual;
   NaN         => undefined
 
   */
-function nanToUndefined(s) {
+export function nanToUndefined(s) {
 	//rename for clarity.
 	return '(y=' + s + ',y===y?y:undefined)';
 }
-var n2u = nanToUndefined; // Alias for backward compatibility
+
+export var n2u = nanToUndefined; // Alias for backward compatibility
 
 /**
   Return undefined if s undefined
@@ -175,18 +157,19 @@ var n2u = nanToUndefined; // Alias for backward compatibility
   NaN,a       => undefined
 
   */
-function undefinedOrValue(s, r) {
+export function undefinedOrValue(s, r) {
 	//rename for clarity
 	return '(y=' + s + ',typeof y=="undefined"?undefined:' + r + ')';
 }
-var und = undefinedOrValue; // Alias for backward compatibility
+
+export var und = undefinedOrValue; // Alias for backward compatibility
 
 /**
   Return always true. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
   @function
   @return {boolean} Always true
   */
-function returnTrue() {
+export function returnTrue() {
 	return true;
 }
 
@@ -195,20 +178,9 @@ function returnTrue() {
   @function
   @return {undefined} Always undefined
   */
-function returnUndefined() {}
+export function returnUndefined() {}
 
-/**
-  Escape string
-  @function
-  @param {string} s Source string
-  @return {string} Escaped string
-  @example
-
-  Pit\er's => Pit\\er\'s
-
-  */
-// based on joliss/js-string-escape
-var escapeq = (utils.escapeq = function (s) {
+export var escapeq = function (s) {
 	//    console.log(s);
 	return ('' + s).replace(/["'\\\n\r\u2028\u2029]/g, function (character) {
 		// Escape all characters not included in SingleStringCharacters and
@@ -230,7 +202,41 @@ var escapeq = (utils.escapeq = function (s) {
 				return '\\u2029';
 		}
 	});
-});
+};
+
+export default function install(alasql) {
+/*jshint unused:false*/
+/*
+	Utilities for Alasql.js
+
+	@todo Review the list of utilities
+	@todo Find more effective utilities
+*/
+
+/**
+ Alasql utility functions
+ @type {object}
+ */
+var utils = (alasql.utils = {});
+utils.escapeq = escapeq;
+utils.hash = hash;
+utils.arrayUnionDeep = arrayUnionDeep;
+utils.arrayExceptDeep = arrayExceptDeep;
+utils.arrayIntersectDeep = arrayIntersectDeep;
+utils.cloneDeep = cloneDeep;
+utils.deepEqual = deepEqual;
+
+/**
+  Escape string
+  @function
+  @param {string} s Source string
+  @return {string} Escaped string
+  @example
+
+  Pit\er's => Pit\\er\'s
+
+  */
+// based on joliss/js-string-escape
 
 /**
   Double quotes for SQL statements
@@ -691,10 +697,4 @@ utils.typeConverter = function (value, dbtypeid) {
 	// Unknown type, return as is
 	return value;
 };
-
-	internal.returnTrue = returnTrue;
-
-	internal.n2u = n2u;
-
-	internal.und = und;
 }

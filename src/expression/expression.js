@@ -1,3 +1,8 @@
+import {escapeq, returnTrue} from '../utils/helpers.js';
+import {re_invalidFnNameChars} from '../functions/functions.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 {
 	const assign = Object.assign;
 
@@ -937,4 +942,5 @@
 		VarValue,
 		View,
 	});
+}
 }

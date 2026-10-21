@@ -7,3 +7,4 @@ alasql.utils.deepEqual      # step 4: as above
 alasql.utils.arrayUnionDeep # step 4: as above
 alasql.utils.arrayExceptDeep # step 4: as above
 alasql.utils.arrayIntersectDeep # step 4: as above
+alasql.utils.escapeq        # step 5: as above

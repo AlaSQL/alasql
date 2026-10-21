@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // CASE for Alasql.js
@@ -65,3 +67,4 @@ yy.CaseValue.prototype.toJS = function (context, tableid, defcols) {
 
 	return s;
 };
+}
