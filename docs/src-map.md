@@ -16,6 +16,12 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/23table.js` | `src/data/table.js` | `install(alasql, internal)`: the `Table` class, set on `alasql` | after database | the wrapper only | 96% |
 | `src/24view.js` | `src/data/view.js` | `install(alasql, internal)`: the `View` class, set on `alasql` | after table | the wrapper only | 91% |
 | `src/21transaction.js` | `src/data/transaction.js` | `install(alasql, internal)`: the `Transaction` class, set on `alasql` | after view | `var schemaChanged = internal.schemaChanged` | 94% |
+| `src/55functions.js` | `src/functions/functions.js` | `install(alasql)`: the function node `yy.FuncValue`, `alasql.stdlib`, `alasql.stdfn`, the aggregates; exports `re_invalidFnNameChars` | after transaction | `import {und} from '../utils/helpers.js'`; `var yy = alasql.yy` | 98% |
+| `src/61date.js` | `src/functions/date.js` | `install(alasql)`: the date functions on `alasql.stdfn`; exports `newDate` and `dateRegexp` | after functions | `var stdfn = alasql.stdfn` | 93% |
+| `src/50expression.js` | `src/expression/expression.js` | `install(alasql)`: the expression classes and their compilers | after date | `import {escapeq, returnTrue} from '../utils/helpers.js'`, `import {re_invalidFnNameChars} from '../functions/functions.js'`; `var yy = alasql.yy` | 99% |
+| `src/57case.js` | `src/expression/case.js` | `install(alasql)`: `yy.CaseValue` | after expression | `var yy = alasql.yy` | 96% |
+| `src/58json.js` | `src/expression/json.js` | `install(alasql, internal)`: `yy.Json`; `internal.JSONtoJS`, `internal.JSONtoString` (they read `yy`) | after case | `var yy = alasql.yy`; the two `internal` lines | 93% |
+| `src/59convert.js` | `src/expression/convert.js` | `install(alasql)`: `yy.Convert` and the CONVERT function | after json | `import {newDate} from '../functions/date.js'`; `var yy = alasql.yy` | 98% |
 | `src/18promise.js` | `src/engine/promise.js` | `install(alasql)`: `alasql.promise` and the global `Promise` check | after the legacy module, which makes `utils` | `var utils = alasql.utils` | 96% |
 
 ## How one module reaches another's internals (decided 2026-10-22, step 4)
@@ -35,8 +41,9 @@ Names the legacy files reach by bare name from converted modules (`tools/free-va
 | `alasql` | `src/engine/create.js` | the `install(alasql)` parameter |
 | `yy` | `src/engine/yy.js` | `var yy = alasql.yy` |
 | `utils`, `cloneDeep`, `hash`, `extend`, `escapeq`, `deepEqual`, `distinctArray`, `arrayExceptDeep`, `arrayIntersectDeep`, `arrayUnionDeep`, `flatArray`, `arrayIntersect`, `arrayDiff`, `arrayUnion`, `escapeqq` | `src/utils/helpers.js` | `var utils = alasql.utils` and `var name = utils.name` (`escapeqq` is `utils.undoubleq`) |
-| `returnTrue`, `n2u`, `und` | `src/utils/helpers.js` | `var name = alasql.private.name` |
-| `schemaChanged` | `src/engine/core.js` | `var schemaChanged = alasql.private.schemaChanged` |
+| `escapeq`, `returnTrue`, `n2u`, `und` | `src/utils/helpers.js` | `import {escapeq, returnTrue, n2u, und} from '../utils/helpers.js'` (stateless, exported since step 5) |
+| `JSONtoJS`, `JSONtoString` | `src/expression/json.js` | `var JSONtoJS = internal.JSONtoJS`, `var JSONtoString = internal.JSONtoString` |
+| `schemaChanged` | `src/engine/core.js` | `var schemaChanged = internal.schemaChanged` |
 | `Query` | `src/data/query.js` | `var Query = alasql.Query` |
 | `Database`, `Table` | `src/data/database.js`, `src/data/table.js` | `var Database = alasql.Database`, `var Table = alasql.Table` |
 | `queryfn` | `src/select/queryfn.js` | `var queryfn = internal.queryfn` |
