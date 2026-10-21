@@ -1,3 +1,4 @@
+export default function install(alasql) {
 alasql.from.XML = function (filename, opts, cb, idx, query) {
 	var res;
 	//console.log('cb',cb);
@@ -163,4 +164,5 @@ function xmlparse(xml) {
 	function is(prefix) {
 		return 0 == xml.indexOf(prefix);
 	}
+}
 }
