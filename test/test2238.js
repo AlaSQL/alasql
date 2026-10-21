@@ -15,7 +15,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 		alasql('drop database test' + test);
 	});
 
-	// NOTE: Tests should use assert.deepEqual to verify the complete expected output
+	// NOTE: Tests should use assert.deepStrictEqual to verify the complete expected output
 	// against the actual result object. This ensures comprehensive validation and
 	// makes test failures more informative by showing the full diff.
 
@@ -28,7 +28,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 
 		// Query the table
 		var data = alasql('SELECT * FROM default ORDER BY id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, name: 'test1'},
 			{id: 2, name: 'test2'},
 		]);
@@ -46,7 +46,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 
 		// Query with DEFAULT column
 		var data = alasql('SELECT id, default, amount FROM test_default_col ORDER BY id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, default: 'col1', amount: 100},
 			{id: 2, default: 'col2', amount: 200},
 		]);
@@ -61,7 +61,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 
 		// Query using table.column notation
 		var data = alasql('SELECT test_qualified.id, test_qualified.default FROM test_qualified');
-		assert.deepEqual(data, [{id: 1, default: 'value1'}]);
+		assert.deepStrictEqual(data, [{id: 1, default: 'value1'}]);
 
 		alasql('DROP TABLE test_qualified');
 	});
@@ -72,7 +72,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 
 		// Filter by DEFAULT column
 		var data = alasql('SELECT * FROM test_where WHERE default = "abc" ORDER BY id');
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, default: 'abc'},
 			{id: 3, default: 'abc'},
 		]);
@@ -119,7 +119,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 		var data = alasql(
 			'SELECT default.amount, other.id FROM default JOIN other ON default.id = other.ref_id ORDER BY other.id'
 		);
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{amount: 'a', id: 1},
 			{amount: 'b', id: 2},
 		]);
@@ -134,7 +134,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 
 		// Use DEFAULT as an alias
 		var data = alasql('SELECT default.id, default.name FROM test_alias AS default');
-		assert.deepEqual(data, [{id: 1, name: 'test'}]);
+		assert.deepStrictEqual(data, [{id: 1, name: 'test'}]);
 
 		alasql('DROP TABLE test_alias');
 	});
@@ -147,7 +147,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 		var data = alasql(
 			'SELECT * FROM (SELECT id, amount FROM default WHERE amount > 5) ORDER BY id'
 		);
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{id: 1, amount: 10},
 			{id: 2, amount: 20},
 		]);
@@ -163,7 +163,7 @@ describe('Test 2238 - DEFAULT keyword should not be reserved in all contexts', f
 		var data = alasql(
 			'SELECT default, SUM(qty) as sumqty FROM test_group GROUP BY default ORDER BY default'
 		);
-		assert.deepEqual(data, [
+		assert.deepStrictEqual(data, [
 			{default: 'a', sumqty: 8},
 			{default: 'b', sumqty: 7},
 		]);
