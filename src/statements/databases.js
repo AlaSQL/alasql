@@ -1,3 +1,6 @@
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
+	var yy = alasql.yy;
 /*
 //
 // UPDATE for Alasql.js
@@ -213,3 +216,4 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (cb) cb(res);
 	return res;
 };
+}
