@@ -26,7 +26,7 @@
 		"test-ci": "(yarn test-format-all || 1) && yarn test-only && yarn install-g && alasql 'select 1 as Succes'",
 		"test-only": "bun test --dots --preload ./test/bun-setup.js ./test/test[0-9]*.js ./test/test-*.js",
 		"test-browser": "node test/browserTestRunner.js 7387",
-		"test-parity": "bun test/parity/run.js record ref --ref && bun test/parity/run.js record new && bun test/parity/run.js compare ref new",
+		"test-parity": "bun test/parity/run.js record ref --ref --if-missing && bun test/parity/run.js record new --once && bun test/parity/run.js compare ref new",
 		"test-parity-smoke": "node test/parity/smoke.js --node=$(which node) --pack",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
