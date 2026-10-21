@@ -22,6 +22,22 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/57case.js` | `src/expression/case.js` | `install(alasql)`: `yy.CaseValue` | after expression | `var yy = alasql.yy` | 96% |
 | `src/58json.js` | `src/expression/json.js` | `install(alasql, internal)`: `yy.Json`; `internal.JSONtoJS`, `internal.JSONtoString` (they read `yy`) | after case | `var yy = alasql.yy`; the two `internal` lines | 93% |
 | `src/59convert.js` | `src/expression/convert.js` | `install(alasql)`: `yy.Convert` and the CONVERT function | after json | `import {newDate} from '../functions/date.js'`; `var yy = alasql.yy` | 98% |
+| `src/40select.js` | `src/select/select.js` | `install(alasql, internal)`: `yy.Select` and its compile and execute; `internal.modify` | after queryfn | `var Query = alasql.Query`, `var queryfn = internal.queryfn`, `var yy = alasql.yy`; the `internal` line | 99% |
+| `src/41exists.js` | `src/select/exists.js` | `install(alasql)`: EXISTS | after select | `var yy = alasql.yy` | 95% |
+| `src/420from.js` | `src/select/from.js` | `install(alasql, internal)`: the FROM compile; `internal.subqueryDatafn` | after exists | `import {returnTrue} from '../utils/helpers.js'`; `var yy = alasql.yy`; the `internal` line | 97% |
+| `src/421join.js` | `src/select/join.js` | `install(alasql, internal)`: the JOIN compile | after from | `import {returnTrue, arrayIntersect} from '../utils/helpers.js'`; `var subqueryDatafn = internal.subqueryDatafn`, `var yy = alasql.yy` | 97% |
+| `src/422where.js` | `src/select/where.js` | `install(alasql)`: the WHERE compile and the join optimisation | after join | `var yy = alasql.yy` | 99% |
+| `src/43rollup.js` | `src/select/rollup.js` | `install(alasql, internal)`: ROLLUP, CUBE, GROUPING SETS; `internal.decartes` | after where | `import {escapeq} from '../utils/helpers.js'`; `var yy = alasql.yy`; the `internal` line | 95% |
+| `src/423groupby.js` | `src/select/groupby.js` | `install(alasql, internal)`: the GROUP BY compile | after rollup | `import {arrayDiff, arrayUnion} from '../utils/helpers.js'`; `var decartes = internal.decartes`, `var yy = alasql.yy` | 99% |
+| `src/424select.js` | `src/select/columns.js` | `install(alasql)`: the column list compile | after groupby | `import {cloneDeep, escapeq, n2u} from '../utils/helpers.js'`; `var yy = alasql.yy` | 99% |
+| `src/425having.js` | `src/select/having.js` | `install(alasql)`: the HAVING compile | after columns | `var yy = alasql.yy` | 93% |
+| `src/426orderby.js` | `src/select/orderby.js` | `install(alasql)`: the ORDER BY compile | after having | `var yy = alasql.yy` | 98% |
+| `src/427pivot.js` | `src/select/pivot.js` | `install(alasql)`: PIVOT and UNPIVOT | after orderby | `import {cloneDeep} from '../utils/helpers.js'`; `var yy = alasql.yy` | 98% |
+| `src/44defcols.js` | `src/select/defcols.js` | `install(alasql)`: the default columns | after pivot | `var yy = alasql.yy` | 97% |
+| `src/45union.js` | `src/select/union.js` | `install(alasql)`: the set operations | after defcols | `var yy = alasql.yy` | 80% |
+| `src/46apply.js` | `src/select/apply.js` | `install(alasql)`: APPLY | after union | `var yy = alasql.yy` | 83% |
+| `src/47over.js` | `src/select/window.js` | `install(alasql)`: OVER | after apply | `var yy = alasql.yy` | 86% |
+| `src/52linq.js` | `src/select/linq.js` | `install(alasql)`: the fluent interface | after window | `import {hash} from '../utils/helpers.js'`; `var yy = alasql.yy` | 97% |
 | `src/18promise.js` | `src/engine/promise.js` | `install(alasql)`: `alasql.promise` and the global `Promise` check | after the legacy module, which makes `utils` | `var utils = alasql.utils` | 96% |
 
 ## How one module reaches another's internals (decided 2026-10-22, step 4)
@@ -30,7 +46,7 @@ Every `install` takes a second parameter, `internal`: an object made in `src/ind
 
 Plain imports are for stateless helpers the old code used by bare name, as `src/utils/helpers.js` exports them; a call through `alasql.utils.x` stays as it is, because a user's override of that function reaches the engine today.
 
-38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on.
+38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6.
 
 Still in the legacy module: every file in `src/legacy.list`, in that order, wrapped by `build.js` into `src/generated/legacy.js` as `install(alasql)`.
 
@@ -42,6 +58,8 @@ Names the legacy files reach by bare name from converted modules (`tools/free-va
 | `yy` | `src/engine/yy.js` | `var yy = alasql.yy` |
 | `utils`, `cloneDeep`, `hash`, `extend`, `escapeq`, `deepEqual`, `distinctArray`, `arrayExceptDeep`, `arrayIntersectDeep`, `arrayUnionDeep`, `flatArray`, `arrayIntersect`, `arrayDiff`, `arrayUnion`, `escapeqq` | `src/utils/helpers.js` | `var utils = alasql.utils` and `var name = utils.name` (`escapeqq` is `utils.undoubleq`) |
 | `escapeq`, `returnTrue`, `n2u`, `und` | `src/utils/helpers.js` | `import {escapeq, returnTrue, n2u, und} from '../utils/helpers.js'` (stateless, exported since step 5) |
+| `modify` | `src/select/select.js` | `var modify = internal.modify` (35search.js) |
+| `arrayUnion`, `arrayDiff`, `arrayIntersect` | `src/utils/helpers.js` | on the same import line (stateless, exported since step 6) |
 | `JSONtoJS`, `JSONtoString` | `src/expression/json.js` | `var JSONtoJS = internal.JSONtoJS`, `var JSONtoString = internal.JSONtoString` |
 | `schemaChanged` | `src/engine/core.js` | `var schemaChanged = internal.schemaChanged` |
 | `Query` | `src/data/query.js` | `var Query = alasql.Query` |
