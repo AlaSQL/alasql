@@ -3,7 +3,7 @@
 src/12pretty.js
 src/data/database.js
 src/21transaction.js
-src/23table.js
+src/data/table.js
 src/24view.js
 src/30statements.js
 src/35search.js
