@@ -1,3 +1,7 @@
+import {escapeq} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
 /*
 //
 // ROLLUP(), CUBE(), GROUPING SETS() for Alasql.js
@@ -128,4 +132,7 @@ const cartes = (a1, a2) => {
 
 	query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
 	return [`${escapeq(gv.toString())}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
+}
+
+	internal.decartes = decartes;
 }

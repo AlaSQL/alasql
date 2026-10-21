@@ -8,7 +8,6 @@ src/select/columns.js
 src/select/having.js
 src/select/orderby.js
 src/select/pivot.js
-src/select/rollup.js
 src/select/defcols.js
 src/select/union.js
 src/select/apply.js
