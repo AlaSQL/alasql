@@ -78,6 +78,7 @@ import postgres from './dialects/postgres.js';
 import oracle from './dialects/oracle.js';
 import sqlite from './dialects/sqlite.js';
 import into from './formats/into.js';
+import xls from './formats/xls.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -150,6 +151,7 @@ postgres(instance, internal);
 oracle(instance, internal);
 sqlite(instance, internal);
 into(instance, internal);
+xls(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
