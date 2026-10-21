@@ -61,7 +61,7 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.
 - `api.js`: `snapshot [dist]` and `compare a.json b.json`.
 - `smoke.js`: the browser global in a `vm` sandbox, the worker file, the CLI, the ESM import, `alasql.min.js` under node, other node binaries (`--node=`), and `--pack`: `npm pack`, install in a temporary folder, then `require`, `import` and the CLI.
-- `same-body.js <old alasql.fs.js>`: is the Bun build (`build.js`) the same code as the concatenation `build.sh` made, apart from the wrapper? Bun prints the code again, so it compares the generated legacy module with the old body, and the old body bundled by Bun with the new output.
+- `same-body.js <old alasql.fs.js>`: is the bundled build (`build.js`) the same code as the concatenation `build.sh` made, apart from the wrapper? esbuild prints the code again, so it compares the generated legacy module with the old body, and the old body bundled by esbuild with the new output.
 - `ledger.md`: bytes and gzip of every `dist` file per step of the conversion, the benchmark against the previous step, and whether two builds gave the same hashes.
 
 ## Not covered

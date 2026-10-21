@@ -65,8 +65,6 @@ jobs:
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
 
       - name: Build project
         run: yarn build-only
@@ -112,8 +110,6 @@ jobs:
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
 
       - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
         with:
@@ -185,8 +181,6 @@ jobs:
       - name: Setup Bun
         if: steps.detect-changes.outputs.any_changed == 'true'
         uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: .bun-version
 
       - name: Build from src
         # This step only runs if the jison file changed

@@ -1,16 +1,16 @@
 /*
 	Is the Bun build the same code as the concatenation, apart from the wrapper? The acceptance of
 	context/roadmap-phase-1.md, step 1: "the new CommonJS output differs from the old
-	concatenation only in its wrapper". Bun prints the code again (indentation, quotes, no
+	concatenation only in its wrapper". esbuild prints the code again (indentation, quotes, no
 	comments), so the two files are not compared as text. Two checks instead:
 
 	  bun test/parity/same-body.js <old dist/alasql.fs.js made with build.sh>
 
-	1. The legacy module build.js generates (Bun's input) against the body of the old file: the
+	1. The legacy module build.js generates (esbuild's input) against the body of the old file: the
 	   old file with its banner, UMD head and tail taken out the way build.js takes them out of
 	   the sources. Byte for byte, or the first difference is shown.
 	2. The old body, bundled by the same build.js functions, against the new dist/alasql.fs.js
-	   with its banner taken out. Identical means Bun's output is a plain re-print of the same
+	   with its banner taken out. Identical means esbuild's output is a plain re-print of the same
 	   code, and everything else in the new file is the wrapper.
 
 	Exit code 1 when a check fails. src/generated/legacy.js is rewritten during check 2 and
@@ -51,22 +51,32 @@ function show(name, x, y) {
 // then the tail. The build string differs between the two builds, so both get the same one.
 const version = b.packageVersion();
 const old = fs.readFileSync(oldFile, 'utf8');
-const oldBuild = (old.match(/build: (\S+) \|/) || [])[1];
+const oldBuild = (old.match(/build: (\S*) \|/) || [])[1];
 const bannerText = b.banner(version, oldBuild);
 if (!old.startsWith(bannerText)) {
 	console.error('the old file does not start with the banner of src/05copyright.js');
 	process.exit(1);
 }
 // The comment passes once more: build.sh ran them before the UMD head was taken out, build.js
-// after, and only the blank lines at the cut differ
-const oldBody = b.stripComments(
-	b.cutTail(b.cutHead(old.slice(bannerText.length), oldFile), oldFile)
+// after, and only the blank lines at the cut differ. The parser stood in the concatenation;
+// the legacy module makes it from its own module at that place.
+const parserText = b
+	.stripComments(fs.readFileSync(path.join(root, 'src', 'alasqlparser.js'), 'utf8'))
+	.trim();
+let oldBody = b.stripComments(b.cutTail(b.cutHead(old.slice(bannerText.length), oldFile), oldFile));
+if (!oldBody.includes(parserText)) {
+	console.error('the old file does not contain src/alasqlparser.js as it is now');
+	process.exit(1);
+}
+const after = oldBody.indexOf(parserText) + parserText.length;
+oldBody = b.stripComments(
+	oldBody.replace(parserText, b.PARSER_BINDING.trim() + (oldBody[after] === '\n' ? '' : '\n'))
 );
 
 // The new file's build string is read from its banner too: the branch may have another name
 // now than when it was built
 const newOut = fs.readFileSync(path.join(root, 'dist', 'alasql.fs.js'), 'utf8');
-const newBuild = (newOut.match(/build: (\S+) \|/) || [])[1];
+const newBuild = (newOut.match(/build: (\S*) \|/) || [])[1];
 const newHead = b.banner(version, newBuild) + '"use strict";\n';
 if (!newOut.startsWith(newHead)) {
 	console.error('dist/alasql.fs.js does not start with the banner and "use strict"');
@@ -75,17 +85,25 @@ if (!newOut.startsWith(newHead)) {
 
 const generated = path.join(root, 'src', 'generated', 'legacy.js');
 const current = fs.readFileSync(generated, 'utf8');
-const header = current.slice(0, current.indexOf('\n') + 1);
-const newBody = current.slice(header.length).split(newBuild).join(oldBuild);
+const open = 'export default function install() {\n';
+const close = '\nreturn alasql;\n}\n';
+const header = current.slice(0, current.indexOf(open) + open.length);
+if (!current.endsWith(close)) {
+	console.error('src/generated/legacy.js does not end with the install() tail');
+	process.exit(1);
+}
+const newBody = current.slice(header.length, -close.length).split(newBuild).join(oldBuild);
 
 let ok = show('1. legacy module against the old body', oldBody, newBody);
 
 // Check 2: bundle the old body and compare with the new output
 try {
-	fs.writeFileSync(generated, header + oldBody);
-	const oldBundled = b.restoreDirname(await b.bundle(path.join(root, 'src', 'index.js')));
+	fs.writeFileSync(generated, header + oldBody + close);
+	const oldBundled = b.defaultExport(
+		await b.bundle(path.join(root, 'src', 'index.js'), {version, build: oldBuild})
+	);
 	const newBundled = newOut.slice(newHead.length).split(newBuild).join(oldBuild);
-	ok = show('2. old body through Bun against the new output', oldBundled, newBundled) && ok;
+	ok = show('2. old body through esbuild against the new output', oldBundled, newBundled) && ok;
 } finally {
 	fs.writeFileSync(generated, current);
 }

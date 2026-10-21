@@ -4,3 +4,4 @@
 # here once more runs confirm it.
 SELECT id, mix AS k FROM o UNION SELECT id, mix FROM o2 ORDER BY k DESC, id -- sorts numbers, strings and undefined after a UNION; the comparator is not consistent for those pairs and the runtime's sort gives one of two orders (1 of 10 runs, Bun 1.4.3, 2026-10-21)
 SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY 2 DESC, id -- the same case with the column by position (2 of 10 runs)
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY mix DESC, id -- the same case with the column by name (seen once in about 20 runs)
