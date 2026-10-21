@@ -20,6 +20,7 @@ import fileio from './utils/fileio.js';
 import xlsx from './utils/xlsx.js';
 import uncomment from './utils/uncomment.js';
 import query from './data/query.js';
+import dojoin from './select/dojoin.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -34,6 +35,7 @@ fileio(instance, internal);
 xlsx(instance, internal);
 uncomment(instance, internal);
 query(instance, internal);
+dojoin(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
