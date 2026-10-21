@@ -22,13 +22,13 @@
 	},
 	"typings": "types/alasql.d.ts",
 	"scripts": {
-		"test": "sh build.sh && yarn test-only",
+		"test": "yarn build-only && yarn test-only",
 		"test-ci": "(yarn test-format-all || 1) && yarn test-only && yarn install-g && alasql 'select 1 as Succes'",
 		"test-only": "bun test --dots --preload ./test/bun-setup.js ./test/test[0-9]*.js ./test/test-*.js",
 		"test-browser": "node test/browserTestRunner.js 7387",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
-		"build-only": "sh build.sh",
+		"build-only": "bun build.js",
 		"test-perf": "bun test/performance/vs-npm.js",
 		"test-perf-mini": "bun test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
@@ -53,7 +53,7 @@
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
 		"prepare": "husky",
 		"preversion": "yarn && yarn test && npm login",
-		"prepublishOnly": "sh build.sh </dev/null",
+		"prepublishOnly": "yarn build-only",
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {

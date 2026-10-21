@@ -175,10 +175,13 @@ async function main() {
 	if (args.includes('--pack')) {
 		const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'alasql-parity-'));
 		check('npm pack + install', () => {
-			const tgz = execFileSync('npm', ['pack', '--pack-destination', tmp, '--loglevel=error'], {
-				cwd: root,
-				encoding: 'utf8',
-			}).trim();
+			// --json: the prepare script (husky) prints to stdout too
+			const packed = execFileSync(
+				'npm',
+				['pack', '--pack-destination', tmp, '--loglevel=error', '--json'],
+				{cwd: root, encoding: 'utf8'}
+			);
+			const tgz = JSON.parse(packed.slice(packed.indexOf('[')))[0].filename;
 			fs.writeFileSync(path.join(tmp, 'package.json'), '{"name":"parity-user","private":true}');
 			execFileSync(
 				'npm',
