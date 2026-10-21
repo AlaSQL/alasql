@@ -1,3 +1,4 @@
+export default function install(alasql) {
 if (alasql.options.tsql) {
 	//
 	// Check tables and views
@@ -32,4 +33,5 @@ if (alasql.options.tsql) {
 
 		return undefined;
 	};
+}
 }
