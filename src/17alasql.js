@@ -510,7 +510,12 @@ alasql.compile = function (sql, databaseid) {
 			schemaVersion = alasql.schemaVersion;
 			Object.assign(statement, compiled);
 		}
-		return compiled(params, cb);
+		// While a run of this statement is still going (a nested call or an unfinished
+		// asynchronous run), this call gets its own copy, as in alasql.dexec (#1953, #2596)
+		if (compiled.running) {
+			return runStatement(alasql.parse(sql).statements[0].compile(databaseid), params, cb);
+		}
+		return runStatement(compiled, params, cb);
 	};
 	// Keep the properties of the compiled statement on the returned function, also after a recompile
 	Object.assign(statement, compiled);
