@@ -3,11 +3,16 @@
 Does a build behave the same as the reference build, or as the build before this change? The ES6 conversion (`context/roadmap-phase-1.md`, step 0) promises the same behaviour, and the suite alone cannot show that: it has 2,447 passing tests, 213 skipped, and the browser, worker, CLI and ESM paths are hardly covered. The dialect test in `test/dialect/` stays what it is: alasql against SQLite, the reference engine.
 
 ```sh
-yarn build-only
+yarn test-parity          # record the reference, record the current build, compare; exit code 1 on any difference
+yarn test-parity-smoke    # the smokes, including --pack, on the node in PATH
+```
+
+`yarn test-parity` builds `dist/` and runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). When to run what is in `context/roadmap-phase-1.md`, "How much to verify, and when": the suite per commit, parity and the smokes on the tip of a step and after every merge of `develop`, the double run that finds unstable statements (`record new` without `--once`) as the last check of a step, and `git bisect run` when a tip fails. Run the three by hand to use another reference (below):
+
+```sh
 bun test/parity/run.js record ref --ref      # the published 4.21.0 in dist/, recorded, then dist/ rebuilt
 bun test/parity/run.js record new            # the current dist/
 bun test/parity/run.js compare ref new       # exit code 1 on any difference
-node test/parity/smoke.js --node=$(which node)
 ```
 
 Record the build before a change and the build after it, and compare. When a step claims "no behaviour change", the compare says so or shows the statement that changed.
@@ -56,6 +61,8 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.
 - `api.js`: `snapshot [dist]` and `compare a.json b.json`.
 - `smoke.js`: the browser global in a `vm` sandbox, the worker file, the CLI, the ESM import, `alasql.min.js` under node, other node binaries (`--node=`), and `--pack`: `npm pack`, install in a temporary folder, then `require`, `import` and the CLI.
+- `same-body.js <old alasql.fs.js>`: is the bundled build (`build.js`) the same code as the concatenation `build.sh` made, apart from the wrapper? esbuild prints the code again, so it compares the generated legacy module with the old body, and the old body bundled by esbuild with the new output.
+- `ledger.md`: bytes and gzip of every `dist` file per step of the conversion, the benchmark against the previous step, and whether two builds gave the same hashes.
 
 ## Not covered
 

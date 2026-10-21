@@ -7,6 +7,7 @@
 	  bun test/parity/run.js record <label> --ref 4.20.1      # another published version
 	  bun test/parity/run.js record <label> --ref develop     # a commit, built with its build.sh
 	  bun test/parity/run.js record <label> --dist <dir>      # another build's dist folder
+	  bun test/parity/run.js record ref --ref --if-missing    # only when ref is not recorded yet
 	  bun test/parity/run.js compare <label-a> <label-b>      # compare two recordings
 
 	A recording is one run of the whole suite plus the dialect cases, with every statement in
@@ -149,6 +150,15 @@ function record(label) {
 	fs.mkdirSync(recordings, {recursive: true});
 	const base = path.join(recordings, label);
 	const file = base + '.jsonl';
+	// --if-missing: a reference is recorded once and reused (roadmap-phase-1.md, "How much to
+	// verify, and when"); the recording's meta line says which build it holds
+	if (flag('--if-missing') && fs.existsSync(file)) {
+		const meta = JSON.parse(fs.readFileSync(file, 'utf8').split('\n')[0]);
+		console.log(
+			`${label} is recorded already (${meta.version} ${meta.build}); not recording again`
+		);
+		return;
+	}
 	for (const ext of ['.jsonl', '.codes.jsonl', '.api.json', '.sizes.json', '.unstable.json'])
 		fs.rmSync(base + ext, {force: true});
 
@@ -232,7 +242,7 @@ if (cmd === 'record') record(args[1]);
 else if (cmd === 'compare') compare(args[1], args[2]);
 else {
 	console.error(
-		'usage: run.js record <label> [--ref [<version>|<commit>] | --dist <dir>] [--no-rebuild] [--once] | compare <a> <b> [--limit N] [--file f]'
+		'usage: run.js record <label> [--ref [<version>|<commit>] | --dist <dir>] [--no-rebuild] [--once] [--if-missing] | compare <a> <b> [--limit N] [--file f]'
 	);
 	process.exit(2);
 }

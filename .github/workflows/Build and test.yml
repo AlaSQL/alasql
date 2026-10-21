@@ -2,9 +2,9 @@ name: 'CI build & test'
 
 on:
   push:
-    branches: '*'
+    branches: '**'
   pull_request:
-    branches: '*'
+    branches: '**'
 
 permissions: read-all
 
@@ -62,6 +62,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Build project
         run: yarn build-only

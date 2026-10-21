@@ -105,7 +105,8 @@ function knownUnstable() {
 	const known = new Set();
 	if (!fs.existsSync(file)) return known;
 	for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
-		const t = line.trim();
+		// the statement ends at " -- ", a SQL comment, which carries the reason
+		const t = line.split(' -- ')[0].trim();
 		if (t && !t.startsWith('#')) known.add(t);
 	}
 	return known;
