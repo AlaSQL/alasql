@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 //
 // 93sqlite.js
 // SQLite database support
@@ -168,3 +170,4 @@ SQLITE.intoTable = function (databaseid, tableid, value, columns, cb) {
 	if (cb) cb(res);
 	return res;
 };
+}

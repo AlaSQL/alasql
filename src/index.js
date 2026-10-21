@@ -90,6 +90,7 @@ import requireStatement from './statements/require.js';
 import assertStatement from './statements/assert.js';
 import indexeddb from './storage/indexeddb.js';
 import localstorage from './storage/localstorage.js';
+import sqljs from './storage/sqljs.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -174,6 +175,7 @@ requireStatement(instance, internal);
 assertStatement(instance, internal);
 indexeddb(instance, internal);
 localstorage(instance, internal);
+sqljs(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
