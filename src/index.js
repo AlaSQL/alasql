@@ -47,6 +47,7 @@ import defcols from './select/defcols.js';
 import union from './select/union.js';
 import apply from './select/apply.js';
 import window from './select/window.js';
+import linq from './select/linq.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -88,6 +89,7 @@ defcols(instance, internal);
 union(instance, internal);
 apply(instance, internal);
 window(instance, internal);
+linq(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);

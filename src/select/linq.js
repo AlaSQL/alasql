@@ -1,3 +1,7 @@
+import {hash} from '../utils/helpers.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 // Alasql Linq library
 
 yy.FromData = function (params) {
@@ -167,3 +171,4 @@ yy.Select.prototype.Where = function (expr) {
 	}
 	return self;
 };
+}
