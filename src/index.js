@@ -65,6 +65,7 @@ import deleteStatement from './statements/delete.js';
 import update from './statements/update.js';
 import merge from './statements/merge.js';
 import databases from './statements/databases.js';
+import declare from './statements/declare.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -124,6 +125,7 @@ deleteStatement(instance, internal);
 update(instance, internal);
 merge(instance, internal);
 databases(instance, internal);
+declare(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
