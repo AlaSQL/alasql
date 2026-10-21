@@ -1,3 +1,9 @@
+import {arrayUnionDeep, arrayExceptDeep, arrayIntersectDeep, cloneDeep, hash} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
+	var doJoin = internal.doJoin;
+	var flatArray = alasql.utils.flatArray;
 // Main query procedure
 function queryfn(query, oldscope, cb, A, B) {
 	query.sourceslen = query.sources.length;
@@ -673,3 +679,6 @@ var preIndex = function (query) {
 		}
 	}
 };
+
+	internal.queryfn = queryfn;
+}
