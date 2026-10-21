@@ -43,6 +43,7 @@ import columns from './select/columns.js';
 import having from './select/having.js';
 import orderby from './select/orderby.js';
 import pivot from './select/pivot.js';
+import defcols from './select/defcols.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -80,6 +81,7 @@ columns(instance, internal);
 having(instance, internal);
 orderby(instance, internal);
 pivot(instance, internal);
+defcols(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
