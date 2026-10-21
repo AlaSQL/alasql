@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // CROSS AND OUTER APPLY for Alasql.js
@@ -21,3 +23,4 @@ yy.Apply = class Apply {
 		return s;
 	}
 };
+}

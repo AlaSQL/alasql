@@ -3,7 +3,6 @@
 src/12pretty.js
 src/30statements.js
 src/35search.js
-src/select/apply.js
 src/select/window.js
 src/select/linq.js
 src/60createtable.js
