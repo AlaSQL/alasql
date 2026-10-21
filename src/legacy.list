@@ -4,7 +4,7 @@ src/12pretty.js
 src/30statements.js
 src/35search.js
 src/select/select.js
-src/41exists.js
+src/select/exists.js
 src/420from.js
 src/421join.js
 src/422where.js
