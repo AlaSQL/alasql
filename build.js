@@ -97,6 +97,7 @@ export const LEGACY_BINDINGS = [
 	'var queryfn = internal.queryfn;',
 	'var JSONtoJS = internal.JSONtoJS;',
 	'var JSONtoString = internal.JSONtoString;',
+	'var modify = internal.modify;',
 ];
 
 const UMD_FIRST = '(function (root, factory) {';
