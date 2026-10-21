@@ -1,3 +1,6 @@
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
+	var JSONtoString = internal.JSONtoString;
 /*
 //
 // HELP for Alasql.js
@@ -65,3 +68,4 @@ yy.Print.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+}
