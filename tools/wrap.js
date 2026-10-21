@@ -2,7 +2,7 @@
 	The codemod that turns a moved numbered file into an ES module with install(alasql)
 	(context/roadmap-phase-1.md, "Wrap with a codemod, not by hand").
 
-	  bun tools/wrap.js <file in src/engine/...> [--create] [--private name ...] [--write]
+	  bun tools/wrap.js <file in src/...> [--create] [--private name ...] [--forward name=path ...] [--write]
 
 	The file has been moved with git mv already (its own commit); this writes the wrap, which is
 	the next commit. Nothing inside the body changes and nothing is re-indented, so git still sees
@@ -18,7 +18,9 @@
 	  and makes the parser for this alasql object; every other module reads alasql.parser;
 	- the wrapper, export default function install(alasql) { ... };
 	- for every name the file declares and the legacy files still use, a line that puts it on
-	  alasql.private (--private name, each named on purpose).
+	  alasql.private (--private name, each named on purpose);
+	- for a name that exists only after this module is installed (saveAs, set by the legacy
+	  module), a forwarder (--forward name=alasql.utils.name) the body calls later.
 
 	--create is for the head file: the UMD head is cut, the wrapper is export function create()
 	returning alasql, and the fluent-interface branch reads yy through alasql.yy, because the
@@ -38,15 +40,21 @@ const file = args.find(a => !a.startsWith('--') && !isOption(args, a));
 const create = args.includes('--create');
 const write = args.includes('--write');
 const privates = [];
-for (let i = 0; i < args.length; i++) if (args[i] === '--private') privates.push(args[i + 1]);
+const forwards = [];
+for (let i = 0; i < args.length; i++) {
+	if (args[i] === '--private') privates.push(args[i + 1]);
+	if (args[i] === '--forward') forwards.push(args[i + 1].split('='));
+}
 
 function isOption(list, a) {
 	const i = list.indexOf(a);
-	return i > 0 && list[i - 1] === '--private';
+	return i > 0 && (list[i - 1] === '--private' || list[i - 1] === '--forward');
 }
 
 if (!file) {
-	console.error('usage: wrap.js <file> [--create] [--private name ...] [--write]');
+	console.error(
+		'usage: wrap.js <file> [--create] [--private name ...] [--forward name=path ...] [--write]'
+	);
 	process.exit(2);
 }
 
@@ -67,7 +75,7 @@ const imports = [];
 const bindings = [];
 {
 	for (const n of names) {
-		if (n === 'alasql') continue;
+		if (n === 'alasql' || forwards.some(([f]) => f === n)) continue;
 		if (n === 'schemaChanged') bindings.push('var schemaChanged = alasql.private.schemaChanged;');
 		else if (n === 'alasqlparser') {
 			// The grammar reads alasql.options, alasql.fn and alasql.aggr, so the parser is made
@@ -101,6 +109,13 @@ if (create) {
 		(imports.length ? '\n' : '') +
 		'export default function install(alasql) {\n' +
 		bindings.map(b => '\t' + b + '\n').join('') +
+		forwards
+			.map(
+				([n, p]) =>
+					`\t// ${p} exists after this module is installed; the body calls it later\n` +
+					`\tfunction ${n}() {\n\t\treturn ${p}.apply(this, arguments);\n\t}\n`
+			)
+			.join('') +
 		text.replace(/\s*$/, '\n') +
 		privates.map(p => `\n\talasql.private.${p} = ${p};\n`).join('') +
 		'}\n';
