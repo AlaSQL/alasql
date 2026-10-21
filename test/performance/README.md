@@ -6,7 +6,7 @@
 
 ```sh
 yarn test-perf                                        # about 7 minutes
-yarn test-perf --scale=0.5 --runs=2 --runtime=node    # about 2 minutes, for CI
+yarn test-perf-ci                                     # about 2 minutes: --scale=0.5 --runs=2 --runtime=node --fail-above=105
 ```
 
 It runs on whatever is in `dist/` (it does not build), downloads the latest release from npm, and runs every group on both builds, interleaved, on Bun and Node. It prints one number: the base build (npm latest) is 100, and the score is 100 times the geometric mean of target time divided by base time over all timed cases. 104 means the target takes about 4 percent longer; below 100 is faster. Below the score it prints the change per runtime and per dimension, and the cases that changed most, so a spike in one dimension shows even when the score barely moves.

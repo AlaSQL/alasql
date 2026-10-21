@@ -3,7 +3,8 @@
 
 	Usage:
 	  yarn test-perf                                 # runs on whatever is in dist/ (about 7 minutes)
-	  yarn test-perf --scale=0.2 --runs=2 --runtime=node   # a quick check, about 2 minutes
+	  yarn test-perf-ci                              # for CI, about 2 minutes: --scale=0.5 --runs=2
+	                                                 # --runtime=node --fail-above=105
 	  node test/performance/vs-npm.js [options]
 
 	Options:
