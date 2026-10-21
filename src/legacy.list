@@ -3,7 +3,7 @@
 src/12pretty.js
 src/15utility.js
 src/16comments.js
-src/18promise.js
+src/engine/promise.js
 src/20database.js
 src/21transaction.js
 src/23table.js
