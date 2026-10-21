@@ -22,7 +22,7 @@ src/expression/expression.js
 src/52linq.js
 src/55functions.js
 src/expression/case.js
-src/58json.js
+src/expression/json.js
 src/59convert.js
 src/60createtable.js
 src/61date.js
