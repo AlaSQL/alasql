@@ -2,7 +2,8 @@
 	The codemod that turns a moved numbered file into an ES module with install(alasql)
 	(context/roadmap-phase-1.md, "Wrap with a codemod, not by hand").
 
-	  bun tools/wrap.js <file in src/...> [--create] [--private name ...] [--forward name=path ...] [--write]
+	  bun tools/wrap.js <file in src/...> [--create] [--private name ...] [--internal name ...]
+	                    [--bind name=expr ...] [--import "<import line>" ...] [--forward name=path ...] [--write]
 
 	The file has been moved with git mv already (its own commit); this writes the wrap, which is
 	the next commit. Nothing inside the body changes and nothing is re-indented, so git still sees
@@ -20,7 +21,10 @@
 	- for every name the file declares and the legacy files still use, a line that puts it on
 	  alasql.private (--private name, each named on purpose);
 	- for a name that exists only after this module is installed (saveAs, set by the legacy
-	  module), a forwarder (--forward name=alasql.utils.name) the body calls later.
+	  module), a forwarder (--forward name=alasql.utils.name) the body calls later;
+	- --internal name puts a name on the second install parameter instead of alasql.private, and
+	  the wrapper becomes install(alasql, internal); --bind name=expr writes any binding
+	  (var name = expr), --import writes an import line and counts its names as provided.
 
 	--create is for the head file: the UMD head is cut, the wrapper is export function create()
 	returning alasql, and the fluent-interface branch reads yy through alasql.yy, because the
@@ -40,15 +44,32 @@ const file = args.find(a => !a.startsWith('--') && !isOption(args, a));
 const create = args.includes('--create');
 const write = args.includes('--write');
 const privates = [];
+const internals = [];
 const forwards = [];
+const binds = [];
+const importLines = [];
+const VALUED = ['--private', '--internal', '--forward', '--bind', '--import'];
 for (let i = 0; i < args.length; i++) {
 	if (args[i] === '--private') privates.push(args[i + 1]);
+	if (args[i] === '--internal') internals.push(args[i + 1]);
 	if (args[i] === '--forward') forwards.push(args[i + 1].split('='));
+	if (args[i] === '--bind') binds.push(args[i + 1].split(/=(.*)/s).slice(0, 2));
+	if (args[i] === '--import') importLines.push(args[i + 1]);
 }
+// the names an import line or a bind provides
+const provided = new Set([
+	...binds.map(([n]) => n),
+	...importLines.flatMap(l =>
+		(l.match(/\{([^}]*)\}/) || ['', ''])[1]
+			.split(',')
+			.map(n => n.trim())
+			.filter(Boolean)
+	),
+]);
 
 function isOption(list, a) {
 	const i = list.indexOf(a);
-	return i > 0 && (list[i - 1] === '--private' || list[i - 1] === '--forward');
+	return i > 0 && VALUED.includes(list[i - 1]);
 }
 
 if (!file) {
@@ -75,7 +96,8 @@ const imports = [];
 const bindings = [];
 {
 	for (const n of names) {
-		if (n === 'alasql' || forwards.some(([f]) => f === n)) continue;
+		if (n === 'alasql' || n === 'internal' || forwards.some(([f]) => f === n) || provided.has(n))
+			continue;
 		if (n === 'schemaChanged') bindings.push('var schemaChanged = alasql.private.schemaChanged;');
 		else if (n === 'alasqlparser') {
 			// The grammar reads alasql.options, alasql.fn and alasql.aggr, so the parser is made
@@ -104,11 +126,12 @@ if (create) {
 		text.slice(at).replace(/\s*$/, '\n') +
 		'\n\treturn alasql;\n}\n';
 } else {
+	const withInternal = internals.length || binds.some(([, e]) => e.startsWith('internal.'));
 	out =
-		imports.map(i => i + '\n').join('') +
-		(imports.length ? '\n' : '') +
-		'export default function install(alasql) {\n' +
-		bindings.map(b => '\t' + b + '\n').join('') +
+		[...importLines, ...imports].map(i => i + '\n').join('') +
+		(importLines.length + imports.length ? '\n' : '') +
+		`export default function install(alasql${withInternal ? ', internal' : ''}) {\n` +
+		[...bindings, ...binds.map(([n, e]) => `var ${n} = ${e};`)].map(b => '\t' + b + '\n').join('') +
 		forwards
 			.map(
 				([n, p]) =>
@@ -118,6 +141,7 @@ if (create) {
 			.join('') +
 		text.replace(/\s*$/, '\n') +
 		privates.map(p => `\n\talasql.private.${p} = ${p};\n`).join('') +
+		internals.map(p => `\n\tinternal.${p} = ${p};\n`).join('') +
 		'}\n';
 }
 

@@ -5,11 +5,8 @@ src/20database.js
 src/21transaction.js
 src/23table.js
 src/24view.js
-src/25queryclass.js
 src/30statements.js
 src/35search.js
-src/38query.js
-src/39dojoin.js
 src/40select.js
 src/41exists.js
 src/420from.js

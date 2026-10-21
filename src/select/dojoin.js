@@ -1,3 +1,4 @@
+export default function install(alasql, internal) {
 //
 // Join all lines over sources
 //
@@ -180,4 +181,7 @@ function swapSources(query, h) {
 
 	query.sources[h] = nextsource;
 	query.sources[h + 1] = source;
+}
+
+	internal.doJoin = doJoin;
 }
