@@ -1,3 +1,6 @@
+export default function install(alasql, internal) {
+	var utils = alasql.utils;
+	var JSONtoString = internal.JSONtoString;
 alasql.test = function (name, times, fn) {
 	if (arguments.length === 0) {
 		alasql.log(alasql.con.results);
@@ -311,3 +314,4 @@ alasql.prompt = function (el, useidel, firstsql) {
 		}
 	};
 };
+}

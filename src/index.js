@@ -71,6 +71,7 @@ import show from './statements/show.js';
 import setStatement from './statements/set.js';
 import commit from './statements/commit.js';
 import pretty from './console/pretty.js';
+import alasqlConsole from './console/console.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -136,6 +137,7 @@ show(instance, internal);
 setStatement(instance, internal);
 commit(instance, internal);
 pretty(instance, internal);
+alasqlConsole(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
