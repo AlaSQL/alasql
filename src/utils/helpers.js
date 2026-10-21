@@ -299,6 +299,20 @@ export var extend = function extend(a, b) {
 	return a;
 };
 
+/**
+  Double quotes for SQL statements
+  @param {string} s Source string
+  @return {string} Escaped string
+
+  @example
+
+  Piter's => Piter''s
+
+  */
+export var escapeqq = function (s) {
+	return s.replace(/(\')/g, "''");
+};
+
 export default function install(alasql) {
 /*jshint unused:false*/
 /*
@@ -315,6 +329,7 @@ export default function install(alasql) {
 var utils = (alasql.utils = {});
 utils.extend = extend;
 utils.distinctArray = distinctArray;
+utils.undoubleq = escapeqq;
 utils.arrayUnion = arrayUnion;
 utils.arrayDiff = arrayDiff;
 utils.arrayIntersect = arrayIntersect;
@@ -337,20 +352,6 @@ utils.deepEqual = deepEqual;
 
   */
 // based on joliss/js-string-escape
-
-/**
-  Double quotes for SQL statements
-  @param {string} s Source string
-  @return {string} Escaped string
-
-  @example
-
-  Piter's => Piter''s
-
-  */
-var escapeqq = (utils.undoubleq = function (s) {
-	return s.replace(/(\')/g, "''");
-});
 
 /**
   Replace double quotes with single quote
