@@ -1,3 +1,7 @@
+import {cloneDeep} from '../utils/helpers.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // DELETE for Alasql.js
@@ -226,3 +230,4 @@ yy.Delete.prototype.compile = function (databaseid) {
 yy.Delete.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params, cb);
 };
+}
