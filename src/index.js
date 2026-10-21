@@ -14,6 +14,7 @@
 import {create} from './engine/create.js';
 import core from './engine/core.js';
 import yy from './engine/yy.js';
+import statements from './engine/statements.js';
 import helpers from './utils/helpers.js';
 import env from './utils/env.js';
 import fileio from './utils/fileio.js';
@@ -56,6 +57,7 @@ const instance = create();
 const internal = {};
 core(instance, internal);
 yy(instance, internal);
+statements(instance, internal);
 helpers(instance, internal);
 env(instance, internal);
 fileio(instance, internal);

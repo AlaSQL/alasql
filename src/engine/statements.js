@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // Statements class for Alasql.js
@@ -27,3 +29,4 @@ yy.Statements = class Statements {
 				};
 	}
 };
+}
