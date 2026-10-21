@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // EXISTS and other subqueries functions for AlaSQL.js
@@ -53,3 +55,4 @@ alasql.precompile = function (statement, databaseid, params) {
 		});
 	}
 };
+}
