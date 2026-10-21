@@ -63,6 +63,7 @@ import insert from './statements/insert.js';
 import trigger from './statements/trigger.js';
 import deleteStatement from './statements/delete.js';
 import update from './statements/update.js';
+import merge from './statements/merge.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -120,6 +121,7 @@ insert(instance, internal);
 trigger(instance, internal);
 deleteStatement(instance, internal);
 update(instance, internal);
+merge(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
