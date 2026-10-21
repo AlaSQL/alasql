@@ -18,7 +18,7 @@ src/select/defcols.js
 src/select/union.js
 src/select/apply.js
 src/select/window.js
-src/52linq.js
+src/select/linq.js
 src/60createtable.js
 src/62droptable.js
 src/63createvertex.js
