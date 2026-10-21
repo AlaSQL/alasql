@@ -5,13 +5,14 @@
 
 	The entry is src/index.js, an ES module. It installs the modules converted to ES modules
 	(none yet) and the generated legacy module, src/generated/legacy.js, which holds every numbered
-	file not yet converted, in the order of the file list in build.sh, with the UMD head and tail
-	taken out, as an install() function. Converting a file means taking it off that list. The
+	file not yet converted, in the order of src/legacy.list, with the UMD head and tail taken out,
+	as an install() function. Converting a file means taking it off that list. The
 	generated parser is a module of its own, src/generated/parser.js: a function that makes the
 	parser for one alasql object, because the grammar actions read alasql.options, alasql.fn and
-	alasql.aggr and call the utility doubleq; the jison output stays what it is. build.sh stays as
-	the fallback until the end of the phase; this script reads its file list so that both builds
-	agree.
+	alasql.aggr and call the utility doubleq; the jison output stays what it is. build.sh, the old
+	concatenation, stays in the tree until the end of the phase; from step 2 on it no longer builds
+	(the moved files are not where its list says), the parity check builds old commits with their
+	own build.
 
 	Outputs, with the names they had:
 	  dist/alasql.fs.js         CommonJS for Node: format cjs, platform node, the externals kept as
@@ -67,6 +68,14 @@ export const EXTERNALS = [
 	'cross-fetch',
 ];
 
+// What the legacy module needs from the converted modules: import lines, and bindings of the
+// names its files reach by bare name (tools/free-variables.js lists them).
+export const LEGACY_IMPORTS = [];
+export const LEGACY_BINDINGS = [
+	'var yy = alasql.yy;',
+	'var schemaChanged = alasql.private.schemaChanged;',
+];
+
 const UMD_FIRST = '(function (root, factory) {';
 const UMD_LAST = '}(this, function () {';
 const TAIL = /\n\s*return alasql;\s*\n\}\)\);\s*$/;
@@ -95,15 +104,13 @@ export function packageVersion() {
 	return JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
 }
 
-// The files of dist/alasql.fs.js, from the cat list in build.sh
-export function fileList() {
-	const script = fs.readFileSync(path.join(root, 'build.sh'), 'utf8');
-	const m = script.match(/\ncat \\\n([\s\S]*?)> \$outfile_fs/);
-	if (!m) throw new Error('build.sh: the file list for alasql.fs.js was not found');
-	return m[1]
+// The files of the legacy module, in order, from src/legacy.list
+export function legacyFiles() {
+	return fs
+		.readFileSync(path.join(root, 'src', 'legacy.list'), 'utf8')
 		.split('\n')
-		.map(l => l.replace(/\\\s*$/, '').trim())
-		.filter(Boolean);
+		.map(l => l.trim())
+		.filter(l => l && !l.startsWith('#'));
 }
 
 // The comment passes of build.sh, so that the legacy module is the body build.sh made
@@ -119,8 +126,11 @@ export function inject(text, version, build) {
 	return text.split('PACKAGE_VERSION').join(version).split('BUILD_VERSION').join(build);
 }
 
-// Takes the UMD envelope out of a head file (10start.js, 99worker-start.js) and a tail file
-// (98finish.js, 99worker-finish.js), and ends the module with module.exports
+// Takes the UMD envelope out of the head file (10start.js, 99worker-start.js) and the tail
+// file (98finish.js, 99worker-finish.js), wherever they are in the list
+export function hasHead(text) {
+	return text.includes(UMD_FIRST) && text.includes(UMD_LAST);
+}
 export function cutHead(text, file) {
 	const a = text.indexOf(UMD_FIRST);
 	const b = text.indexOf(UMD_LAST);
@@ -136,31 +146,51 @@ export function cutTail(text, file) {
 export const PARSER_BINDING = 'var alasqlparser = makeParser(alasql);\n';
 
 // The body of the legacy module: the files concatenated as cat did, with the comment passes,
-// and the parser made from its own module at the place the parser file had
+// and the parser made from its own module at the place the parser file had. createsAlasql says
+// whether the head file, which declares the alasql object, is among them.
 export function legacyBody(files) {
 	let text = '';
+	let createsAlasql = false;
+	let makesParser = false;
 	for (const f of files) {
 		if (f.endsWith('05copyright.js')) continue;
 		if (f.endsWith('alasqlparser.js')) {
 			text += PARSER_BINDING;
+			makesParser = true;
 			continue;
 		}
 		let part = fs.readFileSync(path.join(root, f), 'utf8');
-		if (f.endsWith('10start.js') || f.endsWith('99worker-start.js')) part = cutHead(part, f);
-		if (f.endsWith('98finish.js') || f.endsWith('99worker-finish.js')) part = cutTail(part, f);
+		if (hasHead(part)) {
+			part = cutHead(part, f);
+			createsAlasql = true;
+		}
+		if (TAIL.test(part)) part = cutTail(part, f);
 		text += part;
 	}
-	return stripComments(text);
+	return {text: stripComments(text), createsAlasql, makesParser};
 }
 
-// The legacy module as an ES module: install() makes the alasql object and returns it
-export function legacyModule(files, version, build) {
+// The legacy module as an ES module. While the head file is in the list the module creates the
+// alasql object and returns it; afterwards it is install(alasql) like every converted module.
+export function legacyModule(
+	files,
+	version,
+	build,
+	imports = LEGACY_IMPORTS,
+	bindings = LEGACY_BINDINGS
+) {
+	const {text, createsAlasql, makesParser} = legacyBody(files);
+	const head = createsAlasql
+		? 'export default function install() {\n'
+		: 'export default function install(alasql) {\n' + bindings.map(b => b + '\n').join('');
+	const tail = createsAlasql ? '\nreturn alasql;\n}\n' : '\n}\n';
 	return (
-		'// Generated by build.js from the file list in build.sh. Not committed; do not edit.\n' +
-		"import makeParser from './parser.js';\n" +
-		'export default function install() {\n' +
-		inject(legacyBody(files), version, build) +
-		'\nreturn alasql;\n}\n'
+		'// Generated by build.js from src/legacy.list. Not committed; do not edit.\n' +
+		(makesParser ? "import makeParser from './parser.js';\n" : '') +
+		imports.map(i => i + '\n').join('') +
+		head +
+		inject(text, version, build) +
+		tail
 	);
 }
 
@@ -188,7 +218,7 @@ export function workerModule(version, build) {
 	return (
 		'// Generated by build.js. Not committed; do not edit.\n' +
 		inject(
-			legacyBody(['src/99worker-start.js', 'src/99worker.js', 'src/99worker-finish.js']),
+			legacyBody(['src/99worker-start.js', 'src/99worker.js', 'src/99worker-finish.js']).text,
 			version,
 			build
 		) +
@@ -303,7 +333,7 @@ export async function build() {
 	const opts = {version, build: buildId};
 	fs.writeFileSync(
 		path.join(generatedDir, 'legacy.js'),
-		legacyModule(fileList(), version, buildId)
+		legacyModule(legacyFiles(), version, buildId)
 	);
 	fs.writeFileSync(path.join(generatedDir, 'parser.js'), parserModule());
 	const entry = path.join(root, 'src', 'index.js');

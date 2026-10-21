@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var utils = alasql.utils;
 //
 // Promises for AlaSQL
 //
@@ -85,3 +87,4 @@ alasql.promise = function (sql, params) {
 	}
 	return promiseAll(sql);
 };
+}
