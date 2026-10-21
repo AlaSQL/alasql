@@ -12,7 +12,7 @@ src/select/groupby.js
 src/select/columns.js
 src/select/having.js
 src/select/orderby.js
-src/427pivot.js
+src/select/pivot.js
 src/43rollup.js
 src/44defcols.js
 src/45union.js
