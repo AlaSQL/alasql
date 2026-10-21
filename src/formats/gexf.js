@@ -1,3 +1,4 @@
+export default function install(alasql) {
 alasql.from.GEXF = function (filename, opts, cb, idx, query) {
 	var res;
 	alasql('SEARCH FROM XML(' + filename + ')', [], function (data) {
@@ -7,3 +8,4 @@ alasql.from.GEXF = function (filename, opts, cb, idx, query) {
 	});
 	return res;
 };
+}

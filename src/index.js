@@ -83,6 +83,7 @@ import xlsxml from './formats/xlsxml.js';
 import intoXlsx from './formats/xlsx.js';
 import fromFile from './formats/from.js';
 import xml from './formats/xml.js';
+import gexf from './formats/gexf.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -160,6 +161,7 @@ xlsxml(instance, internal);
 intoXlsx(instance, internal);
 fromFile(instance, internal);
 xml(instance, internal);
+gexf(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
