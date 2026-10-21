@@ -40,7 +40,8 @@ const here = __dirname;
 const bench = path.join(here, 'bench.js');
 const [cmd, ...rest] = process.argv.slice(2);
 const opt = {};
-for (const a of rest) {
+// options only when run from the command line, not when another script requires this file
+for (const a of require.main === module ? rest : []) {
 	const m = a.match(/^--([^=]+)(?:=(.*))?$/);
 	if (!m) throw new Error('Unknown argument ' + a);
 	if (m[1] === 'group') (opt.group ||= []).push(m[2]);
@@ -124,38 +125,66 @@ function unpack(cache, v) {
 // Can this runtime load the build? Installs missing dependencies one by one (some old releases
 // declare dependencies that npm can no longer install as a whole).
 function loads(cache, rt, entry) {
-	const at = entry.indexOf(`${path.sep}package${path.sep}`);
-	const pkg = at < 0 ? null : entry.slice(0, at + 9);
+	const pkg = packageDir(entry);
 	for (let i = 0; i < 5; i++) {
 		try {
 			sh(rt, [smokeFile(cache), entry], {timeout: 30000});
 			return true;
 		} catch (e) {
-			const m = String(e.stderr).match(/Cannot find (?:module|package) '([^'./][^']*)'/);
-			if (!m || !pkg) return false;
-			const name = m[1]
-				.split('/')
-				.slice(0, m[1].startsWith('@') ? 2 : 1)
-				.join('/');
-			const p = readJson(path.join(pkg, 'package.json'));
-			const range = {...p.optionalDependencies, ...p.dependencies}[name] || 'latest';
-			log(`  installing ${name}@${range} for ${path.basename(path.dirname(pkg))}`);
-			// into the folder above the package: it has no package.json, so npm installs only this
-			// module, and Node finds it there
-			try {
-				sh(
-					'npm',
-					['install', `${name}@${range}`, '--no-save', '--ignore-scripts', '--no-package-lock'],
-					{
-						cwd: path.dirname(pkg),
-					}
-				);
-			} catch (e2) {
-				return false;
-			}
+			if (!installMissing(pkg, String(e.stderr))) return false;
 		}
 	}
 	return false;
+}
+
+// The package folder of an unpacked release, or null for another build
+function packageDir(entry) {
+	const at = entry.indexOf(`${path.sep}package${path.sep}`);
+	return at < 0 ? null : entry.slice(0, at + 9);
+}
+
+// Install the module named in a "Cannot find module" message, in the version the release
+// declares. It goes into the folder above the package: that folder has no package.json, so npm
+// installs only this module, and Node and Bun find it there before any other copy.
+function installMissing(pkg, message) {
+	const m = message.match(/Cannot find (?:module|package) '([^'./][^']*)'/);
+	if (!m || !pkg) return false;
+	const name = m[1]
+		.split('/')
+		.slice(0, m[1].startsWith('@') ? 2 : 1)
+		.join('/');
+	const p = readJson(path.join(pkg, 'package.json'));
+	const range = {...p.optionalDependencies, ...p.dependencies}[name] || 'latest';
+	log(`  installing ${name}@${range} for ${path.basename(path.dirname(pkg))}`);
+	try {
+		sh(
+			'npm',
+			['install', `${name}@${range}`, '--no-save', '--ignore-scripts', '--no-package-lock'],
+			{
+				cwd: path.dirname(pkg),
+			}
+		);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
+
+// One bench.js process for one group: {results, status}, or null when the process fails.
+// Dimensions get --expose-gc on Node for their heap numbers; core runs exactly as before.
+function measure(rt, entry, group) {
+	const flags = rt === 'node' && group !== 'core' ? ['--expose-gc'] : [];
+	for (let attempt = 0; attempt < 2; attempt++) {
+		// from the build's own folder, so no runtime finds modules of the folder history.js runs in
+		const out = sh(rt, [...flags, bench, entry, '--json', '--group=' + group], {
+			timeout: 600000,
+			cwd: path.dirname(entry),
+		});
+		const j = JSON.parse(out.slice(out.indexOf('{')));
+		const missing = Object.values(j.status || {}).find(s => /Cannot find (module|package)/.test(s));
+		if (attempt === 0 && missing && installMissing(packageDir(entry), missing)) continue;
+		return {results: j.results, status: j.status || {}};
+	}
 }
 
 // ---- run ----
@@ -245,8 +274,7 @@ function run() {
 					if (k in raw || !b.ok[rt]) continue;
 					let res = null;
 					try {
-						const out = sh(rt, [bench, b.entry, '--json', '--group=' + g], {timeout: 600000});
-						res = JSON.parse(out.slice(out.indexOf('{'))).results;
+						res = measure(rt, b.entry, g);
 					} catch (e) {
 						log(`FAIL ${k}: ${String(e.message).split('\n')[0]}`);
 					}
@@ -272,12 +300,18 @@ function run() {
 				const groupCases = cases.filter(c => c.group === g).map(c => c.name);
 				const rounds = [...Array(RUNS).keys()].map(r => raw[[b.label, rt, g, r].join('|')]);
 				for (const name of groupCases) {
-					const xs = rounds.map(x => (x ? x[name] : null));
+					const xs = rounds.map(x => (x ? x.results[name] : null));
 					const ok = b.ok[rt] && xs.every(x => typeof x === 'number');
 					j.results[name] = ok ? median(xs) : null;
 					j.spread[name] = ok
 						? +((Math.max(...xs) - Math.min(...xs)) / median(xs)).toFixed(3)
 						: null;
+					// why a value is missing or special: a wrong answer in any run wins
+					const ss = rounds.map(x => x && x.status[name]).filter(Boolean);
+					const st = ss.includes('wrong answer') ? 'wrong answer' : ss[0];
+					if (!b.ok[rt]) (j.status ||= {})[name] = 'does not load';
+					else if (st && st !== 'unchecked') (j.status ||= {})[name] = st;
+					else if (j.status) delete j.status[name];
 				}
 				(j.measured ||= {})[g] = {date, runtime, machine: machine(), runs: RUNS};
 				if (b.develop && b.commit) j.measured[g].commit = b.commit;
@@ -346,32 +380,54 @@ function page() {
 		for (const [k, v] of Object.entries(j.results))
 			b.results[rt][k] = v === null ? null : +v.toPrecision(4);
 		for (const [k, v] of Object.entries(j.spread || {})) b.spread[rt][k] = v;
+		if (j.status && Object.keys(j.status).length) (b.status ||= {})[rt] = j.status;
 		for (const [g, m2] of Object.entries(j.measured || {})) (b.measured ||= {})[g] ||= m2.date;
 	}
 	const list = Object.values(builds).sort((a, b) =>
 		a.baseline ? 1 : b.baseline ? -1 : cmpVersion(a.version, b.version)
 	);
 
-	// cases: the ones in the block keep their label and position; new ones come from bench.js
+	// cases: the label in the block is kept; group, unit, SQL and description come from bench.js
 	const has = key => list.some(b => Object.values(b.results).some(r => typeof r[key] === 'number'));
 	const known = new Map((D.cases || []).map(c => [c.key, c]));
 	const cases = [];
+	const groups = new Map();
 	for (const c of benchList) {
-		const prev = known.get(c.name) || {key: c.name, label: c.name, sql: c.sql || ''};
+		const prev = known.get(c.name);
 		known.delete(c.name);
-		if (has(c.name)) cases.push({...prev, group: c.group});
+		if (!has(c.name)) continue;
+		const label = prev
+			? prev.label
+			: c.name
+					.replace(/^[^:]+: /, '')
+					.replace(/ \[heap\]$/, ' · heap (MB)')
+					.replace(/ \[(.+)\]$/, ' · $1');
+		cases.push({
+			key: c.name,
+			label,
+			sql: c.sql || '',
+			group: c.group,
+			unit: c.unit || 'ms',
+			about: c.about || '',
+		});
+		if (!groups.has(c.group))
+			groups.set(c.group, {key: c.group, title: c.groupTitle || c.group, info: c.info});
 	}
 	for (const c of known.values()) if (has(c.key)) cases.push(c); // removed from bench.js, still in data
+
+	// a dimension says when it was measured, and that it is only comparable within itself
 	const groupDates = {};
 	for (const b of list)
 		for (const [g, d] of Object.entries(b.measured || {})) (groupDates[g] ||= new Set()).add(d);
-	for (const c of cases)
-		if (c.group !== 'core') {
-			const ds = [...(groupDates[c.group] || [])].sort();
-			c.note = `Measured ${ds.length ? ds[0] + (ds.length > 1 ? ' to ' + ds[ds.length - 1] : '') : ''} in its own process (group "${c.group}"), so compare it only along this chart.`;
+	for (const g of groups.values())
+		if (g.key !== 'core') {
+			const ds = [...(groupDates[g.key] || [])].sort();
+			const when = ds.length ? ds[0] + (ds.length > 1 ? ' to ' + ds[ds.length - 1] : '') : '';
+			g.note = `Measured ${when}, each dimension in its own process: compare these cases with each other and along their charts, not with other dimensions.`;
 		}
 	for (const b of list) delete b.measured;
 
+	D.groups = [...groups.values()];
 	D.cases = cases;
 	D.index ||= cases.filter(c => c.group === 'core').map(c => c.key);
 	D.builds = list;
@@ -381,7 +437,10 @@ function page() {
 	log(`${list.length} builds, ${cases.length} cases`);
 }
 
-if (cmd === 'run') run();
+module.exports = {unpack, loads, measure, benchCases, cmpVersion, median, sh};
+
+if (require.main !== module);
+else if (cmd === 'run') run();
 else if (cmd === 'page') page();
 else {
 	console.error(

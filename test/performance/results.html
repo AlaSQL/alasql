@@ -201,6 +201,165 @@
 				margin: 0;
 				line-height: 1.35;
 			}
+			.card-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				gap: 8px;
+			}
+			.info,
+			.info-sample {
+				flex: none;
+				display: inline-grid;
+				place-items: center;
+				width: 22px;
+				height: 22px;
+				border-radius: 50%;
+				border: 1px solid var(--axis);
+				background: transparent;
+				color: var(--ink-2);
+				font:
+					italic 600 13px/1 Georgia,
+					'Times New Roman',
+					serif;
+				padding: 0;
+			}
+			.info {
+				cursor: pointer;
+			}
+			.info:hover,
+			.info:focus-visible {
+				background: var(--ink);
+				border-color: var(--ink);
+				color: var(--surface);
+			}
+			.info-sample {
+				width: 18px;
+				height: 18px;
+				font-size: 11px;
+				vertical-align: -3px;
+			}
+			.dim {
+				margin: 40px 0 0;
+			}
+			.dim:first-child {
+				margin-top: 8px;
+			}
+			.dim h3 {
+				font-size: 19px;
+				margin: 0 0 4px;
+				letter-spacing: -0.01em;
+			}
+			.dim > p {
+				color: var(--ink-2);
+				margin: 0 0 6px;
+				max-width: 75ch;
+				font-size: 15px;
+			}
+			.dim > p.dim-note {
+				color: var(--muted);
+				font-size: 13px;
+				margin-bottom: 14px;
+			}
+			.pick {
+				display: inline-flex;
+				align-items: center;
+				gap: 8px;
+				margin-left: 12px;
+				font-size: 13px;
+				color: var(--ink-2);
+			}
+			.pick select {
+				font: inherit;
+				color: var(--ink);
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: 999px;
+				padding: 4px 10px;
+				max-width: 60vw;
+			}
+			dialog.detail {
+				width: min(980px, calc(100vw - 32px));
+				max-height: calc(100vh - 48px);
+				overflow: auto;
+				padding: 24px 28px 28px;
+				border: 1px solid var(--border);
+				border-radius: 16px;
+				background: var(--surface);
+				color: var(--ink);
+				box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+			}
+			dialog.detail::backdrop {
+				background: rgba(0, 0, 0, 0.45);
+			}
+			.detail-head {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+				gap: 16px;
+				margin-bottom: 8px;
+			}
+			.detail-head .kicker {
+				margin: 0 0 4px;
+			}
+			.detail-head h2 {
+				margin: 0;
+				font-size: clamp(20px, 3vw, 26px);
+			}
+			.close {
+				font:
+					400 26px/1 system-ui,
+					sans-serif;
+				width: 36px;
+				height: 36px;
+				border-radius: 50%;
+				border: 1px solid var(--border);
+				background: transparent;
+				color: var(--ink-2);
+				cursor: pointer;
+				flex: none;
+			}
+			.close:hover {
+				background: var(--band);
+			}
+			.detail-sql {
+				white-space: pre-wrap;
+				word-break: break-word;
+				background: var(--band);
+				border-radius: 10px;
+				padding: 12px 14px;
+				margin: 16px 0;
+				font-size: 13px;
+				color: var(--ink);
+			}
+			.detail-text {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+				gap: 4px 32px;
+				color: var(--ink-2);
+				font-size: 15px;
+			}
+			.detail-text h4 {
+				margin: 12px 0 2px;
+				font-size: 13px;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+				color: var(--muted);
+			}
+			.detail-text p {
+				margin: 0 0 8px;
+			}
+			.detail-text .wide {
+				grid-column: 1 / -1;
+			}
+			.detail-text table {
+				font-size: 13px;
+				white-space: normal;
+			}
+			.detail-text td,
+			.detail-text th {
+				padding: 6px 8px;
+			}
 			.card .sql {
 				color: var(--muted);
 				margin: 2px 0 10px;
@@ -571,20 +730,27 @@
 				<h2 id="h-cases">Every case, every release</h2>
 				<p class="lede">
 					Time per query, lower is faster. Each chart has its own scale. Hover or use the arrow keys
-					on a chart: the crosshair follows on all of them.
+					on a chart: the crosshair follows on all of them. The core cases run together in one
+					process; every other dimension runs in its own process, so compare cases within a
+					dimension. The <span class="info-sample" aria-hidden="true">i</span> on a chart opens a
+					larger view with what the case tests and why.
 				</p>
 				<div class="legend" id="legend-cases"></div>
-				<div class="grid" id="cases"></div>
+				<div id="cases"></div>
 			</section>
 
 			<section aria-labelledby="h-table">
 				<h2 id="h-table">The numbers</h2>
 				<p class="lede">
-					Median time per query across five runs. <span class="mono">n/a</span> means the build
-					could not run the case on that runtime.
+					Median time per query across the runs of each build. <span class="mono">n/a</span> means
+					the build could not run the case on that runtime; hover it to see why.
 				</p>
 				<div class="controls">
 					<div class="seg" role="group" aria-label="Runtime" id="table-rt"></div>
+					<label class="pick">
+						Dimension
+						<select id="table-group"></select>
+					</label>
 				</div>
 				<div class="table-wrap"><table id="table"></table></div>
 			</section>
@@ -609,6 +775,20 @@
 					<pre id="recap-text"></pre>
 				</details>
 			</section>
+
+			<dialog class="detail" id="detail" aria-labelledby="detail-title">
+				<div class="detail-head">
+					<div>
+						<p class="kicker" id="detail-group"></p>
+						<h2 id="detail-title"></h2>
+					</div>
+					<button class="close" id="detail-close" type="button" aria-label="Close">×</button>
+				</div>
+				<div class="legend" id="legend-detail"></div>
+				<div id="detail-chart"></div>
+				<pre class="detail-sql mono" id="detail-sql"></pre>
+				<div class="detail-text" id="detail-text"></div>
+			</dialog>
 
 			<footer id="footer"></footer>
 		</div>
@@ -644,61 +824,81 @@
 						"key": "where filter 100k",
 						"label": "WHERE filter",
 						"sql": "SELECT * FROM ? WHERE a > 50",
-						"group": "core"
+						"group": "core",
+						"unit": "ms",
+						"about": "A linear scan with a simple predicate."
 					},
 					{
 						"key": "group by 100k",
 						"label": "GROUP BY",
 						"sql": "SELECT b, SUM(c) AS s, COUNT(*) AS n FROM ? GROUP BY b",
-						"group": "core"
+						"group": "core",
+						"unit": "ms",
+						"about": "Hash aggregation into 50 groups with SUM and COUNT."
 					},
 					{
 						"key": "join 100k x 50",
 						"label": "JOIN 100k × 50",
 						"sql": "SELECT r.id, s.name FROM ? r JOIN ? s ON r.b = s.b WHERE r.a \u003c 10",
-						"group": "core"
+						"group": "core",
+						"unit": "ms",
+						"about": "An equality join of 100,000 rows with 50 rows, filtered on the left."
 					},
 					{
 						"key": "order by limit 100k",
 						"label": "ORDER BY with LIMIT",
 						"sql": "SELECT id, c FROM ? ORDER BY c DESC LIMIT 100",
-						"group": "core"
+						"group": "core",
+						"unit": "ms",
+						"about": "Sorting 100,000 rows and keeping the top 100."
 					},
 					{
 						"key": "scalar functions 100k",
 						"label": "Scalar functions",
 						"sql": "SELECT UPPER(b) || a AS x FROM ?",
-						"group": "core"
+						"group": "core",
+						"unit": "ms",
+						"about": "A built-in function and string concatenation per row."
 					},
 					{
 						"key": "like 100k",
 						"label": "LIKE",
 						"sql": "SELECT id FROM ? WHERE s LIKE 'str1%'",
-						"group": "core"
+						"group": "core",
+						"unit": "ms",
+						"about": "A prefix LIKE per row."
 					},
 					{
 						"key": "insert 10k rows",
 						"label": "INSERT 10k rows",
-						"sql": "10,000 × INSERT INTO bench_t VALUES (?, ?, ?)",
-						"group": "core"
+						"sql": "",
+						"group": "core",
+						"unit": "ms",
+						"about": "10,000 single-row INSERT statements: the cost of running a statement, many times."
 					},
 					{
 						"key": "parse mid-size select",
 						"label": "Parse a mid-size SELECT",
-						"sql": "alasql.parse('SELECT a, b, SUM(c) ... GROUP BY ... HAVING ... ORDER BY ... LIMIT 10')",
-						"group": "core"
+						"sql": "",
+						"group": "core",
+						"unit": "ms",
+						"about": "Only the parser: lexer and AST for a mid-size SELECT."
 					},
 					{
 						"key": "tiny query, cache miss",
 						"label": "Tiny query, cache miss",
-						"sql": "SELECT \u003cn> AS v FROM ? WHERE a > 100  (new SQL text every time)",
-						"group": "core"
+						"sql": "",
+						"group": "core",
+						"unit": "ms",
+						"about": "A new SQL text every call: parse, code generation and run."
 					},
 					{
 						"key": "tiny query, cache hit",
 						"label": "Tiny query, cache hit",
-						"sql": "SELECT 1 AS v FROM ? WHERE a > 100  (same SQL text every time)",
-						"group": "core"
+						"sql": "SELECT 1 AS v FROM ? WHERE a > 100",
+						"group": "core",
+						"unit": "ms",
+						"about": "The same SQL text every call: cache lookup and run."
 					}
 				],
 				"stories": [
@@ -755,6 +955,7 @@
 				"method": [
 					"Every version on npm is measured, installed from npm, except those that cannot run the benchmark: the three 0.0.1-4.x prereleases and 0.0.3 to 0.0.15, which cannot read FROM ?, and 1.7.1, which was published without a build. The Node build dist/alasql.fs.js is used; versions before 0.3 do not have it, so their alasql.js is used instead. develop is a fresh build of commit 787cb25d, the baseline for the v5 work.",
 					"test/performance/bench.js builds 100,000 rows and times each case in 5 rounds; one run reports the median round. Every build was run 5 times, interleaved with all the other builds, and the page shows the median run. The spread between runs is in the JSON files in test/performance/historical.",
+					"The dimensions after the core cases each run in their own process, with data from a seeded generator. Before a case is timed, its answer is compared with the answer develop gives; a build that answers differently is not timed and shows a gap, marked \"wrong answer\". Iterations adapt to the speed of the build, and a case slower than 3 seconds is timed once. Heap values are what one run leaves on the heap while its answer is held. The dimensions use 3 runs per build.",
 					"The x axis is version order, not time. Maintenance releases such as 1.7.5 and 3.1.1 were published after 4.0, so their release dates are later than their position suggests.",
 					"Versions before 0.2.3 stop on Bun with \"lex is not defined\" from their generated parser. Some old versions need their declared dependencies installed to load on Node; where npm can no longer install them, es6-promise was added by hand. Cases that a version cannot run show as gaps. Most old builds report the previous version in alasql.version; the page uses the npm version.",
 					"Compare numbers only from the same machine and runtime. Differences under about 5 percent are noise. On Bun, some releases switch between two speeds from run to run (for example scalar functions in 0.4.6 to 0.4.11); the median run hides most of that, and the spread in the JSON files shows it."
@@ -13641,6 +13842,17 @@
 					"parse mid-size select",
 					"tiny query, cache miss",
 					"tiny query, cache hit"
+				],
+				"groups": [
+					{
+						"key": "core",
+						"title": "Core: ten queries measured together",
+						"info": {
+							"tests": "Ten everyday queries on 100,000 rows (or 50 for the tiny ones), run one after the other in one process in a fixed order. Every release since 0.0.16 was measured with them.",
+							"why": "They are the long view of AlaSQL: the speed index and the tiles at the top of the page use only these cases.",
+							"read": "Compare along one chart. The cases share a process, so a case can be slower here than when it runs alone."
+						}
+					}
 				]
 			}
 		</script>
@@ -13955,7 +14167,8 @@
 						for (const s of opt.series) {
 							const row = el('div', {class: 'row'}, tip);
 							el('i', {style: 'background:' + colour(s.key)}, row);
-							el('b', null, row, opt.fmt(s.values[hover]));
+							const hv = s.values[hover];
+							el('b', null, row, hv == null && opt.status ? opt.status(b, s.key) : opt.fmt(hv));
 							el('span', null, row, s.label);
 						}
 						tip.classList.add('on');
@@ -14098,42 +14311,174 @@
 					});
 				}
 
-				// ---- small multiples ----
+				// ---- small multiples, one section per dimension ----
+				const groups = D.groups || [{key: 'core', title: 'Cases'}];
+				const groupOf = key => groups.find(g => g.key === key) || {key, title: key};
+				const unitFmt = u =>
+					u === 'MB'
+						? v => (v == null ? 'n/a' : (v < 10 ? v.toFixed(1) : Math.round(v)) + ' MB')
+						: u === 'calls'
+							? v => (v == null ? 'n/a' : v.toFixed(1) + ' per row')
+							: fmtMs;
+				const unitTick = u =>
+					!u || u === 'ms' ? tickMs : (v, max, step) => (v === 0 ? '0' : v.toFixed(decimals(step)));
+				const statusOf = (b, rt, key) => {
+					const st = b.status && b.status[rt] && b.status[rt][key];
+					return st ? (st.startsWith('error') ? 'error' : st) : null;
+				};
+				const chartOpt = (c, height) => ({
+					height,
+					series: series((b, rt) => val(b, rt, c.key)),
+					fmt: unitFmt(c.unit),
+					tick: unitTick(c.unit),
+					status: (b, rt) => statusOf(b, rt, c.key) || 'n/a',
+					aria: `${c.label}: ${c.unit === 'MB' ? 'heap left after a run' : c.unit === 'calls' ? 'calls per row' : 'time per query'} per release on Bun and Node.`,
+				});
 				legend($('legend-cases'));
-				for (const c of cases) {
-					const card = el('article', {class: 'card'}, $('cases'));
-					el('h3', null, card, c.label);
-					el('p', {class: 'sql mono', title: c.sql}, card, c.sql);
-					if (c.note) el('p', {class: 'note'}, card, c.note);
-					lineChart(card, {
-						height: 170,
-						series: series((b, rt) => val(b, rt, c.key)),
-						fmt: fmtMs,
-						tick: tickMs,
-						aria: `${c.label}: time per query per release on Bun and Node.`,
-					});
+				for (const g of groups) {
+					const inGroup = cases.filter(c => c.group === g.key);
+					if (!inGroup.length) continue;
+					const sec = el('div', {class: 'dim'}, $('cases'));
+					el('h3', null, sec, g.title);
+					if (g.info) el('p', null, sec, g.info.tests);
+					if (g.note) el('p', {class: 'dim-note'}, sec, g.note);
+					const grid = el('div', {class: 'grid'}, sec);
+					for (const c of inGroup) {
+						const card = el('article', {class: 'card'}, grid);
+						const head = el('div', {class: 'card-head'}, card);
+						el('h3', null, head, c.label);
+						const btn = el(
+							'button',
+							{
+								class: 'info',
+								type: 'button',
+								'aria-label': 'Details: ' + c.label,
+								title: 'What this case tests',
+							},
+							head,
+							'i'
+						);
+						btn.addEventListener('click', () => openDetail(c));
+						el('p', {class: 'sql mono', title: c.sql}, card, c.sql);
+						lineChart(card, chartOpt(c, 170));
+					}
 				}
+
+				// ---- detail dialog: the chart larger, and what the case tests and why ----
+				let detailChart = null;
+				const dlg = $('detail');
+				legend($('legend-detail'));
+				const closeDetail = () => dlg.open && dlg.close();
+				$('detail-close').addEventListener('click', closeDetail);
+				dlg.addEventListener('click', ev => ev.target === dlg && closeDetail());
+				dlg.addEventListener('close', () => {
+					if (detailChart) charts.splice(charts.indexOf(detailChart), 1);
+					detailChart = null;
+					$('detail-chart').textContent = '';
+				});
+				const shortList = vs =>
+					vs.length > 6
+						? vs.slice(0, 3).join(', ') + ' … ' + vs.slice(-2).join(', ')
+						: vs.join(', ');
+				function openDetail(c) {
+					const g = groupOf(c.group);
+					$('detail-group').textContent = g.title;
+					$('detail-title').textContent = c.label;
+					$('detail-sql').textContent = c.sql;
+					const t = $('detail-text');
+					t.textContent = '';
+					const part = (title, text, wide) => {
+						if (!text) return;
+						const d = el('div', wide ? {class: 'wide'} : null, t);
+						el('h4', null, d, title);
+						el('p', null, d, text);
+					};
+					part('This case', c.about, true);
+					if (g.info) {
+						part('What it tests', g.info.tests);
+						part('Why it matters', g.info.why);
+						part('How to read it', g.info.read);
+					}
+					part('Measured', g.note);
+					const notes = [];
+					for (const r of RT) {
+						const by = {};
+						for (const b of builds) {
+							const st = statusOf(b, r.key, c.key);
+							if (st) (by[st] ||= []).push(b.baseline ? 'develop' : 'v' + b.version);
+						}
+						for (const [st, vs] of Object.entries(by))
+							notes.push(
+								`${r.short}: ${st} on ${vs.length} build${vs.length > 1 ? 's' : ''} (${shortList(vs)}).`
+							);
+					}
+					part('Missing or special values', notes.join(' '), true);
+					const sib = cases.filter(x => x.group === c.group);
+					if (sib.length > 1) {
+						const d = el('div', {class: 'wide'}, t);
+						el('h4', null, d, 'This dimension on develop');
+						const tb = el('table', null, d);
+						const hr = el('tr', null, el('thead', null, tb));
+						el('th', {scope: 'col'}, hr, 'Case');
+						for (const r of RT) el('th', {scope: 'col'}, hr, r.short);
+						const body = el('tbody', null, tb);
+						for (const x of sib) {
+							const tr = el('tr', x === c ? {class: 'base'} : null, body);
+							el('td', null, tr, x.label);
+							for (const r of RT) el('td', null, tr, unitFmt(x.unit)(val(base, r.key, x.key)));
+						}
+					}
+					dlg.showModal();
+					detailChart = lineChart($('detail-chart'), chartOpt(c, 360));
+					try {
+						history.replaceState(null, '', '#case=' + encodeURIComponent(c.key));
+					} catch (e) {}
+				}
+				dlg.addEventListener('close', () => {
+					try {
+						if (location.hash.startsWith('#case='))
+							history.replaceState(null, '', location.pathname);
+					} catch (e) {}
+				});
+				// results.html#case=<case key> opens that case
+				const linked = location.hash.startsWith('#case=')
+					? cases.find(c => c.key === decodeURIComponent(location.hash.slice(6)))
+					: null;
+				if (linked) requestAnimationFrame(() => openDetail(linked));
 
 				// ---- table ----
 				let tableRt = RT[RT.length - 1].key;
+				let tableGroup = groups[0].key;
+				for (const g of groups)
+					if (cases.some(c => c.group === g.key))
+						el('option', {value: g.key}, $('table-group'), g.title);
+				$('table-group').addEventListener('change', ev => {
+					tableGroup = ev.target.value;
+					renderTable();
+				});
 				function renderTable() {
 					const t = $('table');
 					t.textContent = '';
+					const cols = cases.filter(c => c.group === tableGroup);
+					const withIndex = cols.some(c => indexCases.includes(c));
 					const hr = el('tr', null, el('thead', null, t));
 					el('th', {scope: 'col'}, hr, 'Version');
 					el('th', {scope: 'col'}, hr, 'Released');
-					el('th', {scope: 'col'}, hr, 'Index');
-					for (const c of cases) el('th', {scope: 'col'}, hr, c.label);
+					if (withIndex) el('th', {scope: 'col'}, hr, 'Index');
+					for (const c of cols) el('th', {scope: 'col'}, hr, c.label);
 					const tb = el('tbody', null, t);
 					for (const b of builds) {
 						const tr = el('tr', b.baseline ? {class: 'base'} : null, tb);
 						el('td', null, tr, b.baseline ? 'develop ' + b.commit : b.version);
 						el('td', null, tr, b.released);
-						const ix = index(b, tableRt);
-						el('td', ix === null ? {class: 'na'} : null, tr, fmtX(ix));
-						for (const c of cases) {
+						if (withIndex) {
+							const ix = index(b, tableRt);
+							el('td', ix === null ? {class: 'na'} : null, tr, fmtX(ix));
+						}
+						for (const c of cols) {
 							const v = val(b, tableRt, c.key);
-							el('td', v == null ? {class: 'na'} : null, tr, fmtMs(v));
+							const why = v == null ? statusOf(b, tableRt, c.key) || 'not measured' : null;
+							el('td', why ? {class: 'na', title: why} : null, tr, unitFmt(c.unit)(v));
 						}
 					}
 				}
@@ -14216,8 +14561,9 @@
 					L.push(`- Machine: ${D.machine}. Runtimes: ${RT.map(r => r.label).join(', ')}.`);
 					if (D.dataset) L.push(`- Data: ${D.dataset}`);
 					L.push(
-						'- Timing: one run of bench.js reports, per case, the median of 5 rounds; a round runs the query many times and gives ms per query. Every build ran 5 times, interleaved with the other builds, and the median run is used. Lower is faster.',
-						'- Cases in one group run in one process, in a fixed order. A case that runs alone can be 2 to 4 times faster than after other cases (the JIT has seen fewer kinds of query), so compare numbers only within one case.',
+						'- Timing: one run of bench.js reports, per case, the median of its rounds; a round runs the query many times and gives ms per query. Every build ran several times, interleaved with the other builds, and the median run is used. Lower is faster.',
+						'- Dimensions: the core cases run together in one process, in a fixed order; every other dimension runs in its own process. A case that runs alone can be 2 to 4 times faster than after other cases (the JIT has seen fewer kinds of query), so compare numbers within one dimension only.',
+						'- Correctness gate (dimensions only): a build whose answer differs from develop\'s is not timed and shows as "wrong answer". Heap values are what one run leaves on the heap while its answer is held, in MB.',
 						'- A build without a value could not run the case on that runtime (for example, Bun cannot load releases before 0.2.3).',
 						`- A big jump: from that version on, the median of three builds differs by ${Math.round((JUMP - 1) * 100)} percent or more from the median of the three builds before it. "Runs vary" marks jumps where the runs of a build differ by more than 30 percent, so the jump may be noise.`,
 						''
@@ -14230,34 +14576,55 @@
 						}
 						L.push('');
 					}
-					for (const c of cases) {
-						L.push(`## ${c.label}`, '');
-						if (c.sql) L.push('```sql', c.sql, '```', '');
-						if (c.note) L.push(c.note, '');
-						for (const r of RT) {
-							const pts = builds.filter(b => typeof val(b, r.key, c.key) === 'number');
-							if (!pts.length) {
-								L.push(`- ${r.short}: no build can run it.`);
-								continue;
-							}
-							const a = pts[0];
-							const z = pts[pts.length - 1];
-							const va = val(a, r.key, c.key);
-							const vz = val(z, r.key, c.key);
-							const name = b => (b.baseline ? 'develop' : 'v' + b.version);
+					for (const g of groups) {
+						const inGroup = cases.filter(c => c.group === g.key);
+						if (!inGroup.length) continue;
+						L.push(`## ${g.title}`, '');
+						if (g.info)
 							L.push(
-								`- ${r.short}: ${name(a)} ${fmtMs(va)}, ${name(z)} ${fmtMs(vz)} (overall ${times(vz / va)}).`
+								`Tests: ${g.info.tests}`,
+								'',
+								`Why: ${g.info.why}`,
+								'',
+								`How to read: ${g.info.read}`,
+								''
 							);
-							const js = jumps(c, r.key);
-							if (!js.length) L.push(`  - No big jumps.`);
-							for (const j of js)
-								L.push(
-									`  - ${name(j.from)} to ${name(j.to)}: ${fmtMs(j.before)} to ${fmtMs(j.after)}, ${times(j.r)}${j.noisy ? ' (runs vary)' : ''}.`
-								);
-						}
-						L.push('');
+						for (const c of inGroup) recapCase(L, c);
 					}
 					return L.join('\n');
+				}
+				function recapCase(L, c) {
+					const fmt = unitFmt(c.unit);
+					L.push(`### ${c.label}`, '');
+					if (c.sql) L.push('```sql', c.sql, '```', '');
+					if (c.about) L.push(c.about, '');
+					for (const r of RT) {
+						const pts = builds.filter(b => typeof val(b, r.key, c.key) === 'number');
+						if (!pts.length) {
+							L.push(`- ${r.short}: no build can run it.`);
+							continue;
+						}
+						const a = pts[0];
+						const z = pts[pts.length - 1];
+						const va = val(a, r.key, c.key);
+						const vz = val(z, r.key, c.key);
+						const name = b => (b.baseline ? 'develop' : 'v' + b.version);
+						L.push(
+							`- ${r.short}: ${name(a)} ${fmt(va)}, ${name(z)} ${fmt(vz)} (overall ${times(vz / va)}).`
+						);
+						const wrong = builds.filter(b => statusOf(b, r.key, c.key) === 'wrong answer');
+						if (wrong.length)
+							L.push(
+								`  - Wrong answer on ${wrong.length} build${wrong.length > 1 ? 's' : ''}: ${shortList(wrong.map(name))}.`
+							);
+						const js = jumps(c, r.key);
+						if (!js.length) L.push(`  - No big jumps.`);
+						for (const j of js)
+							L.push(
+								`  - ${name(j.from)} to ${name(j.to)}: ${fmt(j.before)} to ${fmt(j.after)}, ${times(j.r)}${j.noisy ? ' (runs vary)' : ''}.`
+							);
+					}
+					L.push('');
 				}
 				const recapText = recap();
 				$('recap-text').textContent = recapText;
