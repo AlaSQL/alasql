@@ -72,7 +72,6 @@ export const EXTERNALS = [
 // names its files reach by bare name (tools/free-variables.js lists them).
 export const LEGACY_IMPORTS = [
 	"import {escapeq, returnTrue, n2u, und} from '../utils/helpers.js';",
-	"import {newDate} from '../functions/date.js';",
 ];
 export const LEGACY_BINDINGS = [
 	'var yy = alasql.yy;',

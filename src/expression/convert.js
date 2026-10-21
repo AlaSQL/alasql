@@ -1,3 +1,7 @@
+import {newDate} from '../functions/date.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // CAST and CONVERT functions
@@ -210,3 +214,4 @@ alasql.stdfn.CONVERT = function (value, args) {
 			return val;
 	}
 };
+}
