@@ -14,7 +14,7 @@ src/select/having.js
 src/select/orderby.js
 src/select/pivot.js
 src/select/rollup.js
-src/44defcols.js
+src/select/defcols.js
 src/45union.js
 src/46apply.js
 src/47over.js
