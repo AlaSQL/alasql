@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var utils = alasql.utils;
 /*
 	Environment detection and the path of the library, split from src/15utility.js (docs/src-map.md). Same functions, same bodies.
 */
@@ -181,3 +183,4 @@ utils.findAlaSQLPath = function () {
 
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();
+}
