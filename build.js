@@ -72,7 +72,7 @@ export const EXTERNALS = [
 // names its files reach by bare name (tools/free-variables.js lists them).
 export const LEGACY_IMPORTS = [];
 export const LEGACY_BINDINGS = [
-	'var alasqlparser = alasql.parser;',
+	'var yy = alasql.yy;',
 	'var schemaChanged = alasql.private.schemaChanged;',
 ];
 

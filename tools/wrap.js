@@ -53,14 +53,20 @@ const ON_ALASQL = {yy: 'yy', utils: 'utils'};
 const abs = path.resolve(root, file);
 let text = fs.readFileSync(abs, 'utf8');
 const report = analyze([path.relative(root, abs)]);
-const uses = Object.values(report)[0].uses;
+const {uses, globals} = Object.values(report)[0];
+
+// A name declared by a legacy file, or one that resolves to nothing because its module has
+// already been converted (then it is among the globals)
+const KNOWN = ['alasqlparser', 'schemaChanged', ...Object.keys(ON_ALASQL)];
+const names = new Set([...Object.values(uses).flat(), ...globals.filter(g => KNOWN.includes(g))]);
 
 const imports = [];
 const bindings = [];
-for (const names of Object.values(uses)) {
+{
 	for (const n of names) {
 		if (n === 'alasql') continue;
-		if (n === 'alasqlparser') {
+		if (n === 'schemaChanged') bindings.push('const {schemaChanged} = alasql.private;');
+		else if (n === 'alasqlparser') {
 			// The grammar reads alasql.options, alasql.fn and alasql.aggr, so the parser is made
 			// for the alasql object (src/generated/parser.js). The module that sets alasql.parser
 			// makes it; every other module reads it from there.

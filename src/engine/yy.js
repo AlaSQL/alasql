@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	const alasqlparser = alasql.parser;
 /*
 //
 // Parser helper for Alasql.js
@@ -70,3 +72,4 @@ var yy = {
 };
 
 alasqlparser.yy = alasql.yy = yy;
+}
