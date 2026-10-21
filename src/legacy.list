@@ -7,7 +7,7 @@ src/select/select.js
 src/select/exists.js
 src/select/from.js
 src/select/join.js
-src/422where.js
+src/select/where.js
 src/423groupby.js
 src/424select.js
 src/425having.js
