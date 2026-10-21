@@ -38,6 +38,7 @@ import from from './select/from.js';
 import join from './select/join.js';
 import where from './select/where.js';
 import rollup from './select/rollup.js';
+import groupby from './select/groupby.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -70,6 +71,7 @@ from(instance, internal);
 join(instance, internal);
 where(instance, internal);
 rollup(instance, internal);
+groupby(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
