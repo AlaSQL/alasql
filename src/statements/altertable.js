@@ -1,3 +1,6 @@
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
+	var yy = alasql.yy;
 /*
 //
 // ALTER TABLE for Alasql.js
@@ -166,3 +169,4 @@ yy.AlterTable.prototype.alterColumn = function (table, tableid) {
 
 	throw Error('Unknown ALTER TABLE method');
 };
+}

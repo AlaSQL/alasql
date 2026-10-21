@@ -53,6 +53,7 @@ import search from './graph/search.js';
 import createtable from './statements/createtable.js';
 import droptable from './statements/droptable.js';
 import graphCreate from './graph/create.js';
+import altertable from './statements/altertable.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -100,6 +101,7 @@ search(instance, internal);
 createtable(instance, internal);
 droptable(instance, internal);
 graphCreate(instance, internal);
+altertable(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
