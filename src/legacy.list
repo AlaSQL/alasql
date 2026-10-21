@@ -5,7 +5,7 @@ src/30statements.js
 src/35search.js
 src/select/select.js
 src/select/exists.js
-src/420from.js
+src/select/from.js
 src/421join.js
 src/422where.js
 src/423groupby.js
