@@ -1200,8 +1200,6 @@ var like = (utils.like = function (pattern, value, escape = '') {
 	if (!cache) patternCache.set(escape, (cache = new Map()));
 	var re = cache.get(pattern);
 	if (!re) {
-		// SQL allows exactly one escape character (SQLite raises the same error)
-		if (escape.length > 1) throw new Error('ESCAPE expression must be a single character');
 		var regexStr = '^'; // Start regex pattern to match from the beginning.
 		var i = 0; // Index for traversing the pattern string.
 
