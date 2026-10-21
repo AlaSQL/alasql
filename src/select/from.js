@@ -1,3 +1,7 @@
+import {returnTrue} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
 /*
 //
 // Select compiler part for Alasql.js
@@ -210,3 +214,6 @@ alasql.prepareFromData = function (data, array) {
 	}
 	return res;
 };
+
+	internal.subqueryDatafn = subqueryDatafn;
+}

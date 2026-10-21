@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // Select run-time part for Alasql.js
@@ -93,3 +95,4 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 	//	console.log(89,defcols);
 	return defcols;
 };
+}

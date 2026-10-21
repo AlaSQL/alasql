@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // UNION for Alasql.js
@@ -21,3 +23,4 @@ yy.Union = class Union {
 		return null;
 	}
 };
+}

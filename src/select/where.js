@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 yy.Select.prototype.compileWhere = function (query) {
 	if (this.where) {
 		if (typeof this.where == 'function') {
@@ -215,4 +217,5 @@ function optimizeWhereJoin(query, ast) {
 			optimizeWhereJoin(query, ast.right);
 		}
 	}
+}
 }

@@ -1,3 +1,7 @@
+import {cloneDeep, escapeq, n2u} from '../utils/helpers.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // Select compiler part for Alasql.js
@@ -811,3 +815,4 @@ yy.Select.prototype.compileRemoveColumns = function (query) {
 			});
 	}
 };
+}

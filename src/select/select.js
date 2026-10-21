@@ -1,3 +1,7 @@
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
+	var Query = alasql.Query;
+	var queryfn = internal.queryfn;
 /*
 //
 // Select run-time part for Alasql.js
@@ -778,4 +782,7 @@ function modify(query, res) {
 			};
 	}
 	return res;
+}
+
+	internal.modify = modify;
 }

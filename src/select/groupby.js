@@ -1,3 +1,8 @@
+import {arrayDiff, arrayUnion} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
+	var decartes = internal.decartes;
 /*
 //
 // Select compiler part for Alasql.js
@@ -476,3 +481,4 @@ yy.Select.prototype.compileGroup = function (query) {
 	});
 	return new Function('p,params,alasql', 'var y;' + s);
 };
+}

@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 yy.Select.prototype.compileOrder = function (query, params) {
 	var self = this;
 	self.orderColumns = [];
@@ -174,3 +176,4 @@ if(false) {
 		return new Function('a,b', 'var y;' + s);
 	}
 };
+}

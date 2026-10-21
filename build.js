@@ -71,7 +71,7 @@ export const EXTERNALS = [
 // What the legacy module needs from the converted modules: import lines, and bindings of the
 // names its files reach by bare name (tools/free-variables.js lists them).
 export const LEGACY_IMPORTS = [
-	"import {escapeq, returnTrue, n2u, und} from '../utils/helpers.js';",
+	"import {escapeq, returnTrue, n2u, und, arrayUnion, arrayDiff, arrayIntersect} from '../utils/helpers.js';",
 ];
 export const LEGACY_BINDINGS = [
 	'var yy = alasql.yy;',
@@ -87,9 +87,6 @@ export const LEGACY_BINDINGS = [
 		'arrayIntersectDeep',
 		'arrayUnionDeep',
 		'flatArray',
-		'arrayIntersect',
-		'arrayDiff',
-		'arrayUnion',
 	].map(n => `var ${n} = utils.${n};`),
 	'var escapeqq = utils.undoubleq;',
 	'var loadFile = utils.loadFile;',
@@ -100,6 +97,7 @@ export const LEGACY_BINDINGS = [
 	'var queryfn = internal.queryfn;',
 	'var JSONtoJS = internal.JSONtoJS;',
 	'var JSONtoString = internal.JSONtoString;',
+	'var modify = internal.modify;',
 ];
 
 const UMD_FIRST = '(function (root, factory) {';

@@ -204,6 +204,53 @@ export var escapeq = function (s) {
 	});
 };
 
+// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+
+/**
+  Union arrays
+  @function
+  @param {array} a
+  @param {array} b
+  @return {array}
+  */
+export var arrayUnion = function (a, b) {
+	var r = b.slice(0);
+	a.forEach(function (i) {
+		if (r.indexOf(i) < 0) {
+			r.push(i);
+		}
+	});
+	return r;
+};
+
+/**
+  Array Difference
+  */
+export var arrayDiff = function (a, b) {
+	return a.filter(function (i) {
+		return b.indexOf(i) < 0;
+	});
+};
+
+/**
+  Arrays deep intersect (with records)
+  */
+export var arrayIntersect = function (a, b) {
+	var r = [];
+	a.forEach(function (ai) {
+		var found = false;
+
+		b.forEach(function (bi) {
+			found = found || ai === bi;
+		});
+
+		if (found) {
+			r.push(ai);
+		}
+	});
+	return r;
+};
+
 export default function install(alasql) {
 /*jshint unused:false*/
 /*
@@ -218,6 +265,9 @@ export default function install(alasql) {
  @type {object}
  */
 var utils = (alasql.utils = {});
+utils.arrayUnion = arrayUnion;
+utils.arrayDiff = arrayDiff;
+utils.arrayIntersect = arrayIntersect;
 utils.escapeq = escapeq;
 utils.hash = hash;
 utils.arrayUnionDeep = arrayUnionDeep;
@@ -283,51 +333,6 @@ var doubleqq = (utils.doubleqq = function (s) {
   */
 
 // FNV-1a inspired hashing
-
-/**
-  Union arrays
-  @function
-  @param {array} a
-  @param {array} b
-  @return {array}
-  */
-var arrayUnion = (utils.arrayUnion = function (a, b) {
-	var r = b.slice(0);
-	a.forEach(function (i) {
-		if (r.indexOf(i) < 0) {
-			r.push(i);
-		}
-	});
-	return r;
-});
-
-/**
-  Array Difference
-  */
-var arrayDiff = (utils.arrayDiff = function (a, b) {
-	return a.filter(function (i) {
-		return b.indexOf(i) < 0;
-	});
-});
-
-/**
-  Arrays deep intersect (with records)
-  */
-var arrayIntersect = (utils.arrayIntersect = function (a, b) {
-	var r = [];
-	a.forEach(function (ai) {
-		var found = false;
-
-		b.forEach(function (bi) {
-			found = found || ai === bi;
-		});
-
-		if (found) {
-			r.push(ai);
-		}
-	});
-	return r;
-});
 
 /**
   Check equality of objects
