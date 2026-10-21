@@ -1,6 +1,6 @@
 import makeParser from '../generated/parser.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var alasqlparser = makeParser(alasql);
 /**
 	Database class for Alasql.js
@@ -539,5 +539,5 @@ alasql.compile = function (sql, databaseid) {
 	return statement;
 };
 
-	alasql.private.schemaChanged = schemaChanged;
+	internal.schemaChanged = schemaChanged;
 }
