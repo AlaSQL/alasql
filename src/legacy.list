@@ -21,7 +21,7 @@ src/47over.js
 src/expression/expression.js
 src/52linq.js
 src/55functions.js
-src/57case.js
+src/expression/case.js
 src/58json.js
 src/59convert.js
 src/60createtable.js
