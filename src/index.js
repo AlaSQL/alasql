@@ -16,6 +16,7 @@ import core from './engine/core.js';
 import yy from './engine/yy.js';
 import helpers from './utils/helpers.js';
 import env from './utils/env.js';
+import fileio from './utils/fileio.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -24,6 +25,7 @@ core(instance);
 yy(instance);
 helpers(instance);
 env(instance);
+fileio(instance);
 legacy(instance);
 // after the legacy module: it reads utils when it is installed
 promise(instance);

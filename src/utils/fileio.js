@@ -1,3 +1,9 @@
+export default function install(alasql) {
+	var utils = alasql.utils;
+	// alasql.utils.saveAs exists after this module is installed; the body calls it later
+	function saveAs() {
+		return alasql.utils.saveAs.apply(this, arguments);
+	}
 /*
 	File reading and writing for Node, the browser, React Native, Cordova and Meteor, split from src/15utility.js (docs/src-map.md). Same functions, same bodies.
 */
@@ -532,3 +538,4 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 //         saveAs(blob, path);
 //     }
 //  };
+}

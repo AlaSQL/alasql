@@ -91,6 +91,7 @@ export const LEGACY_BINDINGS = [
 		'arrayUnion',
 	].map(n => `var ${n} = utils.${n};`),
 	'var escapeqq = utils.undoubleq;',
+	'var loadFile = utils.loadFile;',
 	'var returnTrue = alasql.private.returnTrue;',
 	'var n2u = alasql.private.n2u;',
 	'var und = alasql.private.und;',
