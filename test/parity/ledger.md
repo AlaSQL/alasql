@@ -13,6 +13,10 @@ One row per step of `context/roadmap-phase-1.md`: the size of every `dist` file 
 | 2d. `src/engine/yy.js` wrapped | 2647c00b | build.js, esbuild | 917,552 / 140,201 | 913,120 / 139,623 | 522,299 / 114,216 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
 | 2e. `src/engine/promise.js` wrapped | d71fce17 | build.js, esbuild | 917,677 / 140,240 | 913,245 / 139,685 | 521,906 / 114,202 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
 | 2f. bindings as `var`; step 2 complete | e2d1df94 | build.js, esbuild | 917,673 / 140,233 | 913,241 / 139,679 | 521,905 / 114,195 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
+| 3a. `src/utils/helpers.js` wrapped (15utility.js split into helpers, env, fileio, xlsx) | e106a482 | build.js, esbuild | 918,496 / 140,372 | 914,064 / 139,803 | 520,915 / 114,236 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
+| 3b. `src/utils/env.js` wrapped | ed8c309f | build.js, esbuild | 918,609 / 140,397 | 914,177 / 139,833 | 520,785 / 114,218 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
+| 3c. `src/utils/fileio.js` wrapped | 86093bbb | build.js, esbuild | 918,877 / 140,465 | 914,445 / 139,882 | 519,797 / 114,320 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
+| 3d. `src/utils/xlsx.js` wrapped | ecae9df6 | build.js, esbuild | 919,082 / 140,491 | 914,650 / 139,912 | 519,871 / 114,329 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
 
 Notes
 
@@ -20,4 +24,5 @@ Notes
 - Step 1b: the maintainer chose esbuild (pinned in `yarn.lock`) over Bun.build (a binary outside the lockfile). `alasql.min.js` is 1,623 bytes over the 4.21.0 file: the ES module entry, the parser as its own module and the `install()` wrapper. The unminified files carry esbuild's `__name` calls (keepNames), which keep the `.name` of four functions and classes that esbuild would otherwise suffix; measured on compile with 7 runs, keepNames costs nothing (101 with, 100 without, against 4.21.0).
 - Step 2a: nothing changes in `dist` apart from the build string; the ES module entry, the parser module and the `install()` wrapper came with step 1b. The move commits leave every byte of `dist` as it was.
 - Step 2b to 2f: each wrap moves a few hundred bytes; the whole of step 2 changes `alasql.min.js` by 204 bytes. The rows were measured again with esbuild on 2026-10-22 after the bundler switch (1b).
+- Step 3a: the split of `15utility.js` leaves 46 percent of it in `helpers.js`, under git's 50 percent rename threshold; `docs/src-map.md` says what that means for merges. The step 3 rows were measured with esbuild on 2026-10-22.
 - Step 2e and 2f: a binding written as `const {yy} = alasql` at the top of the legacy module made compile 10 to 25 percent slower on Node (V8 checks a `const` of an enclosing scope for initialisation at every access from an inner function, and `yy` is read in every compile); `var yy = alasql.yy` has no such cost. Every generated and codemod binding is `var` since. Measured with the Bun build; the mechanism is V8's.
