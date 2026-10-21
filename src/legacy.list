@@ -10,7 +10,7 @@ src/select/join.js
 src/select/where.js
 src/select/groupby.js
 src/select/columns.js
-src/425having.js
+src/select/having.js
 src/426orderby.js
 src/427pivot.js
 src/43rollup.js
