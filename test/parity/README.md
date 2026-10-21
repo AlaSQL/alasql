@@ -7,7 +7,7 @@ yarn test-parity          # record the reference, record the current build, comp
 yarn test-parity-smoke    # the smokes, including --pack, on the node in PATH
 ```
 
-`yarn test-parity` runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). When to run what is in `context/roadmap-phase-1.md`, "How much to verify, and when": the suite per commit, parity and the smokes on the tip of a step and after every merge of `develop`, the double run that finds unstable statements (`record new` without `--once`) as the last check of a step, and `git bisect run` when a tip fails. Run the three by hand to use another reference (below):
+`yarn test-parity` builds `dist/` and runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). When to run what is in `context/roadmap-phase-1.md`, "How much to verify, and when": the suite per commit, parity and the smokes on the tip of a step and after every merge of `develop`, the double run that finds unstable statements (`record new` without `--once`) as the last check of a step, and `git bisect run` when a tip fails. Run the three by hand to use another reference (below):
 
 ```sh
 bun test/parity/run.js record ref --ref      # the published 4.21.0 in dist/, recorded, then dist/ rebuilt
