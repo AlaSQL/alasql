@@ -67,6 +67,7 @@ import merge from './statements/merge.js';
 import databases from './statements/databases.js';
 import declare from './statements/declare.js';
 import show from './statements/show.js';
+import setStatement from './statements/set.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -128,6 +129,7 @@ merge(instance, internal);
 databases(instance, internal);
 declare(instance, internal);
 show(instance, internal);
+setStatement(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);

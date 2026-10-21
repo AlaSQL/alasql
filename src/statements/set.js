@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // SET for Alasql.js
@@ -80,3 +82,4 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 	if (cb) result = cb(result);
 	return result;
 };
+}
