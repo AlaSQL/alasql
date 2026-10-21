@@ -8,7 +8,7 @@ src/select/exists.js
 src/select/from.js
 src/select/join.js
 src/select/where.js
-src/423groupby.js
+src/select/groupby.js
 src/424select.js
 src/425having.js
 src/426orderby.js
