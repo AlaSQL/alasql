@@ -1,3 +1,7 @@
+import {cloneDeep} from '../utils/helpers.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 // Pivot functions
 /**
 	Compile Pivot functions
@@ -363,3 +367,4 @@ yy.Select.prototype.compileUnpivot = function (query) {
 		//		});
 	};
 };
+}
