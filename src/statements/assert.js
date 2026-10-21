@@ -1,3 +1,7 @@
+import {deepEqual} from '../utils/helpers.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // HELP for Alasql.js
@@ -28,3 +32,4 @@ yy.Assert.prototype.execute = function (databaseid) {
 	}
 	return 1;
 };
+}

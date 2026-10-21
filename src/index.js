@@ -87,6 +87,7 @@ import gexf from './formats/gexf.js';
 import print from './statements/print.js';
 import source from './statements/source.js';
 import requireStatement from './statements/require.js';
+import assertStatement from './statements/assert.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -168,6 +169,7 @@ gexf(instance, internal);
 print(instance, internal);
 source(instance, internal);
 requireStatement(instance, internal);
+assertStatement(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
