@@ -123,7 +123,7 @@ export var deepEqual = function (x, y) {
 	return false;
 };
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 /*jshint unused:false*/
 /*
 	Utilities for Alasql.js
@@ -692,9 +692,9 @@ utils.typeConverter = function (value, dbtypeid) {
 	return value;
 };
 
-	alasql.private.returnTrue = returnTrue;
+	internal.returnTrue = returnTrue;
 
-	alasql.private.n2u = n2u;
+	internal.n2u = n2u;
 
-	alasql.private.und = und;
+	internal.und = und;
 }

@@ -98,7 +98,7 @@ const bindings = [];
 	for (const n of names) {
 		if (n === 'alasql' || n === 'internal' || forwards.some(([f]) => f === n) || provided.has(n))
 			continue;
-		if (n === 'schemaChanged') bindings.push('var schemaChanged = alasql.private.schemaChanged;');
+		if (n === 'schemaChanged') bindings.push('var schemaChanged = internal.schemaChanged;');
 		else if (n === 'alasqlparser') {
 			// The grammar reads alasql.options, alasql.fn and alasql.aggr, so the parser is made
 			// for the alasql object (src/generated/parser.js). The module that sets alasql.parser

@@ -73,7 +73,7 @@ export const EXTERNALS = [
 export const LEGACY_IMPORTS = [];
 export const LEGACY_BINDINGS = [
 	'var yy = alasql.yy;',
-	'var schemaChanged = alasql.private.schemaChanged;',
+	'var schemaChanged = internal.schemaChanged;',
 	'var utils = alasql.utils;',
 	...[
 		'cloneDeep',
@@ -92,10 +92,10 @@ export const LEGACY_BINDINGS = [
 	].map(n => `var ${n} = utils.${n};`),
 	'var escapeqq = utils.undoubleq;',
 	'var loadFile = utils.loadFile;',
-	'var returnTrue = alasql.private.returnTrue;',
-	'var n2u = alasql.private.n2u;',
-	'var und = alasql.private.und;',
-	'var getXLSX = alasql.private.getXLSX;',
+	'var returnTrue = internal.returnTrue;',
+	'var n2u = internal.n2u;',
+	'var und = internal.und;',
+	'var getXLSX = internal.getXLSX;',
 	'var Query = alasql.Query;',
 	'var queryfn = internal.queryfn;',
 ];
