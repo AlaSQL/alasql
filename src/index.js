@@ -52,6 +52,7 @@ import linq from './select/linq.js';
 import search from './graph/search.js';
 import createtable from './statements/createtable.js';
 import droptable from './statements/droptable.js';
+import graphCreate from './graph/create.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -98,6 +99,7 @@ linq(instance, internal);
 search(instance, internal);
 createtable(instance, internal);
 droptable(instance, internal);
+graphCreate(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
