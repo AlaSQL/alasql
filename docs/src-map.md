@@ -5,6 +5,7 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | Old file | Module | Exports | Installed | Added by the wrap | Similarity |
 | --- | --- | --- | --- | --- | --- |
 | `src/10start.js` | `src/engine/create.js` | `create()`: makes the alasql object (the main function, `version`, `build`, `debug`) | first; the UMD wrapper is written by `build.js` | the UMD head taken out; `export function create() {` and `return alasql`; the fluent interface reads `alasql.yy` instead of `yy`, because the object exists before the yy module is installed (3 lines) | 88% (the UMD head and the 3 lines on a 126-line file) |
+| `src/17alasql.js` | `src/engine/core.js` | `install(alasql)`: the parser hookup, `parse`, the registries (`databases`, `engines`, `options`, `from`, `into`, `fn`, `aggr`, ...), `use`, `autoval`, `exec`, `dexec`, `drun`, `adrun`, `compile` | second, before the legacy module | `import makeParser from '../generated/parser.js'` and `const alasqlparser = makeParser(alasql)`: the grammar actions read `alasql.options`, `alasql.fn`, `alasql.aggr` and call `doubleq`, so the parser is made for the alasql object (see `build.js`, `parserModule`); `alasql.private.schemaChanged = schemaChanged` for the seven legacy files that call it | 98% |
 
 Still in the legacy module: every file in `src/legacy.list`, in that order, wrapped by `build.js` into `src/generated/legacy.js` as `install(alasql)`.
 
@@ -13,3 +14,7 @@ Names the legacy files reach by bare name from converted modules (`tools/free-va
 | Name | Declared by | Bound as |
 | --- | --- | --- |
 | `alasql` | `src/engine/create.js` | the `install(alasql)` parameter |
+| `alasqlparser` | `src/generated/parser.js`, made by `src/engine/core.js` | `const alasqlparser = alasql.parser` |
+| `schemaChanged` | `src/engine/core.js` | `const {schemaChanged} = alasql.private` |
+
+The generated parser (`src/alasqlparser.js`, jison output, unchanged) is wrapped by `build.js` into `src/generated/parser.js` as `makeParser(alasql)`, with a forwarder for every utility the grammar calls by bare name (`doubleq`), because the parser is made before the utilities are installed.

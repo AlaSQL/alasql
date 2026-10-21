@@ -1,3 +1,7 @@
+import makeParser from '../generated/parser.js';
+
+export default function install(alasql) {
+	const alasqlparser = makeParser(alasql);
 /**
 	Database class for Alasql.js
 */
@@ -534,3 +538,6 @@ alasql.compile = function (sql, databaseid) {
 
 	return statement;
 };
+
+	alasql.private.schemaChanged = schemaChanged;
+}

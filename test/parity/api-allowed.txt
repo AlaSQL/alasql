@@ -1,0 +1,5 @@
+# API paths allowed to differ from the reference build, one per line, with the reason after #.
+# compare.js reports them as allowed instead of failing; a path covers its prototype and
+# constructor. Everything the conversion adds to the alasql object on purpose goes here, so
+# that the API snapshot keeps catching what was not on purpose.
+alasql.private.schemaChanged   # step 2: the legacy files reach schemaChanged, declared in src/engine/core.js, through alasql.private (context/roadmap-phase-1.md, step 4 settles the general mechanism)

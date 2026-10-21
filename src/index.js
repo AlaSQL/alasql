@@ -12,9 +12,11 @@
 */
 
 import {create} from './engine/create.js';
+import core from './engine/core.js';
 import legacy from './generated/legacy.js';
 
 const instance = create();
+core(instance);
 legacy(instance);
 
 export default instance;

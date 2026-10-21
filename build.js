@@ -71,7 +71,10 @@ export const EXTERNALS = [
 // What the legacy module needs from the converted modules: import lines, and bindings of the
 // names its files reach by bare name (tools/free-variables.js lists them).
 export const LEGACY_IMPORTS = [];
-export const LEGACY_BINDINGS = [];
+export const LEGACY_BINDINGS = [
+	'var alasqlparser = alasql.parser;',
+	'var schemaChanged = alasql.private.schemaChanged;',
+];
 
 const UMD_FIRST = '(function (root, factory) {';
 const UMD_LAST = '}(this, function () {';

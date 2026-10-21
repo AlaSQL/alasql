@@ -123,6 +123,19 @@ function unstable(A, B) {
 	return {list, onlyA: counts.onlyA, onlyB: counts.onlyB, diverged: counts.diverged};
 }
 
+// API paths allowed to differ between the builds, with the reason (api-allowed.txt). A listed
+// path covers its prototype and constructor too.
+function allowedApi() {
+	const file = path.join(__dirname, 'api-allowed.txt');
+	const allowed = new Set();
+	if (!fs.existsSync(file)) return allowed;
+	for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+		const name = line.split('#')[0].trim();
+		if (name) allowed.add(name);
+	}
+	return allowed;
+}
+
 // Files allowed to run tests without a statement reaching the recorder, with the reason
 function silentAllowed() {
 	const file = path.join(__dirname, 'silent-files.txt');
@@ -378,14 +391,28 @@ function report(A, B, labelA, labelB, opts) {
 
 	if (A.api && B.api) {
 		const r = require('./api.js').compare(A.api, B.api);
+		// paths that may differ, each with its reason (api-allowed.txt)
+		const allowed = allowedApi();
+		const isAllowed = k =>
+			allowed.has(k) || allowed.has(k.replace(/\.(prototype|constructor)(\..*)?$/, ''));
+		const onlyA = r.onlyA.filter(k => !isAllowed(k));
+		const onlyB = r.onlyB.filter(k => !isAllowed(k));
+		const changed = r.changed.filter(([k]) => !isAllowed(k));
+		const allowedCount =
+			r.onlyA.length +
+			r.onlyB.length +
+			r.changed.length -
+			onlyA.length -
+			onlyB.length -
+			changed.length;
 		console.log(
-			`\napi: ${r.total} paths; only in a: ${r.onlyA.length}; only in b: ${r.onlyB.length}; changed: ${r.changed.length}`
+			`\napi: ${r.total} paths; only in a: ${onlyA.length}; only in b: ${onlyB.length}; changed: ${changed.length}; allowed differences: ${allowedCount}`
 		);
-		for (const k of r.onlyA.slice(0, limit)) console.log('  only in a: ' + k);
-		for (const k of r.onlyB.slice(0, limit)) console.log('  only in b: ' + k);
-		for (const [k, va, vb] of r.changed.slice(0, limit))
+		for (const k of onlyA.slice(0, limit)) console.log('  only in a: ' + k);
+		for (const k of onlyB.slice(0, limit)) console.log('  only in b: ' + k);
+		for (const [k, va, vb] of changed.slice(0, limit))
 			console.log(`  changed: ${k}: ${va} -> ${vb}`);
-		failures += r.onlyA.length + r.onlyB.length + r.changed.length;
+		failures += onlyA.length + onlyB.length + changed.length;
 	}
 
 	if (A.sizes && B.sizes) {

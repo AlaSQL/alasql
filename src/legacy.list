@@ -1,10 +1,8 @@
 # The files of the generated legacy module, in order. Converting a file means taking it off
 # this list (context/roadmap-phase-1.md). build.js reads it.
-src/alasqlparser.js
 src/12pretty.js
 src/15utility.js
 src/16comments.js
-src/engine/core.js
 src/18promise.js
 src/20database.js
 src/21transaction.js
