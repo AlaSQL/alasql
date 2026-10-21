@@ -40,6 +40,7 @@ import where from './select/where.js';
 import rollup from './select/rollup.js';
 import groupby from './select/groupby.js';
 import columns from './select/columns.js';
+import having from './select/having.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -74,6 +75,7 @@ where(instance, internal);
 rollup(instance, internal);
 groupby(instance, internal);
 columns(instance, internal);
+having(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);

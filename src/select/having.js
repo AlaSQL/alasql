@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /* global yy */
 
 // A name in HAVING that is not a column of a source table reads the SELECT alias
@@ -35,3 +37,4 @@ yy.Select.prototype.compileHaving = function (query) {
 		return true;
 	};
 };
+}
