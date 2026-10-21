@@ -1,3 +1,4 @@
+export default function install(alasql) {
 /*
 //
 // Table class for Alasql.js
@@ -67,3 +68,4 @@ Table.prototype.indexColumns = function () {
 		self.xcolumns[col.columnid] = col;
 	});
 };
+}
