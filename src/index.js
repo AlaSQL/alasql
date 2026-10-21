@@ -23,15 +23,17 @@ import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
 const instance = create();
-core(instance);
-yy(instance);
-helpers(instance);
-env(instance);
-fileio(instance);
-xlsx(instance);
-uncomment(instance);
-legacy(instance);
+// what modules share with each other and nobody else; the second parameter of every install
+const internal = {};
+core(instance, internal);
+yy(instance, internal);
+helpers(instance, internal);
+env(instance, internal);
+fileio(instance, internal);
+xlsx(instance, internal);
+uncomment(instance, internal);
+legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
-promise(instance);
+promise(instance, internal);
 
 export default instance;
