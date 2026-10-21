@@ -1,3 +1,5 @@
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
 /*
 //
 // JSON for Alasql.js
@@ -77,3 +79,8 @@ yy.Json.prototype.toJS = function (context, tableid, defcols) {
 	// TODO redo
 	return JSONtoJS(this.value, context, tableid, defcols);
 };
+
+	internal.JSONtoJS = JSONtoJS;
+
+	internal.JSONtoString = JSONtoString;
+}

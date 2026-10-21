@@ -99,6 +99,8 @@ export const LEGACY_BINDINGS = [
 	'var Database = alasql.Database;',
 	'var Table = alasql.Table;',
 	'var queryfn = internal.queryfn;',
+	'var JSONtoJS = internal.JSONtoJS;',
+	'var JSONtoString = internal.JSONtoString;',
 ];
 
 const UMD_FIRST = '(function (root, factory) {';
