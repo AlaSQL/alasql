@@ -1,6 +1,6 @@
 # Ledger of the conversion
 
-One row per step of `context/roadmap-phase-1.md`: the size of every `dist` file in bytes and gzip (`run.js record` writes them to `recordings/<label>.sizes.json`), whether two builds in a row gave the same hashes (`build.js` prints a sha256 per file), and the benchmark against the previous row (`bun test/performance/vs-npm.js --base=<previous dist/alasql.fs.js> --target=dist/alasql.fs.js`; 100 is the previous build, develop against itself moves by about 2). `alasql-echo.js`, `alasql-prolog.js` and `alasql.d.ts` are copied and left out.
+One row per step of `context/roadmap-phase-1.md` (from step 4 the Commit column holds the pull request): the size of every `dist` file in bytes and gzip (`run.js record` writes them to `recordings/<label>.sizes.json`), whether two builds in a row gave the same hashes (`build.js` prints a sha256 per file), and the benchmark against the previous row (`bun test/performance/vs-npm.js --base=<previous dist/alasql.fs.js> --target=dist/alasql.fs.js`; 100 is the previous build, develop against itself moves by about 2). `alasql-echo.js`, `alasql-prolog.js` and `alasql.d.ts` are copied and left out.
 
 | Step | Commit | Built with | alasql.fs.js | alasql.js | alasql.min.js | alasql-worker.js | precompile/index.js | Same hashes twice | Benchmark |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -18,6 +18,7 @@ One row per step of `context/roadmap-phase-1.md`: the size of every `dist` file 
 | 3c. `src/utils/fileio.js` wrapped | 64c23628 | build.js, esbuild | 918,877 / 140,465 | 914,445 / 139,882 | 519,797 / 114,320 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
 | 3d. `src/utils/xlsx.js` wrapped | 51e33a9b | build.js, esbuild | 919,082 / 140,491 | 914,650 / 139,912 | 519,871 / 114,329 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
 | 3e. `src/utils/uncomment.js` wrapped; step 3 complete | 214de6f6 | build.js, esbuild | 919,183 / 140,510 | 914,751 / 139,927 | 519,924 / 114,345 | 4,092 / 1,930 | 4,915 / 1,762 | yes | 101 (Bun 100, Node 102) against the step 2 build, 3 runs, 172 cases; a focused run of 7 on compile, udf, output and core gave 101 with every dimension within 4 percent |
+| 4a. `src/data/query.js`, `src/select/dojoin.js` and `src/select/queryfn.js` wrapped; six helpers exported; `internal` | #2836 | build.js, esbuild | 919,996 / 140,963 | 915,564 / 140,444 | 520,659 / 114,643 | 4,105 / 1,941 | 4,915 / 1,762 | yes | compile, 7 runs against the step 3 build: 101 (Bun 99, Node 103) |
 
 Notes
 
