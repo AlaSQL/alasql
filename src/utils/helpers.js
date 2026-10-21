@@ -1,3 +1,128 @@
+// Stateless helpers, exported for plain imports; install() also puts them on alasql.utils.
+
+export var hash = function (str) {
+	var hash = 0x811c9dc5,
+		i = str.length;
+	while (i) {
+		hash ^= str.charCodeAt(--i);
+		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+	}
+	return hash;
+};
+
+/**
+  Arrays deep union (with records)
+  */
+export var arrayUnionDeep = function (a, b) {
+	var r = b.slice(0);
+	a.forEach(function (ai) {
+		var found = false;
+
+		r.forEach(function (ri) {
+			//            found = found || equalDeep(ai, ri, true);
+			found = found || deepEqual(ai, ri);
+		});
+
+		if (!found) {
+			r.push(ai);
+		}
+	});
+	return r;
+};
+
+/**
+  Arrays deep union (with records)
+  */
+export var arrayExceptDeep = function (a, b) {
+	var r = [];
+	a.forEach(function (ai) {
+		var found = false;
+
+		b.forEach(function (bi) {
+			//            found = found || equalDeep(ai, bi, true);
+			found = found || deepEqual(ai, bi);
+		});
+
+		if (!found) {
+			r.push(ai);
+		}
+	});
+	return r;
+};
+
+/**
+  Arrays deep intersect (with records)
+  */
+export var arrayIntersectDeep = function (a, b) {
+	var r = [];
+	a.forEach(function (ai) {
+		var found = false;
+
+		b.forEach(function (bi) {
+			//            found = found || equalDeep(ai, bi, true);
+			found = found || deepEqual(ai, bi, true);
+		});
+
+		if (found) {
+			r.push(ai);
+		}
+	});
+	return r;
+};
+
+/**
+  Deep clone objects
+  */
+export var cloneDeep = function cloneDeep(obj) {
+	if (null === obj || typeof obj !== 'object') {
+		return obj;
+	}
+
+	if (obj instanceof Date) {
+		return new Date(obj);
+	}
+
+	if (obj instanceof String) {
+		return obj.toString();
+	}
+
+	if (obj instanceof Number) {
+		return +obj;
+	}
+
+	var temp = new obj.constructor(); // changed
+
+	for (var key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			temp[key] = cloneDeep(obj[key]);
+		}
+	}
+	return temp;
+};
+
+/**
+  Compare two objects in deep
+  */
+export var deepEqual = function (x, y) {
+	if (x === y) {
+		return true;
+	}
+
+	if (typeof x === 'object' && null !== x && typeof y === 'object' && null !== y) {
+		if (Object.keys(x).length !== Object.keys(y).length) {
+			return false;
+		}
+		for (var prop in x) {
+			if (!deepEqual(x[prop], y[prop])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	return false;
+};
+
 export default function install(alasql) {
 /*jshint unused:false*/
 /*
@@ -12,6 +137,12 @@ export default function install(alasql) {
  @type {object}
  */
 var utils = (alasql.utils = {});
+utils.hash = hash;
+utils.arrayUnionDeep = arrayUnionDeep;
+utils.arrayExceptDeep = arrayExceptDeep;
+utils.arrayIntersectDeep = arrayIntersectDeep;
+utils.cloneDeep = cloneDeep;
+utils.deepEqual = deepEqual;
 
 /**
   Convert NaN to undefined
@@ -146,15 +277,6 @@ var doubleqq = (utils.doubleqq = function (s) {
   */
 
 // FNV-1a inspired hashing
-var hash = (utils.hash = function (str) {
-	var hash = 0x811c9dc5,
-		i = str.length;
-	while (i) {
-		hash ^= str.charCodeAt(--i);
-		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
-	}
-	return hash;
-});
 
 /**
   Union arrays
@@ -199,96 +321,6 @@ var arrayIntersect = (utils.arrayIntersect = function (a, b) {
 		}
 	});
 	return r;
-});
-
-/**
-  Arrays deep union (with records)
-  */
-var arrayUnionDeep = (utils.arrayUnionDeep = function (a, b) {
-	var r = b.slice(0);
-	a.forEach(function (ai) {
-		var found = false;
-
-		r.forEach(function (ri) {
-			//            found = found || equalDeep(ai, ri, true);
-			found = found || deepEqual(ai, ri);
-		});
-
-		if (!found) {
-			r.push(ai);
-		}
-	});
-	return r;
-});
-
-/**
-  Arrays deep union (with records)
-  */
-var arrayExceptDeep = (utils.arrayExceptDeep = function (a, b) {
-	var r = [];
-	a.forEach(function (ai) {
-		var found = false;
-
-		b.forEach(function (bi) {
-			//            found = found || equalDeep(ai, bi, true);
-			found = found || deepEqual(ai, bi);
-		});
-
-		if (!found) {
-			r.push(ai);
-		}
-	});
-	return r;
-});
-
-/**
-  Arrays deep intersect (with records)
-  */
-var arrayIntersectDeep = (utils.arrayIntersectDeep = function (a, b) {
-	var r = [];
-	a.forEach(function (ai) {
-		var found = false;
-
-		b.forEach(function (bi) {
-			//            found = found || equalDeep(ai, bi, true);
-			found = found || deepEqual(ai, bi, true);
-		});
-
-		if (found) {
-			r.push(ai);
-		}
-	});
-	return r;
-});
-
-/**
-  Deep clone objects
-  */
-var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
-	if (null === obj || typeof obj !== 'object') {
-		return obj;
-	}
-
-	if (obj instanceof Date) {
-		return new Date(obj);
-	}
-
-	if (obj instanceof String) {
-		return obj.toString();
-	}
-
-	if (obj instanceof Number) {
-		return +obj;
-	}
-
-	var temp = new obj.constructor(); // changed
-
-	for (var key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			temp[key] = cloneDeep(obj[key]);
-		}
-	}
-	return temp;
 });
 
 /**
@@ -340,28 +372,6 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
  };
  */
 
-/**
-  Compare two objects in deep
-  */
-var deepEqual = (utils.deepEqual = function (x, y) {
-	if (x === y) {
-		return true;
-	}
-
-	if (typeof x === 'object' && null !== x && typeof y === 'object' && null !== y) {
-		if (Object.keys(x).length !== Object.keys(y).length) {
-			return false;
-		}
-		for (var prop in x) {
-			if (!deepEqual(x[prop], y[prop])) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	return false;
-});
 /**
   Array with distinct records
   @param {array} data
