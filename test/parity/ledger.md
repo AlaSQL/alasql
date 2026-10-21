@@ -13,11 +13,11 @@ One row per step of `context/roadmap-phase-1.md`: the size of every `dist` file 
 | 2d. `src/engine/yy.js` wrapped | 2647c00b | build.js, esbuild | 917,552 / 140,201 | 913,120 / 139,623 | 522,299 / 114,216 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
 | 2e. `src/engine/promise.js` wrapped | d71fce17 | build.js, esbuild | 917,677 / 140,240 | 913,245 / 139,685 | 521,906 / 114,202 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
 | 2f. bindings as `var`; step 2 complete | e2d1df94 | build.js, esbuild | 917,673 / 140,233 | 913,241 / 139,679 | 521,905 / 114,195 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
-| 3a. `src/utils/helpers.js` wrapped (15utility.js split into helpers, env, fileio, xlsx) | ca1de113 | build.js, esbuild | 918,496 / 140,372 | 914,064 / 139,803 | 520,915 / 114,236 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
-| 3b. `src/utils/env.js` wrapped | 48bd79aa | build.js, esbuild | 918,609 / 140,397 | 914,177 / 139,833 | 520,785 / 114,218 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
-| 3c. `src/utils/fileio.js` wrapped | 5137ceca | build.js, esbuild | 918,877 / 140,465 | 914,445 / 139,882 | 519,797 / 114,320 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
-| 3d. `src/utils/xlsx.js` wrapped | b1d55ba7 | build.js, esbuild | 919,082 / 140,491 | 914,650 / 139,912 | 519,871 / 114,329 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
-| 3e. `src/utils/uncomment.js` wrapped; step 3 complete | ab3b9a15 | build.js, esbuild | 919,183 / 140,510 | 914,751 / 139,927 | 519,924 / 114,345 | 4,092 / 1,930 | 4,915 / 1,762 | yes | 101 (Bun 100, Node 102) against the step 2 build, 3 runs, 172 cases; a focused run of 7 on compile, udf, output and core gave 101 with every dimension within 4 percent |
+| 3a. `src/utils/helpers.js` wrapped (15utility.js split into helpers, env, fileio, xlsx) | 91e21d2c | build.js, esbuild | 918,496 / 140,372 | 914,064 / 139,803 | 520,915 / 114,236 | 4,081 / 1,927 | 4,915 / 1,762 | yes | not run |
+| 3b. `src/utils/env.js` wrapped | ef17b605 | build.js, esbuild | 918,609 / 140,397 | 914,177 / 139,833 | 520,785 / 114,218 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
+| 3c. `src/utils/fileio.js` wrapped | 64c23628 | build.js, esbuild | 918,877 / 140,465 | 914,445 / 139,882 | 519,797 / 114,320 | 4,081 / 1,925 | 4,915 / 1,762 | yes | not run |
+| 3d. `src/utils/xlsx.js` wrapped | 51e33a9b | build.js, esbuild | 919,082 / 140,491 | 914,650 / 139,912 | 519,871 / 114,329 | 4,081 / 1,926 | 4,915 / 1,762 | yes | not run |
+| 3e. `src/utils/uncomment.js` wrapped; step 3 complete | 214de6f6 | build.js, esbuild | 919,183 / 140,510 | 914,751 / 139,927 | 519,924 / 114,345 | 4,092 / 1,930 | 4,915 / 1,762 | yes | 101 (Bun 100, Node 102) against the step 2 build, 3 runs, 172 cases; a focused run of 7 on compile, udf, output and core gave 101 with every dimension within 4 percent |
 
 Notes
 
