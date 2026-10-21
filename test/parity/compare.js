@@ -4,6 +4,10 @@
 
 	  bun test/parity/compare.js recordings/a recordings/b [--limit 20] [--file test123.js]
 
+	A statement whose result differed between the two runs run.js makes of one build (its
+	<label>.unstable.json) compares code only and is counted as unstable; the engine itself is
+	not deterministic there (a mixed-type ORDER BY, for example).
+
 	Records are grouped by test file and compared in order within the file: a statement depends
 	on the ones before it, and the order of test files does not matter. Within a file the two
 	streams are aligned by (kind, SQL); when they drift, the next matching pair within 200
@@ -15,6 +19,10 @@
 	code with the same lines in another order (REQUIRE of several files) is counted as "reordered".
 	Normalisation before comparing: the build string, ISO and SQL timestamps, epoch
 	milliseconds, UUIDs and absolute paths become placeholders.
+
+	A test file that ran tests and recorded no statement fails the compare, unless it is listed in
+	silent-files.txt with the reason (a file that only parses, or runs the CLI in a child process).
+	In the first calibration 379 of 532 files recorded nothing in both runs, and the compare passed.
 
 	Exit code 1 when any difference remains.
 */
@@ -48,10 +56,15 @@ function load(base) {
 		.filter(Boolean);
 	let meta = {};
 	const byFile = new Map();
+	const tests = new Map();
 	for (const line of lines) {
 		const r = JSON.parse(line);
 		if (r.k === 'meta') {
 			meta = r;
+			continue;
+		}
+		if (r.k === 'test') {
+			tests.set(r.f, (tests.get(r.f) || 0) + 1);
 			continue;
 		}
 		if (!byFile.has(r.f)) byFile.set(r.f, []);
@@ -71,7 +84,95 @@ function load(base) {
 	const sizes = fs.existsSync(base + '.sizes.json')
 		? JSON.parse(fs.readFileSync(base + '.sizes.json', 'utf8'))
 		: null;
-	return {meta, byFile, codes, api, sizes};
+	// Statements whose result differed between two runs of this same build (run.js records
+	// twice): their results are not compared, only their code
+	let unstable = [];
+	if (fs.existsSync(base + '.unstable.json')) {
+		unstable = JSON.parse(fs.readFileSync(base + '.unstable.json', 'utf8'));
+	}
+	const ids = new Set(unstable.map(u => u.i));
+	const known = knownUnstable();
+	for (const list of byFile.values())
+		for (const r of list) if (ids.has(r.i) || known.has((r.sql || '').trim())) r.u = true;
+	return {meta, byFile, tests, codes, api, sizes, unstable};
+}
+
+// Statements known to give one of several results run by run (unstable-statements.txt): two
+// runs catch a statement that flips in 1 of 10 runs only in about one run in five, so the
+// ones seen are written down
+function knownUnstable() {
+	const file = path.join(__dirname, 'unstable-statements.txt');
+	const known = new Set();
+	if (!fs.existsSync(file)) return known;
+	for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+		const t = line.trim();
+		if (t && !t.startsWith('#')) known.add(t);
+	}
+	return known;
+}
+
+// The statements whose result or error differs between two recordings of the same build:
+// what run.js writes to <label>.unstable.json. Also says whether the two runs ran the same
+// statements at all.
+function unstable(A, B) {
+	const {counts, diffs} = compareRecordings(A, B);
+	const list = diffs
+		.filter(d => d.what === 'result' || d.what === 'error')
+		.map(d => ({i: d.ia, f: d.file, sql: d.sql}));
+	return {list, onlyA: counts.onlyA, onlyB: counts.onlyB, diverged: counts.diverged};
+}
+
+// Files allowed to run tests without a statement reaching the recorder, with the reason
+function silentAllowed() {
+	const file = path.join(__dirname, 'silent-files.txt');
+	const allowed = new Set();
+	if (!fs.existsSync(file)) return allowed;
+	for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+		const name = line.split('#')[0].trim();
+		if (name) allowed.add(name);
+	}
+	return allowed;
+}
+
+// The files of a recording that ran at least one test and recorded nothing: either the hook
+// was missing (the failure this guards against) or the file is listed in silent-files.txt
+function silent(R) {
+	const allowed = silentAllowed();
+	const out = {files: 0, tests: 0, unexpected: [], listed: [], stale: []};
+	for (const [file, n] of R.tests) {
+		out.files++;
+		out.tests += n;
+		const recorded = R.byFile.has(file);
+		if (!recorded) (allowed.has(file) ? out.listed : out.unexpected).push(file);
+		else if (allowed.has(file)) out.stale.push(file);
+	}
+	out.unexpected.sort();
+	out.listed.sort();
+	out.stale.sort();
+	return out;
+}
+
+// Prints the silent check of one recording and returns the number of failures
+function reportSilent(R, label) {
+	const s = silent(R);
+	if (!s.files) {
+		console.log(
+			`  ${label}: no test records (recorded with an older record.js); silent files not checked`
+		);
+		return 0;
+	}
+	console.log(
+		`  ${label}: ${s.files} files ran ${s.tests} tests, ${s.files - s.listed.length - s.unexpected.length} recorded statements, ${s.listed.length} listed as silent`
+	);
+	if (s.unexpected.length)
+		console.log(
+			`  ${label}: ${s.unexpected.length} files ran tests and recorded no statement: ${s.unexpected.join(', ')}`
+		);
+	if (s.stale.length)
+		console.log(
+			`  ${label}: listed in silent-files.txt but recorded statements: ${s.stale.join(', ')}`
+		);
+	return s.unexpected.length;
 }
 
 const key = r => r.k + '|' + normalize(r.sql || '');
@@ -111,6 +212,8 @@ function comparePair(a, b, A, B, diffs, counts) {
 	const rb = normalize(b.r);
 	if (volatile(a)) {
 		counts.volatile++;
+	} else if (a.u || b.u) {
+		counts.unstable++;
 	} else if (ea !== eb) {
 		counts.error++;
 		diffs.push({
@@ -119,10 +222,12 @@ function comparePair(a, b, A, B, diffs, counts) {
 			what: 'error',
 			a: ea || '(no error)',
 			b: eb || '(no error)',
+			ia: a.i,
+			ib: b.i,
 		});
 	} else if (ra !== rb) {
 		counts.result++;
-		diffs.push({file: a.f, sql: a.sql, what: 'result', a: ra, b: rb});
+		diffs.push({file: a.f, sql: a.sql, what: 'result', a: ra, b: rb, ia: a.i, ib: b.i});
 	}
 	const ca = a.c || [];
 	const cb = b.c || [];
@@ -203,6 +308,7 @@ function compareRecordings(A, B, onlyFile) {
 		error: 0,
 		code: 0,
 		volatile: 0,
+		unstable: 0,
 		reordered: 0,
 		onlyA: 0,
 		onlyB: 0,
@@ -241,7 +347,7 @@ function report(A, B, labelA, labelB, opts) {
 		`parity: ${labelA} (${A.meta.version} ${A.meta.build}) vs ${labelB} (${B.meta.version} ${B.meta.build})`
 	);
 	console.log(
-		`  files compared: ${counts.files}; statements aligned: ${counts.aligned}; volatile (code only): ${counts.volatile}; code reordered: ${counts.reordered}`
+		`  files compared: ${counts.files}; statements aligned: ${counts.aligned}; volatile (code only): ${counts.volatile}; unstable in one build (code only): ${counts.unstable}; code reordered: ${counts.reordered}`
 	);
 	const bad =
 		counts.params +
@@ -257,6 +363,7 @@ function report(A, B, labelA, labelB, opts) {
 	if (counts.filesOnlyA.length) console.log('  files only in a: ' + counts.filesOnlyA.join(', '));
 	if (counts.filesOnlyB.length) console.log('  files only in b: ' + counts.filesOnlyB.join(', '));
 	failures += bad + counts.filesOnlyA.length + counts.filesOnlyB.length;
+	failures += reportSilent(A, 'a') + reportSilent(B, 'b');
 	const limit = opts.limit;
 	for (const d of diffs.slice(0, limit)) {
 		console.log(
@@ -294,7 +401,7 @@ function report(A, B, labelA, labelB, opts) {
 	return failures;
 }
 
-module.exports = {load, compareRecordings, report, normalize};
+module.exports = {load, compareRecordings, report, normalize, silent, reportSilent, unstable};
 
 if (require.main === module) {
 	const args = process.argv.slice(2);

@@ -1,0 +1,8 @@
+# Statements the engine does not answer the same way twice, one per line, matched on the exact
+# SQL text. compare.js compares only their generated code. record.js finds candidates by running
+# the suite twice (<label>.unstable.json); a statement seen there belongs here once it is confirmed
+# by more runs.
+# Mixed types with undefined, sorted after UNION: the comparator is not consistent for those pairs
+# and the runtime's sort gives one of two orders (1 and 2 of 10 runs, Bun 1.4.3, 2026-10-21).
+SELECT id, mix AS k FROM o UNION SELECT id, mix FROM o2 ORDER BY k DESC, id
+SELECT id, mix FROM o UNION SELECT id, mix FROM o2 ORDER BY 2 DESC, id

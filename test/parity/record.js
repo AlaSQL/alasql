@@ -23,10 +23,12 @@
 	  PARITY_TAG     the file name used for records made outside test/test*.js.
 	  PARITY_DEBUG   "1" adds the stack to code records made outside a statement.
 
-	Record fields: i sequence, k kind (exec, cb, compile, run, code), f test file, b build
+	Record fields: i sequence, k kind (exec, cb, compile, run, code, test), f test file, b build
 	(fs or browser), sql, p parameters, r result, e error, c code hashes, of the exec a cb
-	belongs to. Sources are in <recording>.codes.jsonl, one {h, a} line per sha1, written as they
-	are first seen (an exit handler does not run under bun test).
+	belongs to. A test record is written before every test that runs, so that compare.js can
+	tell a file that ran tests and recorded no statement (the hook was missing) from a file
+	whose tests are all skipped. Sources are in <recording>.codes.jsonl, one {h, a} line per
+	sha1, written as they are first seen (an exit handler does not run under bun test).
 */
 
 const fs = require('fs');
@@ -103,13 +105,18 @@ function testFile() {
 	const m = s.match(fileRe);
 	return m ? m[1] : null;
 }
-// The file of the last statement, for code made in an asynchronous callback (REQUIRE, a file
-// source): no test frame is on the stack then
-let lastFile = process.env.PARITY_TAG || '?';
+// When no test frame is on the stack (a promise chain, alasql([...]) in test611, a REQUIRE or
+// file callback), the file is the one whose tests bun is running: Bun.main. Outside bun test
+// (the dialect corpus) it is the tag.
+const tag = process.env.PARITY_TAG || '?';
 function currentFile() {
 	const f = testFile();
-	if (f) lastFile = f;
-	return f || lastFile;
+	if (f) return f;
+	if (typeof Bun !== 'undefined' && Bun.main) {
+		const m = path.basename(Bun.main);
+		if (/^test.*\.js$/.test(m)) return m;
+	}
+	return tag;
 }
 
 function write(rec) {
@@ -267,7 +274,8 @@ function hook(alasql, build) {
 
 // test1495 and test1889 delete alasql from require.cache and load it again, which makes a new,
 // unhooked instance that every later file gets. A beforeEach from the preload runs before every
-// test in every file and hooks an instance it has not seen.
+// test in every file and hooks an instance it has not seen. The same hook writes the test record
+// (Bun.main is the test file that is running).
 const builds = [
 	[path.join(root, 'dist', 'alasql.fs.js'), 'fs'],
 	[path.join(root, 'dist', 'alasql.js'), 'browser'],
@@ -287,7 +295,10 @@ const fsBuild = require(builds[0][0]);
 require(builds[1][0]);
 hookCurrent();
 try {
-	require('bun:test').beforeEach(hookCurrent);
+	require('bun:test').beforeEach(function () {
+		hookCurrent();
+		write({i: seq++, k: 'test', f: path.basename(typeof Bun !== 'undefined' ? Bun.main : '?')});
+	});
 } catch (e) {
 	// not under bun test (the dialect corpus): nothing reloads alasql there
 }
