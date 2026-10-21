@@ -1,3 +1,8 @@
+import {cloneDeep} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var yy = alasql.yy;
+	var JSONtoJS = internal.JSONtoJS;
 /*
 //
 // INSERT for Alasql.js
@@ -457,3 +462,4 @@ yy.Insert.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params, cb);
 	//	throw new Error('Insert statement is should be compiled')
 };
+}

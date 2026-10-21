@@ -59,6 +59,7 @@ import dropindex from './statements/dropindex.js';
 import withSelect from './statements/with.js';
 import ifStatement from './statements/if.js';
 import whileStatement from './statements/while.js';
+import insert from './statements/insert.js';
 import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
@@ -112,6 +113,7 @@ dropindex(instance, internal);
 withSelect(instance, internal);
 ifStatement(instance, internal);
 whileStatement(instance, internal);
+insert(instance, internal);
 legacy(instance, internal);
 // after the legacy module: it reads utils when it is installed
 promise(instance, internal);
