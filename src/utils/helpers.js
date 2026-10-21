@@ -251,6 +251,54 @@ export var arrayIntersect = function (a, b) {
 	return r;
 };
 
+// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+
+/**
+  Array with distinct records
+  @param {array} data
+  @return {array}
+  */
+export var distinctArray = function (data) {
+	var uniq = {};
+	// TODO: Speedup, because Object.keys is slow
+	for (var i = 0, ilen = data.length; i < ilen; i++) {
+		var uix;
+		if (typeof data[i] === 'object') {
+			uix = Object.keys(data[i])
+				.sort()
+				.map(function (k) {
+					return k + '`' + data[i][k];
+				})
+				.join('`');
+		} else {
+			uix = data[i];
+		}
+		uniq[uix] = data[i];
+	}
+	var res = [];
+	for (var key in uniq) {
+		res.push(uniq[key]);
+	}
+	return res;
+};
+
+/**
+  Extend object a with properties of b
+  @function
+  @param {object} a
+  @param {object} b
+  @return {object}
+  */
+export var extend = function extend(a, b) {
+	a = a || {};
+	for (var key in b) {
+		if (b.hasOwnProperty(key)) {
+			a[key] = b[key];
+		}
+	}
+	return a;
+};
+
 export default function install(alasql) {
 /*jshint unused:false*/
 /*
@@ -265,6 +313,8 @@ export default function install(alasql) {
  @type {object}
  */
 var utils = (alasql.utils = {});
+utils.extend = extend;
+utils.distinctArray = distinctArray;
 utils.arrayUnion = arrayUnion;
 utils.arrayDiff = arrayDiff;
 utils.arrayIntersect = arrayIntersect;
@@ -382,52 +432,6 @@ var doubleqq = (utils.doubleqq = function (s) {
 	 return x === y;
  };
  */
-
-/**
-  Array with distinct records
-  @param {array} data
-  @return {array}
-  */
-var distinctArray = (utils.distinctArray = function (data) {
-	var uniq = {};
-	// TODO: Speedup, because Object.keys is slow
-	for (var i = 0, ilen = data.length; i < ilen; i++) {
-		var uix;
-		if (typeof data[i] === 'object') {
-			uix = Object.keys(data[i])
-				.sort()
-				.map(function (k) {
-					return k + '`' + data[i][k];
-				})
-				.join('`');
-		} else {
-			uix = data[i];
-		}
-		uniq[uix] = data[i];
-	}
-	var res = [];
-	for (var key in uniq) {
-		res.push(uniq[key]);
-	}
-	return res;
-});
-
-/**
-  Extend object a with properties of b
-  @function
-  @param {object} a
-  @param {object} b
-  @return {object}
-  */
-var extend = (utils.extend = function extend(a, b) {
-	a = a || {};
-	for (var key in b) {
-		if (b.hasOwnProperty(key)) {
-			a[key] = b[key];
-		}
-	}
-	return a;
-});
 
 /**
  * Extracts the primitive data
