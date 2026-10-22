@@ -32,3 +32,4 @@ src/console/
 src/dialects/
 src/formats/
 src/storage/
+src/worker/

@@ -1,3 +1,4 @@
+export default function install(alasql) {
 alasql = alasql || false;
 
 if (!alasql) {
@@ -73,4 +74,5 @@ if (typeof Worker !== 'undefined') {
 			return;
 		}
 	};
+}
 }

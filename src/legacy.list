@@ -1,5 +1,4 @@
 # The files of the generated legacy module, in order. Converting a file means taking it off
 # this list (context/roadmap-phase-1.md). build.js reads it.
 src/97saveas.js
-src/99worker.js
 src/98finish.js
