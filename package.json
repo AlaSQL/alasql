@@ -15,6 +15,11 @@
 			"browser": "./dist/alasql.min.js",
 			"default": "./dist/alasql.fs.js"
 		},
+		"./esm": {
+			"types": "./types/alasql.d.ts",
+			"node": "./dist/alasql.mjs",
+			"default": "./dist/alasql.browser.mjs"
+		},
 		"./precompile": "./dist/precompile/index.js"
 	},
 	"directories": {

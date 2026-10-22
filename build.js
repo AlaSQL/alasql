@@ -20,6 +20,11 @@
 	                            plugin does what the rexreplace passes of build.sh did), inside the
 	                            UMD wrapper
 	  dist/alasql.min.js        the same, minified by esbuild before the wrapper is added
+	  dist/alasql.mjs           ES module for Node (alasql/esm): the same bundle in esbuild's esm
+	                            format, with require and __dirname made from import.meta.url at
+	                            the top, because the code keeps its lazy require() calls
+	  dist/alasql.browser.mjs   ES module for browsers and bundlers (alasql/esm, default
+	                            condition): the browser file's content, no Node import in it
 	  dist/alasql-worker.js     the worker, built the same way from the worker files
 	  dist/precompile/index.js  src/precompile/index.js as CommonJS, the dist file left external
 	  dist/alasql.d.ts, dist/alasql-echo.js, dist/alasql-prolog.js: copied
@@ -197,19 +202,28 @@ const sourcePlugin = (browser, version, build) => ({
 
 export async function bundle(
 	entry,
-	{browser = false, minify = false, external = EXTERNALS, version = '', build = ''} = {}
+	{
+		browser = false,
+		minify = false,
+		external = EXTERNALS,
+		version = '',
+		build = '',
+		format = 'cjs',
+		bannerJs = '',
+	} = {}
 ) {
 	const result = await esbuild.build({
 		entryPoints: [entry],
 		bundle: true,
 		write: false,
-		format: 'cjs',
+		format,
 		platform: browser ? 'browser' : 'node',
 		external,
 		minify,
 		keepNames: !minify,
 		legalComments: 'inline',
 		define: browser ? {__dirname: '""'} : undefined,
+		banner: bannerJs ? {js: bannerJs} : undefined,
 		plugins: [sourcePlugin(browser, version, build)],
 		logLevel: 'silent',
 	});
@@ -217,6 +231,17 @@ export async function bundle(
 	// the output starts with its own "use strict" when the entry is an ES module; the head adds it
 	return result.outputFiles[0].text.replace(/^"use strict";\n/, '');
 }
+
+// The ES module files, reached as alasql/esm (package.json, exports). The Node one keeps the
+// require() calls of the externals and the __dirname that findAlaSQLPath returns, so it makes
+// both at the top with createRequire and import.meta.url; the browser one has neither, so a
+// bundler finds no Node import in it.
+export const NODE_ESM_BANNER =
+	"import {createRequire as __createRequire} from 'module';\n" +
+	"import {fileURLToPath as __fileURLToPath} from 'url';\n" +
+	"import {dirname as __dirnameOf} from 'path';\n" +
+	'const require = __createRequire(import.meta.url);\n' +
+	'const __dirname = __dirnameOf(__fileURLToPath(import.meta.url));\n';
 
 // esbuild's cjs output of an ES module exports {default: alasql}; the package exports the function
 export function defaultExport(code) {
@@ -283,6 +308,16 @@ export async function build() {
 	write(
 		'alasql.min.js',
 		head + umd(defaultExport(await bundle(entry, {...opts, browser: true, minify: true})), true)
+	);
+	// ES modules are strict on their own, so no directive; esbuild's output ends with the export
+	write(
+		'alasql.mjs',
+		banner(version, buildId) +
+			(await bundle(entry, {...opts, format: 'esm', bannerJs: NODE_ESM_BANNER}))
+	);
+	write(
+		'alasql.browser.mjs',
+		banner(version, buildId) + (await bundle(entry, {...opts, browser: true, format: 'esm'}))
 	);
 
 	// The worker was never strict: src/worker/start.js has no directive and assigns an undeclared
