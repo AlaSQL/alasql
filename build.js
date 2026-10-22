@@ -168,7 +168,7 @@ export function workerModule(version, build) {
 }
 
 export function banner(version, build) {
-	return inject(fs.readFileSync(path.join(root, 'src', '05copyright.js'), 'utf8'), version, build);
+	return inject(fs.readFileSync(path.join(root, 'src', 'copyright.js'), 'utf8'), version, build);
 }
 
 // What build.sh did to the browser copy with rexreplace
