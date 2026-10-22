@@ -1,10 +1,8 @@
 /*
-	The entry of the build (build.js; context/roadmap-phase-1.md, step 2).
+	The entry of the build (build.js; context/roadmap-phase-1.md).
 
-	create() makes the alasql object (src/engine/create.js). The modules converted to ES modules
-	are installed here, one by one, as the conversion goes. Everything not yet converted is in
-	src/generated/legacy.js: the numbered files in the order of src/legacy.list, which build.js
-	writes before bundling. It is not committed.
+	create() makes the alasql object (src/engine/create.js); every module is installed here, in
+	the order the numbered files had in the concatenation, as install(alasql, internal).
 
 	The object is not named alasql at this level: esbuild would give every nested alasql, such as
 	the install parameters, a suffix, which shows in the error messages JavaScriptCore writes
@@ -94,7 +92,6 @@ import indexeddb from './storage/indexeddb.js';
 import localstorage from './storage/localstorage.js';
 import sqljs from './storage/sqljs.js';
 import filestorage from './storage/filestorage.js';
-import legacy from './generated/legacy.js';
 import promise from './engine/promise.js';
 
 const instance = create();
@@ -182,7 +179,6 @@ sqljs(instance, internal);
 filestorage(instance, internal);
 // the browser-only block of 97saveas.js, around the worker launcher
 if (instance.utils.isBrowser && !instance.utils.isWebWorker) launcher(instance, internal);
-legacy(instance, internal);
 finish(instance, internal);
 promise(instance, internal);
 
