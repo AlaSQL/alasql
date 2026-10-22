@@ -1,3 +1,7 @@
+import {extend} from '../utils/helpers.js';
+
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // CREATE VERTEX for AlaSQL
@@ -370,3 +374,4 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	};
 	return statement;
 };
+}

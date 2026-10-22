@@ -1,3 +1,6 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
+	var Table = alasql.Table;
 /*
 //
 // WITH SELECT for Alasql.js
@@ -256,3 +259,4 @@ yy.DropView.prototype.execute = function (databaseid) {
 };
 
 */
+}

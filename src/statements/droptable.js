@@ -1,3 +1,6 @@
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
+	var yy = alasql.yy;
 /*
 //
 // DROP TABLE for Alasql.js
@@ -111,3 +114,4 @@ yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 	return cb ? cb(0) : 0;
 };
+}

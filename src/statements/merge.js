@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // SET for Alasql.js
@@ -48,3 +50,4 @@ yy.Merge.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+}

@@ -1,3 +1,9 @@
+import {hash} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
+	var yy = alasql.yy;
+	var indexColumnToJS = internal.indexColumnToJS;
 /*
 //
 // CREATE TABLE for Alasql.js
@@ -107,3 +113,4 @@ yy.Reindex.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+}

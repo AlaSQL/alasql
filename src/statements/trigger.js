@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // TRIGGER for Alasql.js
@@ -132,3 +134,4 @@ alasql.executeTrigger = function (trigger, databaseid, ...args) {
 		return trigger.statement.execute(databaseid);
 	}
 };
+}

@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // SHOW for Alasql.js
@@ -150,3 +152,4 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 		throw new Error('There is no such table "' + this.table.tableid + '"');
 	}
 };
+}

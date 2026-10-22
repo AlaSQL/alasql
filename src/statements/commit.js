@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // Commit for Alasql.js
@@ -58,3 +60,4 @@ yy.RollbackTransaction.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+}

@@ -38,6 +38,27 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/46apply.js` | `src/select/apply.js` | `install(alasql)`: APPLY | after union | `var yy = alasql.yy` | 83% |
 | `src/47over.js` | `src/select/window.js` | `install(alasql)`: OVER | after apply | `var yy = alasql.yy` | 86% |
 | `src/52linq.js` | `src/select/linq.js` | `install(alasql)`: the fluent interface | after window | `import {hash} from '../utils/helpers.js'`; `var yy = alasql.yy` | 97% |
+| `src/30statements.js` | `src/engine/statements.js` | `install(alasql)`: `yy.Statements` | after yy | `var yy = alasql.yy` | 89% |
+| `src/35search.js` | `src/graph/search.js` | `install(alasql, internal)`: `yy.Search` | after linq | `import {cloneDeep, distinctArray} from '../utils/helpers.js'`; `var yy = alasql.yy`, `var modify = internal.modify` | 99% |
+| `src/60createtable.js` | `src/statements/createtable.js` | `install(alasql, internal)`: `yy.ColumnDef`, `yy.CreateTable`; `internal.indexColumnToJS` (it reads `yy`) | after search | `import {cloneDeep, hash} from '../utils/helpers.js'`; `var schemaChanged = internal.schemaChanged`, `var yy = alasql.yy`; the `internal` line | 99% |
+| `src/62droptable.js` | `src/statements/droptable.js` | `install(alasql, internal)`: DROP TABLE and TRUNCATE TABLE | after createtable | `var schemaChanged = internal.schemaChanged`, `var yy = alasql.yy` | 95% |
+| `src/63createvertex.js` | `src/graph/create.js` | `install(alasql)`: CREATE VERTEX, CREATE EDGE and CREATE GRAPH | after droptable | `import {extend} from '../utils/helpers.js'`; `var yy = alasql.yy` | 98% |
+| `src/64altertable.js` | `src/statements/altertable.js` | `install(alasql, internal)`: ALTER TABLE | after graph/create | `var schemaChanged = internal.schemaChanged`, `var yy = alasql.yy` | 97% |
+| `src/65createindex.js` | `src/statements/createindex.js` | `install(alasql, internal)`: CREATE INDEX and REINDEX | after altertable | `import {hash} from '../utils/helpers.js'`; `var schemaChanged = internal.schemaChanged`, `var yy = alasql.yy`, `var indexColumnToJS = internal.indexColumnToJS` | 93% |
+| `src/66dropindex.js` | `src/statements/dropindex.js` | `install(alasql)`: DROP INDEX | after createindex | `var yy = alasql.yy` | 85% |
+| `src/67withselect.js` | `src/statements/with.js` | `install(alasql)`: WITH (a commented-out CREATE VIEW execute and DROP VIEW stay in the file) | after dropindex | `var yy = alasql.yy`, `var Table = alasql.Table` | 98% |
+| `src/68if.js` | `src/statements/if.js` | `install(alasql)`: IF | after with | `var yy = alasql.yy` | 94% |
+| `src/69while.js` | `src/statements/while.js` | `install(alasql)`: WHILE, BEGIN END, BREAK and CONTINUE | after if | `var yy = alasql.yy` | 98% |
+| `src/70insert.js` | `src/statements/insert.js` | `install(alasql, internal)`: INSERT | after while | `import {cloneDeep} from '../utils/helpers.js'`; `var yy = alasql.yy`, `var JSONtoJS = internal.JSONtoJS` | 98% |
+| `src/71trigger.js` | `src/statements/trigger.js` | `install(alasql)`: CREATE TRIGGER and DROP TRIGGER | after insert | `var yy = alasql.yy` | 98% |
+| `src/72delete.js` | `src/statements/delete.js` | `install(alasql)`: DELETE | after trigger | `import {cloneDeep} from '../utils/helpers.js'`; `var yy = alasql.yy` | 98% |
+| `src/74update.js` | `src/statements/update.js` | `install(alasql)`: UPDATE and `yy.SetColumn` | after delete | `import {cloneDeep} from '../utils/helpers.js'`; `var yy = alasql.yy` | 97% |
+| `src/75merge.js` | `src/statements/merge.js` | `install(alasql)`: MERGE | after update | `var yy = alasql.yy` | 94% |
+| `src/76usedatabase.js` | `src/statements/databases.js` | `install(alasql, internal)`: CREATE, ATTACH, DETACH, USE and DROP DATABASE | after merge | `var schemaChanged = internal.schemaChanged`, `var yy = alasql.yy` | 97% |
+| `src/77declare.js` | `src/statements/declare.js` | `install(alasql)`: DECLARE | after databases | `var yy = alasql.yy` | 96% |
+| `src/78show.js` | `src/statements/show.js` | `install(alasql)`: SHOW | after declare | `var yy = alasql.yy` | 98% |
+| `src/79set.js` | `src/statements/set.js` | `install(alasql)`: SET | after show | `var yy = alasql.yy` | 97% |
+| `src/81commit.js` | `src/statements/commit.js` | `install(alasql)`: BEGIN, COMMIT and ROLLBACK TRANSACTION | after set | `var yy = alasql.yy` | 95% |
 | `src/18promise.js` | `src/engine/promise.js` | `install(alasql)`: `alasql.promise` and the global `Promise` check | after the legacy module, which makes `utils` | `var utils = alasql.utils` | 96% |
 
 ## How one module reaches another's internals (decided 2026-10-22, step 4)
@@ -46,7 +67,7 @@ Every `install` takes a second parameter, `internal`: an object made in `src/ind
 
 Plain imports are for stateless helpers the old code used by bare name, as `src/utils/helpers.js` exports them; a call through `alasql.utils.x` stays as it is, because a user's override of that function reaches the engine today.
 
-38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6.
+38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6. Step 7 put the statements under `src/statements/`, the graph statements (SEARCH, CREATE VERTEX) under `src/graph/`, and `yy.Statements` beside `yy` in `src/engine/`.
 
 Still in the legacy module: every file in `src/legacy.list`, in that order, wrapped by `build.js` into `src/generated/legacy.js` as `install(alasql)`.
 
@@ -58,7 +79,9 @@ Names the legacy files reach by bare name from converted modules (`tools/free-va
 | `yy` | `src/engine/yy.js` | `var yy = alasql.yy` |
 | `utils`, `cloneDeep`, `hash`, `extend`, `escapeq`, `deepEqual`, `distinctArray`, `arrayExceptDeep`, `arrayIntersectDeep`, `arrayUnionDeep`, `flatArray`, `arrayIntersect`, `arrayDiff`, `arrayUnion`, `escapeqq` | `src/utils/helpers.js` | `var utils = alasql.utils` and `var name = utils.name` (`escapeqq` is `utils.undoubleq`) |
 | `escapeq`, `returnTrue`, `n2u`, `und` | `src/utils/helpers.js` | `import {escapeq, returnTrue, n2u, und} from '../utils/helpers.js'` (stateless, exported since step 5) |
-| `modify` | `src/select/select.js` | `var modify = internal.modify` (35search.js) |
+| `modify` | `src/select/select.js` | `var modify = internal.modify` (35search.js until step 7) |
+| `indexColumnToJS` | `src/statements/createtable.js` | `var indexColumnToJS = internal.indexColumnToJS` (65createindex.js until step 7) |
+| `extend`, `distinctArray` | `src/utils/helpers.js` | on the same import line (stateless, exported since step 7) |
 | `arrayUnion`, `arrayDiff`, `arrayIntersect` | `src/utils/helpers.js` | on the same import line (stateless, exported since step 6) |
 | `JSONtoJS`, `JSONtoString` | `src/expression/json.js` | `var JSONtoJS = internal.JSONtoJS`, `var JSONtoString = internal.JSONtoString` |
 | `schemaChanged` | `src/engine/core.js` | `var schemaChanged = internal.schemaChanged` |

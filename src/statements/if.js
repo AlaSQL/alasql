@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // IF for Alasql.js
@@ -39,3 +41,4 @@ yy.If.prototype.execute = function (databaseid, params, cb) {
 	//	 else res = this.elsestat.execute(databaseid,params,cb,scope);
 	return res;
 };
+}
