@@ -1,3 +1,6 @@
+export default function install(alasql) {
+	var utils = alasql.utils;
+	var Database = alasql.Database;
 /* eslint-disable */ 
 
 /*
@@ -18,14 +21,10 @@ if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
 //*/
 
 
-};
-
 // Create default database
 new Database("alasql");
 
 // Set default database
 alasql.use("alasql");
 
-return alasql;
-}));
-
+}
