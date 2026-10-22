@@ -1,13 +1,13 @@
 # Parity check
 
-Does a build behave the same as the reference build, or as the build before this change? The ES6 conversion (`context/roadmap-phase-1.md`, step 0) promises the same behaviour, and the suite alone cannot show that: it has 2,447 passing tests, 213 skipped, and the browser, worker, CLI and ESM paths are hardly covered. The dialect test in `test/dialect/` stays what it is: alasql against SQLite, the reference engine.
+Does a build behave exactly like a reference build? Use it for changes that must not change behaviour: a refactor, a bundler or parser upgrade, performance work. The suite alone cannot show that: many tests check only part of a result, and the browser, worker, CLI and ESM paths are hardly covered. The dialect test in `test/dialect/` is a different check: alasql against SQLite.
 
 ```sh
 yarn test-parity          # record the reference, record the current build, compare; exit code 1 on any difference
 yarn test-parity-smoke    # the smokes, including --pack, on the node in PATH
 ```
 
-`yarn test-parity` builds `dist/` and runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). When to run what is in `context/roadmap-phase-1.md`, "How much to verify, and when": the suite per commit, parity and the smokes on the tip of a step and after every merge of `develop`, the double run that finds unstable statements (`record new` without `--once`) as the last check of a step, and `git bisect run` when a tip fails. Run the three by hand to use another reference (below):
+`yarn test-parity` builds `dist/` and runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). Run the suite per commit and the parity check on the tip of a piece of work; when the tip fails, `git bisect run` finds the commit. For the last check, record without `--once`: the second run finds statements whose result changes from run to run. Run the three by hand to use another reference (below):
 
 ```sh
 bun test/parity/run.js record ref --ref      # the published 4.21.0 in dist/, recorded, then dist/ rebuilt
@@ -15,11 +15,11 @@ bun test/parity/run.js record new            # the current dist/
 bun test/parity/run.js compare ref new       # exit code 1 on any difference
 ```
 
-Record the build before a change and the build after it, and compare. When a step claims "no behaviour change", the compare says so or shows the statement that changed.
+Record the build before a change and the build after it, and compare. When a change claims "no behaviour change", the compare says so or shows the statement that changed.
 
 ## The reference
 
-The published 4.21.0 tarball (`--ref`, the default) until a merge of `develop` brings a behaviour fix into the branch. From then on the reference is `develop` at the commit last merged forward, built with its own `build.sh`: `--ref <commit>` takes a sha, a branch or a tag, extracts it with `git archive` under `.ref/` and builds it there once. `--ref <version>` downloads any published version. Otherwise every merged 4.x fix shows up as a difference. Since #2798 was merged forward (2026-10-22, step 10) the reference is `develop` at 044ab07a, recorded as `ref-044ab07a`; `yarn test-parity` names it. The published tarball is not always the build of its tag: 4.20.1 on npm carries a dist built from `develop-a98910ff` that calls itself 4.20.0 (fixed by #2731 for later releases); the recording's `meta` line shows what was really recorded.
+The reference is the build the change starts from. `--ref <version>` downloads a published version (`--ref` alone: 4.21.0); `--ref <commit>` takes a sha, a branch or a tag, extracts it with `git archive` under `.ref/` and builds it there once with its own build. Pick a reference with the same behaviour as the base of the change: a published version older than a merged fix shows that fix as a difference. `yarn test-parity` uses `ref-044ab07a`, `develop` with #2798. The published tarball is not always the build of its tag: 4.20.1 on npm carries a dist built from `develop-a98910ff` that calls itself 4.20.0 (fixed by #2731 for later releases); the recording's `meta` line shows what was really recorded.
 
 After a recording against another dist, `dist/` is rebuilt with the project's `build-only` script, so a new build script is used as soon as it exists.
 
@@ -56,13 +56,12 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `run.js`: `record <label> [--ref [<version>|<commit>] | --dist <dir>]` and `compare <a> <b>`. Recordings are in `recordings/`, the downloaded or built references in `.ref/`; both are ignored by git.
 - `silent-files.txt`: the test files allowed to run tests without a statement, each with its reason.
 - `unstable-statements.txt`: statements the engine answers differently run by run; only their code is compared.
-- `api-allowed.txt`: API paths the conversion adds or changes on purpose, each with its reason; the compare reports them as allowed.
+- `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed.
 - `record.js`: the recorder, loaded by `bun test --preload`. It hooks `alasql.dexec`, `alasql.compile` and `globalThis.Function`.
 - `dialect-corpus.js`: runs the dialect cases through alasql under the recorder.
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.
 - `api.js`: `snapshot [dist]` and `compare a.json b.json`.
-- `smoke.js`: the browser global in a `vm` sandbox, the worker file, the CLI, the ESM import, the two `alasql/esm` files (the Node one, and the browser one under node and through esbuild), `alasql.min.js` under node, other node binaries (`--node=`), and `--pack`: `npm pack`, install in a temporary folder, then `require`, `import` and the CLI.
-- `ledger.md`: bytes and gzip of every `dist` file per step of the conversion, the benchmark against the previous step, and whether two builds gave the same hashes.
+- `smoke.js`: the browser global in a `vm` sandbox, the worker file, the CLI, the ESM import, `alasql.min.js` under node, other node binaries (`--node=`), and `--pack`: `npm pack`, install in a temporary folder, then `require`, `import` and the CLI.
 
 ## Not covered
 

@@ -1,5 +1,5 @@
 # Commits to leave out of git blame: formatting only. GitHub reads this file; a clone sets
 # git config blame.ignoreRevsFile .git-blame-ignore-revs
 
-# Phase 1 of the ES6 conversion, step 10: the one Prettier run over the converted modules
+# Prettier over the ES module sources, formatting only
 fac32eef19572baff3c9e0ef3e6b44c13cc3025d

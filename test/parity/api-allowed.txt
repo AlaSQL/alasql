@@ -1,15 +1,15 @@
 # API paths allowed to differ from the reference build, one per line, with the reason after #.
 # compare.js reports them as allowed instead of failing; a path covers its prototype and
-# constructor. Everything the conversion adds to the alasql object on purpose goes here, so
-# that the API snapshot keeps catching what was not on purpose.
-alasql.utils.hash           # step 4: the stateless helpers are exports of src/utils/helpers.js now; as exports they have a .name, before they had none (a function assigned to utils.x has no inferred name)
-alasql.utils.deepEqual      # step 4: as above
-alasql.utils.arrayUnionDeep # step 4: as above
-alasql.utils.arrayExceptDeep # step 4: as above
-alasql.utils.arrayIntersectDeep # step 4: as above
-alasql.utils.escapeq        # step 5: as above
-alasql.utils.arrayUnion     # step 6: as above
-alasql.utils.arrayDiff      # step 6: as above
-alasql.utils.arrayIntersect # step 6: as above
-alasql.utils.distinctArray # step 7: as above
-alasql.utils.undoubleq # step 8: as above; the export is escapeqq, the bare name the old code used, so that is its .name
+# constructor. Every change to the alasql object made on purpose goes here, so that the API
+# snapshot keeps catching what was not on purpose.
+alasql.utils.hash           # stateless helpers are module exports now; as exports they have a .name, which a function assigned to utils.x did not have
+alasql.utils.deepEqual      # as above
+alasql.utils.arrayUnionDeep # as above
+alasql.utils.arrayExceptDeep # as above
+alasql.utils.arrayIntersectDeep # as above
+alasql.utils.escapeq        # as above
+alasql.utils.arrayUnion     # as above
+alasql.utils.arrayDiff      # as above
+alasql.utils.arrayIntersect # as above
+alasql.utils.distinctArray # as above
+alasql.utils.undoubleq # as above; the export is escapeqq, the bare name the old code used, so that is its .name

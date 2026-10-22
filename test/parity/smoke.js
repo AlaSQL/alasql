@@ -1,5 +1,5 @@
 /*
-	Smokes for the paths the suite does not cover (context/roadmap-phase-1.md, step 0). Run with
+	Smokes for the paths the suite does not cover. Run with
 	node, because the sandbox is node:vm:
 
 	  node test/parity/smoke.js [--node=/path/to/node ...] [--pack] [--json]
@@ -10,16 +10,11 @@
 	           with the right script path.
 	3 cli      node bin/alasql-cli.js "SELECT VALUE 42" prints 42.
 	4 esm      import() of dist/alasql.fs.js gives the function as default export.
-	4b esm node file     import() of dist/alasql.mjs (alasql/esm under Node) gives the function
-	           and findAlaSQLPath returns a path (__dirname is made from import.meta.url).
-	4c esm browser file  dist/alasql.browser.mjs (alasql/esm elsewhere) runs a query in a child
-	           node, and no line of it imports module, fs, path or url.
-	4d esm browser bundle  esbuild bundles dist/alasql.browser.mjs for the browser without an error.
 	5 min      dist/alasql.min.js loads under node (the exports branch) and runs a query.
 	6 node     --node: dist/alasql.fs.js loads and runs on each given node binary (Node 16 is
 	           the floor to check).
-	7 pack     --pack: npm pack, install in a temporary folder, then require, import, import of
-	           alasql/esm and the CLI from there. Slow and needs the network.
+	7 pack     --pack: npm pack, install in a temporary folder, then require, import and the CLI
+	           from there. Slow and needs the network.
 */
 
 const fs = require('fs');
@@ -177,53 +172,9 @@ async function main() {
 		return 'default export is the function';
 	});
 
-	// alasql/esm: the Node file in this process, the browser file in a child so that its "browser
-	// version" warning stays out of the results, and the browser file through a bundler
-	await checkAsync('esm node file', async () => {
-		const m = await import(pathToFileURL(dist('alasql.mjs')).href);
-		if (typeof m.default !== 'function') throw new Error('default export is ' + typeof m.default);
-		query(m.default);
-		if (typeof m.default.utils.findAlaSQLPath() !== 'string') throw new Error('no path');
-		return 'default export is the function; findAlaSQLPath works';
-	});
-	check('esm browser file', () => {
-		const out = execFileSync(
-			process.execPath,
-			[
-				'--input-type=module',
-				'-e',
-				`import alasql from ${JSON.stringify(pathToFileURL(dist('alasql.browser.mjs')).href)};` +
-					"console.log(JSON.stringify(alasql('SELECT 1+1 AS v')))",
-			],
-			{encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore']}
-		).trim();
-		// the file prints its "browser version" warning first, under node
-		const last = out.split('\n').pop();
-		if (last !== '[{"v":2}]') throw new Error('import gave ' + last);
-		const text = fs.readFileSync(dist('alasql.browser.mjs'), 'utf8');
-		const nodeImport = text.match(/^import .* from ['"](module|fs|path|url)['"]/m);
-		if (nodeImport) throw new Error('has a Node import: ' + nodeImport[0]);
-		return 'select 1+1 under node; no Node import in the file';
-	});
-	await checkAsync('esm browser bundle', async () => {
-		const esbuild = require('esbuild');
-		const r = await esbuild.build({
-			entryPoints: [dist('alasql.browser.mjs')],
-			bundle: true,
-			platform: 'browser',
-			format: 'esm',
-			write: false,
-			logLevel: 'silent',
-		});
-		if (r.errors.length) throw new Error(r.errors[0].text);
-		const warnings = [...new Set(r.warnings.map(w => w.text.replace(/"[^"]*"/g, '"..."')))];
-		return `esbuild, platform browser: ${r.outputFiles[0].text.length.toLocaleString('en-US')} bytes; ${r.warnings.length} warnings${warnings.length ? ': ' + warnings.join('; ') : ''}`;
-	});
-
 	if (args.includes('--pack')) {
 		const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'alasql-parity-'));
 		check('npm pack + install', () => {
-			// --json: the prepare script (husky) prints to stdout too
 			const packed = execFileSync(
 				'npm',
 				['pack', '--pack-destination', tmp, '--loglevel=error', '--json'],
@@ -252,16 +203,6 @@ async function main() {
 				{cwd: tmp, encoding: 'utf8'}
 			).trim();
 			if (esm !== '[{"v":2}]') throw new Error('import gave ' + esm);
-			const sub = execFileSync(
-				'node',
-				[
-					'--input-type=module',
-					'-e',
-					"import alasql from 'alasql/esm'; console.log(JSON.stringify(alasql('SELECT 1+1 AS v')))",
-				],
-				{cwd: tmp, encoding: 'utf8'}
-			).trim();
-			if (sub !== '[{"v":2}]') throw new Error('import of alasql/esm gave ' + sub);
 			const cli = execFileSync(
 				path.join(tmp, 'node_modules', '.bin', 'alasql'),
 				['SELECT VALUE 42'],
@@ -272,7 +213,7 @@ async function main() {
 			).trim();
 			if (cli !== '42') throw new Error('cli printed ' + cli);
 			const size = fs.statSync(path.join(tmp, tgz)).size;
-			return `${tgz} ${size.toLocaleString('en-US')} bytes; require, import, alasql/esm and cli ok`;
+			return `${tgz} ${size.toLocaleString('en-US')} bytes; require, import and cli ok`;
 		});
 		fs.rmSync(tmp, {recursive: true, force: true});
 	}

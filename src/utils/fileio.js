@@ -5,7 +5,7 @@ export default function install(alasql) {
 		return alasql.utils.saveAs.apply(this, arguments);
 	}
 	/*
-	File reading and writing for Node, the browser, React Native, Cordova and Meteor, split from src/15utility.js (docs/src-map.md). Same functions, same bodies.
+	File reading and writing for Node, the browser, React Native, Cordova and Meteor.
 */
 
 	/**

@@ -15,11 +15,6 @@
 			"browser": "./dist/alasql.min.js",
 			"default": "./dist/alasql.fs.js"
 		},
-		"./esm": {
-			"types": "./types/alasql.d.ts",
-			"node": "./dist/alasql.mjs",
-			"default": "./dist/alasql.browser.mjs"
-		},
 		"./precompile": "./dist/precompile/index.js"
 	},
 	"directories": {
@@ -35,7 +30,7 @@
 		"test-parity-smoke": "node test/parity/smoke.js --node=$(which node) --pack",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
-		"build-only": "bun build.js",
+		"build-only": "bun build.js && bunx rexreplace@2.3 PACKAGE_VERSION $npm_package_version -Iq 'dist/**/*.js' && bunx rexreplace@2.3 BUILD_VERSION \"'$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)'.replace(/[^\\da-z-]+/gi, '.')\" -IqJ 'dist/**/*.js'",
 		"test-perf": "bun test/performance/vs-npm.js",
 		"test-perf-mini": "bun test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
@@ -51,7 +46,7 @@
 		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
 		"repush": "yarn rebase && yarn push",
-		"amend": "git reset --soft HEAD~1 && sleep 1 && git add --all && git commit --file .git/COMMIT_EDITMSG # This works with husky hooks",
+		"amend": "git reset --soft HEAD~1 && sleep 1 && git add --all && git commit --file .git/COMMIT_EDITMSG",
 		"commit": "cmdmix 'git add --all && git commit -am \"%1\"'",
 		"add": "git add --all",
 		"goto": "git fetch && git checkout",
@@ -59,6 +54,7 @@
 		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
 		"preversion": "yarn && yarn test && npm login",
+		"version": "bunx rexreplace@2.3 'alasql@\\d+(\\.\\d+){2}' alasql@$npm_package_version -q README.md && git add README.md",
 		"prepublishOnly": "yarn build-only",
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},

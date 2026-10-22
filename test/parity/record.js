@@ -1,5 +1,5 @@
 /*
-	Parity recorder (context/roadmap-phase-1.md, step 0).
+	Parity recorder.
 
 	Loaded by `bun test --preload` through run.js. It patches the alasql builds the tests load
 	(dist/alasql.fs.js and dist/alasql.js) so that every statement is written, in order, to a

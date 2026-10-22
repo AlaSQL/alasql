@@ -123,7 +123,7 @@ export var deepEqual = function (x, y) {
 	return false;
 };
 
-// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+// Stateless, so other modules import it directly; install() also keeps it on alasql.utils, where users reach it.
 
 /**
   Convert NaN to undefined
@@ -204,7 +204,7 @@ export var escapeq = function (s) {
 	});
 };
 
-// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+// Stateless, so other modules import it directly; install() also keeps it on alasql.utils, where users reach it.
 
 /**
   Union arrays
@@ -251,7 +251,7 @@ export var arrayIntersect = function (a, b) {
 	return r;
 };
 
-// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+// Stateless, so other modules import it directly; install() also keeps it on alasql.utils, where users reach it.
 
 /**
   Array with distinct records

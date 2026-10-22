@@ -1,6 +1,6 @@
 import {und} from '../utils/helpers.js';
 
-// Stateless, exported for plain imports (context/roadmap-phase-1.md); install() puts what was on utils back on utils.
+// Stateless, so other modules import it directly; install() also keeps it on alasql.utils, where users reach it.
 
 export let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 

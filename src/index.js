@@ -1,8 +1,9 @@
 /*
-	The entry of the build (build.js; context/roadmap-phase-1.md).
+	The entry of the build (build.js).
 
-	create() makes the alasql object (src/engine/create.js); every module is installed here, in
-	the order the numbered files had in the concatenation, as install(alasql, internal).
+	create() makes the alasql object (src/engine/create.js), and every module is installed here
+	as install(alasql, internal). The order matters: a module that reads another module's names
+	when it installs comes after that module.
 
 	The object is not named alasql at this level: esbuild would give every nested alasql, such as
 	the install parameters, a suffix, which shows in the error messages JavaScriptCore writes

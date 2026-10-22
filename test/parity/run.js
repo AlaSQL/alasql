@@ -1,11 +1,11 @@
 /*
-	Parity check (context/roadmap-phase-1.md, step 0): is the behaviour of a build the same as
-	the reference build, or as the build before this change?
+	Parity check: does a build behave exactly like a reference build? For changes that must not
+	change behaviour: a refactor, a bundler or parser upgrade, performance work.
 
 	  bun test/parity/run.js record <label>                   # record a suite run of ./dist
 	  bun test/parity/run.js record <label> --ref             # the published 4.21.0
 	  bun test/parity/run.js record <label> --ref 4.20.1      # another published version
-	  bun test/parity/run.js record <label> --ref develop     # a commit, built with its build.sh
+	  bun test/parity/run.js record <label> --ref develop     # a commit, built with its own build
 	  bun test/parity/run.js record <label> --dist <dir>      # another build's dist folder
 	  bun test/parity/run.js record ref --ref --if-missing    # only when ref is not recorded yet
 	  bun test/parity/run.js compare <label-a> <label-b>      # compare two recordings
@@ -16,9 +16,8 @@
 	statements whose result differs between the two runs are written to <label>.unstable.json;
 	compare.js compares only their code. --once skips the second run.
 
-	The reference is the published 4.21.0 tarball until a merge of develop brings a behaviour fix
-	into the branch; from then on it is develop at the commit last merged forward, built with
-	build.sh (roadmap-phase-1.md, step 0). --ref <version> downloads that version from npm once;
+	The reference is the build the change starts from: a published version, or the commit before
+	the change. --ref <version> downloads that version from npm once;
 	--ref <commit> (a sha, a branch or a tag) extracts the commit with git archive and runs its own
 	build once (build.js when the commit has it, else build.sh); both are kept under test/parity/.ref/. The reference dist is put in place of
 	./dist for the recording, and ./dist is rebuilt afterwards with the project's build-only
@@ -94,7 +93,7 @@ function buildCommit(spec) {
 	const dist = path.join(dir, 'dist');
 	if (fs.existsSync(path.join(dist, 'alasql.fs.js'))) return dist;
 	console.log(
-		`building ${spec} (${sha.slice(0, 12)}) with its build.sh into ${path.relative(root, dir)}`
+		`building ${spec} (${sha.slice(0, 12)}) with its own build into ${path.relative(root, dir)}`
 	);
 	fs.rmSync(dir, {recursive: true, force: true});
 	fs.mkdirSync(dir, {recursive: true});
@@ -103,9 +102,11 @@ function buildCommit(spec) {
 	const tar = spawnSync('tar', ['x', '-C', dir], {input: archive.stdout});
 	if (tar.status) throw new Error('tar failed: ' + tar.stderr);
 	fs.symlinkSync(path.join(root, 'node_modules'), path.join(dir, 'node_modules'));
-	// a commit of the conversion has build.js; develop builds with build.sh
+	// a commit with build.js builds with its build-only script; an older one with build.sh
 	const withBun = fs.existsSync(path.join(dir, 'build.js'));
-	const status = withBun ? sh('bun', ['build.js'], {cwd: dir}) : sh('sh', ['build.sh'], {cwd: dir});
+	const status = withBun
+		? sh('bun', ['run', 'build-only'], {cwd: dir})
+		: sh('sh', ['build.sh'], {cwd: dir});
 	if (status) throw new Error(`the build of ${spec} failed`);
 	fs.writeFileSync(path.join(dir, 'PARITY_REF'), `${spec} ${sha}\n`);
 	return dist;
@@ -153,8 +154,8 @@ function record(label) {
 	fs.mkdirSync(recordings, {recursive: true});
 	const base = path.join(recordings, label);
 	const file = base + '.jsonl';
-	// --if-missing: a reference is recorded once and reused (roadmap-phase-1.md, "How much to
-	// verify, and when"); the recording's meta line says which build it holds
+	// --if-missing: a reference cannot change, so it is recorded once and reused; the recording's
+	// meta line says which build it holds
 	if (flag('--if-missing') && fs.existsSync(file)) {
 		const meta = JSON.parse(fs.readFileSync(file, 'utf8').split('\n')[0]);
 		console.log(
