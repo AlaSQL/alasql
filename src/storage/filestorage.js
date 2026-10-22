@@ -89,13 +89,14 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 		} catch (err) {
 			throw new Error('Data in FileStorage database are corrupted');
 		}
-		db.tables = db.data.tables;
-		// IF AUTOCOMMIT IS OFF then copy data to memory
-		if (!alasql.options.autocommit) {
-			if (db.tables) {
-				for (var tbid in db.tables) {
-					db.tables[tbid].data = db.data[tbid];
-				}
+		// Live tables are kept apart from the schema stored in the file, so storing a
+		// schema does not drop the keys and checks of the live table (#1846)
+		db.tables = {};
+		for (var tbid in db.data.tables) {
+			db.tables[tbid] = extend({}, db.data.tables[tbid]);
+			// IF AUTOCOMMIT IS OFF then copy data to memory
+			if (!alasql.options.autocommit) {
+				db.tables[tbid].data = db.data[tbid];
 			}
 		}
 		if (cb) res = cb(res);

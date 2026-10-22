@@ -224,25 +224,28 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			// UNIQUE clause
 			if (col.foreignkey) {
 				var fk = col.foreignkey.table;
+				// The check uses the primary key of the referenced table, as in 4.x; a named
+				// column is used only when that table has no primary key in memory (#1846)
+				var fkcolumnid = col.foreignkey.columnid;
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
-				if (typeof fk.columnid === 'undefined') {
-					if (fktable.pk.columns && fktable.pk.columns.length > 0) {
-						fk.columnid = fktable.pk.columns[0];
-					} else {
-						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
-					}
+				if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
+					fkcolumnid = fktable.pk.columns[0];
+				} else if (typeof fkcolumnid === 'undefined') {
+					throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
 				}
 				// Store foreignkey property in column for later access
 				newcol.foreignkey = {
 					tableid: fk.tableid,
-					columnid: fk.columnid,
+					columnid: fkcolumnid,
 				};
 				var fkfn = function (r) {
 					var rr = {};
 					var val = r[col.columnid];
 					// Only check foreign key if value is not null, undefined, or NaN
 					if (val != null && !(typeof val === 'number' && isNaN(val))) {
-						rr[fk.columnid] = val;
+						rr[fkcolumnid] = val;
+						// Get the table when checking, as storage engines can replace the table object
+						var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 						var addr = fktable.pk.onrightfn(rr);
 						if (!fktable.uniqs[fktable.pk.hh][addr]) {
 							throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
