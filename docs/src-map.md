@@ -1,6 +1,6 @@
 # Source map of the ES6 conversion
 
-One row per numbered file that has moved (`context/roadmap.md`, "The source map"): where its code lives now, what the module exports, and what the wrap added. A fix made against the old file on `develop` is redone in the module this table names when the merge cannot carry it. The body of a moved file keeps its indentation until the end of Phase 1, so git sees the move; the similarity column is `git diff -M --stat` between the file before the move and the module after the wrap.
+One row per numbered file that has moved (`context/roadmap.md`, "The source map"): where its code lives now, what the module exports, and what the wrap added. The similarity column is git's figure at the wrap commit, before step 10 formatted every converted module with Prettier in one commit (its hash is in `.git-blame-ignore-revs`, so blame still reaches the numbered files). A fix made against the old file on `develop` is redone in the module this table names when the merge cannot carry it. The body of a moved file keeps its indentation until the end of Phase 1, so git sees the move; the similarity column is `git diff -M --stat` between the file before the move and the module after the wrap.
 
 | Old file | Module | Exports | Installed | Added by the wrap | Similarity |
 | --- | --- | --- | --- | --- | --- |
