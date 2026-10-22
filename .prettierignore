@@ -7,6 +7,7 @@ test/test238.json
 build/
 
 test/lib/
+test/coverage/
 src/generated/
 
 # The head and tail of the worker concatenation (build.js) are not files Prettier can parse
