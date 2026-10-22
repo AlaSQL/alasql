@@ -60,7 +60,6 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/79set.js` | `src/statements/set.js` | `install(alasql)`: SET | after show | `var yy = alasql.yy` | 97% |
 | `src/81commit.js` | `src/statements/commit.js` | `install(alasql)`: BEGIN, COMMIT and ROLLBACK TRANSACTION | after set | `var yy = alasql.yy` | 95% |
 | `src/FileSaver.js` | `src/utils/filesaver.js` | `install(alasql, internal)`: FileSaver's `saveAs`, inside the same `if (utils.isBrowser && !utils.isWebWorker)` block that 97saveas.js opens in the legacy module, and the `alasql.utils.saveAs = saveAs` registration that 98finish.js held; `internal.saveAs` | after uncomment | `var utils = alasql.utils`; the `if` line, the registration and the closing brace; the `internal` line | 96% |
-| `src/97saveas.js` | still legacy; its `if` goes with 99worker.js in step 9 | its one line is the `if (utils.isBrowser && !utils.isWebWorker)` that wrapped 99worker.js and FileSaver.js; 98finish.js closes it | - | filesaver.js has the same line; 98finish.js lost the registration | - |
 | `src/12pretty.js` | `src/console/pretty.js` | `install(alasql)`: `alasql.pretty`, `alasql.prettyflag` | after commit | nothing beyond the wrapper | 92% |
 | `src/80console.js` | `src/console/console.js` | `install(alasql, internal)`: `alasql.con`, the console output | after pretty | `var utils = alasql.utils`, `var JSONtoString = internal.JSONtoString` | 98% |
 | `src/821tsql.js` | `src/dialects/tsql.js` | `install(alasql)`: `OBJECT_ID` under `alasql.options.tsql` | after console | nothing beyond the wrapper | 95% |
@@ -83,6 +82,13 @@ One row per numbered file that has moved (`context/roadmap.md`, "The source map"
 | `src/92localstorage.js` | `src/storage/localstorage.js` | `install(alasql)`: the localStorage engine | after indexeddb | `import {extend} from '../utils/helpers.js'` | 99% |
 | `src/93sqljs.js` | `src/storage/sqljs.js` | `install(alasql)`: the sql.js engine | after localstorage | `var yy = alasql.yy` | 98% |
 | `src/94filestorage.js` | `src/storage/filestorage.js` | `install(alasql, internal)`: the file storage engine | after sqljs | `import {extend} from '../utils/helpers.js'`; `var schemaChanged = internal.schemaChanged`, `var loadFile = alasql.utils.loadFile` | 97% |
+| `src/99worker.js` | `src/worker/launcher.js` | `install(alasql)`: `alasql.worker`; installed by `src/index.js` under the condition of 97saveas.js, and called by the worker bundle between its head and tail | before finish, under `if (instance.utils.isBrowser && !instance.utils.isWebWorker)` | the wrapper | 97% |
+| `src/99worker-start.js` | `src/worker/start.js` | the head of the worker bundle: the UMD head, the proxy `alasql` function, its promise interface; still concatenated by `build.js` (`src/generated/worker.js`), not a module | - | nothing | 100% |
+| `src/99worker-finish.js` | `src/worker/finish.js` | the tail of the worker bundle; concatenated as above | - | nothing | 100% |
+| `src/98finish.js` | `src/engine/finish.js` | `install(alasql)`: the browser warning and the default database | after every other module, before promise | `var utils = alasql.utils`, `var Database = alasql.Database`; the `};` of 97saveas.js and the UMD tail taken out, by hand (the codemod cuts a head, not a tail); CRLF endings kept | 77% |
+| `src/97saveas.js` | removed in step 9 | its `if (utils.isBrowser && !utils.isWebWorker)` is written out in `src/index.js` around the launcher install; `src/utils/filesaver.js` has its own copy since step 8 | - | - | - |
+| `src/05copyright.js` | `src/copyright.js` | the banner `build.js` puts at the top of every dist file; not a module | - | nothing | 100% |
+| `src/56sprintf.js, src/826orientdb.js, src/839zip.js, src/85help.js` | removed in step 9 | no build included them (not in build.sh); last touched 2018 to 2022 | - | - | - |
 | `src/18promise.js` | `src/engine/promise.js` | `install(alasql)`: `alasql.promise` and the global `Promise` check | after the legacy module, which makes `utils` | `var utils = alasql.utils` | 96% |
 
 ## How one module reaches another's internals (decided 2026-10-22, step 4)
@@ -91,11 +97,11 @@ Every `install` takes a second parameter, `internal`: an object made in `src/ind
 
 Plain imports are for stateless helpers the old code used by bare name, as `src/utils/helpers.js` exports them; a call through `alasql.utils.x` stays as it is, because a user's override of that function reaches the engine today.
 
-38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6. Step 7 put the statements under `src/statements/`, the graph statements (SEARCH, CREATE VERTEX) under `src/graph/`, and `yy.Statements` beside `yy` in `src/engine/`. Step 8 put the console and `alasql.pretty` under `src/console/`, the dialect files under `src/dialects/`, INTO and FROM with the spreadsheet, XML and GEXF code under `src/formats/`, PRINT, SOURCE, REQUIRE and ASSERT under `src/statements/`, the storage engines under `src/storage/`, and FileSaver.js under `src/utils/`; after it the legacy module holds 97saveas.js (the browser-only `if`), 99worker.js and 98finish.js.
+38query.js and 39dojoin.js are step 6 files by the roadmap, converted early in step 4 because they hold the internals the mechanism was decided on; the other sixteen followed in step 6. Step 7 put the statements under `src/statements/`, the graph statements (SEARCH, CREATE VERTEX) under `src/graph/`, and `yy.Statements` beside `yy` in `src/engine/`. Step 8 put the console and `alasql.pretty` under `src/console/`, the dialect files under `src/dialects/`, INTO and FROM with the spreadsheet, XML and GEXF code under `src/formats/`, PRINT, SOURCE, REQUIRE and ASSERT under `src/statements/`, the storage engines under `src/storage/`, and FileSaver.js under `src/utils/`; after it the legacy module held 97saveas.js (the browser-only `if`), 99worker.js and 98finish.js. Step 9 converted those, removed the legacy generator with its tools, and left no numbered file in `src/`.
 
-Still in the legacy module: every file in `src/legacy.list`, in that order, wrapped by `build.js` into `src/generated/legacy.js` as `install(alasql)`.
+Nothing is left in a legacy module: `src/legacy.list` and the generator in `build.js` went in step 9. The worker bundle is still a concatenation of `src/worker/start.js`, a call of the launcher module and `src/worker/finish.js` (`src/generated/worker.js`), because its head assigns undeclared names and was never strict.
 
-Names the legacy files reach by bare name from converted modules (`tools/free-variables.js`), and how the legacy module binds them:
+Names the legacy files reached by bare name from converted modules (listed by `tools/free-variables.js`, removed with the generator in step 9), and how the legacy module binds them:
 
 | Name | Declared by | Bound as |
 | --- | --- | --- |
