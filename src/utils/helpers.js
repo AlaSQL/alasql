@@ -73,7 +73,7 @@ export var arrayIntersectDeep = function (a, b) {
 /**
   Deep clone objects
   */
-export var cloneDeep = function cloneDeep(obj) {
+export function cloneDeep(obj) {
 	if (null === obj || typeof obj !== 'object') {
 		return obj;
 	}
@@ -98,7 +98,7 @@ export var cloneDeep = function cloneDeep(obj) {
 		}
 	}
 	return temp;
-};
+}
 
 /**
   Compare two objects in deep
@@ -289,7 +289,7 @@ export var distinctArray = function (data) {
   @param {object} b
   @return {object}
   */
-export var extend = function extend(a, b) {
+export function extend(a, b) {
 	a = a || {};
 	for (var key in b) {
 		if (b.hasOwnProperty(key)) {
@@ -297,7 +297,7 @@ export var extend = function extend(a, b) {
 		}
 	}
 	return a;
-};
+}
 
 /**
   Double quotes for SQL statements

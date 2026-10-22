@@ -61,7 +61,7 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `dialect-corpus.js`: runs the dialect cases through alasql under the recorder.
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.
 - `api.js`: `snapshot [dist]` and `compare a.json b.json`.
-- `smoke.js`: the browser global in a `vm` sandbox, the worker file, the CLI, the ESM import, `alasql.min.js` under node, other node binaries (`--node=`), and `--pack`: `npm pack`, install in a temporary folder, then `require`, `import` and the CLI.
+- `smoke.js`: the browser global in a `vm` sandbox, the worker file, the CLI, the ESM import, the two `alasql/esm` files (the Node one, and the browser one under node and through esbuild), `alasql.min.js` under node, other node binaries (`--node=`), and `--pack`: `npm pack`, install in a temporary folder, then `require`, `import` and the CLI.
 - `ledger.md`: bytes and gzip of every `dist` file per step of the conversion, the benchmark against the previous step, and whether two builds gave the same hashes.
 
 ## Not covered

@@ -20,6 +20,11 @@
 	                            plugin does what the rexreplace passes of build.sh did), inside the
 	                            UMD wrapper
 	  dist/alasql.min.js        the same, minified by esbuild before the wrapper is added
+	  dist/alasql.mjs           ES module for Node (alasql/esm): the same bundle in esbuild's esm
+	                            format, with require and __dirname made from import.meta.url at
+	                            the top, because the code keeps its lazy require() calls
+	  dist/alasql.browser.mjs   ES module for browsers and bundlers (alasql/esm, default
+	                            condition): the browser file's content, no Node import in it
 	  dist/alasql-worker.js     the worker, built the same way from the worker files
 	  dist/precompile/index.js  src/precompile/index.js as CommonJS, the dist file left external
 	  dist/alasql.d.ts, dist/alasql-echo.js, dist/alasql-prolog.js: copied
@@ -31,10 +36,12 @@
 	  output of an ES module exports {default: alasql}, and require('alasql') must give the function.
 	- The UMD wrapper for the browser files, by hand. esbuild has no UMD format. The wrapper gives
 	  the body a module object and returns module.exports.
-	- keepNames for the unminified files. When esbuild bundles, a name declared in a nested scope
-	  that shadows one of an enclosing scope gets a suffix (the class Table assigned to yy.Table
-	  beside var Table, the function extend inside var extend), which would change the .name of
-	  four functions and classes; keepNames keeps them. The minified file had mangled names before.
+	- No keepNames. It was on for the unminified files until the end of Phase 1, to keep the .name
+	  of functions whose identifier esbuild suffixes when a nested scope shadows an enclosing one;
+	  but its __name() helper, run at every creation of a named function, made SEARCH 40 percent
+	  slower on Node and 25 on Bun (the parity ledger, row 11). The two names it still protected,
+	  extend and cloneDeep, are function declarations in src/utils/helpers.js now, which esbuild
+	  does not suffix; the API snapshot of the parity check watches every other .name.
 	- __dirname is defined as '' in the browser build, which is what the only-for-browser shim in
 	  10start.js gives the code that shares its scope.
 	- PACKAGE_VERSION and BUILD_VERSION are replaced in the text of every source file, as build.sh
@@ -197,19 +204,27 @@ const sourcePlugin = (browser, version, build) => ({
 
 export async function bundle(
 	entry,
-	{browser = false, minify = false, external = EXTERNALS, version = '', build = ''} = {}
+	{
+		browser = false,
+		minify = false,
+		external = EXTERNALS,
+		version = '',
+		build = '',
+		format = 'cjs',
+		bannerJs = '',
+	} = {}
 ) {
 	const result = await esbuild.build({
 		entryPoints: [entry],
 		bundle: true,
 		write: false,
-		format: 'cjs',
+		format,
 		platform: browser ? 'browser' : 'node',
 		external,
 		minify,
-		keepNames: !minify,
 		legalComments: 'inline',
 		define: browser ? {__dirname: '""'} : undefined,
+		banner: bannerJs ? {js: bannerJs} : undefined,
 		plugins: [sourcePlugin(browser, version, build)],
 		logLevel: 'silent',
 	});
@@ -217,6 +232,17 @@ export async function bundle(
 	// the output starts with its own "use strict" when the entry is an ES module; the head adds it
 	return result.outputFiles[0].text.replace(/^"use strict";\n/, '');
 }
+
+// The ES module files, reached as alasql/esm (package.json, exports). The Node one keeps the
+// require() calls of the externals and the __dirname that findAlaSQLPath returns, so it makes
+// both at the top with createRequire and import.meta.url; the browser one has neither, so a
+// bundler finds no Node import in it.
+export const NODE_ESM_BANNER =
+	"import {createRequire as __createRequire} from 'module';\n" +
+	"import {fileURLToPath as __fileURLToPath} from 'url';\n" +
+	"import {dirname as __dirnameOf} from 'path';\n" +
+	'const require = __createRequire(import.meta.url);\n' +
+	'const __dirname = __dirnameOf(__fileURLToPath(import.meta.url));\n';
 
 // esbuild's cjs output of an ES module exports {default: alasql}; the package exports the function
 export function defaultExport(code) {
@@ -283,6 +309,16 @@ export async function build() {
 	write(
 		'alasql.min.js',
 		head + umd(defaultExport(await bundle(entry, {...opts, browser: true, minify: true})), true)
+	);
+	// ES modules are strict on their own, so no directive; esbuild's output ends with the export
+	write(
+		'alasql.mjs',
+		banner(version, buildId) +
+			(await bundle(entry, {...opts, format: 'esm', bannerJs: NODE_ESM_BANNER}))
+	);
+	write(
+		'alasql.browser.mjs',
+		banner(version, buildId) + (await bundle(entry, {...opts, browser: true, format: 'esm'}))
 	);
 
 	// The worker was never strict: src/worker/start.js has no directive and assigns an undeclared

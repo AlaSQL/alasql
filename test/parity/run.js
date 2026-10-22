@@ -133,7 +133,7 @@ function sizes() {
 	const dist = path.join(root, 'dist');
 	const result = {};
 	for (const f of fs.readdirSync(dist).sort()) {
-		if (!f.endsWith('.js')) continue;
+		if (!f.endsWith('.js') && !f.endsWith('.mjs')) continue;
 		const buf = fs.readFileSync(path.join(dist, f));
 		result[f] = {bytes: buf.length, gzip: zlib.gzipSync(buf, {level: 9}).length};
 	}
