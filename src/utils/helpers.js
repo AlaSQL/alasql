@@ -314,34 +314,34 @@ export var escapeqq = function (s) {
 };
 
 export default function install(alasql) {
-/*jshint unused:false*/
-/*
+	/*jshint unused:false*/
+	/*
 	Utilities for Alasql.js
 
 	@todo Review the list of utilities
 	@todo Find more effective utilities
 */
 
-/**
+	/**
  Alasql utility functions
  @type {object}
  */
-var utils = (alasql.utils = {});
-utils.extend = extend;
-utils.distinctArray = distinctArray;
-utils.undoubleq = escapeqq;
-utils.arrayUnion = arrayUnion;
-utils.arrayDiff = arrayDiff;
-utils.arrayIntersect = arrayIntersect;
-utils.escapeq = escapeq;
-utils.hash = hash;
-utils.arrayUnionDeep = arrayUnionDeep;
-utils.arrayExceptDeep = arrayExceptDeep;
-utils.arrayIntersectDeep = arrayIntersectDeep;
-utils.cloneDeep = cloneDeep;
-utils.deepEqual = deepEqual;
+	var utils = (alasql.utils = {});
+	utils.extend = extend;
+	utils.distinctArray = distinctArray;
+	utils.undoubleq = escapeqq;
+	utils.arrayUnion = arrayUnion;
+	utils.arrayDiff = arrayDiff;
+	utils.arrayIntersect = arrayIntersect;
+	utils.escapeq = escapeq;
+	utils.hash = hash;
+	utils.arrayUnionDeep = arrayUnionDeep;
+	utils.arrayExceptDeep = arrayExceptDeep;
+	utils.arrayIntersectDeep = arrayIntersectDeep;
+	utils.cloneDeep = cloneDeep;
+	utils.deepEqual = deepEqual;
 
-/**
+	/**
   Escape string
   @function
   @param {string} s Source string
@@ -351,9 +351,9 @@ utils.deepEqual = deepEqual;
   Pit\er's => Pit\\er\'s
 
   */
-// based on joliss/js-string-escape
+	// based on joliss/js-string-escape
 
-/**
+	/**
   Replace double quotes with single quote
   @param {string} s Source string
   @return {string} Replaced string
@@ -362,34 +362,34 @@ utils.deepEqual = deepEqual;
   Piter''s => Piter's
 
   */
-var doubleq = (utils.doubleq = function (s) {
-	return s.replace(/(\'\')/g, "\\'");
-});
+	var doubleq = (utils.doubleq = function (s) {
+		return s.replace(/(\'\')/g, "\\'");
+	});
 
-/**
+	/**
   Replace single quote with escaped single quote
   @param {string} s Source string
   @return {string} Replaced string
 
   @todo Check this function
 */
-var doubleqq = (utils.doubleqq = function (s) {
-	return s.replace(/'/g, "\\'");
-});
+	var doubleqq = (utils.doubleqq = function (s) {
+		return s.replace(/'/g, "\\'");
+	});
 
-/**
+	/**
   @function Hash a string to signed integer
   @param {string} source string
   @return {integer} hash number
   */
 
-// FNV-1a inspired hashing
+	// FNV-1a inspired hashing
 
-/**
+	/**
   Check equality of objects
   */
 
-/*/*
+	/*/*
  var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 	 if (deep) {
 		 if (x === y){
@@ -434,109 +434,109 @@ var doubleqq = (utils.doubleqq = function (s) {
  };
  */
 
-/**
- * Extracts the primitive data
- */
-var getValueOf = (utils.getValueOf = function (val) {
-	return typeof val === 'object' && (val instanceof String || val instanceof Number)
-		? val.valueOf()
-		: val;
-});
+	/**
+	 * Extracts the primitive data
+	 */
+	var getValueOf = (utils.getValueOf = function (val) {
+		return typeof val === 'object' && (val instanceof String || val instanceof Number)
+			? val.valueOf()
+			: val;
+	});
 
-/**
+	/**
   Flat array by first row
   */
-var flatArray = (utils.flatArray = function (a) {
-	//console.log(684,a);
-	if (!a || 0 === a.length) {
-		return [];
-	}
+	var flatArray = (utils.flatArray = function (a) {
+		//console.log(684,a);
+		if (!a || 0 === a.length) {
+			return [];
+		}
 
-	// For recordsets
-	if (typeof a === 'object' && a instanceof alasql.Recordset) {
-		return a.data.map(function (ai) {
-			return getValueOf(ai[a.columns[0].columnid]);
+		// For recordsets
+		if (typeof a === 'object' && a instanceof alasql.Recordset) {
+			return a.data.map(function (ai) {
+				return getValueOf(ai[a.columns[0].columnid]);
+			});
+		}
+		// Else for other arrays
+		var key = Object.keys(a[0])[0];
+		if (key === undefined) {
+			return [];
+		}
+		return a.map(function (ai) {
+			return ai[key];
 		});
-	}
-	// Else for other arrays
-	var key = Object.keys(a[0])[0];
-	if (key === undefined) {
-		return [];
-	}
-	return a.map(function (ai) {
-		return ai[key];
 	});
-});
 
-/**
+	/**
   Convert array of objects to array of arrays
   */
-var arrayOfArrays = (utils.arrayOfArrays = function (a) {
-	return a.map(function (aa) {
-		var ar = [];
-		for (var key in aa) {
-			ar.push(aa[key]);
-		}
-		return ar;
+	var arrayOfArrays = (utils.arrayOfArrays = function (a) {
+		return a.map(function (aa) {
+			var ar = [];
+			for (var key in aa) {
+				ar.push(aa[key]);
+			}
+			return ar;
+		});
 	});
-});
 
-if (!Array.isArray) {
-	Array.isArray = function (arg) {
-		return Object.prototype.toString.call(arg) === '[object Array]';
-	};
-}
+	if (!Array.isArray) {
+		Array.isArray = function (arg) {
+			return Object.prototype.toString.call(arg) === '[object Array]';
+		};
+	}
 
-/**
+	/**
   Excel:convert number to Excel column, like 1 => 'A'
   @param {integer} i Column number, starting with 0
   @return {string} Column name, starting with 'A'
   */
 
-var xlsnc = (utils.xlsnc = function (i) {
-	var first = '';
-	if (i > 701) {
-		let x = (((i - 26) / (26 * 26)) | 0) - 1;
-		first = String.fromCharCode(65 + (x % 26));
-		i = i % (26 * 26);
-	}
-	var addr = String.fromCharCode(65 + (i % 26));
-	if (i >= 26) {
-		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + (i % 26)) + addr;
-		if (i > 26) {
+	var xlsnc = (utils.xlsnc = function (i) {
+		var first = '';
+		if (i > 701) {
+			let x = (((i - 26) / (26 * 26)) | 0) - 1;
+			first = String.fromCharCode(65 + (x % 26));
+			i = i % (26 * 26);
+		}
+		var addr = String.fromCharCode(65 + (i % 26));
+		if (i >= 26) {
 			i = ((i / 26) | 0) - 1;
 			addr = String.fromCharCode(65 + (i % 26)) + addr;
+			if (i > 26) {
+				i = ((i / 26) | 0) - 1;
+				addr = String.fromCharCode(65 + (i % 26)) + addr;
+			}
 		}
-	}
-	return first + addr;
-});
+		return first + addr;
+	});
 
-/**
+	/**
   Excel:conver Excel column name to number
   @param {string} s Column number, like 'A' or 'BE'
   @return {string} Column name, starting with 0
   */
-var xlscn = (utils.xlscn = function (s) {
-	var n = s.charCodeAt(0) - 65;
-	if (s.length > 1) {
-		n = (n + 1) * 26 + s.charCodeAt(1) - 65;
-		//        console.log(n, s.charCodeAt(0)-65, s.charCodeAt(1)-65);
-		if (s.length > 2) {
-			n = (n + 1) * 26 + s.charCodeAt(2) - 65;
+	var xlscn = (utils.xlscn = function (s) {
+		var n = s.charCodeAt(0) - 65;
+		if (s.length > 1) {
+			n = (n + 1) * 26 + s.charCodeAt(1) - 65;
+			//        console.log(n, s.charCodeAt(0)-65, s.charCodeAt(1)-65);
+			if (s.length > 2) {
+				n = (n + 1) * 26 + s.charCodeAt(2) - 65;
+			}
 		}
-	}
-	return n;
-});
+		return n;
+	});
 
-var domEmptyChildren = (utils.domEmptyChildren = function (container) {
-	var len = container.childNodes.length;
-	while (len--) {
-		container.removeChild(container.lastChild);
-	}
-});
+	var domEmptyChildren = (utils.domEmptyChildren = function (container) {
+		var len = container.childNodes.length;
+		while (len--) {
+			container.removeChild(container.lastChild);
+		}
+	});
 
-/**
+	/**
   SQL LIKE emulation
   @parameter {string} pattern Search pattern
   @parameter {string} value Searched value
@@ -544,167 +544,167 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
   @return {boolean} If value LIKE pattern ESCAPE escape
   */
 
-/* * Tests if a given value matches a pattern with optional escape character.
- * Supports SQL-like syntax with % and _ as wildcards and custom escape character.
- */
-var patternCache = new Map(); // escape character -> pattern -> RegExp
-var like = (utils.like = function (pattern, value, escape = '') {
-	var cache = patternCache.get(escape);
-	if (!cache) patternCache.set(escape, (cache = new Map()));
-	var re = cache.get(pattern);
-	if (!re) {
-		var regexStr = '^'; // Start regex pattern to match from the beginning.
-		var i = 0; // Index for traversing the pattern string.
+	/* * Tests if a given value matches a pattern with optional escape character.
+	 * Supports SQL-like syntax with % and _ as wildcards and custom escape character.
+	 */
+	var patternCache = new Map(); // escape character -> pattern -> RegExp
+	var like = (utils.like = function (pattern, value, escape = '') {
+		var cache = patternCache.get(escape);
+		if (!cache) patternCache.set(escape, (cache = new Map()));
+		var re = cache.get(pattern);
+		if (!re) {
+			var regexStr = '^'; // Start regex pattern to match from the beginning.
+			var i = 0; // Index for traversing the pattern string.
 
-		while (i < pattern.length) {
-			var currentChar = pattern[i];
-			var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
+			while (i < pattern.length) {
+				var currentChar = pattern[i];
+				var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
 
-			// Handle escape character.
-			if (currentChar === escape) {
-				regexStr += '\\' + nextChar;
-				i++; // Skip next character as it's escaped.
+				// Handle escape character.
+				if (currentChar === escape) {
+					regexStr += '\\' + nextChar;
+					i++; // Skip next character as it's escaped.
+				}
+				// Handle negation within character classes.
+				else if (currentChar === '[' && nextChar === '^') {
+					regexStr += '[^';
+					i++; // Include '^' as part of the set.
+				}
+				// Directly append square brackets.
+				else if (currentChar === '[' || currentChar === ']') {
+					regexStr += currentChar;
+				}
+				// Replace '%' with regex to match any character sequence.
+				else if (currentChar === '%') {
+					regexStr += '[\\s\\S]*';
+				}
+				// Replace '_' with regex to match any single character.
+				else if (currentChar === '_') {
+					regexStr += '.';
+				}
+				// Escape special regex characters.
+				else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
+					regexStr += '\\' + currentChar;
+				}
+				// Append literal characters.
+				else {
+					regexStr += currentChar;
+				}
+				i++;
 			}
-			// Handle negation within character classes.
-			else if (currentChar === '[' && nextChar === '^') {
-				regexStr += '[^';
-				i++; // Include '^' as part of the set.
-			}
-			// Directly append square brackets.
-			else if (currentChar === '[' || currentChar === ']') {
-				regexStr += currentChar;
-			}
-			// Replace '%' with regex to match any character sequence.
-			else if (currentChar === '%') {
-				regexStr += '[\\s\\S]*';
-			}
-			// Replace '_' with regex to match any single character.
-			else if (currentChar === '_') {
-				regexStr += '.';
-			}
-			// Escape special regex characters.
-			else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
-				regexStr += '\\' + currentChar;
-			}
-			// Append literal characters.
-			else {
-				regexStr += currentChar;
-			}
-			i++;
+
+			regexStr += '$'; // End regex pattern to match until the end.
+			// Compile and cache the regex pattern for future use.
+			re = RegExp(regexStr, 'i');
+			cache.set(pattern, re);
 		}
 
-		regexStr += '$'; // End regex pattern to match until the end.
-		// Compile and cache the regex pattern for future use.
-		re = RegExp(regexStr, 'i');
-		cache.set(pattern, re);
-	}
+		// Convert value to string (handling null/undefined) and test against compiled pattern.
+		return ('' + (value ?? '')).search(re) > -1;
+	});
 
-	// Convert value to string (handling null/undefined) and test against compiled pattern.
-	return ('' + (value ?? '')).search(re) > -1;
-});
+	/**
+	 * Tests if a given value matches a glob pattern.
+	 * The function supports '*', '?' as wildcards where '*' matches any sequence of characters,
+	 * and '?' matches any single character. Square brackets can be used for character sets and ranges.
+	 *
+	 * @param {string} value - The string value to test against the glob pattern.
+	 * @param {string} pattern - The glob pattern to match the value against.
+	 * @returns {boolean} - True if the value matches the pattern, false otherwise.
+	 */
+	utils.glob = function (value, pattern) {
+		var currentIndex = 0; // Index for traversing the pattern string.
+		var regexPattern = '^'; // Start regex pattern to match from the beginning.
 
-/**
- * Tests if a given value matches a glob pattern.
- * The function supports '*', '?' as wildcards where '*' matches any sequence of characters,
- * and '?' matches any single character. Square brackets can be used for character sets and ranges.
- *
- * @param {string} value - The string value to test against the glob pattern.
- * @param {string} pattern - The glob pattern to match the value against.
- * @returns {boolean} - True if the value matches the pattern, false otherwise.
- */
-utils.glob = function (value, pattern) {
-	var currentIndex = 0; // Index for traversing the pattern string.
-	var regexPattern = '^'; // Start regex pattern to match from the beginning.
+		while (currentIndex < pattern.length) {
+			var currentChar = pattern[currentIndex];
+			var nextChar = currentIndex < pattern.length - 1 ? pattern[currentIndex + 1] : '';
 
-	while (currentIndex < pattern.length) {
-		var currentChar = pattern[currentIndex];
-		var nextChar = currentIndex < pattern.length - 1 ? pattern[currentIndex + 1] : '';
-
-		// Handle character sets and negation within them.
-		if (currentChar === '[' && nextChar === '^') {
-			regexPattern += '[^';
-			currentIndex++; // Include '^' as part of the set.
-		} else if (currentChar === '[' || currentChar === ']') {
-			// Directly append square brackets.
-			regexPattern += currentChar;
-		} else if (currentChar === '*') {
-			// Replace '*' with regex to match any character sequence.
-			regexPattern += '.*';
-		} else if (currentChar === '?') {
-			// Replace '?' with regex to match any single character.
-			regexPattern += '.';
-		} else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
-			// Escape special regex characters.
-			regexPattern += '\\' + currentChar;
-		} else {
-			// Append literal characters.
-			regexPattern += currentChar;
+			// Handle character sets and negation within them.
+			if (currentChar === '[' && nextChar === '^') {
+				regexPattern += '[^';
+				currentIndex++; // Include '^' as part of the set.
+			} else if (currentChar === '[' || currentChar === ']') {
+				// Directly append square brackets.
+				regexPattern += currentChar;
+			} else if (currentChar === '*') {
+				// Replace '*' with regex to match any character sequence.
+				regexPattern += '.*';
+			} else if (currentChar === '?') {
+				// Replace '?' with regex to match any single character.
+				regexPattern += '.';
+			} else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
+				// Escape special regex characters.
+				regexPattern += '\\' + currentChar;
+			} else {
+				// Append literal characters.
+				regexPattern += currentChar;
+			}
+			currentIndex++;
 		}
-		currentIndex++;
-	}
 
-	regexPattern += '$'; // End regex pattern to match until the end.
+		regexPattern += '$'; // End regex pattern to match until the end.
 
-	// Convert value to uppercase, compile the regex pattern in uppercase to perform a case-insensitive match.
-	return ('' + (value || '')).toUpperCase().search(RegExp(regexPattern.toUpperCase())) > -1;
-};
+		// Convert value to uppercase, compile the regex pattern in uppercase to perform a case-insensitive match.
+		return ('' + (value || '')).toUpperCase().search(RegExp(regexPattern.toUpperCase())) > -1;
+	};
 
-/**
- * Type converter regex patterns
- */
-var reTypeConverter = {
-	str: /string|char$|text/i,
-	int: /^int|int$/i,
-	num: /float|double|real|^num|decimal|money/i,
-	bool: /^bool/i,
-	date: /^date|^time/i,
-};
+	/**
+	 * Type converter regex patterns
+	 */
+	var reTypeConverter = {
+		str: /string|char$|text/i,
+		int: /^int|int$/i,
+		num: /float|double|real|^num|decimal|money/i,
+		bool: /^bool/i,
+		date: /^date|^time/i,
+	};
 
-/**
- * Convert a value to the appropriate type based on column definition
- * @param {*} value - The value to convert
- * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
- * @return {*} The converted value
- */
-utils.typeConverter = function (value, dbtypeid) {
-	// If value is null or undefined, return as is
-	if (value === null || value === undefined) {
+	/**
+	 * Convert a value to the appropriate type based on column definition
+	 * @param {*} value - The value to convert
+	 * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
+	 * @return {*} The converted value
+	 */
+	utils.typeConverter = function (value, dbtypeid) {
+		// If value is null or undefined, return as is
+		if (value === null || value === undefined) {
+			return value;
+		}
+
+		// If no type specified, try to auto-convert if it looks like a number
+		if (!dbtypeid) {
+			if (alasql.options.csvStringToNumber && typeof value === 'string' && value.length > 0) {
+				if (value == +value) {
+					return +value;
+				}
+			}
+			return value;
+		}
+
+		// Check type using regex patterns
+		if (reTypeConverter.str.test(dbtypeid)) {
+			return String(value);
+		}
+		if (reTypeConverter.int.test(dbtypeid)) {
+			var intVal = parseInt(value, 10);
+			return isNaN(intVal) ? value : intVal;
+		}
+		if (reTypeConverter.num.test(dbtypeid)) {
+			var numVal = parseFloat(value);
+			return isNaN(numVal) ? value : numVal;
+		}
+		if (reTypeConverter.bool.test(dbtypeid)) {
+			if (typeof value === 'string') {
+				return /^(true|1|yes)$/i.test(value);
+			}
+			return Boolean(value);
+		}
+		if (reTypeConverter.date.test(dbtypeid)) {
+			return value instanceof Date ? value : new Date(value);
+		}
+
+		// Unknown type, return as is
 		return value;
-	}
-
-	// If no type specified, try to auto-convert if it looks like a number
-	if (!dbtypeid) {
-		if (alasql.options.csvStringToNumber && typeof value === 'string' && value.length > 0) {
-			if (value == +value) {
-				return +value;
-			}
-		}
-		return value;
-	}
-
-	// Check type using regex patterns
-	if (reTypeConverter.str.test(dbtypeid)) {
-		return String(value);
-	}
-	if (reTypeConverter.int.test(dbtypeid)) {
-		var intVal = parseInt(value, 10);
-		return isNaN(intVal) ? value : intVal;
-	}
-	if (reTypeConverter.num.test(dbtypeid)) {
-		var numVal = parseFloat(value);
-		return isNaN(numVal) ? value : numVal;
-	}
-	if (reTypeConverter.bool.test(dbtypeid)) {
-		if (typeof value === 'string') {
-			return /^(true|1|yes)$/i.test(value);
-		}
-		return Boolean(value);
-	}
-	if (reTypeConverter.date.test(dbtypeid)) {
-		return value instanceof Date ? value : new Date(value);
-	}
-
-	// Unknown type, return as is
-	return value;
-};
+	};
 }

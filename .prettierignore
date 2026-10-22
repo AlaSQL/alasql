@@ -9,17 +9,6 @@ build/
 test/lib/
 src/generated/
 
-# Converted modules keep their old indentation until the end of Phase 1 (context/roadmap-phase-1.md)
-src/engine/
-src/utils/
-src/data/
-src/select/
-src/expression/
-src/functions/
-src/graph/
-src/statements/
-src/console/
-src/dialects/
-src/formats/
-src/storage/
-src/worker/
+# The head and tail of the worker concatenation (build.js) are not files Prettier can parse
+src/worker/start.js
+src/worker/finish.js

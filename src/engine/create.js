@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-"use strict";
+'use strict';
 
 /**
 	@fileoverview AlaSQL JavaScript SQL library
@@ -17,9 +17,7 @@
 	UMD envelope for AlaSQL
 */
 
-
-
-	/**
+/**
 		AlaSQL - Main Alasql class
 		  @function
 		  @param {string|function|object} sql - SQL-statement or data object for fluent interface
@@ -49,23 +47,21 @@
 	 */
 
 export function create() {
-
 	let alasql = function (sql, params, cb, scope) {
-
 		params = params || [];
 
 		if (typeof importScripts !== 'function' && alasql.webworker) {
 			var id = alasql.lastid++;
 			alasql.buffer[id] = cb;
-			alasql.webworker.postMessage({ id: id, sql: sql, params: params });
+			alasql.webworker.postMessage({id: id, sql: sql, params: params});
 			return;
 		}
 
 		if (arguments.length === 0) {
 			// Without arguments - Fluent interface
 			return new alasql.yy.Select({
-				columns: [new alasql.yy.Column({ columnid: '*' })],
-				from: [new alasql.yy.ParamValue({ param: 0 })]
+				columns: [new alasql.yy.Column({columnid: '*'})],
+				from: [new alasql.yy.ParamValue({param: 0})],
 			});
 		} else if (arguments.length === 1) {
 			// Access promise notation without using `.promise(...)`
@@ -86,14 +82,17 @@ export function create() {
 
 		// Standard interface
 		// alasql('#sql');
-		if (typeof sql === 'string' && sql[0] === '#' && typeof document === "object") {
+		if (typeof sql === 'string' && sql[0] === '#' && typeof document === 'object') {
 			sql = document.querySelector(sql).textContent;
 		} else if (typeof sql === 'object' && sql instanceof HTMLElement) {
 			sql = sql.textContent;
 		} else if (typeof sql === 'function') {
 			// to run multiline functions
 			sql = sql.toString();
-			sql = (/\/\*([\S\s]+)\*\//m.exec(sql) || ['', 'Function given as SQL. Plese Provide SQL string or have a /* ... */ syle comment with SQL in the function.'])[1];
+			sql = (/\/\*([\S\s]+)\*\//m.exec(sql) || [
+				'',
+				'Function given as SQL. Plese Provide SQL string or have a /* ... */ syle comment with SQL in the function.',
+			])[1];
 		}
 		// Run SQL
 		return alasql.exec(sql, params, cb, scope);
@@ -112,8 +111,7 @@ export function create() {
 	*/
 	alasql.debug = undefined; // Initial debug variable
 
-
-/*only-for-browser/*
+	/*only-for-browser/*
 var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" references to
 var __dirname = '';
 //*/

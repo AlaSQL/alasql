@@ -1,6 +1,6 @@
 export default function install(alasql) {
 	var yy = alasql.yy;
-/*
+	/*
 //
 // DROP TABLE for Alasql.js
 // Date: 03.11.2014
@@ -8,18 +8,18 @@ export default function install(alasql) {
 //
 */
 
-yy.DropIndex = function (params) {
-	return Object.assign(this, params);
-};
-yy.DropIndex.prototype.toString = function () {
-	return 'DROP INDEX' + this.indexid;
-};
-
-// DROP TABLE
-yy.DropIndex.prototype.compile = function (db) {
-	var indexid = this.indexid;
-	return function () {
-		return 1;
+	yy.DropIndex = function (params) {
+		return Object.assign(this, params);
 	};
-};
+	yy.DropIndex.prototype.toString = function () {
+		return 'DROP INDEX' + this.indexid;
+	};
+
+	// DROP TABLE
+	yy.DropIndex.prototype.compile = function (db) {
+		var indexid = this.indexid;
+		return function () {
+			return 1;
+		};
+	};
 }

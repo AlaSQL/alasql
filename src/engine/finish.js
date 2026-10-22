@@ -1,9 +1,9 @@
 export default function install(alasql) {
 	var utils = alasql.utils;
 	var Database = alasql.Database;
-/* eslint-disable */ 
+	/* eslint-disable */
 
-/*
+	/*
 //
 // Last part of Alasql.js
 // Date: 03.11.2014
@@ -11,20 +11,17 @@ export default function install(alasql) {
 //
 */
 
-// This is a final part of Alasql
+	// This is a final part of Alasql
 
-
-/*only-for-browser/*
+	/*only-for-browser/*
 if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
   console.log('It looks like you are using the browser version of AlaSQL. Please use the alasql.fs.js file instead.')
 }
 //*/
 
+	// Create default database
+	new Database('alasql');
 
-// Create default database
-new Database("alasql");
-
-// Set default database
-alasql.use("alasql");
-
+	// Set default database
+	alasql.use('alasql');
 }

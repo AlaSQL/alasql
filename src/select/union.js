@@ -1,6 +1,6 @@
 export default function install(alasql) {
 	var yy = alasql.yy;
-/*
+	/*
 //
 // UNION for Alasql.js
 // Date: 03.11.2014
@@ -8,19 +8,19 @@ export default function install(alasql) {
 //
 */
 
-// SELECT UNION statement
+	// SELECT UNION statement
 
-yy.Union = class Union {
-	constructor(params) {
-		Object.assign(this, params);
-	}
+	yy.Union = class Union {
+		constructor(params) {
+			Object.assign(this, params);
+		}
 
-	toString() {
-		return 'UNION';
-	}
+		toString() {
+			return 'UNION';
+		}
 
-	compile(tableid) {
-		return null;
-	}
-};
+		compile(tableid) {
+			return null;
+		}
+	};
 }
