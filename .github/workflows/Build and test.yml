@@ -2,9 +2,9 @@ name: 'CI build & test'
 
 on:
   push:
-    branches: '*'
+    branches: '**'
   pull_request:
-    branches: '*'
+    branches: '**'
 
 permissions: read-all
 
@@ -13,7 +13,7 @@ jobs:
     name: Verify code formatting
     permissions:
       contents: read
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node
-        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         uses: actions/setup-node@v7
         with:
@@ -42,7 +42,7 @@ jobs:
     needs: []
     permissions:
       contents: write
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node
-        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         uses: actions/setup-node@v7
         with:
@@ -62,6 +62,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Build project
         run: yarn build-only
@@ -84,7 +87,7 @@ jobs:
     permissions:
       contents: read
     needs: [build, verify-formatting]
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     strategy:
@@ -99,7 +102,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node
-        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         uses: actions/setup-node@v7
         with:
@@ -129,7 +132,7 @@ jobs:
     permissions:
       contents: read
     needs: [build, verify-formatting]
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
@@ -156,7 +159,7 @@ jobs:
     needs: []
     permissions:
       contents: read
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:

@@ -1,14 +1,4 @@
-src/10start.js
-
-src/98finish.js
-
-src/99worker-finish.js
-
-src/99worker-start.js
-
 src/alasqlparser.js
-
-src/97saveas.js
 
 modules/
 
@@ -17,3 +7,9 @@ test/test238.json
 build/
 
 test/lib/
+test/coverage/
+src/generated/
+
+# The head and tail of the worker concatenation (build.js) are not files Prettier can parse
+src/worker/start.js
+src/worker/finish.js

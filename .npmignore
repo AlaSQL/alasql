@@ -2,9 +2,10 @@ examples/
 test/
 src/
 *.md
-gulpfile.js
+build.js
+bun.lock
+test*.json
 yarn.lock
-tslint.json
 .*
 *.log
 context/

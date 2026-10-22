@@ -666,11 +666,6 @@ https-proxy-agent@^5.0.1:
     agent-base "6"
     debug "4"
 
-husky@9.1.7:
-  version "9.1.7"
-  resolved "https://registry.npmjs.org/husky/-/husky-9.1.7.tgz"
-  integrity sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==
-
 is-docker@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/is-docker/-/is-docker-3.0.0.tgz"
