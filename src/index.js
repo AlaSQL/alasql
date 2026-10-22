@@ -22,6 +22,7 @@ import xlsx from './utils/xlsx.js';
 import uncomment from './utils/uncomment.js';
 import filesaver from './utils/filesaver.js';
 import launcher from './worker/launcher.js';
+import finish from './engine/finish.js';
 import query from './data/query.js';
 import database from './data/database.js';
 import table from './data/table.js';
@@ -182,7 +183,7 @@ filestorage(instance, internal);
 // the browser-only block of 97saveas.js, around the worker launcher
 if (instance.utils.isBrowser && !instance.utils.isWebWorker) launcher(instance, internal);
 legacy(instance, internal);
-// after the legacy module: it reads utils when it is installed
+finish(instance, internal);
 promise(instance, internal);
 
 export default instance;
