@@ -1,3 +1,5 @@
+export default function install(alasql, internal) {
+	var getXLSX = internal.getXLSX;
 /*
 //
 // FROM functions Alasql.js
@@ -621,3 +623,4 @@ alasql.from.ODS = function (filename, opts, cb, idx, query) {
 	opts.autoExt = false;
 	return XLSXLSX(getXLSX(), filename, opts, cb, idx, query);
 };
+}

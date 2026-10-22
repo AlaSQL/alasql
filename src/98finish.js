@@ -18,9 +18,6 @@ if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
 //*/
 
 
-// FileSaveAs
-alasql.utils.saveAs = saveAs;
-
 };
 
 // Create default database

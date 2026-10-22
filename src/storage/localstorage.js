@@ -1,3 +1,6 @@
+import {extend} from '../utils/helpers.js';
+
+export default function install(alasql) {
 //
 // 91localstorage.js
 // localStorage and DOM-Storage engine
@@ -451,3 +454,4 @@ LS.rollback = function (databaseid, cb) {
 	//	}
 	//console.log(999, alasql.databases[databaseid]);
 };
+}

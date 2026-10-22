@@ -1,3 +1,4 @@
+export default function install(alasql) {
 //
 // 91indexeddb.js
 // AlaSQL IndexedDB module
@@ -501,3 +502,4 @@ IDB.rollback = function (databaseid, cb) {
 	// This provides API compatibility only
 	return cb ? cb(1) : 1;
 };
+}

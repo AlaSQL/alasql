@@ -1,3 +1,6 @@
+import {escapeqq} from '../utils/helpers.js';
+
+export default function install(alasql) {
 //
 // into functions
 //
@@ -281,3 +284,4 @@ alasql.into.CSV = function (filename, opts, data, columns, cb) {
 	}
 	return res;
 };
+}

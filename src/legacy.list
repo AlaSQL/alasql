@@ -1,28 +1,5 @@
 # The files of the generated legacy module, in order. Converting a file means taking it off
 # this list (context/roadmap-phase-1.md). build.js reads it.
-src/12pretty.js
-src/80console.js
-src/821tsql.js
-src/822mysql.js
-src/823postgres.js
-src/824oracle.js
-src/825sqlite.js
-src/830into.js
-src/831xls.js
-src/832xlsxml.js
-src/833xlsx.js
-src/84from.js
-src/843xml.js
-src/844gexf.js
-src/86print.js
-src/87source.js
-src/88require.js
-src/89assert.js
-src/91indexeddb.js
-src/92localstorage.js
-src/93sqljs.js
-src/94filestorage.js
 src/97saveas.js
 src/99worker.js
-src/FileSaver.js
 src/98finish.js

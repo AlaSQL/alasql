@@ -1,3 +1,6 @@
+import {extend} from '../utils/helpers.js';
+
+export default function install(alasql) {
 //
 // 831xl.js - Coloring Excel
 // 18.04.2015
@@ -322,3 +325,4 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 		return s;
 	}
 };
+}

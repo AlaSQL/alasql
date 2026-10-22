@@ -1,3 +1,4 @@
+export default function install(alasql) {
 if (alasql.options.mysql) {
 	alasql.fn.TIMESTAMPDIFF = function (unit, date1, date2) {
 		return alasql.stdfn.DATEDIFF(unit, date1, date2);
@@ -25,4 +26,5 @@ if (alasql.options.mysql || alasql.options.sqlite) {
 		}
 		throw new Error('Unknown INFORMATION_SCHEMA table');
 	};
+}
 }

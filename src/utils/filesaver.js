@@ -1,3 +1,6 @@
+export default function install(alasql, internal) {
+	var utils = alasql.utils;
+if(utils.isBrowser && !utils.isWebWorker) {
 /*! FileSaver.js
  * A saveAs() FileSaver implementation.
  * 1.3.2
@@ -196,4 +199,11 @@ if (typeof module !== 'undefined' && module.exports) {
 	define('FileSaver.js', function () {
 		return saveAs;
 	});
+}
+
+// FileSaveAs
+alasql.utils.saveAs = saveAs;
+
+};
+	internal.saveAs = saveAs;
 }

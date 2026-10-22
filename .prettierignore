@@ -28,3 +28,7 @@ src/expression/
 src/functions/
 src/graph/
 src/statements/
+src/console/
+src/dialects/
+src/formats/
+src/storage/

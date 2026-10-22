@@ -1,3 +1,6 @@
+import {extend, hash} from '../utils/helpers.js';
+
+export default function install(alasql) {
 alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	opts = opts || {};
 
@@ -362,3 +365,4 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 		return s1 + s2 + s3;
 	}
 };
+}

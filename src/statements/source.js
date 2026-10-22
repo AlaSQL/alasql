@@ -1,3 +1,5 @@
+export default function install(alasql) {
+	var yy = alasql.yy;
 /*
 //
 // HELP for Alasql.js
@@ -32,3 +34,4 @@ yy.Source.prototype.execute = function (databaseid, params, cb) {
 	);
 	return res;
 };
+}

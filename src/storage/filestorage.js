@@ -1,3 +1,8 @@
+import {extend} from '../utils/helpers.js';
+
+export default function install(alasql, internal) {
+	var schemaChanged = internal.schemaChanged;
+	var loadFile = alasql.utils.loadFile;
 //
 // 91localstorage.js
 // localStorage and DOM-Storage engine
@@ -254,3 +259,4 @@ FS.rollback = function (databaseid, cb) {
 		}, 100);
 	}
 };
+}
