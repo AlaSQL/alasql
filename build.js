@@ -9,8 +9,8 @@
 	alasql.fn and alasql.aggr and call the utility doubleq; the jison output stays what it is. The
 	worker bundle is a concatenation still (src/generated/worker.js): src/worker/start.js, a call
 	of the launcher module, src/worker/finish.js, because its head assigns undeclared names and
-	was never strict. build.sh, the old concatenation, stays in the tree until the end of the
-	phase; it no longer builds, and the parity check builds old commits with their own build.
+	was never strict. build.sh, the old concatenation, is gone (it had not built since step 2);
+	the parity check builds old commits with their own build.
 
 	Outputs, with the names they had:
 	  dist/alasql.fs.js         CommonJS for Node: format cjs, platform node, the externals kept as
