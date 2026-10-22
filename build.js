@@ -36,10 +36,12 @@
 	  output of an ES module exports {default: alasql}, and require('alasql') must give the function.
 	- The UMD wrapper for the browser files, by hand. esbuild has no UMD format. The wrapper gives
 	  the body a module object and returns module.exports.
-	- keepNames for the unminified files. When esbuild bundles, a name declared in a nested scope
-	  that shadows one of an enclosing scope gets a suffix (the class Table assigned to yy.Table
-	  beside var Table, the function extend inside var extend), which would change the .name of
-	  four functions and classes; keepNames keeps them. The minified file had mangled names before.
+	- No keepNames. It was on for the unminified files until the end of Phase 1, to keep the .name
+	  of functions whose identifier esbuild suffixes when a nested scope shadows an enclosing one;
+	  but its __name() helper, run at every creation of a named function, made SEARCH 40 percent
+	  slower on Node and 25 on Bun (the parity ledger, row 11). The two names it still protected,
+	  extend and cloneDeep, are function declarations in src/utils/helpers.js now, which esbuild
+	  does not suffix; the API snapshot of the parity check watches every other .name.
 	- __dirname is defined as '' in the browser build, which is what the only-for-browser shim in
 	  10start.js gives the code that shares its scope.
 	- PACKAGE_VERSION and BUILD_VERSION are replaced in the text of every source file, as build.sh
@@ -220,7 +222,6 @@ export async function bundle(
 		platform: browser ? 'browser' : 'node',
 		external,
 		minify,
-		keepNames: !minify,
 		legalComments: 'inline',
 		define: browser ? {__dirname: '""'} : undefined,
 		banner: bannerJs ? {js: bannerJs} : undefined,
