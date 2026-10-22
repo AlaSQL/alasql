@@ -2,173 +2,173 @@ import {hash} from '../utils/helpers.js';
 
 export default function install(alasql) {
 	var yy = alasql.yy;
-// Alasql Linq library
+	// Alasql Linq library
 
-yy.FromData = function (params) {
-	return yy.extend(this, params);
-};
-yy.FromData.prototype.toString = function () {
-	if (this.data) return 'DATA(' + ((Math.random() * 10e15) | 0) + ')';
-	else return '?';
-};
-yy.FromData.prototype.toJS = function () {
-	//	console.log('yy.FromData.prototype.toJS');
-};
+	yy.FromData = function (params) {
+		return yy.extend(this, params);
+	};
+	yy.FromData.prototype.toString = function () {
+		if (this.data) return 'DATA(' + ((Math.random() * 10e15) | 0) + ')';
+		else return '?';
+	};
+	yy.FromData.prototype.toJS = function () {
+		//	console.log('yy.FromData.prototype.toJS');
+	};
 
-yy.Select.prototype.exec = function (params, cb) {
-	if (this.preparams) params = this.preparams.concat(params);
-	//	console.log(15,this.preparams);
+	yy.Select.prototype.exec = function (params, cb) {
+		if (this.preparams) params = this.preparams.concat(params);
+		//	console.log(15,this.preparams);
 
-	var databaseid = alasql.useid;
-	var db = alasql.databases[databaseid];
-	var sql = this.toString();
-	var hh = hash(sql);
-	//	console.log(sql);
+		var databaseid = alasql.useid;
+		var db = alasql.databases[databaseid];
+		var sql = this.toString();
+		var hh = hash(sql);
+		//	console.log(sql);
 
-	var statement = this.compile(databaseid);
-	if (!statement) return;
-	statement.sql = sql;
-	statement.dbversion = db.dbversion;
-	statement.schemaVersion = alasql.schemaVersion;
+		var statement = this.compile(databaseid);
+		if (!statement) return;
+		statement.sql = sql;
+		statement.dbversion = db.dbversion;
+		statement.schemaVersion = alasql.schemaVersion;
 
-	// Secure sqlCache size
-	if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
-		db.resetSqlCache();
-	}
-	db.sqlCacheSize++;
-	db.sqlCache[hh] = statement;
-	var res = (alasql.res = statement(params, cb));
-	return res;
-};
-
-yy.Select.prototype.Select = function () {
-	var self = this;
-	var args = [];
-	if (arguments.length > 1) {
-		args = Array.prototype.slice.call(arguments);
-	} else if (arguments.length == 1) {
-		if (Array.isArray(arguments[0])) {
-			args = arguments[0];
-		} else {
-			args = [arguments[0]];
+		// Secure sqlCache size
+		if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
+			db.resetSqlCache();
 		}
-	} else {
-		throw new Error('Wrong number of arguments of Select() function');
-	}
+		db.sqlCacheSize++;
+		db.sqlCache[hh] = statement;
+		var res = (alasql.res = statement(params, cb));
+		return res;
+	};
 
-	self.columns = [];
+	yy.Select.prototype.Select = function () {
+		var self = this;
+		var args = [];
+		if (arguments.length > 1) {
+			args = Array.prototype.slice.call(arguments);
+		} else if (arguments.length == 1) {
+			if (Array.isArray(arguments[0])) {
+				args = arguments[0];
+			} else {
+				args = [arguments[0]];
+			}
+		} else {
+			throw new Error('Wrong number of arguments of Select() function');
+		}
 
-	args.forEach(function (arg) {
-		if (typeof arg == 'string') {
-			self.columns.push(new yy.Column({columnid: arg}));
-		} else if (typeof arg == 'function') {
+		self.columns = [];
+
+		args.forEach(function (arg) {
+			if (typeof arg == 'string') {
+				self.columns.push(new yy.Column({columnid: arg}));
+			} else if (typeof arg == 'function') {
+				var pari = 0;
+				if (self.preparams) {
+					pari = self.preparams.length;
+				} else {
+					self.preparams = [];
+				}
+				self.preparams.push(arg);
+				self.columns.push(new yy.Column({columnid: '*', func: arg, param: pari}));
+			} else {
+				// Unknown type
+			}
+		});
+
+		//	console.log(self instanceof yy.Select);
+		return self;
+	};
+
+	yy.Select.prototype.From = function (tableid) {
+		var self = this;
+		if (!self.from) self.from = [];
+		if (Array.isArray(tableid)) {
 			var pari = 0;
 			if (self.preparams) {
 				pari = self.preparams.length;
 			} else {
 				self.preparams = [];
 			}
-			self.preparams.push(arg);
-			self.columns.push(new yy.Column({columnid: '*', func: arg, param: pari}));
+			self.preparams.push(tableid);
+			self.from.push(new yy.ParamValue({param: pari}));
+		} else if (typeof tableid == 'string') {
+			self.from.push(new yy.Table({tableid: tableid}));
 		} else {
-			// Unknown type
+			throw new Error('Unknown arguments in From() function');
 		}
-	});
+		return self;
+	};
 
-	//	console.log(self instanceof yy.Select);
-	return self;
-};
+	yy.Select.prototype.OrderBy = function () {
+		var self = this;
+		var args = [];
 
-yy.Select.prototype.From = function (tableid) {
-	var self = this;
-	if (!self.from) self.from = [];
-	if (Array.isArray(tableid)) {
-		var pari = 0;
-		if (self.preparams) {
-			pari = self.preparams.length;
+		self.order = [];
+
+		if (arguments.length == 0) {
+			//		self.order.push(new yy.OrderExpression({expression: new yy.Column({columnid:"_"}), direction:'ASC'}));
+			args = ['_'];
+		} else if (arguments.length > 1) {
+			args = Array.prototype.slice.call(arguments);
+		} else if (arguments.length == 1) {
+			if (Array.isArray(arguments[0])) {
+				args = arguments[0];
+			} else {
+				args = [arguments[0]];
+			}
 		} else {
-			self.preparams = [];
+			throw new Error('Wrong number of arguments of Select() function');
 		}
-		self.preparams.push(tableid);
-		self.from.push(new yy.ParamValue({param: pari}));
-	} else if (typeof tableid == 'string') {
-		self.from.push(new yy.Table({tableid: tableid}));
-	} else {
-		throw new Error('Unknown arguments in From() function');
-	}
-	return self;
-};
 
-yy.Select.prototype.OrderBy = function () {
-	var self = this;
-	var args = [];
+		if (args.length > 0) {
+			args.forEach(function (arg) {
+				var expr = new yy.Column({columnid: arg});
+				if (typeof arg == 'function') {
+					expr = arg;
+				}
+				self.order.push(new yy.OrderExpression({expression: expr, direction: 'ASC'}));
+			});
+		}
+		return self;
+	};
 
-	self.order = [];
+	yy.Select.prototype.Top = function (topnum) {
+		var self = this;
+		self.top = new yy.NumValue({value: topnum});
+		return self;
+	};
 
-	if (arguments.length == 0) {
-		//		self.order.push(new yy.OrderExpression({expression: new yy.Column({columnid:"_"}), direction:'ASC'}));
-		args = ['_'];
-	} else if (arguments.length > 1) {
-		args = Array.prototype.slice.call(arguments);
-	} else if (arguments.length == 1) {
-		if (Array.isArray(arguments[0])) {
-			args = arguments[0];
+	yy.Select.prototype.GroupBy = function () {
+		var self = this;
+		var args = [];
+
+		if (arguments.length > 1) {
+			args = Array.prototype.slice.call(arguments);
+		} else if (arguments.length == 1) {
+			if (Array.isArray(arguments[0])) {
+				args = arguments[0];
+			} else {
+				args = [arguments[0]];
+			}
 		} else {
-			args = [arguments[0]];
+			throw new Error('Wrong number of arguments of Select() function');
 		}
-	} else {
-		throw new Error('Wrong number of arguments of Select() function');
-	}
 
-	if (args.length > 0) {
+		self.group = [];
+
 		args.forEach(function (arg) {
 			var expr = new yy.Column({columnid: arg});
-			if (typeof arg == 'function') {
-				expr = arg;
-			}
-			self.order.push(new yy.OrderExpression({expression: expr, direction: 'ASC'}));
+			self.group.push(expr);
 		});
-	}
-	return self;
-};
 
-yy.Select.prototype.Top = function (topnum) {
-	var self = this;
-	self.top = new yy.NumValue({value: topnum});
-	return self;
-};
+		return self;
+	};
 
-yy.Select.prototype.GroupBy = function () {
-	var self = this;
-	var args = [];
-
-	if (arguments.length > 1) {
-		args = Array.prototype.slice.call(arguments);
-	} else if (arguments.length == 1) {
-		if (Array.isArray(arguments[0])) {
-			args = arguments[0];
-		} else {
-			args = [arguments[0]];
+	yy.Select.prototype.Where = function (expr) {
+		var self = this;
+		if (typeof expr == 'function') {
+			self.where = expr;
 		}
-	} else {
-		throw new Error('Wrong number of arguments of Select() function');
-	}
-
-	self.group = [];
-
-	args.forEach(function (arg) {
-		var expr = new yy.Column({columnid: arg});
-		self.group.push(expr);
-	});
-
-	return self;
-};
-
-yy.Select.prototype.Where = function (expr) {
-	var self = this;
-	if (typeof expr == 'function') {
-		self.where = expr;
-	}
-	return self;
-};
+		return self;
+	};
 }

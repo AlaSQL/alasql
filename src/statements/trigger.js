@@ -1,75 +1,75 @@
 export default function install(alasql) {
 	var yy = alasql.yy;
-/*
+	/*
 //
 // TRIGGER for Alasql.js
 // Date: 29.12.2015
 //
 */
 
-yy.CreateTrigger = function (params) {
-	return Object.assign(this, params);
-};
-yy.CreateTrigger.prototype.toString = function () {
-	var s = 'CREATE TRIGGER ' + this.trigger + ' ';
-	if (this.when) s += this.when + ' ';
-	s += this.action + ' ON ';
-	if (this.table.databaseid) s += this.table.databaseid + '.';
-	s += this.table.tableid + ' ';
-	s += this.statement.toString();
-	return s;
-};
-
-const validTriggers = [
-	'beforeinsert',
-	'afterinsert',
-	'insteadofinsert',
-	'beforedelete',
-	'afterdelete',
-	'insteadofdelete',
-	'beforeupdate',
-	'afterupdate',
-	'insteadofupdate',
-];
-
-yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
-	let res = 1; // No tables removed
-	const triggerid = this.trigger;
-	databaseid = this.table.databaseid || databaseid;
-	const db = alasql.databases[databaseid];
-	const {tableid} = this.table;
-
-	const trigger = {
-		action: this.action,
-		when: this.when,
-		statement: this.statement,
-		funcid: this.funcid,
-		tableid,
+	yy.CreateTrigger = function (params) {
+		return Object.assign(this, params);
+	};
+	yy.CreateTrigger.prototype.toString = function () {
+		var s = 'CREATE TRIGGER ' + this.trigger + ' ';
+		if (this.when) s += this.when + ' ';
+		s += this.action + ' ON ';
+		if (this.table.databaseid) s += this.table.databaseid + '.';
+		s += this.table.tableid + ' ';
+		s += this.statement.toString();
+		return s;
 	};
 
-	db.triggers[triggerid] = trigger;
-	const actionKey = `${this.when}${this.action}`.toLowerCase();
+	const validTriggers = [
+		'beforeinsert',
+		'afterinsert',
+		'insteadofinsert',
+		'beforedelete',
+		'afterdelete',
+		'insteadofdelete',
+		'beforeupdate',
+		'afterupdate',
+		'insteadofupdate',
+	];
 
-	if (validTriggers.includes(actionKey)) {
-		// Ensure the existence of db.tables[tableid] and db.tables[tableid][actionKey]
-		db.tables[tableid] = db.tables[tableid] || {};
-		db.tables[tableid][actionKey] = db.tables[tableid][actionKey] || {};
-		db.tables[tableid][actionKey][triggerid] = trigger;
-	}
+	yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
+		let res = 1; // No tables removed
+		const triggerid = this.trigger;
+		databaseid = this.table.databaseid || databaseid;
+		const db = alasql.databases[databaseid];
+		const {tableid} = this.table;
 
-	if (cb) res = cb(res);
-	return res;
-};
+		const trigger = {
+			action: this.action,
+			when: this.when,
+			statement: this.statement,
+			funcid: this.funcid,
+			tableid,
+		};
 
-yy.DropTrigger = function (params) {
-	return Object.assign(this, params);
-};
-yy.DropTrigger.prototype.toString = function () {
-	var s = 'DROP TRIGGER ' + this.trigger;
-	return s;
-};
+		db.triggers[triggerid] = trigger;
+		const actionKey = `${this.when}${this.action}`.toLowerCase();
 
-/**
+		if (validTriggers.includes(actionKey)) {
+			// Ensure the existence of db.tables[tableid] and db.tables[tableid][actionKey]
+			db.tables[tableid] = db.tables[tableid] || {};
+			db.tables[tableid][actionKey] = db.tables[tableid][actionKey] || {};
+			db.tables[tableid][actionKey][triggerid] = trigger;
+		}
+
+		if (cb) res = cb(res);
+		return res;
+	};
+
+	yy.DropTrigger = function (params) {
+		return Object.assign(this, params);
+	};
+	yy.DropTrigger.prototype.toString = function () {
+		var s = 'DROP TRIGGER ' + this.trigger;
+		return s;
+	};
+
+	/**
 	Drop trigger
 	@param {string} databaseid Database id
 	@param {object} params Parameters
@@ -78,60 +78,60 @@ yy.DropTrigger.prototype.toString = function () {
 	@example
 	DROP TRIGGER one;
 */
-yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
-	let res = 0; // No tables removed
-	const db = alasql.databases[databaseid];
-	const triggerid = this.trigger;
+	yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
+		let res = 0; // No tables removed
+		const db = alasql.databases[databaseid];
+		const triggerid = this.trigger;
 
-	// Get the trigger
-	const trigger = db.triggers[triggerid];
+		// Get the trigger
+		const trigger = db.triggers[triggerid];
 
-	// If the trigger exists
-	if (trigger) {
-		const {tableid} = trigger;
+		// If the trigger exists
+		if (trigger) {
+			const {tableid} = trigger;
 
-		if (tableid) {
-			res = 1;
+			if (tableid) {
+				res = 1;
 
-			// Delete the trigger from all trigger points
-			validTriggers.forEach(point => {
-				delete db.tables[tableid][point][triggerid];
-			});
+				// Delete the trigger from all trigger points
+				validTriggers.forEach(point => {
+					delete db.tables[tableid][point][triggerid];
+				});
 
-			// Finally, delete the trigger itself
-			delete db.triggers[triggerid];
+				// Finally, delete the trigger itself
+				delete db.triggers[triggerid];
+			} else {
+				throw new Error('Trigger Table not found');
+			}
 		} else {
-			throw new Error('Trigger Table not found');
+			throw new Error('Trigger not found');
 		}
-	} else {
-		throw new Error('Trigger not found');
-	}
 
-	if (cb) res = cb(res);
-	return res;
-};
+		if (cb) res = cb(res);
+		return res;
+	};
 
-/**
- * Helper function to execute a trigger with proper parameter passing
- * @param {object} trigger - The trigger object
- * @param {string} databaseid - Database ID for statement execution
- * @param {...any} args - Arguments to pass to the trigger function
- * @return {*} Result from trigger execution (typically boolean or undefined)
- */
-alasql.executeTrigger = function (trigger, databaseid, ...args) {
-	if (!trigger) return;
+	/**
+	 * Helper function to execute a trigger with proper parameter passing
+	 * @param {object} trigger - The trigger object
+	 * @param {string} databaseid - Database ID for statement execution
+	 * @param {...any} args - Arguments to pass to the trigger function
+	 * @return {*} Result from trigger execution (typically boolean or undefined)
+	 */
+	alasql.executeTrigger = function (trigger, databaseid, ...args) {
+		if (!trigger) return;
 
-	if (trigger.funcid) {
-		// Direct function ID (older syntax: CREATE TRIGGER ... tablename funcname)
-		return alasql.fn[trigger.funcid](...args);
-	} else if (trigger.statement) {
-		// CALL funcname() without arguments gets the row data, like the older syntax
-		const call = trigger.statement.expression;
-		if (call && call.funcid && !call.args?.length) {
-			return alasql.fn[call.funcid](...args);
+		if (trigger.funcid) {
+			// Direct function ID (older syntax: CREATE TRIGGER ... tablename funcname)
+			return alasql.fn[trigger.funcid](...args);
+		} else if (trigger.statement) {
+			// CALL funcname() without arguments gets the row data, like the older syntax
+			const call = trigger.statement.expression;
+			if (call && call.funcid && !call.args?.length) {
+				return alasql.fn[call.funcid](...args);
+			}
+			// Otherwise run the statement as written, with its own arguments
+			return trigger.statement.execute(databaseid);
 		}
-		// Otherwise run the statement as written, with its own arguments
-		return trigger.statement.execute(databaseid);
-	}
-};
+	};
 }

@@ -1,6 +1,6 @@
 export default function install(alasql) {
 	var yy = alasql.yy;
-/*
+	/*
 //
 // HELP for Alasql.js
 // Date: 03.11.2014
@@ -8,30 +8,30 @@ export default function install(alasql) {
 //
 */
 
-yy.Source = function (params) {
-	return Object.assign(this, params);
-};
-yy.Source.prototype.toString = function () {
-	var s = 'SOURCE';
-	if (this.url) s += " '" + this.url + " '";
-	return s;
-};
+	yy.Source = function (params) {
+		return Object.assign(this, params);
+	};
+	yy.Source.prototype.toString = function () {
+		var s = 'SOURCE';
+		if (this.url) s += " '" + this.url + " '";
+		return s;
+	};
 
-// SOURCE FILE
-yy.Source.prototype.execute = function (databaseid, params, cb) {
-	var res;
-	alasql.utils.loadFile(
-		this.url,
-		!!cb,
-		function (data) {
-			res = alasql(data);
-			if (cb) res = cb(res);
-			return res;
-		},
-		function (err) {
-			throw err;
-		}
-	);
-	return res;
-};
+	// SOURCE FILE
+	yy.Source.prototype.execute = function (databaseid, params, cb) {
+		var res;
+		alasql.utils.loadFile(
+			this.url,
+			!!cb,
+			function (data) {
+				res = alasql(data);
+				if (cb) res = cb(res);
+				return res;
+			},
+			function (err) {
+				throw err;
+			}
+		);
+		return res;
+	};
 }

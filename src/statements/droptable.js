@@ -1,7 +1,7 @@
 export default function install(alasql, internal) {
 	var schemaChanged = internal.schemaChanged;
 	var yy = alasql.yy;
-/*
+	/*
 //
 // DROP TABLE for Alasql.js
 // Date: 03.11.2014
@@ -9,20 +9,20 @@ export default function install(alasql, internal) {
 //
 */
 
-yy.DropTable = function (params) {
-	return Object.assign(this, params);
-};
-yy.DropTable.prototype.toString = function () {
-	var s = 'DROP' + ' ';
-	if (this.view) s += 'VIEW';
-	else s += 'TABLE';
-	if (this.ifexists) s += ' IF EXISTS';
-	s += ' ' + this.tables.toString();
-	return s;
-};
+	yy.DropTable = function (params) {
+		return Object.assign(this, params);
+	};
+	yy.DropTable.prototype.toString = function () {
+		var s = 'DROP' + ' ';
+		if (this.view) s += 'VIEW';
+		else s += 'TABLE';
+		if (this.ifexists) s += ' IF EXISTS';
+		s += ' ' + this.tables.toString();
+		return s;
+	};
 
-// DROP TABLE
-/**
+	// DROP TABLE
+	/**
 	Drop tables
 	@param {string} databaseid Database id
 	@param {object} params Parameters
@@ -32,86 +32,86 @@ yy.DropTable.prototype.toString = function () {
 	DROP TABLE one;
 	DROP TABLE IF NOT EXISTS two, three;
 */
-yy.DropTable.prototype.execute = function (databaseid, params, cb) {
-	var ifexists = this.ifexists;
-	var res = 0; // No tables removed
-	var count = 0;
-	var tlen = this.tables.length;
+	yy.DropTable.prototype.execute = function (databaseid, params, cb) {
+		var ifexists = this.ifexists;
+		var res = 0; // No tables removed
+		var count = 0;
+		var tlen = this.tables.length;
 
-	// For each table in the list
-	this.tables.forEach(function (table) {
-		var db = alasql.databases[table.databaseid || databaseid];
-		var tableid = table.tableid;
+		// For each table in the list
+		this.tables.forEach(function (table) {
+			var db = alasql.databases[table.databaseid || databaseid];
+			var tableid = table.tableid;
 
-		/** @todo Test with AUTOCOMMIT flag is ON */
-		/** @todo Test with IndexedDB and multiple tables */
+			/** @todo Test with AUTOCOMMIT flag is ON */
+			/** @todo Test with IndexedDB and multiple tables */
 
-		if (!ifexists || (ifexists && db.tables[tableid])) {
-			if (!db.tables[tableid]) {
-				if (!alasql.options.dropifnotexists) {
-					throw new Error(
-						`Can not drop table ${JSON.stringify(
-							table.tableid
-						)} because it does not exist in the database.`
-					);
+			if (!ifexists || (ifexists && db.tables[tableid])) {
+				if (!db.tables[tableid]) {
+					if (!alasql.options.dropifnotexists) {
+						throw new Error(
+							`Can not drop table ${JSON.stringify(
+								table.tableid
+							)} because it does not exist in the database.`
+						);
+					}
+				} else {
+					if (db.engineid /*&& alasql.options.autocommit*/) {
+						alasql.engines[db.engineid].dropTable(
+							table.databaseid || databaseid,
+							tableid,
+							ifexists,
+							function (res1) {
+								delete db.tables[tableid];
+								schemaChanged(db);
+								res += res1;
+								count++;
+								if (count == tlen && cb) cb(res);
+							}
+						);
+					} else {
+						delete db.tables[tableid];
+						// The schema changed, so statements in the statement cache must be compiled again
+						schemaChanged(db);
+						res++;
+						count++;
+						if (count == tlen && cb) cb(res);
+					}
 				}
 			} else {
-				if (db.engineid /*&& alasql.options.autocommit*/) {
-					alasql.engines[db.engineid].dropTable(
-						table.databaseid || databaseid,
-						tableid,
-						ifexists,
-						function (res1) {
-							delete db.tables[tableid];
-							schemaChanged(db);
-							res += res1;
-							count++;
-							if (count == tlen && cb) cb(res);
-						}
-					);
-				} else {
-					delete db.tables[tableid];
-					// The schema changed, so statements in the statement cache must be compiled again
-					schemaChanged(db);
-					res++;
-					count++;
-					if (count == tlen && cb) cb(res);
-				}
+				count++;
+				if (count == tlen && cb) cb(res);
 			}
-		} else {
-			count++;
-			if (count == tlen && cb) cb(res);
+		});
+		// if(cb) res = cb(res);
+		return res;
+	};
+
+	yy.TruncateTable = function (params) {
+		return Object.assign(this, params);
+	};
+	yy.TruncateTable.prototype.toString = function () {
+		var s = 'TRUNCATE TABLE';
+		s += ' ' + this.table.toString();
+		return s;
+	};
+
+	yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
+		var db = alasql.databases[this.table.databaseid || databaseid];
+		var tableid = this.table.tableid;
+		if (db.engineid) {
+			return alasql.engines[db.engineid].truncateTable(
+				this.table.databaseid || databaseid,
+				tableid,
+				this.ifexists,
+				cb
+			);
 		}
-	});
-	// if(cb) res = cb(res);
-	return res;
-};
-
-yy.TruncateTable = function (params) {
-	return Object.assign(this, params);
-};
-yy.TruncateTable.prototype.toString = function () {
-	var s = 'TRUNCATE TABLE';
-	s += ' ' + this.table.toString();
-	return s;
-};
-
-yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[this.table.databaseid || databaseid];
-	var tableid = this.table.tableid;
-	if (db.engineid) {
-		return alasql.engines[db.engineid].truncateTable(
-			this.table.databaseid || databaseid,
-			tableid,
-			this.ifexists,
-			cb
-		);
-	}
-	if (db.tables[tableid]) {
-		db.tables[tableid].data = [];
-	} else {
-		throw new Error('Cannot truncate table becaues it does not exist');
-	}
-	return cb ? cb(0) : 0;
-};
+		if (db.tables[tableid]) {
+			db.tables[tableid].data = [];
+		} else {
+			throw new Error('Cannot truncate table becaues it does not exist');
+		}
+		return cb ? cb(0) : 0;
+	};
 }

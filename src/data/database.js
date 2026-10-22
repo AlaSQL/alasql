@@ -1,5 +1,5 @@
 export default function install(alasql) {
-/*
+	/*
 //
 // Database class for Alasql.js
 // Date: 03.11.2014
@@ -7,94 +7,94 @@ export default function install(alasql) {
 //
 */
 
-// Main Database class
+	// Main Database class
 
-/**
+	/**
     @class Database
  */
 
-var Database = (alasql.Database = function (databaseid) {
-	var self = this;
-	//		self = function(a){console.log('OK',a);}
-	//		self.prototype = this;
+	var Database = (alasql.Database = function (databaseid) {
+		var self = this;
+		//		self = function(a){console.log('OK',a);}
+		//		self.prototype = this;
 
-	if (self === alasql) {
-		if (databaseid) {
-			//			if(alasql.databases[databaseid]) {
-			self = alasql.databases[databaseid];
-			//			} else {
-			alasql.databases[databaseid] = self;
-			//			}
-			if (!self) {
-				throw new Error(`Database ${databaseid} not found`);
+		if (self === alasql) {
+			if (databaseid) {
+				//			if(alasql.databases[databaseid]) {
+				self = alasql.databases[databaseid];
+				//			} else {
+				alasql.databases[databaseid] = self;
+				//			}
+				if (!self) {
+					throw new Error(`Database ${databaseid} not found`);
+				}
+			} else {
+				// Create new database (or get alasql?)
+				self = alasql.databases.alasql;
+				// For SQL Server examples, USE tempdb
+				if (alasql.options.tsql) {
+					alasql.databases.tempdb = alasql.databases.alasql;
+				}
+				//			self = new Database(databaseid); // to call without new
 			}
-		} else {
-			// Create new database (or get alasql?)
-			self = alasql.databases.alasql;
-			// For SQL Server examples, USE tempdb
-			if (alasql.options.tsql) {
-				alasql.databases.tempdb = alasql.databases.alasql;
-			}
-			//			self = new Database(databaseid); // to call without new
 		}
-	}
-	if (!databaseid) {
-		databaseid = 'db' + alasql.databasenum++; // Random name
-	}
+		if (!databaseid) {
+			databaseid = 'db' + alasql.databasenum++; // Random name
+		}
 
-	// Step 1
-	self.databaseid = databaseid;
-	alasql.databases[databaseid] = self;
-	self.dbversion = 0;
+		// Step 1
+		self.databaseid = databaseid;
+		alasql.databases[databaseid] = self;
+		self.dbversion = 0;
 
-	//Steps 2-5
-	self.tables = {};
-	self.views = {};
-	self.triggers = {};
-	self.indices = {};
+		//Steps 2-5
+		self.tables = {};
+		self.views = {};
+		self.triggers = {};
+		self.indices = {};
 
-	// Step 6: Objects storage
-	self.objects = {};
-	self.counter = 0;
+		// Step 6: Objects storage
+		self.objects = {};
+		self.counter = 0;
 
-	self.resetSqlCache();
-	return self;
-});
+		self.resetSqlCache();
+		return self;
+	});
 
-/**
+	/**
     Reset SQL statements cache
  */
 
-Database.prototype.resetSqlCache = function () {
-	this.sqlCache = {}; // Cache for compiled SQL statements
-	this.sqlCacheSize = 0;
-	this.astCache = {}; // Cache for AST objects
-};
+	Database.prototype.resetSqlCache = function () {
+		this.sqlCache = {}; // Cache for compiled SQL statements
+		this.sqlCacheSize = 0;
+		this.astCache = {}; // Cache for AST objects
+	};
 
-// Main SQL function
+	// Main SQL function
 
-/**
+	/**
     Run SQL statement on database
     @param {string} sql SQL statement
     @param [object] params Parameters
     @param {function} cb callback
  */
 
-Database.prototype.exec = function (sql, params, cb) {
-	return alasql.dexec(this.databaseid, sql, params, cb);
-};
+	Database.prototype.exec = function (sql, params, cb) {
+		return alasql.dexec(this.databaseid, sql, params, cb);
+	};
 
-Database.prototype.autoval = function (tablename, colname, getNext) {
-	return alasql.autoval(tablename, colname, getNext, this.databaseid);
-};
+	Database.prototype.autoval = function (tablename, colname, getNext) {
+		return alasql.autoval(tablename, colname, getNext, this.databaseid);
+	};
 
-Database.prototype.transaction = function (cb) {
-	var tx = new alasql.Transaction(this.databaseid);
-	var res = cb(tx);
-	return res;
-};
+	Database.prototype.transaction = function (cb) {
+		var tx = new alasql.Transaction(this.databaseid);
+		var res = cb(tx);
+		return res;
+	};
 
-/*/*
+	/*/*
 // 	// Compile
 // 	var statement = this.compile(sql);
 // 	// Run
@@ -116,8 +116,8 @@ Database.prototype.transaction = function (cb) {
 // };
 */
 
-// Aliases like MS SQL
-/*/*
+	// Aliases like MS SQL
+	/*/*
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
 Database.prototype.queryArray = function(sql, params, cb) {

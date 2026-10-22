@@ -3,7 +3,7 @@ import {arrayDiff, arrayUnion} from '../utils/helpers.js';
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	var decartes = internal.decartes;
-/*
+	/*
 //
 // Select compiler part for Alasql.js
 // Date: 03.11.2014
@@ -11,212 +11,219 @@ export default function install(alasql, internal) {
 //
 */
 
-/**
- * Helper to get GROUP_CONCAT parameters for compilation
- * @param {Object} col - Column with aggregatorid and funcid
- * @returns {string} - Comma-separated parameter string for aggregator call
- */
-function getGroupConcatParams(col) {
-	if (!col.funcid || col.funcid.toUpperCase() !== 'GROUP_CONCAT') {
-		return '';
+	/**
+	 * Helper to get GROUP_CONCAT parameters for compilation
+	 * @param {Object} col - Column with aggregatorid and funcid
+	 * @returns {string} - Comma-separated parameter string for aggregator call
+	 */
+	function getGroupConcatParams(col) {
+		if (!col.funcid || col.funcid.toUpperCase() !== 'GROUP_CONCAT') {
+			return '';
+		}
+		const separator = col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
+		// Extract direction from order expressions (MySQL GROUP_CONCAT orders by the value itself)
+		const orderDir =
+			col.order && col.order.length > 0 && col.order[0].direction
+				? JSON.stringify(col.order[0].direction)
+				: 'undefined';
+		return `,${separator},${orderDir}`;
 	}
-	const separator = col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
-	// Extract direction from order expressions (MySQL GROUP_CONCAT orders by the value itself)
-	const orderDir =
-		col.order && col.order.length > 0 && col.order[0].direction
-			? JSON.stringify(col.order[0].direction)
-			: 'undefined';
-	return `,${separator},${orderDir}`;
-}
 
-/**
+	/**
  Compile group of statements
  */
-yy.Select.prototype.compileGroup = function (query) {
-	//	console.log(this.group);
-	if (query.sources.length > 0) {
-		var tableid = query.sources[0].alias;
-	} else {
-		// If SELECT contains group aggregators without source tables
-		var tableid = '';
-	}
-	var defcols = query.defcols;
-	query.groupSources = new WeakMap();
-	var allgroup = [[]];
-	if (this.group) {
-		allgroup = decartes(this.group, query);
-	}
-	// Union all arrays to get a maximum
-	var allgroups = [];
-	allgroup.forEach(function (a) {
-		allgroups = arrayUnion(allgroups, a);
-	});
-
-	query.allgroups = allgroups;
-
-	query.ingroup = [];
-	var s = '';
-	allgroup.forEach(function (agroup, setIdx) {
-		// Start of group function
-		s += 'var g=this.xgroups[';
-
-		// Array with group columns from record
-		var rg = agroup.map(function (col2) {
-			var columnid = col2.split('\t')[0];
-			var coljs = col2.split('\t')[1];
-			// Check, if aggregator exists but GROUP BY is not exists
-			if (columnid === '') {
-				return '1'; // Create fictive grouping column for fictive GROUP BY
-			}
-			query.ingroup.push(columnid);
-			return coljs;
+	yy.Select.prototype.compileGroup = function (query) {
+		//	console.log(this.group);
+		if (query.sources.length > 0) {
+			var tableid = query.sources[0].alias;
+		} else {
+			// If SELECT contains group aggregators without source tables
+			var tableid = '';
+		}
+		var defcols = query.defcols;
+		query.groupSources = new WeakMap();
+		var allgroup = [[]];
+		if (this.group) {
+			allgroup = decartes(this.group, query);
+		}
+		// Union all arrays to get a maximum
+		var allgroups = [];
+		allgroup.forEach(function (a) {
+			allgroups = arrayUnion(allgroups, a);
 		});
 
-		if (rg.length === 0) {
-			rg = ["''"];
-		}
+		query.allgroups = allgroups;
 
-		// With several grouping sets (CUBE, ROLLUP, GROUPING SETS) the same values can
-		// appear in different sets, e.g. (a=2) and (b=2), so the key must include the set
-		var groupKey = rg.join('+"`"+');
-		if (allgroup.length > 1) {
-			groupKey = `'${setIdx}\`'+` + groupKey;
-		}
+		query.ingroup = [];
+		var s = '';
+		allgroup.forEach(function (agroup, setIdx) {
+			// Start of group function
+			s += 'var g=this.xgroups[';
 
-		s += groupKey;
-		s += '];if(!g) {this.groups.push((g=this.xgroups[';
-		s += groupKey;
-		s += '] = {';
-		s += agroup
-			.map(function (col2) {
+			// Array with group columns from record
+			var rg = agroup.map(function (col2) {
 				var columnid = col2.split('\t')[0];
 				var coljs = col2.split('\t')[1];
-
+				// Check, if aggregator exists but GROUP BY is not exists
 				if (columnid === '') {
-					return '';
+					return '1'; // Create fictive grouping column for fictive GROUP BY
 				}
-				return "'" + columnid + "':" + coljs + ',';
-			})
-			.join('');
-		var neggroup = arrayDiff(allgroups, agroup);
+				query.ingroup.push(columnid);
+				return coljs;
+			});
 
-		s += neggroup
-			.map(function (col2) {
-				var columnid = col2.split('\t')[0];
-				return "'" + columnid + "':null,";
-			})
-			.join('');
-		var aft = '',
-			aft2 = '';
+			if (rg.length === 0) {
+				rg = ["''"];
+			}
 
-		if (typeof query.groupStar !== 'undefined') {
-			aft2 += "for(var f in p['" + query.groupStar + "']) {g[f]=p['" + query.groupStar + "'][f];};";
-		}
+			// With several grouping sets (CUBE, ROLLUP, GROUPING SETS) the same values can
+			// appear in different sets, e.g. (a=2) and (b=2), so the key must include the set
+			var groupKey = rg.join('+"`"+');
+			if (allgroup.length > 1) {
+				groupKey = `'${setIdx}\`'+` + groupKey;
+			}
 
-		s += query.selectGroup
-			.map(function (col) {
-				var colexp = col.expression.toJS('p', tableid, defcols);
-				var colas = col.nick;
-				let colExpIfFunIdExists = expression => {
-					let colexpression = expression.args[0];
-					return colexpression.toJS('p', tableid, defcols);
-				};
-				if (col instanceof yy.AggrValue) {
-					if (col.distinct) {
-						aft +=
-							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
+			s += groupKey;
+			s += '];if(!g) {this.groups.push((g=this.xgroups[';
+			s += groupKey;
+			s += '] = {';
+			s += agroup
+				.map(function (col2) {
+					var columnid = col2.split('\t')[0];
+					var coljs = col2.split('\t')[1];
+
+					if (columnid === '') {
+						return '';
 					}
-					if (col.aggregatorid === 'SUM') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(y = ${colexp}, (y instanceof Date) ? undefined : ((y || typeof y == 'number') ? y : undefined)),`;
+					return "'" + columnid + "':" + coljs + ',';
+				})
+				.join('');
+			var neggroup = arrayDiff(allgroups, agroup);
+
+			s += neggroup
+				.map(function (col2) {
+					var columnid = col2.split('\t')[0];
+					return "'" + columnid + "':null,";
+				})
+				.join('');
+			var aft = '',
+				aft2 = '';
+
+			if (typeof query.groupStar !== 'undefined') {
+				aft2 +=
+					"for(var f in p['" + query.groupStar + "']) {g[f]=p['" + query.groupStar + "'][f];};";
+			}
+
+			s += query.selectGroup
+				.map(function (col) {
+					var colexp = col.expression.toJS('p', tableid, defcols);
+					var colas = col.nick;
+					let colExpIfFunIdExists = expression => {
+						let colexpression = expression.args[0];
+						return colexpression.toJS('p', tableid, defcols);
+					};
+					if (col instanceof yy.AggrValue) {
+						if (col.distinct) {
+							aft +=
+								",g['$$_VALUES_" +
+								colas +
+								"']={},g['$$_VALUES_" +
+								colas +
+								"'][" +
+								colexp +
+								']=true';
 						}
-						return `'${colas}':(y = ${colexp}, (y instanceof Date) ? undefined : ((y || typeof y == 'number') ? y : undefined)),`;
-					} else if (col.aggregatorid === 'TOTAL') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ?
+						if (col.aggregatorid === 'SUM') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								return `'${colas}':(y = ${colexp}, (y instanceof Date) ? undefined : ((y || typeof y == 'number') ? y : undefined)),`;
+							}
+							return `'${colas}':(y = ${colexp}, (y instanceof Date) ? undefined : ((y || typeof y == 'number') ? y : undefined)),`;
+						} else if (col.aggregatorid === 'TOTAL') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ?
 							${colexp1} : ${colexp1} == 'string' && typeof Number(${colexp1}) == 'number' ? Number(${colexp1}) :
 							typeof ${colexp1} == 'boolean' ?  Number(${colexp1}) : 0,`;
-						}
-						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ?
+							}
+							return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ?
 							${colexp} : ${colexp} == 'string' && typeof Number(${colexp}) == 'number' ? Number(${colexp}) :
 							typeof ${colexp} === 'boolean' ?  Number(${colexp}) : 0,`;
-					} else if (col.aggregatorid === 'FIRST' || col.aggregatorid === 'LAST') {
-						return "'" + colas + "':" + colexp + ','; //f.field.arguments[0].toJS();
-					} else if (col.aggregatorid === 'MIN') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
+						} else if (col.aggregatorid === 'FIRST' || col.aggregatorid === 'LAST') {
+							return "'" + colas + "':" + colexp + ','; //f.field.arguments[0].toJS();
+						} else if (col.aggregatorid === 'MIN') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
 
+								return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
+							}
 							return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
-						}
-						return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
-					} else if (col.aggregatorid === 'MAX') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
-						}
-						return `'${colas}' : (${colexp} !== null && (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint') ? ${colexp} : ${colexp} !== null && typeof ${colexp} == 'object' ?
+						} else if (col.aggregatorid === 'MAX') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								return `'${colas}': (y = ${colexp}, y !== null && (typeof y == 'number' || typeof y == 'bigint' || (typeof y == 'object' && (typeof Number(y) == 'number' || y instanceof Date))) ? y : undefined),`;
+							}
+							return `'${colas}' : (${colexp} !== null && (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint') ? ${colexp} : ${colexp} !== null && typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : undefined : undefined),`;
-					} else if (col.aggregatorid === 'ARRAY') {
-						return `'${colas}':[${colexp}],`;
-					} else if (col.aggregatorid === 'COUNT') {
-						if (col.expression.columnid === '*') {
-							return `'${colas}':1,`;
-						} else {
-							return `'${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
-						}
-					} else if (col.aggregatorid === 'AVG') {
-						query.removeKeys.push(`_SUM_${colas}`);
-						query.removeKeys.push(`_COUNT_${colas}`);
+						} else if (col.aggregatorid === 'ARRAY') {
+							return `'${colas}':[${colexp}],`;
+						} else if (col.aggregatorid === 'COUNT') {
+							if (col.expression.columnid === '*') {
+								return `'${colas}':1,`;
+							} else {
+								return `'${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
+							}
+						} else if (col.aggregatorid === 'AVG') {
+							query.removeKeys.push(`_SUM_${colas}`);
+							query.removeKeys.push(`_COUNT_${colas}`);
 
-						return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : t; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : (t || 0); })(),'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
-					} else if (col.aggregatorid === 'AGGR') {
-						aft += `,g['${colas}']=${col.expression.toJS('g', -1)}`;
+							return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : t; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : (t || 0); })(),'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
+						} else if (col.aggregatorid === 'AGGR') {
+							aft += `,g['${colas}']=${col.expression.toJS('g', -1)}`;
+							return '';
+						} else if (col.aggregatorid === 'REDUCE') {
+							query.aggrKeys.push(col);
+							const extraParams = getGroupConcatParams(col);
+							// Support multiple arguments for user-defined aggregates
+							if (col.args && col.args.length > 1) {
+								// Multiple arguments - pass all of them
+								let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
+								return `'${colas}':alasql.aggr['${col.funcid}'](${argExpressions},undefined,1${extraParams}),`;
+							} else {
+								// Single argument - backward compatibility
+								return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
+							}
+						}
 						return '';
-					} else if (col.aggregatorid === 'REDUCE') {
-						query.aggrKeys.push(col);
-						const extraParams = getGroupConcatParams(col);
-						// Support multiple arguments for user-defined aggregates
-						if (col.args && col.args.length > 1) {
-							// Multiple arguments - pass all of them
-							let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
-							return `'${colas}':alasql.aggr['${col.funcid}'](${argExpressions},undefined,1${extraParams}),`;
-						} else {
-							// Single argument - backward compatibility
-							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
-						}
 					}
+
 					return '';
-				}
+				})
+				.join('');
 
-				return '';
-			})
-			.join('');
+			s += '}' + aft + ',g));this.groupSources.set(g,Object.assign({},p));' + aft2 + '} else {';
+			s += query.selectGroup
+				.map(function (col) {
+					var colas = col.nick;
+					var colexp = col.expression.toJS('p', tableid, defcols);
+					let colExpIfFunIdExists = expression => {
+						let colexpression = expression.args[0];
+						return colexpression.toJS('p', tableid, defcols);
+					};
+					if (col instanceof yy.AggrValue) {
+						var pre = '',
+							post = '';
+						if (col.distinct) {
+							pre = `if(typeof ${colexp}!="undefined" && (!g['$$_VALUES_${colas}'][${colexp}])) {`;
+							post = `g['$$_VALUES_${colas}'][${colexp}]=true;}`;
+						}
 
-		s += '}' + aft + ',g));this.groupSources.set(g,Object.assign({},p));' + aft2 + '} else {';
-		s += query.selectGroup
-			.map(function (col) {
-				var colas = col.nick;
-				var colexp = col.expression.toJS('p', tableid, defcols);
-				let colExpIfFunIdExists = expression => {
-					let colexpression = expression.args[0];
-					return colexpression.toJS('p', tableid, defcols);
-				};
-				if (col instanceof yy.AggrValue) {
-					var pre = '',
-						post = '';
-					if (col.distinct) {
-						pre = `if(typeof ${colexp}!="undefined" && (!g['$$_VALUES_${colas}'][${colexp}])) {`;
-						post = `g['$$_VALUES_${colas}'][${colexp}]=true;}`;
-					}
-
-					if (col.aggregatorid === 'SUM') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return (
-								pre +
-								`
+						if (col.aggregatorid === 'SUM') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								return (
+									pre +
+									`
 								{
 									const __g_colas = g['${colas}'];
 									const __typeof_colexp1 = typeof ${colexp1};
@@ -242,12 +249,12 @@ yy.Select.prototype.compileGroup = function (query) {
 									}
 								}
 								` +
-								post
-							);
-						}
-						return (
-							pre +
-							`
+									post
+								);
+							}
+							return (
+								pre +
+								`
 							{
 								const __g_colas = g['${colas}'];
 								const __typeof_colexp = typeof ${colexp};
@@ -274,14 +281,14 @@ yy.Select.prototype.compileGroup = function (query) {
 							}
 						}
 						` +
-							post
-						);
-					} else if (col.aggregatorid === 'TOTAL') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return (
-								pre +
-								`{
+								post
+							);
+						} else if (col.aggregatorid === 'TOTAL') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								return (
+									pre +
+									`{
 									const __g_colas = g['${colas}'];
 									const __colexp1 = ${colexp1};
 									const __typeof_g_colas = typeof __g_colas;
@@ -302,12 +309,12 @@ yy.Select.prototype.compileGroup = function (query) {
 										g['${colas}'] += __colexp1 || 0;
 									}
 								}` +
-								post
-							);
-						}
-						return (
-							pre +
-							`{
+									post
+								);
+							}
+							return (
+								pre +
+								`{
 								const __g_colas = g['${colas}'];
 								const __colexp = ${colexp};
 								const __typeof_g_colas = typeof __g_colas;
@@ -330,26 +337,26 @@ yy.Select.prototype.compileGroup = function (query) {
 							}
 
 							` +
-							post
-						);
-					} else if (col.aggregatorid === 'COUNT') {
-						if (col.expression.columnid === '*') {
-							return `${pre}
+								post
+							);
+						} else if (col.aggregatorid === 'COUNT') {
+							if (col.expression.columnid === '*') {
+								return `${pre}
 								g['${colas}']++;
 								${post}`;
-						} else {
-							return `${pre}
+							} else {
+								return `${pre}
 							if(typeof ${colexp}!="undefined" && ${colexp} !== null) g['${colas}']++;
 							${post}`;
-						}
-					} else if (col.aggregatorid === 'ARRAY') {
-						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
-					} else if (col.aggregatorid === 'MIN') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return (
-								pre +
-								`if ((g['${colas}'] == null && ${colexp1} !== null) ? y = ${colexp} : 
+							}
+						} else if (col.aggregatorid === 'ARRAY') {
+							return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
+						} else if (col.aggregatorid === 'MIN') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								return (
+									pre +
+									`if ((g['${colas}'] == null && ${colexp1} !== null) ? y = ${colexp} : 
 									(g['${colas}'] !== null && ${colexp1} == null) ? y = g['${colas}'] : 
 									((y = ${colexp}) < g['${colas}'])) {
 									if (typeof y == 'number' || typeof y == 'bigint') {
@@ -364,12 +371,12 @@ yy.Select.prototype.compileGroup = function (query) {
 								} else if (g['${colas}'] !== null && typeof g['${colas}'] == 'object') {
 									g['${colas}'] = Number(g['${colas}']);
 								}` +
-								post
-							);
-						}
-						return (
-							pre +
-							`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : 
+									post
+								);
+							}
+							return (
+								pre +
+								`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : 
 								(g['${colas}']!== null && ${colexp} == null) ? y = g['${colas}'] : 
 								((y=${colexp}) < g['${colas}'])) { 
 								if(typeof y == 'number' || typeof y == 'bigint') {
@@ -384,15 +391,15 @@ yy.Select.prototype.compileGroup = function (query) {
 							} else if(g['${colas}']!== null && typeof g['${colas}'] == 'object') {
 								g['${colas}'] = Number(g['${colas}']);
 							}` +
-							post
-						);
-					} else if (col.aggregatorid === 'MAX') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							//console.log(pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'])
-							return (
-								pre +
-								`if ((g['${colas}'] == null && ${colexp1} !== null) ? y = ${colexp} : 
+								post
+							);
+						} else if (col.aggregatorid === 'MAX') {
+							if ('funcid' in col.expression) {
+								let colexp1 = colExpIfFunIdExists(col.expression);
+								//console.log(pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'])
+								return (
+									pre +
+									`if ((g['${colas}'] == null && ${colexp1} !== null) ? y = ${colexp} : 
 									(g['${colas}'] !== null && ${colexp1} == null) ? y = g['${colas}'] : 
 									((y = ${colexp}) > g['${colas}'])) {
 									if (typeof y == 'number' || typeof y == 'bigint') {
@@ -407,12 +414,12 @@ yy.Select.prototype.compileGroup = function (query) {
 								} else if (g['${colas}'] !== null && typeof g['${colas}'] == 'object') {
 									g['${colas}'] = Number(g['${colas}']);
 								}` +
-								post
-							);
-						}
-						return (
-							pre +
-							`if ((g['${colas}'] == null && ${colexp} !== null) ? y = ${colexp} : 
+									post
+								);
+							}
+							return (
+								pre +
+								`if ((g['${colas}'] == null && ${colexp} !== null) ? y = ${colexp} : 
 								(g['${colas}'] !== null && ${colexp} == null) ? y = g['${colas}'] : 
 								((y = ${colexp}) > g['${colas}'])) {
 								if (typeof y == 'number' || typeof y == 'bigint') {
@@ -427,14 +434,14 @@ yy.Select.prototype.compileGroup = function (query) {
 							} else if (g['${colas}'] !== null && typeof g['${colas}'] == 'object') {
 								g['${colas}'] = Number(g['${colas}']);
 							}` +
-							post
-						);
-					} else if (col.aggregatorid === 'FIRST') {
-						return '';
-					} else if (col.aggregatorid === 'LAST') {
-						return `${pre}g['${colas}']=${colexp};${post}`;
-					} else if (col.aggregatorid === 'AVG') {
-						return `${pre}
+								post
+							);
+						} else if (col.aggregatorid === 'FIRST') {
+							return '';
+						} else if (col.aggregatorid === 'LAST') {
+							return `${pre}g['${colas}']=${colexp};${post}`;
+						} else if (col.aggregatorid === 'AVG') {
+							return `${pre}
 							y= (${colexp});
 							g['_COUNT_${colas}'] += (typeof y == "undefined" || y === null) ? 0 : 1;
 							if (y instanceof Date || (g['_SUM_${colas}'] && g['_SUM_${colas}'] instanceof Date)) {
@@ -450,35 +457,35 @@ yy.Select.prototype.compileGroup = function (query) {
     							g['${colas}'] = g['_SUM_${colas}'] / g['_COUNT_${colas}']; 
     						}
 							${post}`;
-					} else if (col.aggregatorid === 'AGGR') {
-						return `${pre}
+						} else if (col.aggregatorid === 'AGGR') {
+							return `${pre}
 							g['${colas}']=${col.expression.toJS('g', -1)};
 							${post}`;
-					} else if (col.aggregatorid === 'REDUCE') {
-						const extraParams = getGroupConcatParams(col);
-						// Support multiple arguments for user-defined aggregates
-						if (col.args && col.args.length > 1) {
-							// Multiple arguments - pass all of them
-							let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
-							return `${pre}
+						} else if (col.aggregatorid === 'REDUCE') {
+							const extraParams = getGroupConcatParams(col);
+							// Support multiple arguments for user-defined aggregates
+							if (col.args && col.args.length > 1) {
+								// Multiple arguments - pass all of them
+								let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
+								return `${pre}
 								g['${colas}'] = alasql.aggr.${col.funcid}(${argExpressions},g['${colas}'],2${extraParams});
 								${post}`;
-						} else {
-							// Single argument - backward compatibility
-							return `${pre}
+							} else {
+								// Single argument - backward compatibility
+								return `${pre}
 								g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2${extraParams});
 								${post}`;
+							}
 						}
+						return '';
 					}
+
 					return '';
-				}
+				})
+				.join('');
 
-				return '';
-			})
-			.join('');
-
-		s += '}';
-	});
-	return new Function('p,params,alasql', 'var y;' + s);
-};
+			s += '}';
+		});
+		return new Function('p,params,alasql', 'var y;' + s);
+	};
 }

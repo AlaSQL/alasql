@@ -1,6 +1,6 @@
 export default function install(alasql) {
 	var yy = alasql.yy;
-/*
+	/*
 //
 // CROSS AND OUTER APPLY for Alasql.js
 // Date: 03.11.2014
@@ -8,19 +8,19 @@ export default function install(alasql) {
 //
 */
 
-yy.Apply = class Apply {
-	constructor(params) {
-		Object.assign(this, params);
-	}
-
-	toString() {
-		let s = `${this.applymode} APPLY (${this.select.toString()})`;
-
-		if (this.as) {
-			s += ` AS ${this.as}`;
+	yy.Apply = class Apply {
+		constructor(params) {
+			Object.assign(this, params);
 		}
 
-		return s;
-	}
-};
+		toString() {
+			let s = `${this.applymode} APPLY (${this.select.toString()})`;
+
+			if (this.as) {
+				s += ` AS ${this.as}`;
+			}
+
+			return s;
+		}
+	};
 }

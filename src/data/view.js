@@ -1,5 +1,5 @@
 export default function install(alasql) {
-/*
+	/*
 //
 // View class for Alasql.js
 // Date: 14.11.2014
@@ -7,22 +7,22 @@ export default function install(alasql) {
 //
 */
 
-// Table class
-class View {
-	constructor(params) {
-		// Columns
-		this.columns = [];
-		this.xcolumns = {};
-		// Data array
-		this.query = [];
+	// Table class
+	class View {
+		constructor(params) {
+			// Columns
+			this.columns = [];
+			this.xcolumns = {};
+			// Data array
+			this.query = [];
 
-		Object.assign(this, params);
+			Object.assign(this, params);
+		}
 	}
-}
 
-alasql.View = View;
+	alasql.View = View;
 
-/*/*
+	/*/*
 // View = function(){
 // 	this.data = [];
 // 	this.columns = [];
