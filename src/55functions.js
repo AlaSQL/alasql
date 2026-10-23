@@ -66,7 +66,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 			s += alasql.stdlib[funcid.toUpperCase()].apply(
 				this,
 				this.args.map(function (arg) {
-					return arg.toJS(context, tableid);
+					return arg.toJS(context, tableid, defcols);
 				})
 			);
 		} else {
