@@ -472,6 +472,16 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 			query.removeKeys.push(key);
 		});
 	}
+	// Like ORDER BY, a name or number refers to an output column, anything else to the source row
+	if (this.distinctOn) {
+		var exprs = this.distinctOn.map(function (e) {
+			if (e instanceof yy.Column && query.xcolumns[e.columnid]) return "r['" + e.columnid + "']";
+			if (e instanceof yy.NumValue) return 'r[Object.keys(r)[' + (e.value - 1) + ']]';
+			return e.toJS('p', query.defaultTableid, query.defcols);
+		});
+		s += "r['$$distinctOn']=JSON.stringify([" + exprs.join(',') + ']);';
+		query.removeKeys.push('$$distinctOn');
+	}
 	return new Function('p,params,alasql', 'var y;' + s + 'return r');
 };
 

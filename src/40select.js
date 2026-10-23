@@ -30,6 +30,9 @@ yy.Select = class Select {
 		if (this.distinct) {
 			s += 'DISTINCT ';
 		}
+		if (this.distinctOn) {
+			s += 'DISTINCT ON (' + this.distinctOn.map(e => e.toString()).join(',') + ') ';
+		}
 		if (this.top) {
 			s += 'TOP ' + this.top.toString() + ' ';
 			if (this.percent) {
@@ -238,6 +241,20 @@ yy.Select = class Select {
 
 		// 7. Compile DISTINCT, LIMIT and OFFSET
 		query.distinct = this.distinct;
+		query.distinctOn = !!this.distinctOn;
+		if (
+			this.distinctOn &&
+			(this.group ||
+				query.selectGroup.length > 0 ||
+				this.union ||
+				this.unionall ||
+				this.except ||
+				this.intersect)
+		) {
+			throw new Error(
+				'DISTINCT ON is not supported with GROUP BY, aggregates, UNION, INTERSECT or EXCEPT'
+			);
+		}
 
 		// 9. Compile PIVOT clause
 		if (this.pivot) query.pivotfn = this.compilePivot(query);
