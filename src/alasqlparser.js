@@ -1638,7 +1638,7 @@ case 627:
  this.$ = new yy.DetachDatabase({databaseid:$$[$0]});
 break;
 case 628:
- this.$ = new yy.CreateDatabase({databaseid:$$[$0] }); yy.extend(this.$,$$[$0]); 
+ this.$ = new yy.CreateDatabase({databaseid:$$[$0] }); yy.extend(this.$,$$[$0-1]); 
 break;
 case 629:
  this.$ = new yy.CreateDatabase({engineid:$$[$0-4].toUpperCase(), databaseid:$$[$0-1], as:$$[$0] }); yy.extend(this.$,$$[$0-2]); 
