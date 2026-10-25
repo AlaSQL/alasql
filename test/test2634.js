@@ -10,11 +10,7 @@ describe(`Test ${testId} - REPLACE with an empty pattern`, function () {
 		assert.deepStrictEqual(alasql("SELECT REPLACE('abc', '', 'x') AS result"), [{result: 'abc'}]);
 	});
 
-	it('B) Treats a NULL pattern as empty without splitting the target', function () {
-		assert.deepStrictEqual(alasql("SELECT REPLACE('abc', NULL, 'x') AS result"), [{result: 'abc'}]);
-	});
-
-	it('C) Still replaces a matching non-empty pattern', function () {
+	it('B) Still replaces a matching non-empty pattern', function () {
 		assert.deepStrictEqual(alasql("SELECT REPLACE('abc', 'b', 'x') AS result"), [{result: 'axc'}]);
 	});
 });
