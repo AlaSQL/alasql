@@ -747,10 +747,12 @@
 			return id;
 		}
 
-		// Value of an unqualified column from the first source where it is not null
+		// Value of an unqualified column from the first source whose row has it, even when it is null (#2873)
 		static fromAnySource(context, aliases, columnid) {
-			return (
-				'(' + aliases.map(alias => `${context}['${alias}']?.['${columnid}']`).join(' ?? ') + ')'
+			return aliases.reduceRight(
+				(rest, alias) =>
+					`('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`,
+				'undefined'
 			);
 		}
 
