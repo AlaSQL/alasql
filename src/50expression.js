@@ -385,7 +385,9 @@
 						skipNullCheck = true; // Result is deterministic even with null operands
 					} else if (
 						!alasql.options.cache ||
-						this.right.some(value => value instanceof yy.ParamValue)
+						this.right.some(
+							value => !(value instanceof yy.NumValue || value instanceof yy.StringValue)
+						)
 					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
@@ -420,7 +422,9 @@
 						skipNullCheck = true; // Result is deterministic even with null operands
 					} else if (
 						!alasql.options.cache ||
-						this.right.some(value => value instanceof yy.ParamValue)
+						this.right.some(
+							value => !(value instanceof yy.NumValue || value instanceof yy.StringValue)
+						)
 					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
