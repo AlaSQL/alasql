@@ -300,7 +300,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return indexColumnToJS(expr.expression, table);
 				})
 				.join("+'`'+");
-			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
+			// The key can call functions that compile to alasql.*, as UNIQUE (ROUND(a)) does (#2876)
+			var ukfn = new Function('r,params,alasql', 'var y;return ' + uk.onrightfns);
+			uk.onrightfn = function (r, params) {
+				return ukfn(r, params, alasql);
+			};
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
 		} else if (con.type === 'INDEX') {
