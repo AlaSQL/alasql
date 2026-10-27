@@ -42,4 +42,19 @@ describe(`Test ${testId} - unqualified column that is NULL in the first join sou
 			]
 		);
 	});
+
+	it('D) a table row without the column does not read the other table', function () {
+		alasql('CREATE DATABASE test2873; USE test2873');
+		alasql('CREATE TABLE ta (id INT, x INT); CREATE TABLE tb (id INT, x INT, z INT)');
+		alasql('INSERT INTO ta (id) VALUES (1)');
+		alasql('INSERT INTO tb VALUES (1, 100, 5)');
+		assert.deepStrictEqual(alasql('SELECT ta.id, x, z FROM ta JOIN tb ON ta.id = tb.id'), [
+			{id: 1, x: undefined, z: 5},
+		]);
+		assert.deepStrictEqual(
+			alasql('SELECT ta.id FROM ta JOIN ? t1 ON ta.id = t1.id WHERE x IS NULL', [[{id: 1, x: 7}]]),
+			[{id: 1}]
+		);
+		alasql('USE alasql; DROP DATABASE test2873');
+	});
 });

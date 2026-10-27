@@ -747,13 +747,17 @@
 			return id;
 		}
 
-		// Value of an unqualified column from the first source whose row has it, even when it is null (#2873)
-		static fromAnySource(context, aliases, columnid) {
-			return aliases.reduceRight(
-				(rest, alias) =>
-					`('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`,
-				'undefined'
-			);
+		// Value of an unqualified column from the first source that has it, even when it is null (#2873).
+		// A table with column definitions is decided here, as its rows leave out columns that were
+		// not inserted; any other source is decided per row by whether the row has the key.
+		static fromAnySource(context, aliases, columnid, sources) {
+			return aliases.reduceRight((rest, alias) => {
+				const columns = sources?.[alias];
+				if (columns instanceof Set) {
+					return columns.has(columnid) ? `${context}['${alias}']?.['${columnid}']` : rest;
+				}
+				return `('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`;
+			}, 'undefined');
 		}
 
 		toString() {
@@ -811,7 +815,12 @@
 				} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
 					// Not a column of any table here, so it comes from a subquery, parameter
 					// or table without column definitions (#832)
-					return Column.fromAnySource(context, Object.keys(defcols['.']), this.columnid);
+					return Column.fromAnySource(
+						context,
+						Object.keys(defcols['.']),
+						this.columnid,
+						defcols['.']
+					);
 				} else {
 					return this.columnid !== '_'
 						? `${context}['${this.tableid || tableid}']['${this.columnid}']`
