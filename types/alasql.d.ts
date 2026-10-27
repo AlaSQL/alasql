@@ -67,6 +67,7 @@ declare module 'alasql' {
 		right2?: ExpressionNode;
 	}
 
+	// Not in the ExpressionNode union, so code that walks the tree compiles as it did before 4.21.0
 	export interface ArrowOp extends AlaSQLExpression {
 		left: ExpressionNode;
 		op: '->';
@@ -107,7 +108,7 @@ declare module 'alasql' {
 	}
 
 	export type ExpressionNode =
-		Op | ArrowOp | Column | ParamValue | NumValue | StringValue | LogicValue | UniOp | FuncValue;
+		Op | Column | ParamValue | NumValue | StringValue | LogicValue | UniOp | FuncValue;
 
 	export interface ExpressionWrapper extends AlaSQLExpression {
 		expression: ExpressionNode;
