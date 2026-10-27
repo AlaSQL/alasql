@@ -187,6 +187,14 @@
 		}
 	}
 
+	// The parser reads -1 as a minus in front of 1, so a negative number counts as a literal here
+	// too: an IN list with a non-literal builds its Set again for every row
+	const isInListLiteral = item =>
+		item instanceof yy.NumValue ||
+		item instanceof yy.StringValue ||
+		(item instanceof yy.UniOp && item.op === '-' && item.right instanceof yy.NumValue);
+	const inListValue = item => (item instanceof yy.UniOp ? -item.right.value : item.value);
+
 	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^', '<<', '>>', '&', '|']);
 	const toTypeStringOps = new Set(['||']);
 	// Regex to detect identifiers that need bracket wrapping (spaces, dots, hyphens, square brackets)
@@ -383,19 +391,14 @@
 						leftJS();
 						s = 'false';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (
-						!alasql.options.cache ||
-						this.right.some(
-							value => !(value instanceof yy.NumValue || value instanceof yy.StringValue)
-						)
-					) {
+					} else if (!alasql.options.cache || !this.right.every(isInListLiteral)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query. The key keeps the
 						// type of each value, so IN (5) and IN ('5') get their own Set (#2912)
 						alasql.sets = alasql.sets || {};
-						const allValues = this.right.map(value => value.value);
+						const allValues = this.right.map(inListValue);
 						const key = JSON.stringify(allValues);
 						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
 						s = `alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
@@ -420,18 +423,13 @@
 						leftJS();
 						s = 'true';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (
-						!alasql.options.cache ||
-						this.right.some(
-							value => !(value instanceof yy.NumValue || value instanceof yy.StringValue)
-						)
-					) {
+					} else if (!alasql.options.cache || !this.right.every(isInListLiteral)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query, keyed as for IN
 						alasql.sets = alasql.sets || {};
-						const allValues = this.right.map(value => value.value);
+						const allValues = this.right.map(inListValue);
 						const key = JSON.stringify(allValues);
 						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
 						s = `!alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
