@@ -118,7 +118,8 @@ function compileSelectStar(query, aliases, joinstar) {
 					'var w=p["' + escapeq(alias) + '"];for(var k in w){r["' + escapeq(alias) + '_"+k]=w[k]};';
 			} else {
 				// Default overwrite mode
-				sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r[k]=w[k]};';
+				sp +=
+					'var w=p["' + escapeq(alias) + '"];for(var k in w){' + setOwnJS('r', 'k', 'w[k]') + '};';
 			}
 			//console.log(777, sp);
 			query.dirtyColumns = true;
@@ -619,7 +620,7 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 			//			s += 'for(var k in g){r[k]=g[k]};';
 			//			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
 
-			s += 'for(var k in g) {r[k]=g[k]};';
+			s += 'for(var k in g) {' + setOwnJS('r', 'k', 'g[k]') + '};';
 			return '';
 
 			//			console.log(query);

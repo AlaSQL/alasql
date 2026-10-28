@@ -149,7 +149,7 @@ yy.Update.prototype.compile = function (databaseid) {
 					if (col.columnid === '*') {
 						// For *, use INSERTED values
 						for (var key in inserted) {
-							outputRow[key] = inserted[key];
+							setOwn(outputRow, key, inserted[key]);
 						}
 					} else {
 						var colname = col.as || col.columnid;
