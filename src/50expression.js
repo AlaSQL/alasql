@@ -390,12 +390,13 @@
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
-						// Use a cache to avoid re-creating the Set on every identical query
+						// Use a cache to avoid re-creating the Set on every identical query. The key keeps the
+						// type of each value, so IN (5) and IN ('5') get their own Set (#2912)
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const key = JSON.stringify(allValues);
+						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
+						s = `alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
@@ -424,12 +425,12 @@
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
-						// Use a cache to avoid re-creating the Set on every identical query
+						// Use a cache to avoid re-creating the Set on every identical query, keyed as for IN
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `!alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const key = JSON.stringify(allValues);
+						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
+						s = `!alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
@@ -747,11 +748,17 @@
 			return id;
 		}
 
-		// Value of an unqualified column from the first source where it is not null
-		static fromAnySource(context, aliases, columnid) {
-			return (
-				'(' + aliases.map(alias => `${context}['${alias}']?.['${columnid}']`).join(' ?? ') + ')'
-			);
+		// Value of an unqualified column from the first source that has it, even when it is null (#2873).
+		// A table with column definitions is decided here, as its rows leave out columns that were
+		// not inserted; any other source is decided per row by whether the row has the key.
+		static fromAnySource(context, aliases, columnid, sources) {
+			return aliases.reduceRight((rest, alias) => {
+				const columns = sources?.[alias];
+				if (columns instanceof Set) {
+					return columns.has(columnid) ? `${context}['${alias}']?.['${columnid}']` : rest;
+				}
+				return `('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`;
+			}, 'undefined');
 		}
 
 		toString() {
@@ -809,7 +816,12 @@
 				} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
 					// Not a column of any table here, so it comes from a subquery, parameter
 					// or table without column definitions (#832)
-					return Column.fromAnySource(context, Object.keys(defcols['.']), this.columnid);
+					return Column.fromAnySource(
+						context,
+						Object.keys(defcols['.']),
+						this.columnid,
+						defcols['.']
+					);
 				} else {
 					return this.columnid !== '_'
 						? `${context}['${this.tableid || tableid}']['${this.columnid}']`

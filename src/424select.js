@@ -258,7 +258,12 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 									"'" +
 										escapeq(col.as || col.columnid) +
 										"':" +
-										yy.Column.fromAnySource('p', Object.keys(query.aliases), col.columnid)
+										yy.Column.fromAnySource(
+											'p',
+											Object.keys(query.aliases),
+											col.columnid,
+											query.defcols['.']
+										)
 								);
 								// Only check it against the default table if no other source can have it
 								var inOtherSource = query.sources.some(

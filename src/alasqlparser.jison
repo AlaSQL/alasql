@@ -2420,6 +2420,10 @@ ColumnConstraint
 		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
 		{$$ = {"default":$2};}
+	| DEFAULT MINUS NumValue
+		{$$ = {"default":new yy.UniOp({op:'-', right:$3})};}
+	| DEFAULT PLUS NumValue
+		{$$ = {"default":new yy.UniOp({op:'+', right:$3})};}
 	| DEFAULT LPAR Expression RPAR
 		{$$ = {"default":$3};}
 	| DEFAULT FuncValue
@@ -2499,7 +2503,7 @@ DetachDatabase
 
 CreateDatabase
 	: CREATE DATABASE IfNotExists Literal
-		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$4); }
+		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$3); }
 	| CREATE Literal DATABASE IfNotExists Literal AsClause
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, as:$6 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
@@ -3365,6 +3369,7 @@ NonReserved
 	|BOM
 	|BREADTH
 	|C
+	|CALL
 	|CASCADE
 	|CATALOG
 	|CATALOG_NAME
@@ -3524,6 +3529,7 @@ NonReserved
 	|PATH
 	|PERMISSION
 	|PLACING
+	|PLAN
 	|PLI
 	|PRECEDING
 	|PRESERVE
@@ -3568,6 +3574,7 @@ NonReserved
 	|SERVER_NAME
 	|SESSION
 	|SETS
+	|SHOW
 	|SIMPLE
 	|SIZE
 	|SOURCE
@@ -3582,6 +3589,8 @@ NonReserved
 	|SUBCLASS_ORIGIN
 	|T
 	|TABLE_NAME
+	|TARGET
+	|TEMP
 	|TEMPORARY
 	|TIES
 	|TOKEN
@@ -3649,6 +3658,7 @@ var nonReserved = ["A"
 	,"BOM"
 	,"BREADTH"
 	,"C"
+	,"CALL"
 	,"CASCADE"
 	,"CATALOG"
 	,"CATALOG_NAME"
@@ -3808,6 +3818,7 @@ var nonReserved = ["A"
 	,"PATH"
 	,"PERMISSION"
 	,"PLACING"
+	,"PLAN"
 	,"PLI"
 	,"PRECEDING"
 	,"PRESERVE"
@@ -3852,6 +3863,7 @@ var nonReserved = ["A"
 	,"SERVER_NAME"
 	,"SESSION"
 	,"SETS"
+	,"SHOW"
 	,"SIMPLE"
 	,"SIZE"
 	,"SOURCE"
@@ -3866,6 +3878,8 @@ var nonReserved = ["A"
 	,"SUBCLASS_ORIGIN"
 	,"T"
 	,"TABLE_NAME"
+	,"TARGET"
+	,"TEMP"
 	,"TEMPORARY"
 	,"TIES"
 	,"TOKEN"
