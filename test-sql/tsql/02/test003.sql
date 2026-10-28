@@ -1,0 +1,13 @@
+DECLARE @x VARCHAR(10);
+DECLARE @y INT;
+DECLARE @z VARCHAR(10);
+
+SET @x =  '1000';
+SET @y =  '2000';
+SET @z = '+3000';
+
+SELECT
+  CASE WHEN @x < @y THEN 'TRUE' ELSE 'FALSE' END AS [x<y?],
+  CASE WHEN @y < @z THEN 'TRUE' ELSE 'FALSE' END AS [y<z?], 
+  CASE WHEN @x < @z THEN 'TRUE' ELSE 'FALSE' END AS [x<z?]
+GO

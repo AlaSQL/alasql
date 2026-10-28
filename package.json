@@ -1,0 +1,62 @@
+{
+  "name": "alasql",
+  "description": "AlaSQL - JavaScript SQL database and data manipulation library",
+  "version": "0.0.52",
+  "author": "Andrey Gershun <agershun@gmail.com>",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "devDependencies": {
+    "dom-storage":"2.0.1",
+    "gulp":"3.8.11",
+    "gulp-changed":"1.2.1",
+    "gulp-concat-sourcemap":"1.3.1",
+    "gulp-shell":"0.4.1",
+    "jison":"0.4.15",
+    "lodash":"3.7.0",
+    "xlsjs":"0.7.15",
+    "xlsx":"0.8.0"
+    },
+  "engines": [
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/agershun/alasql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agershun/alasql/issues"
+  },
+  "bin" : { 
+    "alacon" : "./bin/alacon.js",
+    "alaserver" : "./bin/alaserver.js"
+  },
+  "homepage": "https://github.com/agershun/alasql",
+  "main": "dist/alasql.js",
+  "scripts": {
+    "test": "cd test && mocha ."
+  },
+  "keywords": [
+    "sql",
+    "nosql",
+    "alasql",
+    "javascript",
+    "parser",
+    "database",
+    "DBMS",
+    "data",
+    "query",
+    "localStorage",
+    "IndexedDB",
+    "DOM-storage",
+    "SQLite",
+    "JSON",
+    "Excel",
+    "XLSX",
+    "XLS",
+    "CSV",
+    "worker"
+  ],
+  "license": "MIT"
+}

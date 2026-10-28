@@ -1,0 +1,15 @@
+<script src="../alasql.js"></script>
+<script>
+	alasql.worker();
+	alasql('SELECT VALUE 100',[],function(res){
+		console.log(res);
+		alasql.worker(false);
+		var res = alasql('SELECT VALUE 200');
+		console.log(res);
+
+		alasql.worker(true);
+		alasql('SELECT VALUE 300',[],function(res){
+			console.log(res);
+		});
+	});
+</script>
