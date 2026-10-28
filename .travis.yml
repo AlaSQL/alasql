@@ -1,0 +1,21 @@
+# whitelisted branches
+branches:
+  only:
+    - master
+    - develop
+
+language: node_js
+node_js:
+  - "node"
+  - "6"
+  - "5"
+  - "4"
+  - "0.12"
+
+script: npm run test:only && npm test
+
+after_success:
+  - npm run test:cover
+  - bash <(curl -s https://codecov.io/bash)
+  
+sudo: false
