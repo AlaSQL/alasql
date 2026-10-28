@@ -2418,6 +2418,10 @@ ColumnConstraint
 		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
 		{$$ = {"default":$2};}
+	| DEFAULT MINUS NumValue
+		{$$ = {"default":new yy.UniOp({op:'-', right:$3})};}
+	| DEFAULT PLUS NumValue
+		{$$ = {"default":new yy.UniOp({op:'+', right:$3})};}
 	| DEFAULT LPAR Expression RPAR
 		{$$ = {"default":$3};}
 	| DEFAULT FuncValue
