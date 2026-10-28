@@ -1,0 +1,5 @@
+{
+  "alasql": "{\"databases\":{\"ls379\":true}}",
+  "ls379": "{\"databaseid\":\"ls379\",\"tables\":{\"one\":true}}",
+  "ls379.one": "{\"columns\":[{\"columnid\":\"a\",\"dbtypeid\":\"INT\"},{\"columnid\":\"b\",\"dbtypeid\":\"STRING\"}],\"data\":[],\"identities\":{},\"defaultfns\":\"\",\"onupdatefns\":\"\"}"
+}
