@@ -148,6 +148,36 @@ var PERIODS = {
 	microsecond: 0.001,
 };
 
+// T-SQL abbreviations of the date parts in PERIODS
+var PERIOD_ABBREVIATIONS = {
+	yy: 'year',
+	yyyy: 'year',
+	qq: 'quarter',
+	q: 'quarter',
+	mm: 'month',
+	m: 'month',
+	dy: 'dayofyear',
+	y: 'dayofyear',
+	dd: 'day',
+	d: 'day',
+	wk: 'week',
+	ww: 'week',
+	dw: 'weekday',
+	w: 'weekday',
+	hh: 'hour',
+	mi: 'minute',
+	n: 'minute',
+	ss: 'second',
+	s: 'second',
+	ms: 'millisecond',
+	mcs: 'microsecond',
+};
+
+function datePart(period) {
+	period = period.toLowerCase();
+	return PERIOD_ABBREVIATIONS.hasOwnProperty(period) ? PERIOD_ABBREVIATIONS[period] : period;
+}
+
 function periodLength(period) {
 	if (!PERIODS.hasOwnProperty(period)) {
 		throw new Error('Unknown date part: ' + period);
@@ -157,12 +187,12 @@ function periodLength(period) {
 
 alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 	var interval = newDate(d2).getTime() - newDate(d1).getTime();
-	return (interval / periodLength(period.toLowerCase())) | 0;
+	return (interval / periodLength(datePart(period))) | 0;
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
 	var nd = newDate(d);
-	var period = period.toLowerCase();
+	var period = datePart(period);
 
 	switch (period) {
 		case 'year':
