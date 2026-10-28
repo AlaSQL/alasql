@@ -43,7 +43,10 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 		table.uk.push(uniqueConstraint);
 		uniqueConstraint.columns = this.columns;
 		uniqueConstraint.onrightfns = rightfns;
-		uniqueConstraint.onrightfn = rightfn;
+		// Callers pass only the row, so pass alasql here for keys like ROUND(a) (#2876)
+		uniqueConstraint.onrightfn = function (r, params) {
+			return rightfn(r, params, alasql);
+		};
 		uniqueConstraint.hh = hash(rightfns);
 
 		// Store in uniqdefs for reference

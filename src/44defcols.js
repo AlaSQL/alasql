@@ -26,6 +26,10 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 				}
 
 				if (table.columns) {
+					// Kept per source, so an unqualified column is decided by the table definition (#2873)
+					if (table.columns.length) {
+						defcols['.'][alias] = new Set(table.columns.map(col => col.columnid));
+					}
 					table.columns.forEach(function (col) {
 						if (defcols[col.columnid]) {
 							defcols[col.columnid] = '-'; // Ambigous
@@ -71,6 +75,9 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 				}
 
 				if (table.columns) {
+					if (table.columns.length) {
+						defcols['.'][alias] = new Set(table.columns.map(col => col.columnid));
+					}
 					table.columns.forEach(function (col) {
 						if (defcols[col.columnid]) {
 							defcols[col.columnid] = '-'; // Ambigous
