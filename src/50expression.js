@@ -390,12 +390,13 @@
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
-						// Use a cache to avoid re-creating the Set on every identical query
+						// Use a cache to avoid re-creating the Set on every identical query. The key keeps the
+						// type of each value, so IN (5) and IN ('5') get their own Set (#2912)
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const key = JSON.stringify(allValues);
+						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
+						s = `alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
@@ -424,12 +425,12 @@
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
-						// Use a cache to avoid re-creating the Set on every identical query
+						// Use a cache to avoid re-creating the Set on every identical query, keyed as for IN
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `!alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const key = JSON.stringify(allValues);
+						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
+						s = `!alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
