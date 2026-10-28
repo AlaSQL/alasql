@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "interface-name": [
+      true,
+      "never-prefix"
+    ],
+    "whitespace": [
+      false
+    ]
+  }
+}

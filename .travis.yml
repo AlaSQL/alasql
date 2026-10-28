@@ -1,0 +1,15 @@
+# whitelisted branches
+branches:
+  only:
+    - master
+    - develop
+
+language: node_js
+node_js:
+  - "node"
+  - "5"
+  - "4"
+  - "0.12"
+
+script: npm run test:only && npm test
+
