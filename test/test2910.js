@@ -167,4 +167,48 @@ describe('Test 2910 - comma joins with bare column names or tables out of chain 
 		assert.equal(sources[2].optimization, 'ix');
 		assert.ok(sources[0].srcwherefns, 'a1 = 5 filters t1 before the join');
 	});
+
+	it('L) rows come out in FROM order when the join runs in another order', function () {
+		alasql('CREATE TABLE orders (oid INT, cid INT)');
+		alasql('CREATE TABLE customers (id INT, name STRING, vip INT)');
+		alasql('INSERT INTO orders VALUES (1, 2), (2, 1), (3, 2), (4, 1)');
+		alasql('INSERT INTO customers VALUES (2, "Bo", 1), (1, "Al", 1), (3, "Cy", 0)');
+		// customers is pinned by vip = 1, so the join starts there; the rows still follow orders
+		assert.deepStrictEqual(
+			alasql('SELECT oid, name FROM orders, customers WHERE cid = id AND vip = 1'),
+			[
+				{oid: 1, name: 'Bo'},
+				{oid: 2, name: 'Al'},
+				{oid: 3, name: 'Bo'},
+				{oid: 4, name: 'Al'},
+			]
+		);
+		assert.deepStrictEqual(
+			alasql('SELECT x3, x1, x2 FROM t3, t1, t2 WHERE b1 = a2 AND b2 = a3 AND a1 = 5'),
+			alasql('SELECT x3, x1, x2 FROM t3 JOIN t2 ON b2 = a3 JOIN t1 ON b1 = a2 WHERE a1 = 5')
+		);
+	});
+
+	it('M) a condition with one bare and one qualified column', function () {
+		// Before: "Cannot read properties of undefined (reading 'a1')"
+		assert.deepStrictEqual(alasql('SELECT x1, x2 FROM t1, t2 WHERE b1 = t2.a2 AND a1 = 5'), [
+			{x1: 't1 row 5', x2: 't2 row 6'},
+		]);
+		assert.deepStrictEqual(alasql('SELECT x1, x2 FROM t1, t2 WHERE t1.b1 = a2 AND a1 = 5'), [
+			{x1: 't1 row 5', x2: 't2 row 6'},
+		]);
+	});
+
+	it('N) a bare column inside a function stays a WHERE condition', function () {
+		// A function reads a bare column from the first table (#2615), so it is no join link yet
+		alasql(
+			'CREATE TABLE f1 (k1 INT); CREATE TABLE f2 (k2 INT, s2 STRING); CREATE TABLE f3 (s3 STRING)'
+		);
+		alasql(
+			'INSERT INTO f1 VALUES (1); INSERT INTO f2 VALUES (1, "x"); INSERT INTO f3 VALUES ("x")'
+		);
+		assert.doesNotThrow(function () {
+			alasql("SELECT COUNT(*) AS n FROM f1, f2, f3 WHERE s3 = 'x' AND UPPER(s3) = UPPER(s2)");
+		});
+	});
 });

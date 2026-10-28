@@ -96,13 +96,21 @@ yy.Select.prototype.compileWhereJoins = function (query) {
 		}
 	});
 
-	// The join order: the first source with a condition against a constant, else the first in
-	// FROM; then, while sources are left, the first in FROM order that a link ties to a placed
-	// source, and when none is linked the first in FROM order (a cross product, as before).
-	// With FROM already in chain order this is FROM order, so nothing changes for such queries.
+	// FROM order is kept when every source links to one before it: each is then found through its
+	// index and the rows come out in FROM order without sorting. Only when a source has no such
+	// link, so FROM order would try it against every row so far, is the order chosen: the first
+	// source with a condition against a constant, else the first in FROM; then, while sources are
+	// left, the first in FROM order that a link ties to a placed source, and when none is linked
+	// the first in FROM order (a cross product, as before).
 	var n = query.sources.length;
 	var order = [];
-	if (links.length > 0 && movable) {
+	var linkedInFrom = true;
+	for (var k = 1; k < n && linkedInFrom; k++) {
+		linkedInFrom = links.some(function (l) {
+			return (l.a === k && l.b < k) || (l.b === k && l.a < k);
+		});
+	}
+	if (links.length > 0 && movable && !linkedInFrom) {
 		var placed = [];
 		var start = 0;
 		for (var i = 0; i < n; i++) {
@@ -168,6 +176,12 @@ yy.Select.prototype.compileWhereJoins = function (query) {
 		query.sources = order.map(function (idx) {
 			return query.sources[idx];
 		});
+		// 4.x keeps the row order of a query without ORDER BY, which was the FROM order: the join
+		// collects its rows with each source's position in FROM and hands them on sorted (queryfn3)
+		query.sources.forEach(function (source, k) {
+			source.fromidx = order[k];
+		});
+		query.joinsorted = true;
 	}
 
 	// Compile the srcwherefn for sources that have single-table conditions
@@ -208,15 +222,17 @@ function extractWhereConditions(where) {
 // The aliases of the sources an expression reads, in the order met, or null when that cannot
 // be told: a subquery, a search, an aggregate, raw JavaScript, a node this does not know, or
 // a bare column that no single source answers for (ambiguous, or not among the declared
-// columns). A bare column resolves through defcols, as Column.toJS resolves it.
+// columns). A bare column resolves through defcols, as Column.toJS resolves it, except inside a
+// function, CASE or list: their code still reads a bare column from the first source (#2615), so
+// such a condition is left to the WHERE clause.
 function sourcesRead(node, defcols) {
 	var aliases = [];
 	var known = true;
 
-	function walk(n) {
+	function walk(n, nested) {
 		if (!known || n === null || typeof n !== 'object') return;
 		if (n instanceof yy.Column) {
-			var alias = n.tableid || (defcols && defcols[n.columnid]);
+			var alias = n.tableid || (!nested && defcols && defcols[n.columnid]);
 			if (typeof alias !== 'string' || alias === '-' || alias === '.') {
 				known = false;
 			} else if (aliases.indexOf(alias) === -1) {
@@ -225,22 +241,26 @@ function sourcesRead(node, defcols) {
 		} else if (n instanceof yy.Op) {
 			if (n.allsome || n.queriesidx !== undefined) known = false;
 			else {
-				walk(n.left);
-				walk(n.right);
+				walk(n.left, nested);
+				walk(n.right, nested);
 			}
 		} else if (n instanceof yy.UniOp) {
-			walk(n.right);
+			walk(n.right, nested);
 		} else if (n instanceof yy.FuncValue) {
-			(n.args || []).forEach(walk);
-		} else if (n instanceof yy.CaseValue) {
-			walk(n.expression);
-			(n.whens || []).forEach(function (w) {
-				walk(w.when);
-				walk(w.then);
+			(n.args || []).forEach(function (arg) {
+				walk(arg, true);
 			});
-			walk(n.elses);
+		} else if (n instanceof yy.CaseValue) {
+			walk(n.expression, true);
+			(n.whens || []).forEach(function (w) {
+				walk(w.when, true);
+				walk(w.then, true);
+			});
+			walk(n.elses, true);
 		} else if (n instanceof yy.ArrayValue) {
-			(n.value || []).forEach(walk);
+			(n.value || []).forEach(function (item) {
+				walk(item, true);
+			});
 		} else if (
 			n instanceof yy.NumValue ||
 			n instanceof yy.StringValue ||
@@ -256,7 +276,7 @@ function sourcesRead(node, defcols) {
 		}
 	}
 
-	walk(node);
+	walk(node, false);
 	return known ? aliases : null;
 }
 
