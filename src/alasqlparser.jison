@@ -2497,7 +2497,7 @@ DetachDatabase
 
 CreateDatabase
 	: CREATE DATABASE IfNotExists Literal
-		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$4); }
+		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$3); }
 	| CREATE Literal DATABASE IfNotExists Literal AsClause
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, as:$6 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
