@@ -530,7 +530,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			//			console.log();
 			table.update(
 				function (t) {
-					for (var f in r) t[f] = r[f];
+					for (var f in r) setOwn(t, f, r[f]);
 				},
 				table.data.indexOf(toreplace),
 				params

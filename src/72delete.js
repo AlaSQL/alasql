@@ -131,7 +131,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 						if (col.columnid === '*') {
 							// For *, expand all properties
 							for (var key in r) {
-								outputRow[key] = r[key];
+								setOwn(outputRow, key, r[key]);
 							}
 						} else {
 							var colname = col.as || col.columnid;
@@ -202,7 +202,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 						if (col.columnid === '*') {
 							// For *, expand all properties
 							for (var key in r) {
-								outputRow[key] = r[key];
+								setOwn(outputRow, key, r[key]);
 							}
 						} else {
 							var colname = col.as || col.columnid;
