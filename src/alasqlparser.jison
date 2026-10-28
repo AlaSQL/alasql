@@ -815,6 +815,8 @@ SelectClause
 
 	SelectModifier DISTINCT TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1); yy.extend($$, $3); }
+	| SelectModifier DISTINCT ON LPAR ExprList RPAR TopClause ResultColumns
+		{ $$ = new yy.Select({ columns:$8, distinctOn: $5 }); yy.extend($$, $1); yy.extend($$, $7); }
 	| SelectModifier UNIQUE TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier  ALL TopClause ResultColumns

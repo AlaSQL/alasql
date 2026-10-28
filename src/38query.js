@@ -416,6 +416,16 @@ function queryfn3(query) {
 		}
 	}
 
+	// DISTINCT ON: after ordering, keep the first row of each key
+	if (query.distinctOn) {
+		var seen = new Set();
+		query.data = query.data.filter(function (r) {
+			if (seen.has(r['$$distinctOn'])) return false;
+			seen.add(r['$$distinctOn']);
+			return true;
+		});
+	}
+
 	// Reduce to limit and offset
 	if (!limitApplied) doLimit(query);
 
