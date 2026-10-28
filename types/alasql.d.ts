@@ -41,11 +41,13 @@ declare module 'alasql' {
 
 	// compiled Statement
 	export interface AlaSQLStatement {
-		<T = unknown>(params?: any, cb?: AlaSQLStatementCallback<T>, scope?: unknown): T;
+		<T = unknown>(params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 	}
 
-	// returned by alasql.compile(): a compiled statement with a promise helper
-	export interface AlaSQLCompiledStatement extends AlaSQLStatement {
+	// returned by alasql.compile(): a compiled statement with a promise helper. Only this one takes
+	// the data-first callback, so the older Statement.compile() types stay as they were in 4.x
+	export interface AlaSQLCompiledStatement {
+		<T = unknown>(params?: any, cb?: AlaSQLStatementCallback<T>, scope?: unknown): T;
 		promise<T = unknown>(params?: any): Promise<T>;
 	}
 
