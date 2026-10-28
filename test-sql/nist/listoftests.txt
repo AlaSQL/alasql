@@ -1,0 +1,902 @@
+﻿
+Test
+Number	Program	Description
+0001	dml001	CURSOR with ORDER BY DESC
+0002	dml001	CURSOR with ORDER BY integer ASC
+0003	dml001	CURSOR with ORDER BY DESC integer, named column
+0004	dml001	CURSOR with UNION: ORDER by integer DESC
+0005	dml001	CURSOR with UNION ALL
+0006	dml002	Error for second consecutive OPEN without CLOSE
+0007	dml003	Error for second consecutive CLOSE
+0008	dml004	SQLCODE = 100: FETCH on empty table
+0009	dml004	FETCH NULL value, get indicator = -1
+0010	dml004	FETCH truncated CHAR column with indicator
+0011	dml005	FIPS sizing - DECIMAL(15)
+0012	dml006	SQLCODE < 0: DELETE CURRENT at end-of-data
+0013	dml006	DELETE CURRENT row twice
+0014	dml007	UPDATE CURRENT
+0015	dml007	UPDATE CURRENT - view with check and unique
+0016	dml008	SQLCODE < 0: 2 rows selected by single-row SELECT
+0017	dml008	SELECT DISTINCT
+0018	dml008	SQLCODE = 100: SELECT with no data
+0019	dml008	SQLCODE = 0: SELECT with data
+0020	dml008	SELECT NULL value, get indicator = -1
+0021	dml008	SELECT CHAR(M) col. into short var., get indic = M
+0022	dml009	INSERT (column list) VALUES (literals and NULL)
+0023	dml009	SQLCODE < 0 if left-truncate DEC (>= col.def.)
+0024	dml009	SQLCODE = 100: INSERT query spec. is empty
+0025	dml009	SQLCODE = 0: INSERT query spec. is not empty
+0026	dml009	INSERT into view, check option + unique violations
+0027	dml010	INSERT short string into long column-space padding
+0028	dml010	INSERT string that exactly fits in column
+0031	dml010	INSERT (column list) VALUES (variables and NULL)
+0033	dml011	UPDATE view without WHERE clause - all rows
+0034	dml011	UPDATE table with SET column in WHERE clause
+0035	dml011	UPDATE with correlated subquery in WHERE clause
+0036	dml011	UPDATE view globally with check option violation
+0037	dml012	DELETE without WHERE clause - all rows
+0038	dml012	DELETE with correlated subquery in WHERE clause
+0039	dml013	COUNT DISTINCT function
+0040	dml013	SUM function with WHERE clause
+0041	dml013	MAX function in subquery
+0042	dml013	MIN function in subquery
+0043	dml013	AVG function
+0044	dml013	AVG function: empty result NULL value
+0045	dml014	BETWEEN predicate
+0046	dml014	NOT BETWEEN predicate
+0047	dml014	IN predicate with subquery
+0048	dml014	NOT IN predicate with subquery
+0049	dml014	IN predicate with value list
+0050	dml014	LIKE predicate with % (percent)
+0051	dml014	LIKE predicate with _ (underscore)
+0052	dml014	LIKE predicate with ESCAPE character
+0053	dml014	NOT LIKE predicate
+0054	dml014	IS NULL predicate
+0055	dml014	NOT NULL predicate
+0056	dml014	NOT EXISTS predicate
+0057	dml014	ALL quantifier
+0058	dml014	SOME quantifier
+0059	dml014	ANY quantifier
+0060	dml015	COMMIT WORK closes cursors
+0061	dml015	COMMIT WORK keeps changes to database
+0062	dml015	ROLLBACK WORK cancels changes to database
+0063	dml015	ROLLBACK WORK closes cursors
+0064	dml016	SELECT USER
+0065	dml016	SELECT CHAR literal, term with numeric literal
+0066	dml016	SELECT numeric literal
+0067	dml017	WHENEVER NOT FOUND(SQLCODE=100), GOTO and CONTINUE
+0068	dml017	WHENEVER SQLERROR (SQLCODE< 0), GOTO and CONTINUE
+0069	dml018	HAVING COUNT with WHERE, GROUP BY
+0070	dml018	HAVING COUNT with GROUP BY
+0071	dml018	HAVING MIN, MAX with GROUP BY 3 columns
+0072	dml018	Nested HAVING IN, with no outer reference
+0073	dml018	HAVING MIN with no GROUP BY
+0074	dml019	GROUP BY column: SELECT column, SUM
+0075	dml019	GROUP BY clause
+0076	dml019	GROUP BY 2 columns
+0077	dml019	GROUP BY all columns, with SELECT *
+0078	dml019	GROUP BY 3 columns, SELECT 2 of them
+0079	dml019	GROUP BY NULL value
+0080	dml020	Simple 2-table join
+0081	dml020	Simple 2-table join with 1-table predicate
+0082	dml020	Join 3 tables
+0083	dml020	Join a table with itself
+0084	dml021	Data type CHAR(20)
+0085	dml021	Data type CHARACTER(20)
+0086	dml021	Data type INTEGER
+0087	dml021	Data type INT
+0088	dml034	Data type REAL
+0089	dml021	Data type SMALLINT
+0090	dml034	Data type DOUBLE PRECISION
+0091	dml034	Data type FLOAT
+0092	dml034	Data type FLOAT(32)
+0093	dml034	Data type NUMERIC(13,6)
+0094	dml034	Data type DECIMAL(13,6)
+0095	dml034	Data type DEC(13,6)
+0096	dml022	Subquery with MAX in < comparison predicate
+0097	dml022	Subquery with AVG - 1 in <= comparison predicate
+0098	dml022	IN predicate with simple subquery
+0099	dml022	Nested IN predicate - 2 levels
+0100	dml022	Nested IN predicate - 6 levels
+0101	dml022	Quantified predicate <= ALL with AVG and GROUP BY
+0102	dml022	Nested NOT EXISTS with corr. subqueries, DISTINCT
+0103	dml023	Subquery with = comparison predicate
+0104	dml023	SQLCODE < 0: subquery with more than 1 value
+0105	dml023	Subquery in comparison predicate is empty
+0106	dml023	Comparison predicate <> (not equal)
+0107	dml023	Short string logically blank-padded in = pred.
+0108	dml024	Search condition true OR NOT (true)
+0109	dml024	Search condition true AND NOT (true)
+0110	dml024	Search condition unknown OR NOT (unknown)
+0111	dml024	Search condition unknown AND NOT (unknown)
+0112	dml024	Search condition unknown AND true
+0113	dml024	Search condition unknown OR true
+0114	dml025	Set functions without GROUP BY returns 1 row
+0115	dml025	GROUP BY 0 groups returns 0 rows: SEL col.,AVG...
+0116	dml025	GROUP BY 0 groups returns 0 rows: SELECT set fnc.
+0117	dml025	Set functions with GROUP BY several groups
+0118	dml026	Monadic arithmetic operator + (plus)
+0119	dml026	Monadic arithmetic operator - (minus)
+0120	dml026	Value expression with NULL primary yields NULL
+0121	dml026	Dyadic arithmetic operators +, -, *, /
+0122	dml026	SQLCODE < 0: divisor shall not be zero
+0123	dml026	Evaluation order of expression
+0124	dml027	UPDATE UNIQUE column (key=key+1) interim conflict
+0125	dml027	UPDATE UNIQUE column (key+1): no interim conflict
+0126	dml028	CLOSE, OPEN, FETCH returns first row
+0127	dml028	OPEN 2 cursors at same time
+0128	dml028	OPEN 3 cursors at same time
+0129	dml029	Double quote mark (') in character string literal
+0130	dml029	Approximate numeric literal <mantissa>E<exponent>
+0131	dml029	Approximate numeric literal with neg. exponent
+0135	dml033	Upper and lower case letters are distinct
+0137	sdl001	CREATE SCHEMA
+0138	sdl002	GRANT ALL PRIVILEGES TO PUBLIC (SELECT, INSERT)
+0139	sdl003	GRANT ALL PRIVILEGES TO PUBLIC (SELECT, UPDATE)
+0140	sdl004	Priv.violation: GRANT SELECT TO PUBLIC, no INSERT
+0141	sdl005	GRANT SELECT and UPDATE to individual
+0142	sdl006	GRANT SELECT and UPDATE WITH GRANT OPTION
+0143	sdl007	GRANT SELECT and UPDATE on VIEW
+0144	sdl008	Priv.violation: colunm not in UPDATE column list
+0145	sdl009	Fully qualified column specification
+0146	sdl010	GRANT SELECT, DELETE, INSERT
+0147	sdl011	CREATE SCHEMA
+0148	sdl012	CREATE TABLE with NOT NULL
+0149	sdl013	CREATE TABLE with NOT NULL UNIQUE
+0150	sdl014	CREATE TABLE with UNIQUE(...): INSERT VALUES
+0151	sdl015	CREATE VIEW
+0152	sdl016	CREATE VIEW with CHECK OPTION
+0153	sdl017	CREATE VIEW joining 3 tables
+0154	sdl018	Schema def.- same table name for different schemas
+0155	sdl019	CREATE TABLE with UNIQUE(...): INSERT via SELECT
+0156	sdl020	Tables are multi-sets, dup. INSERTed via subquery
+0157	dml035	CURSOR with ORDER BY approximate numeric
+0158	dml001	CURSOR with UNION and NOT EXISTS subquery
+0159	dml001	CURSOR with 2 UNIONs, ORDER BY 2 integers
+0160	dml001	CURSOR with UNION, UNION ALL and ORDER BY
+0161	dml004	SQLCODE < 0: FETCH NULL value without indicator
+0162	dml004	FETCH NULL value with INDICATOR syntax
+0163	dml006	SQLCODE < 0: DELETE CURRENT without FETCH
+0164	dml008	Default of SELECT is ALL, not DISTINCT
+0165	dml008	Truncate CHAR column SELECTed into shorter var.
+0166	dml036	INSERT NULL value with indicator = -1
+0167	dml013	SUM ALL function
+0168	dml013	SUM function
+0169	dml013	COUNT (*) function
+0170	dml013	SUM DISTINCT function with WHERE clause
+0171	dml013	SUM (column) + literal
+0172	dml016	SELECT USER into short variable
+0173	dml021	Data type CHAR
+0174	dml021	Data type CHARACTER
+0175	dml021	Data type NUMERIC
+0176	dml021	Data type NUMERIC(9): SELECT *
+0177	dml021	Data type NUMERIC(9): SELECT column
+0178	dml021	Data type DECIMAL
+0179	dml021	Data type DECIMAL(8)
+0180	dml023	NULLs sort together in ORDER BY
+0181	dml023	NULLs are equal for DISTINCT
+0182	dml029	Approx. num. literal with neg. mantissa and exp.
+0183	ccc001	C language embedded host identifiers
+0184	ccc002	C language NULL terminator
+0185	cob001	COBOL - embedded host identifiers
+0186	cob002	COBOL - CHAR(80)
+0187	cob002	COBOL - CHAR(132)
+0188	cob002	COBOL - CHAR(240)
+0189	dml078	OPTIONAL - CHAR(256)
+0190	dml078	OPTIONAL - CHAR(512)
+0191	dml078	OPTIONAL - CHAR(1024)
+0192	ccc003	C language continuation of SQL char. literal
+0193	ccc003	C language comments within embedded SQL statement
+0194	ccc004	C language EXTERN storage class
+0195	ccc005	C language STATIC storage class
+0196	cob004	COBOL PIC S9(12) precision test
+0197	cob004	COBOL PIC S9(18) precision test
+0198	ccc006	C language AUTO storage class
+0199	sdl021	Priv.violation: GRANT SELECT to PUBLIC, no DELETE
+0200	sdl022	Priv.violation: GRANT INSERT to indiv., no SELECT
+0201	sdl023	Priv.violation: GRANT without GRANT OPTION
+0202	dml037	Host variable names same as column names
+0203	sdl024	CREATE VIEW on VIEW
+0204	sdl025	Updatable VIEW with AND, OR in CHECK clause
+0205	dml038	Cartesian product is produced without WHERE
+0206	cob005	COBOL - continuation of SQL char. literal
+0207	cob006	COBOL - comments within embedded SQL statement
+0208	dml039	LIKE predicate with underscore is case sensitive
+0209	dml040	Join 2 tables from different schemas
+0210	cob007	COBOL - PIC S9(1) syntax
+0211	cob007	COBOL - PIC S9(7) syntax
+0212	dml041	Enforcement of CHECK clauses in nested views
+0213	dml042	FIPS sizing - 100 columns in a row
+0214	dml043	FIPS sizing - 2000 byte-row
+0215	dml044	FIPS sizing - 6 columns in a UNIQUE specification
+0216	dml044	FIPS sizing - 120 bytes in a UNIQUE specification
+0217	for001	FORTRAN - continuation of SQL character literal
+0218	dml045	FIPS sizing - 6 columns in GROUP BY
+0219	dml045	FIPS sizing - 120 bytes in GROUP BY
+0220	dml046	FIPS sizing - 6 columns in ORDER BY
+0221	dml046	FIPS sizing - 120 bytes in ORDER BY
+0222	dml047	FIPS sizing - CHARACTER(240)
+0223	for001	FORTRAN - comments within embedded SQL statements
+0224	dml048	FIPS sizing - 10 cursors open at once
+0225	dml049	FIPS sizing - 10 tables in FROM clause
+0226	dml050	FIPS sizing - 10 tables in nested SQL statements
+0227	dml051	BETWEEN predicate with character string values
+0228	dml051	NOT BETWEEN predicate with character string value
+0229	dml052	LIKE predicate is case sensitive
+0230	mpa001	Transactions serializable: assign sequential key
+0231	mpa002	Transactions serializable: SELECT/UPDATE(replace)
+0232	mpa003	Transactions serializable: UPDATE with arithmetic
+0233	dml053	Tables are multi-sets: duplicate via INSERT VALUE
+0234	dml037	SQL comments (double hyphen) in SQL statements
+0235	cob008	COBOL - exact numeric types S9(i)V9(k)
+0236	cob008	COBOL: SQLCODE < 0: exception losing signif. digit
+0237	sdl026	Identifier length 18
+0238	pas002	Pascal - comments within embedded SQL statements
+0239	pas001	Pascal - embedded host identifiers
+0240	dml054	Updatable CURSOR with ALL, IN, BETWEEN
+0241	dml054	Updatable CURSOR with LIKE, NULL, >, =, <
+0242	dml054	Updatable CURSOR with view, correlation name, NOT
+0243	dml055	FIPS sizing - precision of SMALLINT >= 4
+0244	dml055	FIPS sizing - precision of INTEGER >= 9
+0245	dml055	FIPS sizing - precision of DECIMAL >= 15
+0246	dml056	FIPS sizing - 100 values in INSERT
+0247	dml056	FIPS sizing - 20 values in update SET clause
+0248	dml057	FIPS sizing - binary precision of FLOAT >= 20
+0249	dml057	FIPS sizing - binary precision of REAL >= 20
+0250	dml057	FIPS sizing - binary precision of DOUBLE >= 30
+0251	dml058	COMMIT keeps changes of current transaction
+0252	dml058	ROLLBACK cancels changes of current transaction
+0253	dml058	TEST0124 workaround (key = key+1)
+0254	dml058	Column name in SET clause
+0255	dml058	Key word USER for INSERT, UPDATE
+0256	dml058	Key word USER in WHERE clause
+0257	dml059	SELECT MAX, MIN (COL1 + or - COL2)
+0258	dml059	SELECT SUM (:var * COL1 * COL2)
+0259	dml059	SOME, ANY in GROUP BY, HAVING clause
+0260	dml059	EXISTS in GROUP BY, HAVING
+0261	dml060	WHERE (:var * (COL1 - COL2)) BETWEEN
+0262	dml060	WHERE clause with computation, ANY/ALL subqueries
+0263	dml060	Computed column in ORDER BY
+0264	dml059	WHERE, HAVING without GROUP BY
+0265	dml060	UPDATE : positioned - view with check option
+0266	dml060	UPDATE : positioned - UNIQUE violation under view
+0267	dml060	UPDATE compound key, interim uniqueness conflicts
+0268	mpa004	Transactions serializable: deadlock management
+0269	dml061	BETWEEN value expressions in wrong order
+0270	dml061	BETWEEN approximate and exact numeric values
+0271	dml061	COUNT(*) with Cartesian product subset
+0272	dml061	Statement rollback for integrity violation
+0273	dml061	SUM, MAX, MIN = NULL (not 0) for empty arguments
+0274	dml062	COMMIT and ROLLBACK across schemas
+0275	dml062	COMMIT and ROLLBACK of multiple cursors
+0276	dml062	View across schemas
+0277	dml061	Computation with NULL value specification
+0278	dml061	IN value list with USER, literal,variable spec.
+0279	dml062	IN is a 3-valued predicate, EXISTS is 2-valued
+0280	dml063	SQL key words used as embedded host identifiers
+0281	dml064	Updatable VIEW with ALL, IN, BETWEEN
+0282	dml064	Updatable VIEW with LIKE, NULL, >, =, <
+0283	dml064	Updatable VIEW with view, correlation name, NOT
+0284	dml065	INSERT,SELECT character strings with blanks
+0285	dml065	INSERT,SELECT integers with various formats
+0286	dml066	Compatibility of structures and host variables
+0287	dml066	Compatibility of arrays and host structures
+0288	dml067	Embedded - multiple identifiers in 1 declaration
+0289	dml067	Embedded - multiple declare sections
+0290	ccc007	C language common placement of SQL statements
+0291	ccc008	C language SQL statements in functions
+0292	cob009	COBOL - VALUE IS initialization
+0293	cob009	COBOL - placement of SQL statements
+0294	pas003	Pascal - placement of SQL statements
+0295	for002	FORTRAN - placement of SQL statements
+0296	flg005	FIPS Flagger - vendor provided character function
+0297	flg005	FIPS Flagger - vendor provided integer function
+0298	pas004	Pascal - SQL statements in functions
+0299	flg006	FIPS Flagger - identifier length > 18
+0300	cdr001	DEFAULT value literal + number in a table
+0301	cdr001	DEFAULT value USER in a table
+0302	cdr002	CHECK <comp. predicate> in <tab. cons.>, insert
+0303	cdr002	CHECK <comp. predicate> in <col. cons.>, insert
+0304	cdr002	CHECK <between predicate> in <tab. cons.>, insert
+0305	cdr002	CHECK <null predicate> in <tab. cons.>, insert
+0306	cdr003	CHECK X IS NOT NULL, NOT X IS NULL are equivalent
+0307	cdr003	CHECK <like predicate> in <tab. cons>, insert
+0308	cdr003	CHECK <in predicate> in <tab. cons.>, insert
+0309	cdr004	CHECK combination predicates in <tab. cons.>
+0310	cdr004	CHECK X NOT IN, NOT X IN equivalent, insert
+0311	cdr004	CHECK NOT NULL in col.cons., insert, null explicit
+0312	cdr004	CHECK NOT NULL in col.cons., insert, null implicit
+0313	cdr005	CHECK <comp. predicate> in <tab. cons.>, update
+0314	cdr005	CHECK <comp. predicate> in <col. cons.>, update
+0315	cdr005	CHECK <between predicate> in <tab. cons.>, update
+0316	cdr006	CHECK <null predicate> in <tab. cons.>, update
+0317	cdr006	CHECK X IS NOT NULL, NOT X IS NULL same, by update
+0318	cdr006	CHECK <like predicate> in <tab. cons.>, update
+0319	cdr007	CHECK <in predicate> in <tab. cons.>, update
+0320	cdr007	CHECK combination pred. in <tab. cons.>, update
+0321	cdr007	CHECK if X NOT LIKE/IN, NOT X LIKE/IN same, update
+0322	cdr007	CHECK <null predicate> in <col. cons>, update
+0323	cdr008	(2 pr.,1 son),both P.K e, F.K e,insert another F.K
+0324	cdr008	(2 pr.,1 son),1 P.K exist,another not. insert F.K
+0325	cdr008	(2 pr.,1 son),both P.K e, F.K e, delete 1 P.K
+0326	cdr008	(2 pr.,1 son),P.K e, no F.K, modify P.K
+0327	cdr009	(2 pr.,1 son),check PRIMARY KEY unique via insert
+0328	cdr009	(2 pr.,1 son),F.K exist,modify P.K
+0329	cdr009	(2 pr.,1 son),check PRIMARY KEY unique via modify
+0330	cdr009	(2 pr.,1 son),modify F.K to no P.K corr.
+0331	cdr009	(2 pr.,1 son),modify F.K to P.K corr. value
+0332	cdr010	(self ref.), P.K exist, insert a F.K
+0333	cdr010	(self ref.), delete P.K but F.K exist.
+0334	cdr010	(self ref.), update P.K, no corr. F.K
+0335	cdr011	(self ref.), insert a F.K but no corr. P.K
+0336	cdr011	(self ref.), update P.K, but corr. F.K e.
+0337	cdr011	(self ref.), update P.K, check P.K unique via var.
+0338	cdr011	(self ref.), update F.K and no corr. P.K
+0339	cdr011	(self ref.), update F.K and corr. P.K exist
+0340	cdr012	(ref. each other), insert F.K and corr. P.K e
+0341	cdr012	(ref. each other), delete P.K but corr. F.K e
+0342	cdr012	(ref. each other), update P.K and no corr. F.K
+0343	cdr013	(ref. each other), update P.K and corr. F.K e
+0344	cdr013	(ref. each other), update F.K to no corr. P.K
+0345	cdr013	(ref. each other), update F.K to corr. P.K e
+0346	cdr013	(ref. each other), insert F.K and no corr. P.K
+0347	cdr014	FIPS sz. (comb.keys=6), P.K unique,insert
+0348	cdr014	FIPS sz. (comb.keys=6), insert F.K + no corr. P.K
+0349	cdr015	FIPS sz. (comb.keys=6), delete P.K + corr. F.K e
+0350	cdr015	FIPS sz. (comb.keys=6), update P.K + no corr. F.K
+0351	cdr015	FIPS sz. (comb.keys=6), update P.K + corr. P.K e
+0352	cdr016	FIPS sz. (comb.keys=6), P.K unique, update
+0353	cdr016	FIPS sz. (comb.keys=6), update F.K to no corr. P.K
+0354	cdr016	FIPS sz. (comb.keys=6), update F.K to corr. P.K e
+0355	cdr017	FIPS sz. (1 pr.,6 son), insert F.K + no corr. P.K
+0356	cdr017	FIPS sz. (1 pr.,6 son), delete P.K + corr. F.K e
+0357	cdr017	FIPS sz. (1 pr.,6 son), update P.K but corr. F.K e
+0358	cdr017	FIPS sz. (1 pr.,6 son), check key unique, update
+0359	cdr017	FIPS sz. (1 pr.,6 son), update F.K to no corr. P.K
+0360	cdr018	FIPS sz. (6 pr.,1 son), insert F.K, without P.K
+0361	cdr018	FIPS sz. (6 pr.,1 son), delete P.K, but corr.F.K e
+0362	cdr018	FIPS sz. (6 pr.,1 son), update P.K, but corr.F.K e
+0363	cdr018	FIPS sz. (6 pr.,1 son), check key unique ,update
+0364	cdr018	FIPS sz. (6 pr.,1 son), update F.K to no corr. P.K
+0365	cdr019	(3-level schema), check insert F.K
+0366	cdr019	(3-level schema), check delete P.K
+0367	cdr019	(3-level schema), update mid. tab. check P.K + F.K
+0368	cdr019	(3-level schema), check update P.K
+0369	cdr020	update P. K, set F1=F1+1, interim violation
+0370	cdr020	update F. K, set F1=F1+1, interim violation
+0371	cdr020	update self-ref table, interim violation
+0372	cdr020	delete self-ref table, interim violation
+0373	cdr003	insert with embeded var.+ indic. var. CHECK clause
+0374	cdr003	computation in update, CHECK clause
+0375	cdr017	ref. integrity with computation
+0376	cdr017	ref. integrity with join
+0377	cdr001	DEFAULT value with explicit NULL
+0378	cdr021	(ref. acr. sch.) delete P.K and corr. F.K e.
+0379	cdr021	(ref. acr. sch.) update P.K and corr. F.K e.
+0380	cdr022	(ref. acr. sch.) insert F.K and no corr. P.K
+0381	cdr022	(ref. acr. sch.) update F.K to no P.K corr.
+0382	cdr023	(ref. acr. sch.) with GRANT OPTION, insert
+0383	cdr023	Priv.violation: GRANT without GRANT OPTION
+0384	cdr023	Priv.violation: SELECT, but not REFERENCES
+0385	cdr024	character default column values
+0386	cdr024	exact numeric default column values
+0387	cdr024	approximate numeric default column values
+0388	cdr024	FIPS sz. default column values
+0389	dml068	95-char ASCII collating sequence (PL vs. SQL)
+0390	dml072	Short char column value blank-padded in larger var
+0391	sdl027	Correlation names used in self-join of view
+0392	for003	FORTRAN - placement of additional SQL statements
+0393	dml073	SUM, MAX on Cartesian product
+0394	dml073	AVG, MIN on joined table with WHERE
+0395	dml073	SUM, MIN on joined table with GROUP BY
+0396	dml073	SUM, MIN on joined table with WHERE,GROUP,HAVING
+0397	sdl028	Grouped view
+0398	ccc011	Embedded C initial value
+0399	ccc009	C language storage class and class modifier comb.
+0401	sdl027	View with computed columns (degrees F to C)
+0402	cdr025	Computed GROUP BY view over referencing tables
+0403	cdr025	View on computed GROUP BY view with joins
+0404	dml069	2 FETCHes (different target types) on same cursor
+0405	dml069	2 cursors open from different schemas (coded join)
+0406	dml069	Subquery from different schema
+0407	dml069	SELECT INTO :XX ... WHERE :XX =
+0408	dml069	UPDATE references column value BEFORE update
+0409	dml070	Effective outer join--join with two cursors
+0410	dml076	NULL value in OPEN CURSOR
+0411	dml070	Effective set difference
+0412	dml070	Effective set intersection
+0413	cdr025	Computed SELECT on computed VIEW
+0414	dml071	WHENEVER NOT FOUND, multiple settings
+0415	dml071	WHENEVER SQLERROR, multiple settings
+0416	dml071	WHENEVER NOTFOUND overlaps WHENEVER SQLERROR
+0417	dml073	Cartesian product GROUP BY 2 columns with NULLs
+0418	dml073	AVG,SUM,COUNT on Cartesian product with NULLs
+0419	dml073	SUM, MAX, MIN on joined table view
+0420	sdl028	View with multiple SELECT of same column
+0421	dml074	Module language constants and expressions
+0422	dml074	Module language order of SQLCODE (not first)
+0423	dml074	Module language multiple SQLCODE parameters
+0424	ada001	Ada embedded host identifiers
+0425	ada002	Ada comments
+0426	ada002	Ada initial value
+0427	ada003	Ada common placement of SQL statements
+0428	ada004	Ada placement of SQL statements
+0430	ada005	Ada unqualified type spec - without SQL_STANDARD
+0431	dml075	Redundant rows in IN subquery
+0432	dml075	Unknowns in subquery of ALL, SOME, ANY
+0433	dml075	Empty subquery of ALL, SOME, ANY
+0434	dml075	GROUP BY with HAVING EXISTS-correlated set fnc
+0435	dml076	Host variables in UPDATE WHERE CURRENT
+0436	dml076	NULL values for various SQL data types
+0437	dml076	NULL values for various host variable types
+0438	cdr026	(partial-NULL F.K) F.K INSERT supported
+0439	cdr026	(partial-NULL F.K) F.K UPDATE supported
+0440	cdr026	(partial-NULL F.K) no restrict P.K update/delete
+0441	dml076	NULL value for various predicates
+0442	dml075	DISTINCT with GROUP BY, HAVING
+0443	dml077	VIEW with check option rejects unknown (NULL)
+0444	dml077	Updatable cursor, modify value selected on
+0445	dml077	Values not assigned to targets for SQLCODE=100
+0446	cdr027	Table CHECK constraint allows unknown (NULL)
+0447	cdr027	NULLs with check constraint and check option
+0448	cdr027	PRIMARY KEY implies UNIQUE
+0449	cdr027	Constraint definition is case sensitive
+0450	cdr027	Referential integrity is case sensitive
+0451	dml079	UNIQUEness is case sensitive
+0452	dml079	Order of precedence, left-to-right in UNION [ALL]
+0453	dml079	NULL with empty subquery of ALL, SOME, ANY
+0454	flg008	SELECT nonGROUP column in GROUP BY
+0455	flg009	Relaxed union compatability rules for columns
+0456	ada006	Module language Ada subtype enforcement,name assoc
+0457	mpa005	Transactions serializable: phantom read
+0458	sdl029	Priv.violation: GRANT only SELECT to individual
+0459	sdl029	Priv.violation: GRANT only INSERT to individual
+0460	sdl029	Priv.violation: GRANT only UPDATE to individual
+0461	sdl029	Priv.violation: GRANT only DELETE to individual
+0462	dml080	SQLCODE 100: DELETE with no data
+0463	dml080	SQLCODE 100: UPDATE with no data
+0464	sdl030	Priv.violation: GRANT only SELECT to PUBLIC
+0465	sdl030	Priv.violation: GRANT only INSERT to PUBLIC
+0466	sdl030	Priv.violation: GRANT only UPDATE to PUBLIC
+0467	sdl030	Priv.violation: GRANT only DELETE to PUBLIC
+0468	sdl031	Priv.violation: individual without any privileges
+0469	sdl031	GRANT ALL PRIVILEGES to individual
+0470	sdl031	GRANT ALL PRIVILEGES to public
+0471	sdl031	Priv.violation: GRANT privilege not grantable
+0472	sdl032	Priv.violation: individual SELECT, column UPDATE
+0473	sdl033	Priv.violation: GRANT all on view but not table
+0474	sdl034	Priv.violation: need SELECT for searched UPDATE
+0475	sdl034	Priv.violation: GRANT ALL w/o GRANT OPTION
+0476	sdl034	Priv.violation: GRANT OPTION view but not table
+0477	sdl035	Priv.violation: GRANT only SELECT on view
+0478	sdl035	Priv.violation: GRANT only INSERT on view
+0479	sdl035	Priv.violation: GRANT only UPDATE on view
+0480	sdl035	Priv.violation: GRANT only DELETE on view
+0481	sdl036	Priv.violation: no privileges on view
+0482	sdl036	GRANT ALL PRIVILEGES on view
+0483	sdl036	Priv.violation: GRANT UPDATE not grantable on view
+0484	sdl032	Priv.violation: SELECT and column UPDATE on view
+0485	sdl032	Priv.violation: SELECT and column UPDATE cursor
+0486	cdr028	Priv.violation: illegal REFERENCES
+0487	dml081	SQLSTATE 00000: successful completion
+0488	dml081	SQLSTATE 21000: cardinality violation
+0489	dml081	SQLSTATE 02000: no data
+0490	dml081	SQLSTATE 22012: data exception/division by zero
+0491	dml082	SQLSTATE 22022: data exception/indicator overflow
+0492	dml082	SQLSTATE 22019: data exception/invalid escape char
+0493	dml082	SQLSTATE 22025: data exception/invalid escape seq.
+0494	dml082	SQLSTATE 22003: data exception/numeric val.range 1
+0495	sdl037	Priv.violation: illegal GRANT to self
+0496	dml083	SQLSTATE 22002: data exception/null but no indic
+0497	dml091	SQLSTATE 22003: data exception/numeric val.range 2
+0498	dml083	SQLSTATE 22001: data exception/string right trunc.
+0499	ccc010	SQLSTATE 22024: data exception/unterminat.C string
+0500	dml083	SQLSTATE 01003: warning/null elim. in set function
+0501	dml083	SQLSTATE 01004: warning/string right truncation
+0502	dml081	SQLSTATE 24000: invalid cursor state
+0503	dml084	SQLSTATE 42000: syntax error or access rule vio.1
+0504	dml084	SQLSTATE 42000: syntax error or access rule vio.2
+0505	dml082	SQLSTATE 44000: with check option violation
+0506	mpa006	SQLSTATE 40001: trans.rollback/serialization fail.
+0507	mpa007	Transactions serializable: dueling cursors
+0508	dml085	Delimited identifiers
+0509	dml085	Renaming columns with AS for ORDER BY
+0510	dml085	<parameter name> = <column name> (OK with SQL-92)
+0511	dml086	CHECK clauses in nested views(clarified in SQL-92)
+0512	dml090	<value expression> for IN predicate
+0513	dml090	NUMERIC(4) implies CHECK BETWEEN -9999 AND 9999
+0514	dml141	SQLSTATE 23000: integrity constraint violation
+0515	dml132	FIPS sizing: NUMERIC (15) decimal precision
+0516	cdr030	SQLSTATE 23000: integrity constraint violation
+0517	mpa008	Transactions serializable: Twins Problem
+0518	dml087	CREATE VIEW with DISTINCT
+0519	dml087	CREATE VIEW with subqueries
+0520	dml087	Underscores are legal and significant
+0521	dml088	New format in MODULE-<parameter declaration list>
+0522	cdr029	No implied natural join on FROM T1, T2
+0523	dml090	<value expression> for BETWEEN predicate
+0524	dml132	FIPS sizing: 100 Items in a SELECT list
+0525	dml132	FIPS sizing: 15 Table references in SQL statement
+0526	cdr031	FIPS sizing: Length FOREIGN KEY column list = 120
+0527	dml142	Priv. violation: HU
+0528	dml142	Tables are multi-sets: cursor operations
+0529	dml143	Priv. violation: SELECT in <insert statement>
+0530	mpquic	Interactive SQL serializability: dirty read
+0531	mpquic	Interactive serializability: non-repeatable read
+0532	ada007	package SQLSTATE_CODES
+0533	ada008	Misc. in package SQL_STANDARD
+0534	ada009	ADA Tasks
+0535	cob010	COBOL - BINARY PICTURE for INTEGER, SMALLINT type
+0536	cob010	FIPS sizing - COBOL BINARY decimal precision >= 9
+0537	cdr029	Table check constraint: column vs. column
+0538	cdr029	With check option: column vs. column
+0539	mpquic	Interactive SQL serializability: phantom read
+0554	dml085	More column renaming - single row select with join
+0556	dml123	Static insert, dynamic fetch, static commit
+0557	dml123	Static insert, dynamic commit, static rollback
+0558	dml123	Dynamic insert, static delete, dynamic count
+0559	dml123	Static insert, dynamic rollback, static fetch
+0560	mpa010	Table privileges vs. column privileges
+0561	dml149	Double SET TRANSACTION
+0562	mpquic	Interactive serializability: ISOLATION MODE
+0564	dml090	Outer ref. directly contained in HAVING clause
+0565	dml092	VARCHAR for Transitional SQL
+0566	dml093	VARCHAR for TSQL: dynamic version
+0567	dml094	CHAR type in Dynamic SQL
+0568	isi001	INFORMATION_SCHEMA.TABLES definition
+0569	isi002	INFORMATION_SCHEMA.VIEWS definition
+0570	isi003	INFORMATION_SCHEMA.COLUMNS definition
+0571	isi004	INFORMATION_SCHEMA.SCHEMATA definition
+0572	isi005	INFORMATION_SCHEMA.TABLE_PRIVILEGES definition
+0573	isi006	INFORMATION_SCHEMA.COLUMN_PRIVILEGES definition
+0574	isi007	Orphaned IS data structures, Intermediate SQL
+0575	isi008	VARCHAR in INFORMATION_SCHEMA
+0576	dml095	NUMERIC type in Dynamic SQL
+0577	dml096	DECIMAL type in Dynamic SQL
+0578	dml097	INTEGER and SMALLINT types in Dynamic SQL
+0579	dml098	FIPS sizing, Dynamic SQL exact numerics
+0580	dml098	FIPS sizing, Dynamic SQL approximate numerics
+0581	dml099	Implicit numeric casting (feature 9) dynamic
+0582	dml099	Implicit numeric casting (feature 9) static
+0583	dml099	FIPS sizing, Dynamic SQL character strings
+0584	dml092	FIPS sizing, VARCHAR (254) strings (static)
+0585	dml093	FIPS sizing, VARCHAR (254) strings (dynamic)
+0586	dml098	Sizing of FLOAT in a descriptor (dynamic)
+0587	dml100	SET TR READ ONLY / READ WRITE (static)
+0588	dml101	SET TR READ ONLY / READ WRITE (dynamic)
+0589	mpa013	SET TR ISOLATION LEVEL (static)
+0590	mpa012	SET TR ISOLATION LEVEL (dynamic)
+0591	dml104	NATURAL JOIN (feature 4) (static)
+0592	dml104	INNER JOIN (feature 4) (static)
+0593	dml104	LEFT OUTER JOIN (feature 4) (static)
+0594	dml104	RIGHT OUTER JOIN (feature 4) (static)
+0595	dml105	NATURAL JOIN (feature 4) (dynamic)
+0596	dml105	INNER JOIN (feature 4) (dynamic)
+0597	dml105	LEFT OUTER JOIN (feature 4) (dynamic)
+0598	dml105	RIGHT OUTER JOIN (feature 4) (dynamic)
+0599	dml106	UNION in views (feature 8) (static)
+0600	dml107	UNION in views (feature 8) (dynamic)
+0601	dml106	DATETIME data types (feature 5) (static)
+0602	dml107	DATETIME data types (feature 5) (dynamic)
+0603	ist001	INFO_SCHEM.TABLES definition
+0604	ist002	INFO_SCHEM.VIEWS definition
+0605	ist003	INFO_SCHEM.COLUMNS definition
+0606	ist004	INFO_SCHEM.SCHEMATA definition
+0607	ist005	INFO_SCHEM.TABLE_PRIVILEGES definition
+0608	ist006	INFO_SCHEM.COLUMN_PRIVILEGES definition
+0609	ist007	Orphaned IS data structures, Transitional SQL
+0610	ist008	VARCHAR in INFO_SCHEM
+0611	dml106	FIPS sizing, DATETIME data types (static)
+0612	dml107	FIPS sizing, DATETIME data types (dynamic)
+0613	dml106	<datetime value function> (static)
+0614	dml107	<datetime value function> (dynamic)
+0615	dml106	DATETIME-related SQLSTATE codes (static)
+0616	dml107	DATETIME-related SQLSTATE codes (dynamic)
+0617	dml108	DATETIME with predicates, set fns (static)
+0618	dml109	DATETIME with predicates, set fns (dynamic)
+0619	dml110	DATETIME cursor operations (static)
+0620	dml111	DATETIME cursor operations (dynamic)
+0621	dml112	DATETIME NULLs (static)
+0622	dml113	DATETIME NULLs (dynamic)
+0623	dml112	OUTER JOINs with NULLs and empty tables (static)
+0624	dml113	OUTER JOINs with NULLs and empty tables (dynamic)
+0625	dml112	ADD COLUMN and DROP COLUMN (static)
+0626	dml113	ADD COLUMN and DROP COLUMN (dynamic)
+0627	mpa010	<grant statement> (static)
+0628	mpa010	<revoke statement> (static)
+0629	mpa011	<grant statement> (dynamic)
+0630	mpa011	<revoke statement> (dynamic)
+0631	dml112	Datetimes in a <default clause> (static)
+0632	dml113	Datetimes in a <default clause> (dynamic)
+0633	dml112	TRIM function (static)
+0634	dml113	TRIM function (dynamic)
+0635	dml114	Feature 13, grouped operations (static)
+0636	dml115	Feature 13, grouped operations (dynamic)
+0637	dml114	Feature 14, Qualified * in select list (static)
+0638	dml115	Feature 14, Qualified * in select list (dynamic)
+0639	dml114	Feature 15, Lowercase Identifiers (static)
+0640	dml115	Feature 15, Lowercase Identifiers (dynamic)
+0641	dml114	Feature 16, PRIMARY KEY enhancement (static)
+0642	dml115	Feature 16, PRIMARY KEY enhancement (dynamic)
+0643	dml133	Feature 17, Multiple schemas per user
+0644	dml116	Feature 18, Multiple module support
+0645	dml117	Feature 19, Referential delete actions (static)
+0646	dml118	Feature 19, Referential delete actions (dynamic)
+0647	dml119	Feature 20, CAST functions (static)
+0648	dml120	Feature 20, CAST functions (dynamic)
+0649	dml121	Feature 22, Explicit defaults (static)
+0650	dml122	Feature 22, Explicit defaults (dynamic)
+0651	dml121	Feature 24, Keyword relaxations (static)
+0652	dml122	Feature 24, Keyword relaxations (dynamic)
+0653	dml124	Descriptors: DESCRIBE OUTPUT
+0654	dml124	Descriptors: INTO SQL DESCRIPTOR
+0655	dml124	Descriptors: USING SQL DESCRIPTOR
+0656	dml124	Descriptors: datetimes
+0657	dml125	Descriptors: VARCHAR
+0658	dml125	Descriptors: SQLSTATE codes
+0659	dml125	Descriptors: TSQL orphaned features
+0660	dml126	Dynamic SQL SQLSTATEs
+0661	dml121	Errata: datetime casting (static)
+0662	dml122	Errata: datetime casting (dynamic)
+0663	dml121	Errata: datetime SQLSTATEs (static)
+0664	dml122	Errata: datetime SQLSTATEs (dynamic)
+0665	dml127	Diagnostics: statement information
+0666	dml127	Diagnostics: condition information
+0667	dml152	Diagnostics: access violations
+0668	dml152	Diagnostics: COMMAND_FUNCTION (static)
+0669	dml152	Diagnostics: COMMAND_FUNCTION F# 3, 11
+0670	dml126	Diagnostics: COMMAND_FUNCTION (dynamic)
+0671	dml126	Diagnostics: DYNAMIC_FUNCTION
+0672	dml152	Diagnostics: Multiple conditions
+0673	dml152	Diagnostics SQLSTATE: inv. cond. number
+0674	dml128	Diagnostics: TSQL orphaned features
+0675	dml128	Diagnostics: MORE
+0676	dml129	Diagnostics: VARCHAR
+0677	dml129	VARCHAR with <like predicate>
+0678	dml130	Data type semantics with NULL / NOT NULL
+0679	dml130	INFO_SCHEM: Table data types
+0680	dml130	INFO_SCHEM: View data types
+0681	dml129	INFO_SCHEM: Varchar data types
+0682	dml130	INFO_SCHEM: Datetime data types
+0683	dml131	INFO_SCHEM: Changes are visible
+0684	dml131	INFO_SCHEM: Visibility to other users
+0685	dml131	INFO_SCHEM: Privileges and privilege views
+0686	dml131	INFO_SCHEM: Primary key enh. is not null
+0687	dml131	INFO_SCHEM: Multiple schemas per user
+0688	dml134	INFO_SCHEM: Dynamic changes are visible
+0689	dml134	Many Trans SQL features #1: inventory system
+0690	dml134	Many Trans SQL features #2: talk show schedule
+0691	dml134	INFO_SCHEM: SQLSTATEs for length overruns
+0692	dml135	Many TSQL features #3: enhanced proj/works
+0693	dml135	Many TSQL features #4: enhanced INFO_SCHEM
+0694	dml135	Interval Arithmetic and Casts
+0695	dml135	<updatability clause> in <declare cursor>
+0696	dml136	Many TSQL features #5: Video Game Scores
+0697	dml137	Erratum: drop behavior, constraints (static)
+0698	dml138	Erratum: drop behavior, constraints (dynamic)
+0699	dml139	<drop behavior> on a REVOKE (static)
+0700	xop700	X/O,DEFAULTS and LIMITS for DATA TYPES
+0701	xop701	X/O,WHENEVER SQLWARNING and scoping of C labels
+0702	xop702	X/O,ALTER TABLE ADD
+0703	xop703	X/O,CREATE INDEX on existent/non-existent tables
+0706	xop706	X/O,CREATE INDEX on at least 6 columns
+0707	xop707	X/O,Limit on depth of nested sub-queries
+0708	xop708	X/O,Limit on the total length of an Index Key
+0709	xop709	X/O,SQL Escape Clause Processing
+0710	xop710	X/O,Acceptance of correctly placed SQLCA
+0712	xop712	X/O,MAPPING OF DATATYPES ONTO SQL DECIMAL
+0719	xop719	X/O,GRANT ALL with optional PRIVILEGES omitted
+0720	xop720	X/O,GRANT ALL with optional PRIVILEGES omitted
+0721	xop721	X/O,REVOKE ALL with optional PRIVILEGES omitted
+0722	xop722	X/O,REVOKE ALL with optional PRIVILEGES omitted
+0723	xop723	X/O,DROP TABLE with outstanding grants and views
+0724	xop712	X/O,MAPPING ONTO SQL SMALLINT, DECIMAL AND INTEGER
+0725	xop725	X/O,INCLUDE SQLCA IN LINKAGE SECTION
+0829	dml140	<drop behavior> on a REVOKE (dynamic)
+0830	flg010	FIPS Flagger - WHENEVER SQLWARNING
+0831	flg011	FIPS Flagger - ADD (column, ...)
+0832	flg012	FIPS Flagger - CREATE INDEX
+0833	flg013	FIPS Flagger - INCLUDE SQLCA
+0834	dml144	<length expression> (static)
+0835	dml144	<character substring function> (static)
+0836	dml145	<length expression> (dynamic)
+0837	dml145	<character substring function> (dynamic)
+0838	dml146	<character substring function> varchar
+0839	dml144	Composed <length expression> and SUBSTRING
+0840	dml147	Roll back schema manipulation
+0841	dml147	Multiple-join and default order of joins
+0842	dml147	Multi-column joins
+0843	dml148	Ordering of column names in joins
+0844	dml148	Outer join predicates
+0845	dml150	Parameters and indicators in dynamic SQL statement
+0846	dml149	Feature 20, CAST functions (static) nits
+0847	mpa009	Dynamic SQL: serializability
+0848	dml153	Query spec with subquery is now updatable
+0849	dml154	Descriptors: datetime length in positions
+0850	dml155	Comparing fixed vs. variable length char strings
+0851	ada010	Errata: SQL_STANDARD changed to Interfaces.SQL
+0852	dml154	Transitive grant in COLUMN_PRIV, TABLE_PRIV
+0853	dml151	Exceptions not affecting position of cursor
+0854	dml154	Informational: mixing SDL and DML
+0855	dml156	Dynamic SQL syntax errors
+0856	dml157	Transitional Schema Definition
+0857	dml158	<join condition> set function, outer reference
+0858	dml159	? (dyn parm spec) in <having clause>
+0859	dml160	<joined table> contained in <select list>
+0860	dml160	Domains over various data types
+0861	dml161	CURRENT_USER, SESSION_USER, SYSTEM_USER
+0862	dml161	CURRENT_USER etc. with set session authid
+0863	dml162	<joined table> directly contained in cursor, view
+0864	dml163	Intermediate Dynamic SQL syntax errors
+0865	dml163	Result data types for case expressions
+0866	dml163	Case expressions in other than SELECT
+0867	dml164	LIKE enhancements: keyword search
+0868	dml164	More <unique predicate>
+0869	dml164	More table operations
+0870	dml165	Non-identical descriptors in UNION
+0871	ada011	Errata: Interfaces.SQL.Numerics--TC3 clause 23.3
+0872	ada012	Errata: Interfaces.SQL.Varying--TC3 clause 23.3
+0873	dml166	Dynamic schema creation
+0874	dml167	INFORMATION_SCHEMA catalog columns
+0875	dml167	INFORMATION_SCHEMA column coverage
+0876	dml168	SQL_IDENTIFIER and CHARACTER_DATA domains
+0877	dml169	Intermediate DB, Flag at Entry level
+0878	dml168	Keyword COLUMN in ALTER TABLE is optional
+0879	dml168	<drop table constraint definition>
+0880	dml170	Long constraint names, cursor names
+0881	dml170	Long character set names, domain names
+0882	dml171	More full outer join
+0883	ada013	Errata: Interfaces.SQL.Varying.NCHAR--TC3, 23.3
+0884	dml172	ASCII_FULL and SQL_TEXT in column definition
+0885	dml173	FIPS sizing, CHAR (1000)
+0886	dml174	FIPS sizing, VARCHAR (1000)
+0887	dml175	FIPS sizing, NCHAR (500)
+0888	dml176	FIPS sizing, NCHAR VARYING (500)
+0889	dml177	FIPS sizing, INTEGER binary prec >= 31
+0890	dml177	FIPS sizing, SMALLINT binary prec >= 15
+0891	dml178	FIPS sizing, 250 columns, 4000 char data statement
+0892	dml179	FIPS sizing, rowlen >= 8000, statement var >= 4000
+0893	dml180	FIPS sizing, descriptor occurrences >= 100
+0894	dml181	FIPS sizing, length of column lists >= 750
+0895	dml182	FIPS sizing, columns in list >= 15
+0896	dml183	FIPS sizing, 50 WHEN clauses in a CASE expression
+0897	dml184	Constraint usage redux
+0898	dml185	COLUMN_DEFAULT interpretation
+0899	dml186	FIPS sizing, INTERVAL decimal leading field prec
+7001	xts700	NULLIF producing NULL
+7002	xts798	NULLIF producing non-NULL
+7003	xts799	COALESCE with three <value expression>s
+7004	xts701	Compound char. literal in <comparison predicate>
+7005	xts701	Compound character literal as inserted value
+7006	xts701	Compound character literal in a <select list>
+7007	xts702	LIKE with unrestricted <match value>
+7008	xts702	LIKE with general char. value for pattern + escape
+7009	xts702	LIKE with zero-length escape
+7010	xts703	UNIQUE predicate, single table, all values distinc
+7011	xts703	UNIQUE PREDICATE, table subquery with non-null dup
+7012	xts703	UNIQUE predicate, duplicates containing null
+7013	xts713	Schema definition in an SQL statement-single table
+7014	xts714	Schema definition named schema, implicit auth-id.
+7015	xts715	Schema definition - explicit name and auth-id.
+7016	xts716	SET SESSION AUTHORIZATION to current auth-id.
+7017	xts717	SET SESSION AUTH. to current auth-id in. transactn
+7018	xts718	SET SESSION AUTHORIZATION to different value
+7019	xts719	Access to KEY_COLUMN_USAGE view
+7020	xts720	Access to VIEW_TABLE_USAGE view
+7021	xts721	Access to VIEW_COLUMN_USAGE view
+7022	xts722	Access to CONSTRAINT_TABLE_USAGE view
+7023	xts723	Access to CONSTRAINT_COLUMN_USAGE view
+7024	xts724	Access to COLUMN_DOMAIN_USAGE view
+7025	xts725	Flagging - Full SQL INSENSITIVE cursor
+7026	xts726	Flagging Full SQL - cursor FOR UPDATE and ORDER BY
+7027	xts727	Flagging - Full SQL - <explicit table> in <qry exp
+7028	xts728	Flagging,Full SQL,<null predicate> with two-col ro
+7029	xts729	Column name with 19 and 128 characters - regular.
+7030	xts730	Table name with 19 characters - delimited.
+7031	xts731	View name with 128 characters - delimited.
+7032	xts732	NATURAL FULL OUTER JOIN <table ref> -- static.
+7033	xts733	FULL OUTER JOIN <table ref> ON <search condition>
+7034	xts734	National Character data type in comparison predica
+7035	xts735	INSERT National character literal in NCHAR column
+7036	xts736	Update NCHAR VARYING column with value from NCHAR
+7037	xts737	Scrolled cursor with ORDER BY DESC, FETCH NEXT
+7038	xts738	Scrolled cursor with ORDER BY DESC, FETCH PRIOR
+7039	xts739	Scrolled cursor with ORDER BY int, name ASC, FETCH
+7040	xts740	COUNT(ALL <column name>) with Nulls in column
+7041	xts741	COUNT(ALL NULLIF...) with generated Nulls
+7042	xts742	COUNT ALL <literal>
+7044	xts744	Presence of SQL_CHARACTER in CHARACTER_SETS view
+7045	xts745	Presence of ASCII_GRAPHIC in CHARACTER_SETS view
+7046	xts746	Presence of LATIN1 in CHARACTER_SETS view
+7047	xts747	Presence of ASCII_FULL in CHARACTER_SETS view
+7048	xts748	Named constraint in column definition in schema de
+7049	xts749	Named table constraint in table definition.
+7050	xts750	Named domain constraint.
+7051	xts751	Name of violated column constraint returned in dia
+7052	xts752	ALTER TABLE ADD TABLE CONSTRAINT
+7053	xts753	ALTER TABLE ADD COLUMN WITH <data type>
+7054	xts754	ALTER TABLE ADD COLUMN WITH domain and constraint
+7055	xts755	ALTER TABLE DROP COLUMN RESTRICT
+7056	xts756	ALTER TABLE DROP COLUMN CASCADE
+7058	xts758	Scrolled cursor FETCH ABSOLUTE non-literal, after
+7059	xts759	Scrolled cursor on grouped view,FETCH RELATIVE,FIR
+7060	xts760	MAX of column derived from <set function specifica
+7061	xts761	Defined character set in <comparison predicate>
+7062	xts762	Defined character set in <like predicate>
+7063	xts763	Access to CHARACTER_SETS view
+7064	xts764	REVOKE USAGE on character set RESTRICT
+7065	xts765	REVOKE USAGE on character set CASCADE
+7066	xts766	Drop character set no granted privileges
+7067	xts767	DROP character set, outstanding granted privileges
+7068	xts768	Presence of SQL_TEXT in CHARACTER_SETS view
+7069	xts769	<Character set specification> of LATIN1 in <litera
+7070	xts770	<Character set specification> of SQL_CHARACTER in
+7071	xts771	CHARACTER SET ASCII_GRAPHIC in <data type>
+7500	yts750	CREATE DOMAIN -SQL Procedure statement,no options
+7501	yts751	CREATE DOMAIN as SQL proc statement with default
+7502	yts752	CREATE DOMAIN-SQL proc statement with constraint
+7503	yts753	DROP DOMAIN RESTRICT
+7504	yts754	DROP DOMAIN CASCADE - domain definition in use
+7505	yts755	DROP DOMAIN CASCADE-domain w. default + constraint
+7506	yts756	Domain Constraint Containing VALUE
+7507	yts757	INSERT value in column defined on domain
+7508	yts757	Put value in col defined on dom breaking constrain
+7509	yts759	GRANT USAGE on a domain
+7510	yts776	DROP SCHEMA - empty schema with restrict
+7511	yts777	DROP SCHEMA - non-empty schema
+7512	yts783	Scr.cursor,no ORDER,FETCH all,FIRST,LAST,NEXT
+7513	yts784	Scr.cursor with joined table, FETCH ABS literal
+7517	yts762	<query expression> with EXCEPT
+7518	yts763	<query expression> with INTERSECT CORRESPONDING
+7519	yts764	<query expression> with UNION ALL CORRESPONDING BY
+7520	yts778	ALTER TABLE SET COLUMN DEFAULT
+7521	yts779	ALTER TABLE DROP COLUMN DEFAULT
+7522	yts788	CREATE CHARACTER SET, implicit default collation
+7523	yts789	CREATE CHAR SET in schema def,COLLATION FROM DEFLT
+7524	yts790	GRANT USAGE on character set,WITH GRANT OPTION
+7525	yts791	GRANT USAGE on character set,WITH GRANT OPTION
+7526	yts792	GRANT USAGE on character set,WITH GRANT OPTION
+7527	yts793	GRANT USAGE on character set,no WGO
+7528	yts794	GRANT USAGE on character set, no WGO
+7529	yts795	GRANT USAGE on character set, no WGO
+7530	yts796	<scalar subquery> as first operand in <comp pred>
+7531	yts799	<subqry> as<row val constructor>in<null predicate>
+7532	yts800	<nul pred><interval value exp> as <row value cons>
+7534	yts760	CASE expression with one simple WHEN
+7535	yts761	CASE expression with searched WHEN
+7536	yts781	Set local time zone - valid value
+7537	yts765	Explicit table constrnts in TABLE_CONSTRAINTS view
+7538	yts765	Column constraints in TABLE_CONSTRAINTS view
+7539	yts765	Unique identification in TABLE_CONSTRAINTS view
+7540	yts766	Explicit table constrnts - REFERENTIAL_CONSTRAINTS
+7541	yts766	Column constraints in REFERENTIAL_CONSTRAINTS view
+7542	yts766	Unique id in REFERENTIAL_CONSTRAINTS view
+7543	yts766	Values in columns of REFERENTIAL_CONSTRAINTS view
+7544	yts767	Explicit table constr. in CHECK_CONSTRAINTS view
+7545	yts767	Column constraints in CHECK_CONSTRAINTS view
+7546	yts767	Domain constraints in CHECK_CONSTRAINTS view
+7547	yts767	Unique identification in CHECK_CONSTRAINTS view
+7548	yts802	Support of SQL_FEATURES tab. in documentatn schema
+7549	yts803	Support SQL_SIZING table in documentation schema
+7550	yts768	Access to SCHEMATA view
+7551	yts769	Access to DOMAINS view
+7552	yts770	Access to DOMAIN_CONSTRAINTS view
+7553	yts771	Access to CHARACTER_SETS view
+7554	yts772	Access to ASSERTIONS view
+7555	yts773	Access to SQL_LANGUAGES view
+7556	yts774	Access to INFORMATION_SCHEMA_CATALOG_NAME base tab
+7557	yts775	SQL host prog. with duplicate local variable names
+7558	yts797	<scalar subquery> in SET of searched update
+7559	yts798	<scalar subqry> in <sel.list> of single-row sel.
+7560	yts780	<time zone interval> in literal
+7561	yts782	Set local time zone - invalid value, exception
+7562	yts805	Schema with crossed referential const. bet. tables
+7563	yts806	NATURAL FULL OUTER JOIN <table ref> - dynamic
+7564	yts807	TIMEZONE_HOUR + TIMEZONE_MINUTE in <extract expr.>
+7565	yts808	LOCAL time zone in <datetime value expression>
+7566	yts809	TIME ZONE in <datetime value expression>
+7567	yts810	FULL OUTER JOIN<table ref>ON<search condition> dyn
+7568	yts811	WHERE <search cond.> referencing column
+7569	yts812	<null predicate>,concat. in<row value constructor>
+7570	yts813	<null predct>, <numrc val expr> in <row val cons>
+7571	yts814	<module character set specification>

@@ -1,0 +1,57 @@
+{
+  "name": "alasql",
+  "description":"Versatile SQL database for browser or node. Handles both your (traditional) relational tables and nested JSON data (noSQL). Export, store, and import data from localStorage, IndexedDB, or Excel.",
+  "version": "0.1.10",
+  "license": "MIT",
+  "keywords": [
+    "sql",
+    "nosql",
+    "alasql",
+    "javascript",
+    "parser",
+    "database",
+    "DBMS",
+    "data",
+    "query",
+    "localStorage",
+    "IndexedDB",
+    "SQLite",
+    "JSON",
+    "Excel",
+    "XLSX",
+    "XLS",
+    "CSV",
+    "worker"
+  ],
+  "authors": ["Andrey Gershun <agershun@gmail.com>"],
+  "homepage": "alasql.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agershun/alasql.git"
+  },
+  "dependencies": {
+    "js-xls": "~0.7.5",
+    "js-xlsx":"0.8.0",
+    "es6-promise":"2.1.0"
+  },
+  "devDependencies": {
+    "gulp":"3.8.11",
+    "gulp-changed":"1.2.1",
+    "gulp-concat-sourcemap":"1.3.1",
+    "gulp-shell":"0.4.1",
+    "jison":"0.4.15",
+    "lodash":"3.7.0"
+  },
+  "ignore": [
+    "src",
+    "test",
+    "test-sql",
+    "node_modules",
+    "bower.json",
+    "gruntfile.js",
+    "package.json",
+    "README.md",
+    "bin",
+    "lib"
+  ]
+}

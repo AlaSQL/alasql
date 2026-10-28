@@ -1,0 +1,4 @@
+# Console functions
+
+* ECHO
+* PRINT 

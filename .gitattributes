@@ -1,0 +1,9 @@
+alacon.js text eol=lf
+alaserver.js text eol=lf
+
+alasql.js binary
+alasql.js.map binary
+alasql.min.js binary
+
+*.xlsx binary
+*.xls binary

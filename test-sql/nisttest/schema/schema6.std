@@ -1,0 +1,38 @@
+-- SQL Test Suite, V6.0, Schema Definition, schema6.std
+-- 59-byte ID
+-- TEd Version #
+-- date_time print
+-- *******************************************************************
+-- ****** THIS FILE SHOULD BE RUN UNDER AUTHORIZATION ID FLATER ******
+-- *******************************************************************
+
+-- This is a standard schema definition.
+
+-- This SDL file requires Feature 17 of Transitional SQL (multiple schemas
+-- per user).
+
+-- Explicit AUTHORIZATION
+
+   CREATE SCHEMA SHIRLEY_HURWITZ
+     AUTHORIZATION FLATER
+
+     CREATE VIEW NOT_AVAILABLE AS
+       SELECT TIMESLOT FROM MEETINGS
+
+     CREATE TABLE MEETINGS (TIMESLOT INT, AGENDA CHAR(4))
+
+-- Vendors may add a semicolon here or break this into two separate files
+-- if need be.
+
+-- Implicit AUTHORIZATION
+
+   CREATE SCHEMA LEN_GALLAGHER
+
+     CREATE TABLE TRAVEL (
+       TRAVEL_ORDER CHAR(40) NOT NULL UNIQUE,
+       DESTINATION CHAR(40),
+       REASON_CODE NUMERIC(9))
+
+     GRANT SELECT ON TRAVEL TO PUBLIC
+
+-- ************* End of Schema *************

@@ -1,0 +1,59 @@
+# Test
+hash-threshold 8 # Test
+
+statement ok
+CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER)
+
+
+statement ok
+INSERT INTO t1(e,d,c,b,a) VALUES(246,248,247,249,245)
+
+
+statement ok
+INSERT INTO t1(e,d,c,b,a) 
+VALUES(246,248,247,249,245)
+
+skipif dbnameA
+query I nosort
+SELECT CASE WHEN c>(SELECT avg(c) FROM t1) THEN a*2 ELSE b*10 END
+  FROM t1
+ 
+----
+30 values hashing to 3c13dee48d9356ae19af2515e05e6b54
+
+onlyif dbnameB
+query II nosort
+SELECT a+b*2+c*3+d*4+e*5,
+       (a+b+c+d+e)/5
+  FROM t1
+ 
+----
+60 values hashing to 808146289313018fce25f1a280bd8c30
+
+halt
+
+query IIIII nosort
+SELECT a+b*2+c*3+d*4+e*5,
+       CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222
+        WHEN a<b+3 THEN 333 ELSE 444 END,
+       abs(b-c),
+       (a+b+c+d+e)/5,
+       a+b*2+c*3
+  FROM t1
+ WHERE (e>c OR e<d)
+   AND d>e
+   AND EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b)
+----
+80 values hashing to f588aa173060543daffc54d07638516f
+
+hash-threshold 12
+
+query I nosort
+SELECT CASE WHEN c>(SELECT avg(c) FROM t1) THEN a*2 ELSE b*10 END
+  FROM t1
+ WHERE e+d BETWEEN a+b-10 AND c+130
+   AND c>d
+----
+1000
+1180
+1240

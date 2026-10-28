@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <title>AlaSQL - JavaScript SQL database console</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
+
+  <script src="xlsx.core.min.js"></script>
+  <script src='alasql.min.js'></script>
+
+ </head>
+ <body>
+  
+
+<h1>AlaSQL - JavaScript SQL database console</h1>
+
+<p>This is a demo console for AlaSQL javascript database. Read more information and documentation on 
+<a href="https://github.com/agershun/alasql">https://github.com/agershun/alasql</a></p>
+
+<p>Type <b>HELP</b> for the list of commands.</p>
+<p>Enter <b>SOURCE 'world.sql'</b> to load sample database, then <b>SHOW TABLES</b>, and then <b>SELECT TOP 10 * FROM City</b>. Then enter <b>SELECT VALUE COUNT(*) FROM TXT('world.sql') WHERE LEN([0])>20</b> to count number of lines with length more than 20 characters</p>
+
+<div id='myconsole'></div>
+
+<p>
+	<tt></tt><span id="useid">alasql</span> &gt;</tt> <input id='myprompt' autofocus/> 
+</p>
+<script>
+	var first = decodeURI(location.search.substr(1));
+ 	alasql.options.logtarget = 'myconsole';
+	alasql.prompt('myprompt','useid');
+	alasql.prompt('myprompt','useid', first);
+</script> 
+
+
+</body>
+</html>

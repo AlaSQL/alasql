@@ -1,0 +1,37 @@
+-- SQL Test Suite, V6.0, Schema Definition, schema6.smi
+-- 59-byte ID
+-- TEd Version #
+-- date_time print
+-- *******************************************************************
+-- ****** THIS FILE SHOULD BE RUN UNDER AUTHORIZATION ID FLATER ******
+-- *******************************************************************
+
+-- This non-standard schema definition is provided so that
+-- implementations which require semicolons to terminate statements,
+-- but which are otherwise conforming, can still execute the 
+-- remaining tests.
+
+-- This SDL file requires Feature 17 of Transitional SQL (multiple schemas
+-- per user).
+
+-- Explicit AUTHORIZATION
+
+   CREATE SCHEMA SHIRLEY_HURWITZ
+     AUTHORIZATION FLATER;
+
+-- Forward reference not applicable to .smi version.
+
+     CREATE TABLE SHIRLEY_HURWITZ.MEETINGS (TIMESLOT INT, AGENDA CHAR(4));
+     CREATE VIEW SHIRLEY_HURWITZ.NOT_AVAILABLE AS
+       SELECT TIMESLOT FROM MEETINGS;
+
+-- Implicit AUTHORIZATION
+
+   CREATE SCHEMA LEN_GALLAGHER;
+     CREATE TABLE LEN_GALLAGHER.TRAVEL (
+       TRAVEL_ORDER CHAR(40) NOT NULL UNIQUE,
+       DESTINATION CHAR(40),
+       REASON_CODE NUMERIC(9));
+     GRANT SELECT ON LEN_GALLAGHER.TRAVEL TO PUBLIC;
+
+-- ************* End of Schema *************

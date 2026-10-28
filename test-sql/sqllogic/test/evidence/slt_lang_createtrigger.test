@@ -1,0 +1,224 @@
+hash-threshold 8
+
+statement ok
+CREATE TABLE t1( x INTEGER, y VARCHAR(8) )
+
+statement ok
+INSERT INTO t1 VALUES(1,'true')
+
+statement ok
+INSERT INTO t1 VALUES(0,'false')
+
+statement ok
+INSERT INTO t1 VALUES(NULL,'NULL')
+
+statement ok
+CREATE INDEX t1i1 ON t1(x)
+
+onlyif mssql
+halt
+
+# skip this entire file if PostgreSQL-FoundationDB
+onlyif PostgreSQL # FoundationDB
+halt
+
+# EVIDENCE-OF: R-10346-40046 The CREATE TRIGGER statement is used to add
+# triggers to the database schema.
+
+statement ok
+CREATE TRIGGER t1r1 UPDATE ON t1 BEGIN SELECT 1; END;
+
+# already exists
+statement error
+CREATE TRIGGER t1r1 UPDATE ON t1 BEGIN SELECT 1; END;
+
+# TBD-EVIDENCE-OF: R-49475-10767 Triggers are database operations that are
+# automatically performed when a specified database event occurs.
+
+# EVIDENCE-OF: R-51478-11146 A trigger may be specified to fire whenever
+# a DELETE, INSERT, or UPDATE of a particular database table occurs, or
+# whenever an UPDATE occurs on on one or more specified columns of a
+# table.
+
+statement ok
+CREATE TRIGGER t1r2 DELETE ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r3 INSERT ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r4 UPDATE ON t1 BEGIN SELECT 1; END;
+
+# TBD-EVIDENCE-OF: R-52227-24890 At this time SQLite supports only FOR EACH
+# ROW triggers, not FOR EACH STATEMENT triggers.
+
+# TBD-EVIDENCE-OF: R-38336-05023 Hence explicitly specifying FOR EACH ROW is
+# optional.
+
+# TBD-EVIDENCE-OF: R-32235-53300 FOR EACH ROW implies that the SQL
+# statements specified in the trigger may be executed (depending on the
+# WHEN clause) for each database row being inserted, updated or deleted
+# by the statement causing the trigger to fire.
+
+# TBD-EVIDENCE-OF: R-25950-00887 Both the WHEN clause and the trigger
+# actions may access elements of the row being inserted, deleted or
+# updated using references of the form "NEW.column-name" and
+# "OLD.column-name", where column-name is the name of a column from the
+# table that the trigger is associated with.
+
+# EVIDENCE-OF: R-63660-13730 OLD and NEW references may only be used in
+# triggers on events for which they are relevant, as follows: INSERT NEW
+# references are valid UPDATE NEW and OLD references are valid DELETE
+# OLD references are valid
+
+# EVIDENCE-OF: R-17846-38304 If a WHEN clause is supplied, the SQL
+# statements specified are only executed for rows for which the WHEN
+# clause is true.
+
+# EVIDENCE-OF: R-20446-37715 If no WHEN clause is supplied, the SQL
+# statements are executed for all rows.
+
+# EVIDENCE-OF: R-35362-38850 The BEFORE or AFTER keyword determines when
+# the trigger actions will be executed relative to the insertion,
+# modification or removal of the associated row.
+
+statement ok
+CREATE TRIGGER t1r5 AFTER DELETE ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r6 AFTER INSERT ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r7 AFTER UPDATE ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r8 BEFORE DELETE ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r9 BEFORE INSERT ON t1 BEGIN SELECT 1; END;
+
+statement ok
+CREATE TRIGGER t1r10 BEFORE UPDATE ON t1 BEGIN SELECT 1; END;
+
+# TBD-EVIDENCE-OF: R-57724-61571 An ON CONFLICT clause may be specified as
+# part of an UPDATE or INSERT action within the body of the trigger.
+
+# TBD-EVIDENCE-OF: R-35856-58769 However if an ON CONFLICT clause is
+# specified as part of the statement causing the trigger to fire, then
+# conflict handling policy of the outer statement is used instead.
+
+# TBD-EVIDENCE-OF: R-32333-58476 Triggers are automatically dropped when the
+# table that they are associated with (the table-name table) is dropped.
+
+# TBD-EVIDENCE-OF: R-45164-23268 However if the trigger actions reference
+# other tables, the trigger is not dropped or modified if those other
+# tables are dropped or modified.
+
+# TBD-EVIDENCE-OF: R-31067-37494 Triggers are removed using the DROP TRIGGER
+# statement.
+
+# TBD-EVIDENCE-OF: R-46291-22228 The UPDATE, DELETE, and INSERT statements
+# within triggers do not support the full syntax for UPDATE, DELETE, and
+# INSERT statements.
+
+# TBD-EVIDENCE-OF: R-42881-44982 The name of the table to be modified in an
+# UPDATE, DELETE, or INSERT statement must be an unqualified table name.
+# In other words, one must use just "tablename" not "database.tablename"
+# when specifying the table.
+
+# TBD-EVIDENCE-OF: R-58089-32183 The table to be modified must exist in the
+# same database as the table or view to which the trigger is attached.
+
+# TBD-EVIDENCE-OF: R-21148-64834 The "INSERT INTO table DEFAULT VALUES" form
+# of the INSERT statement is not supported.
+
+# TBD-EVIDENCE-OF: R-34918-27009 The INDEXED BY and NOT INDEXED clauses are
+# not supported for UPDATE and DELETE statements.
+
+# TBD-EVIDENCE-OF: R-43310-35438 The ORDER BY and LIMIT clauses on UPDATE
+# and DELETE statements are not supported. ORDER BY and LIMIT are not
+# normally supported for UPDATE or DELETE in any context but can be
+# enabled for top-level statements using the
+# SQLITE_ENABLE_UPDATE_DELETE_LIMIT compile-time option. However, that
+# compile-time option only applies to top-level UPDATE and DELETE
+# statements, not UPDATE and DELETE statements within triggers.
+
+# TBD-EVIDENCE-OF: R-63298-27030 Triggers may be created on views, as well
+# as ordinary tables, by specifying INSTEAD OF in the CREATE TRIGGER
+# statement.
+
+# TBD-EVIDENCE-OF: R-36338-64112 If one or more ON INSERT, ON DELETE or ON
+# UPDATE triggers are defined on a view, then it is not an error to
+# execute an INSERT, DELETE or UPDATE statement on the view,
+# respectively.
+
+# TBD-EVIDENCE-OF: R-46991-00459 Instead, executing an INSERT, DELETE or
+# UPDATE on the view causes the associated triggers to fire.
+
+# TBD-EVIDENCE-OF: R-42811-40895 The real tables underlying the view are not
+# modified (except possibly explicitly, by a trigger program).
+
+# TBD-EVIDENCE-OF: R-58080-31767 Note that the sqlite3_changes() and
+# sqlite3_total_changes() interfaces do not count INSTEAD OF trigger
+# firings, but the count_changes pragma does count INSTEAD OF trigger
+# firing.
+
+# TBD-EVIDENCE-OF: R-60230-33797 Assuming that customer records are stored
+# in the "customers" table, and that order records are stored in the
+# "orders" table, the following trigger ensures that all associated
+# orders are redirected when a customer changes his or her address:
+# CREATE TRIGGER update_customer_address UPDATE OF address ON customers
+# BEGIN UPDATE orders SET address = new.address WHERE customer_name =
+# old.name; END; With this trigger installed, executing the statement:
+# UPDATE customers SET address = '1 Main St.' WHERE name = 'Jack Jones';
+# causes the following to be automatically executed: UPDATE orders SET
+# address = '1 Main St.' WHERE customer_name = 'Jack Jones';
+
+# TBD-EVIDENCE-OF: R-53099-14426 A special SQL function RAISE() may be used
+# within a trigger-program,
+
+# TBD-EVIDENCE-OF: R-17798-50697 When one of the first three forms is called
+# during trigger-program execution, the specified ON CONFLICT processing
+# is performed (either ABORT, FAIL or ROLLBACK) and the current query
+# terminates.
+
+# TBD-EVIDENCE-OF: R-48669-35999 When RAISE(IGNORE) is called, the remainder
+# of the current trigger program, the statement that caused the trigger
+# program to execute and any subsequent trigger programs that would of
+# been executed are abandoned.
+
+# TBD-EVIDENCE-OF: R-64082-04685 No database changes are rolled back.
+
+# TBD-EVIDENCE-OF: R-01402-03601 If the statement that caused the trigger
+# program to execute is itself part of a trigger program, then that
+# trigger program resumes execution at the beginning of the next step.
+
+statement ok
+DROP TRIGGER t1r1
+
+statement ok
+DROP TRIGGER t1r2
+
+statement ok
+DROP TRIGGER t1r3
+
+statement ok
+DROP TRIGGER t1r4
+
+statement ok
+DROP TRIGGER t1r5
+
+statement ok
+DROP TRIGGER t1r6
+
+statement ok
+DROP TRIGGER t1r7
+
+statement ok
+DROP TRIGGER t1r8
+
+statement ok
+DROP TRIGGER t1r9
+
+statement ok
+DROP TRIGGER t1r10

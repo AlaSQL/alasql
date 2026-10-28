@@ -1,0 +1,11 @@
+body {
+  font-family: arial;
+  font-size: 0.9em;
+  padding: 1%;
+}
+
+#myprompt{
+  width: 80%;
+  font-size: 1.3em;
+  font-family: Consolas,Monaco, monospace;
+}

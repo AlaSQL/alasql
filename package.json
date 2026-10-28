@@ -1,0 +1,67 @@
+{
+  "name": "alasql",
+  "description": "Versatile SQL database for browser or node. Handles both your (traditional) relational tables and nested JSON data (noSQL). Export, store, and import data from localStorage, IndexedDB, or Excel.",
+  "version": "0.1.11",
+  "author": "Andrey Gershun <agershun@gmail.com>",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "cd test && mocha ."
+  },
+  "dependencies": {
+    "dom-storage": "^2.0.1",
+    "es6-promise": "2.1.1",
+    "lodash": "^3.9.3",
+    "xlsjs": "^0.7.5",
+    "xlsx": "0.8.0"
+  },
+  "devDependencies": {
+    "blueimp-md5": "^1.1.0",
+    "gulp": "3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-shell": "^0.4.1",
+    "jison": "0.4.15",
+    "mocha": "^2.2.5",
+    "uglifyjs": "^2.4.10"
+  },
+  "engines": [
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/agershun/alasql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agershun/alasql/issues"
+  },
+  "bin": {
+    "alacon": "./bin/alacon.js",
+    "alaserver": "./bin/alaserver.js"
+  },
+  "homepage": "https://github.com/agershun/alasql",
+  "main": "dist/alasql.js",
+  "keywords": [
+    "sql",
+    "nosql",
+    "graph",
+    "alasql",
+    "javascript",
+    "parser",
+    "database",
+    "DBMS",
+    "data",
+    "query",
+    "localStorage",
+    "IndexedDB",
+    "DOM-storage",
+    "SQLite",
+    "JSON",
+    "Excel",
+    "XLSX",
+    "XLS",
+    "CSV",
+    "worker"
+  ],
+  "license": "MIT"
+}
