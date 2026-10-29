@@ -94,7 +94,17 @@ export default function install(alasql) {
 			if (leftAliases.length === 1 && rightAliases.length === 1) {
 				var leftIdx = aliasToIdx[leftAliases[0]];
 				var rightIdx = aliasToIdx[rightAliases[0]];
-				if (leftIdx === undefined || rightIdx === undefined || leftIdx === rightIdx) return;
+				if (leftIdx === undefined || rightIdx === undefined) return;
+				if (leftIdx === rightIdx) {
+					// Both sides read the same table (t1.a = t1.b): a filter on it, like any other
+					// condition on one table
+					addSourceWhereCondition(
+						query.sources[leftIdx],
+						'(' + cond.toJS('p', query.defaultTableid, query.defcols) + ')'
+					);
+					pinned[leftIdx] = pinned[leftIdx] || 1;
+					return;
+				}
 				links.push({a: leftIdx, aExpr: ls, b: rightIdx, bExpr: rs});
 			} else if (leftAliases.length === 1 && rightAliases.length === 0) {
 				// Single-table condition (e.g., t1.a = 5)

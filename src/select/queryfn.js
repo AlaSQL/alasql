@@ -578,14 +578,20 @@ export default function install(alasql, internal) {
 			var scope, i, ilen, dataw, ixx, addr, group, res;
 			// If there is indexation rule
 			if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
+				// An index built on the filtered rows depends on the parameters the filter reads, which
+				// are not in the cache key, so only an index of the whole table is cached on it
+				var cacheable =
+					!source.srcwherefns &&
+					source.databaseid &&
+					alasql.databases[source.databaseid].tables[source.tableid];
 				// If there is no table.indices - create it
-				if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
+				if (cacheable) {
 					if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
 						query.database.tables[source.tableid].indices = {};
 					// Check if index already exists
 					ixx =
 						alasql.databases[source.databaseid].tables[source.tableid].indices[
-							hash(source.onrightfns + '`' + source.srcwherefns)
+							hash(source.onrightfns + '`')
 						];
 					if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 						source.ix = ixx;
@@ -623,10 +629,10 @@ export default function install(alasql, internal) {
 						i++;
 					}
 
-					if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
+					if (cacheable) {
 						// Save index to original table
 						alasql.databases[source.databaseid].tables[source.tableid].indices[
-							hash(source.onrightfns + '`' + source.srcwherefns)
+							hash(source.onrightfns + '`')
 						] = source.ix;
 					}
 				}
