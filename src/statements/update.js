@@ -1,4 +1,4 @@
-import {cloneDeep} from '../utils/helpers.js';
+import {cloneDeep, setOwn} from '../utils/helpers.js';
 
 export default function install(alasql) {
 	var yy = alasql.yy;
@@ -154,7 +154,7 @@ export default function install(alasql) {
 						if (col.columnid === '*') {
 							// For *, use INSERTED values
 							for (var key in inserted) {
-								outputRow[key] = inserted[key];
+								setOwn(outputRow, key, inserted[key]);
 							}
 						} else {
 							var colname = col.as || col.columnid;

@@ -126,8 +126,9 @@ export default function install(alasql) {
 			return alasql.fn[trigger.funcid](...args);
 		} else if (trigger.statement) {
 			// CALL funcname() without arguments gets the row data, like the older syntax
-			const call = trigger.statement.expression;
-			if (call && call.funcid && !call.args?.length) {
+			const {statement} = trigger;
+			const call = statement.expression;
+			if (statement instanceof yy.ExpressionStatement && call?.funcid && !call.args?.length) {
 				return alasql.fn[call.funcid](...args);
 			}
 			// Otherwise run the statement as written, with its own arguments

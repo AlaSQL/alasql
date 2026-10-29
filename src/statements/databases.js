@@ -50,6 +50,9 @@ export default function install(alasql, internal) {
 		} else {
 			var dbid = this.databaseid;
 			if (alasql.databases[dbid]) {
+				if (this.ifnotexists) {
+					return cb ? cb(0) : 0;
+				}
 				throw new Error("Database '" + dbid + "' already exists");
 			}
 			var a = new alasql.Database(dbid);

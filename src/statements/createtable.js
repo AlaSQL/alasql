@@ -1,4 +1,4 @@
-import {cloneDeep, hash} from '../utils/helpers.js';
+import {cloneDeep, hash, setOwn} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var schemaChanged = internal.schemaChanged;
@@ -307,7 +307,11 @@ export default function install(alasql, internal) {
 						return indexColumnToJS(expr.expression, table);
 					})
 					.join("+'`'+");
-				uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
+				// The key can call functions that compile to alasql.*, as UNIQUE (ROUND(a)) does (#2876)
+				var ukfn = new Function('r,params,alasql', 'var y;return ' + uk.onrightfns);
+				uk.onrightfn = function (r, params) {
+					return ukfn(r, params, alasql);
+				};
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
 			} else if (con.type === 'INDEX') {
@@ -533,7 +537,7 @@ export default function install(alasql, internal) {
 				//			console.log();
 				table.update(
 					function (t) {
-						for (var f in r) t[f] = r[f];
+						for (var f in r) setOwn(t, f, r[f]);
 					},
 					table.data.indexOf(toreplace),
 					params

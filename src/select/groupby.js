@@ -1,4 +1,4 @@
-import {arrayDiff, arrayUnion} from '../utils/helpers.js';
+import {arrayDiff, arrayUnion, setOwnJS} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -111,7 +111,11 @@ export default function install(alasql, internal) {
 
 			if (typeof query.groupStar !== 'undefined') {
 				aft2 +=
-					"for(var f in p['" + query.groupStar + "']) {g[f]=p['" + query.groupStar + "'][f];};";
+					"for(var f in p['" +
+					query.groupStar +
+					"']) {" +
+					setOwnJS('g', 'f', "p['" + query.groupStar + "'][f]") +
+					'};';
 			}
 
 			s += query.selectGroup
