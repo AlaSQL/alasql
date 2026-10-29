@@ -1,4 +1,4 @@
-import {cloneDeep, escapeq, n2u} from '../utils/helpers.js';
+import {cloneDeep, escapeq, n2u, setOwnJS} from '../utils/helpers.js';
 
 export default function install(alasql) {
 	var yy = alasql.yy;
@@ -134,7 +134,12 @@ export default function install(alasql) {
 						'_"+k]=w[k]};';
 				} else {
 					// Default overwrite mode
-					sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r[k]=w[k]};';
+					sp +=
+						'var w=p["' +
+						escapeq(alias) +
+						'"];for(var k in w){' +
+						setOwnJS('r', 'k', 'w[k]') +
+						'};';
 				}
 				//console.log(777, sp);
 				query.dirtyColumns = true;
@@ -274,7 +279,12 @@ export default function install(alasql) {
 										"'" +
 											escapeq(col.as || col.columnid) +
 											"':" +
-											yy.Column.fromAnySource('p', Object.keys(query.aliases), col.columnid)
+											yy.Column.fromAnySource(
+												'p',
+												Object.keys(query.aliases),
+												col.columnid,
+												query.defcols['.']
+											)
 									);
 									// Only check it against the default table if no other source can have it
 									var inOtherSource = query.sources.some(
@@ -488,6 +498,16 @@ export default function install(alasql) {
 				query.removeKeys.push(key);
 			});
 		}
+		// Like ORDER BY, a name or number refers to an output column, anything else to the source row
+		if (this.distinctOn) {
+			var exprs = this.distinctOn.map(function (e) {
+				if (e instanceof yy.Column && query.xcolumns[e.columnid]) return "r['" + e.columnid + "']";
+				if (e instanceof yy.NumValue) return 'r[Object.keys(r)[' + (e.value - 1) + ']]';
+				return e.toJS('p', query.defaultTableid, query.defcols);
+			});
+			s += "r['$$distinctOn']=JSON.stringify([" + exprs.join(',') + ']);';
+			query.removeKeys.push('$$distinctOn');
+		}
 		return new Function('p,params,alasql', 'var y;' + s + 'return r');
 	};
 
@@ -620,7 +640,7 @@ export default function install(alasql) {
 				//			s += 'for(var k in g){r[k]=g[k]};';
 				//			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
 
-				s += 'for(var k in g) {r[k]=g[k]};';
+				s += 'for(var k in g) {' + setOwnJS('r', 'k', 'g[k]') + '};';
 				return '';
 
 				//			console.log(query);

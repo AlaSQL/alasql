@@ -90,11 +90,13 @@ export function cloneDeep(obj) {
 		return +obj;
 	}
 
-	var temp = new obj.constructor(); // changed
+	// An own constructor comes from the data, so it is never called
+	var ctor = Object.prototype.hasOwnProperty.call(obj, 'constructor') ? Object : obj.constructor;
+	var temp = typeof ctor === 'function' ? new ctor() : {};
 
 	for (var key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			temp[key] = cloneDeep(obj[key]);
+		if (Object.prototype.hasOwnProperty.call(obj, key)) {
+			setOwn(temp, key, cloneDeep(obj[key]));
 		}
 	}
 	return temp;
@@ -292,11 +294,35 @@ export var distinctArray = function (data) {
 export function extend(a, b) {
 	a = a || {};
 	for (var key in b) {
-		if (b.hasOwnProperty(key)) {
-			a[key] = b[key];
+		if (Object.prototype.hasOwnProperty.call(b, key)) {
+			setOwn(a, key, b[key]);
 		}
 	}
 	return a;
+}
+
+/**
+  Set one key on an object. Assigning a "__proto__" key from data would replace
+  the prototype of the object, so that key becomes an own property instead
+  */
+export function setOwn(target, key, value) {
+	if (key === '__proto__') {
+		Object.defineProperty(target, key, {
+			value,
+			writable: true,
+			enumerable: true,
+			configurable: true,
+		});
+	} else {
+		target[key] = value;
+	}
+}
+
+/**
+  The same as setOwn, as code for compiled queries
+  */
+export function setOwnJS(target, key, value) {
+	return `if(${key}==="__proto__"){Object.defineProperty(${target},${key},{value:${value},writable:true,enumerable:true,configurable:true})}else{${target}[${key}]=${value}}`;
 }
 
 /**
@@ -328,6 +354,7 @@ export default function install(alasql) {
  */
 	var utils = (alasql.utils = {});
 	utils.extend = extend;
+	utils.setOwn = setOwn;
 	utils.distinctArray = distinctArray;
 	utils.undoubleq = escapeqq;
 	utils.arrayUnion = arrayUnion;

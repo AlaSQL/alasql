@@ -1,4 +1,4 @@
-import {cloneDeep} from '../utils/helpers.js';
+import {cloneDeep, setOwn, setOwnJS} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -295,7 +295,7 @@ export default function install(alasql, internal) {
 				self.output.columns.forEach(function (col) {
 					if (col.columnid === '*') {
 						// For *, expand all properties
-						s += 'for(var key in r){ outputRow[key] = r[key]; }';
+						s += 'for(var key in r){ ' + setOwnJS('outputRow', 'key', 'r[key]') + ' }';
 					} else {
 						var colname = col.as || col.columnid;
 						// Direct property access for simple columns
@@ -381,7 +381,7 @@ export default function install(alasql, internal) {
 								if (col.columnid === '*') {
 									// For *, expand all properties
 									for (var key in r) {
-										outputRow[key] = r[key];
+										setOwn(outputRow, key, r[key]);
 									}
 								} else {
 									var colname = col.as || col.columnid;
