@@ -26,20 +26,21 @@ export default function install(alasql) {
 		source.optimization = 'ix';
 	}
 
-	// Helper to add a single-table WHERE condition to a source
-	function addSourceWhereCondition(source, leftExpr, rightExpr) {
-		var condition = '(' + leftExpr + '==' + rightExpr + ')';
+	// Helper to add a single-table WHERE condition to a source: generated code that reads only
+	// that source, run against each of its rows before the join
+	function addSourceWhereCondition(source, condition) {
 		source.srcwherefns = source.srcwherefns ? source.srcwherefns + '&&' + condition : condition;
 	}
 
 	// Comma joins: FROM t1, t2, t3 WHERE t1.b = t2.a AND t2.b = t3.a. The conditions in WHERE say
 	// how the tables link; each table but the first gets an index on its side of one link, so
 	// doJoin looks rows up instead of trying every combination (#118, #2279), and a condition
-	// on one table alone filters that table before the join. The join order is chosen here, not
-	// taken from FROM (#2910): the first table is one with a condition against a constant, and
-	// every next table is one linked to the tables already placed, so no table is scanned in
-	// full for every row so far. Bare column names resolve to their table through defcols, as
-	// they do in the generated code.
+	// that reads one table alone, whatever its operator (=, IN, OR, LIKE, BETWEEN ...), filters
+	// that table before the join (#2916). The join order is chosen here when FROM is out of
+	// chain order (#2910): the first table is one with such a filter, and every next table is
+	// one linked to the tables already placed, so no table is scanned in full for every row so
+	// far. Bare column names resolve to their table through defcols, as they do in the
+	// generated code.
 	yy.Select.prototype.compileWhereJoins = function (query) {
 		if (!this.where) return;
 
@@ -54,20 +55,32 @@ export default function install(alasql) {
 			return !source.applyselect && (!source.joinmode || source.joinmode === 'INNER');
 		});
 
-		var conditions = extractWhereConditions(this.where);
+		var conditions = whereConjuncts(this.where);
 
 		var aliasToIdx = {};
 		query.sources.forEach(function (source, idx) {
 			aliasToIdx[source.alias] = idx;
 		});
 
-		// links: {a, aExpr, b, bExpr}, a condition between two sources; pinned: the sources with a
-		// condition against something that reads no source
+		// links: {a, aExpr, b, bExpr}, an equality between two sources; pinned: the sources with a
+		// filter of their own, 2 for an equality against a constant, 1 for any other condition
 		var links = [];
 		var pinned = [];
 		conditions.forEach(function (cond) {
-			if (cond.op !== '=') return;
-			if (cond.allsome) return;
+			if (!(cond instanceof yy.Op) || cond.op !== '=' || cond.allsome) {
+				// Not an equality: a filter on one source when it reads that source alone, else
+				// left to the WHERE clause (a subquery, a column no single source answers for)
+				var read = sourcesRead(cond, query.defcols);
+				if (read && read.length === 1 && aliasToIdx[read[0]] !== undefined) {
+					var idx = aliasToIdx[read[0]];
+					addSourceWhereCondition(
+						query.sources[idx],
+						'(' + cond.toJS('p', query.defaultTableid, query.defcols) + ')'
+					);
+					pinned[idx] = pinned[idx] || 1;
+				}
+				return;
+			}
 
 			var leftAliases = sourcesRead(cond.left, query.defcols);
 			var rightAliases = sourcesRead(cond.right, query.defcols);
@@ -86,14 +99,20 @@ export default function install(alasql) {
 			} else if (leftAliases.length === 1 && rightAliases.length === 0) {
 				// Single-table condition (e.g., t1.a = 5)
 				if (aliasToIdx[leftAliases[0]] !== undefined) {
-					addSourceWhereCondition(query.sources[aliasToIdx[leftAliases[0]]], ls, rs);
-					pinned[aliasToIdx[leftAliases[0]]] = true;
+					addSourceWhereCondition(
+						query.sources[aliasToIdx[leftAliases[0]]],
+						'(' + ls + '==' + rs + ')'
+					);
+					pinned[aliasToIdx[leftAliases[0]]] = 2;
 				}
 			} else if (leftAliases.length === 0 && rightAliases.length === 1) {
 				// Single-table condition with alias on right (e.g., 5 = t1.a)
 				if (aliasToIdx[rightAliases[0]] !== undefined) {
-					addSourceWhereCondition(query.sources[aliasToIdx[rightAliases[0]]], ls, rs);
-					pinned[aliasToIdx[rightAliases[0]]] = true;
+					addSourceWhereCondition(
+						query.sources[aliasToIdx[rightAliases[0]]],
+						'(' + ls + '==' + rs + ')'
+					);
+					pinned[aliasToIdx[rightAliases[0]]] = 2;
 				}
 			}
 		});
@@ -101,9 +120,9 @@ export default function install(alasql) {
 		// FROM order is kept when every source links to one before it: each is then found through its
 		// index and the rows come out in FROM order without sorting. Only when a source has no such
 		// link, so FROM order would try it against every row so far, is the order chosen: the first
-		// source with a condition against a constant, else the first in FROM; then, while sources are
-		// left, the first in FROM order that a link ties to a placed source, and when none is linked
-		// the first in FROM order (a cross product, as before).
+		// source with an equality against a constant, else the first with any filter, else the first
+		// in FROM; then, while sources are left, the first in FROM order that a link ties to a placed
+		// source, and when none is linked the first in FROM order (a cross product, as before).
 		var n = query.sources.length;
 		var order = [];
 		var linkedInFrom = true;
@@ -115,11 +134,8 @@ export default function install(alasql) {
 		if (links.length > 0 && movable && !linkedInFrom) {
 			var placed = [];
 			var start = 0;
-			for (var i = 0; i < n; i++) {
-				if (pinned[i]) {
-					start = i;
-					break;
-				}
+			for (var i = 1; i < n; i++) {
+				if ((pinned[i] || 0) > (pinned[start] || 0)) start = i;
 			}
 			order.push(start);
 			placed[start] = true;
@@ -194,25 +210,23 @@ export default function install(alasql) {
 		});
 	};
 
-	// Helper function to extract all equality conditions from a WHERE clause
-	function extractWhereConditions(where) {
+	// The conditions the WHERE clause ANDs together, each a node of its own
+	function whereConjuncts(where) {
 		var conditions = [];
 
 		function traverse(node) {
 			if (!node) return;
 
 			// Handle Expression wrapper - get the inner expression
-			if (node.expression) {
+			if (node instanceof yy.Expression) {
 				traverse(node.expression);
 				return;
 			}
 
-			if (!(node instanceof yy.Op)) return;
-
-			if (node.op === 'AND') {
+			if (node instanceof yy.Op && node.op === 'AND') {
 				traverse(node.left);
 				traverse(node.right);
-			} else if (node.op === '=') {
+			} else {
 				conditions.push(node);
 			}
 		}
@@ -233,7 +247,12 @@ export default function install(alasql) {
 
 		function walk(n, nested) {
 			if (!known || n === null || typeof n !== 'object') return;
-			if (n instanceof yy.Column) {
+			if (Array.isArray(n)) {
+				// the list of IN (1, 2, 3)
+				n.forEach(function (item) {
+					walk(item, true);
+				});
+			} else if (n instanceof yy.Column) {
 				var alias = n.tableid || (!nested && defcols && defcols[n.columnid]);
 				if (typeof alias !== 'string' || alias === '-' || alias === '.') {
 					known = false;
@@ -245,13 +264,20 @@ export default function install(alasql) {
 				else {
 					walk(n.left, nested);
 					walk(n.right, nested);
+					walk(n.right1, nested); // BETWEEN
+					walk(n.right2, nested);
+					walk(n.escape, nested); // LIKE ... ESCAPE
 				}
 			} else if (n instanceof yy.UniOp) {
 				walk(n.right, nested);
 			} else if (n instanceof yy.FuncValue) {
-				(n.args || []).forEach(function (arg) {
-					walk(arg, true);
-				});
+				if (n.over) known = false;
+				else
+					(n.args || []).forEach(function (arg) {
+						walk(arg, true);
+					});
+			} else if (n instanceof yy.Convert) {
+				walk(n.expression, true);
 			} else if (n instanceof yy.CaseValue) {
 				walk(n.expression, true);
 				(n.whens || []).forEach(function (w) {
