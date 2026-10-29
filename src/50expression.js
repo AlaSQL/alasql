@@ -642,6 +642,13 @@
 		}
 	}
 
+	// DEFAULT in SET or VALUES. INSERT and UPDATE put the column default in its place, elsewhere it is NULL
+	class DefaultValue extends NullValue {
+		toString() {
+			return 'DEFAULT';
+		}
+	}
+
 	class ParamValue {
 		constructor(params) {
 			assign(this, params);
@@ -930,6 +937,7 @@
 		AggrValue,
 		ArrayValue,
 		Column,
+		DefaultValue,
 		DomainValueValue,
 		Expression,
 		ExpressionStatement,
