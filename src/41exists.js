@@ -22,7 +22,8 @@ yy.ExistsValue = class ExistsValue {
 
 	toJS(context, tableid, defcols) {
 		// Updated to return a boolean value correctly
-		return `!!this.existsfn[${this.existsidx}](params, null, ${context}).data.length`;
+		const outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
+		return `!!this.existsfn[${this.existsidx}](params, null, ${outerContext}).data.length`;
 	}
 };
 
