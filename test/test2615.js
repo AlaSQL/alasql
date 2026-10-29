@@ -61,4 +61,24 @@ describe(`Test ${testId} - built-in functions with a column of the second table 
 			{b: 20, u: ' YY '},
 		]);
 	});
+
+	it('F) A column in both tables reads the first table, as before', function () {
+		alasql('CREATE TABLE three (a INT, w STRING)');
+		alasql("INSERT INTO three VALUES (1, 'p'), (2, 'qq')");
+		const joins = [
+			'FROM two t1 JOIN three t2 ON t1.a = t2.a',
+			'FROM two t1 LEFT JOIN three t2 ON t1.a = t2.a',
+			'FROM two t1, three t2 WHERE t1.a = t2.a',
+		];
+		for (const from of joins) {
+			assert.deepStrictEqual(alasql(`SELECT UPPER(w) AS u, LENGTH(w) AS l ${from}`), [
+				{u: 'X', l: 1},
+				{u: ' YY ', l: 4},
+			]);
+		}
+		assert.deepStrictEqual(
+			alasql("SELECT t2.a FROM two t1 JOIN three t2 ON t1.a = t2.a WHERE TRIM(w) = 'yy'"),
+			[{a: 2}]
+		);
+	});
 });
