@@ -56,7 +56,7 @@
 		"preversion": "yarn && yarn test && npm login",
 		"version": "bunx rexreplace@2.3 'alasql@\\d+(\\.\\d+){2}' alasql@$npm_package_version -q README.md && git add README.md",
 		"prepublishOnly": "yarn build-only",
-		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
+		"postversion": "npm publish && git push && git push origin v$npm_package_version && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
 		"cross-fetch": "4.1.0",
