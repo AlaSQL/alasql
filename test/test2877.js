@@ -38,4 +38,18 @@ describe(`Test ${testId} - DEFAULT in UPDATE SET and INSERT VALUES`, function ()
 		db.exec('UPDATE t SET b = [default]');
 		assert.deepStrictEqual(db.exec('SELECT b FROM t'), [{b: 7}]);
 	});
+	it('E) INSERT ... SET, an expression default, IDENTITY and NOT NULL', function () {
+		var db = new alasql.Database();
+		db.exec(
+			'CREATE TABLE t (id INT IDENTITY(1,1), a INT NOT NULL DEFAULT 5, e INT DEFAULT (2+3), b INT)'
+		);
+		db.exec('INSERT INTO t VALUES (DEFAULT, DEFAULT, DEFAULT, 1)');
+		db.exec('INSERT INTO t SET b = 2, a = DEFAULT');
+		db.exec('UPDATE t SET a = 7, e = 0');
+		db.exec('UPDATE t SET a = DEFAULT, e = DEFAULT WHERE b = 2');
+		assert.deepStrictEqual(db.exec('SELECT * FROM t ORDER BY b'), [
+			{id: 1, a: 7, e: 0, b: 1},
+			{id: 2, a: 5, e: 5, b: 2},
+		]);
+	});
 });
