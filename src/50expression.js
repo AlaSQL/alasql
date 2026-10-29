@@ -440,8 +440,7 @@
 			if (this.allsome === 'ALL') {
 				var s;
 				if (this.right instanceof yy.Select) {
-					s =
-						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
+					s = `alasql.utils.flatArray(this.query.queriesfn[${this.queriesidx}](params,null,${context}))`;
 
 					s += '.every(function(b){return (';
 					s += leftJS() + ')' + op + 'b})';
@@ -461,8 +460,7 @@
 			if (this.allsome === 'SOME' || this.allsome === 'ANY') {
 				var s;
 				if (this.right instanceof yy.Select) {
-					s =
-						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
+					s = `alasql.utils.flatArray(this.query.queriesfn[${this.queriesidx}](params,null,${context}))`;
 					s += '.some(function(b){return (';
 					s += leftJS() + ')' + op + 'b})';
 				} else if (Array.isArray(this.right)) {
