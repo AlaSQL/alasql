@@ -317,6 +317,27 @@
 			} else if (this.op === 'OR') {
 				op = '||';
 			} else if (this.op === '->') {
+				// db.table.column is parsed as (db.table)->column. When "db" is a database and
+				// not a source alias, but "table" is a source, read it as a column (#2186).
+				// alias.column.property keeps working as a property lookup.
+				const left = this.left;
+				if (
+					left instanceof yy.Column &&
+					left.tableid &&
+					typeof this.right === 'string' &&
+					defcols &&
+					defcols['.'] &&
+					!defcols['.'][left.tableid] &&
+					defcols['.'][left.columnid] &&
+					alasql.databases[left.tableid]
+				) {
+					return new yy.Column({
+						databaseid: left.tableid,
+						tableid: left.columnid,
+						columnid: this.right,
+					}).toJS(context, tableid, defcols);
+				}
+
 				// Expression to prevent error if object is empty (#344)
 				const ljs = `(${leftJS()} || {})`;
 
