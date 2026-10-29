@@ -248,22 +248,21 @@ export default function install(alasql) {
 	// The aliases of the sources an expression reads, in the order met, or null when that cannot
 	// be told: a subquery, a search, an aggregate, raw JavaScript, a node this does not know, or
 	// a bare column that no single source answers for (ambiguous, or not among the declared
-	// columns). A bare column resolves through defcols, as Column.toJS resolves it, except inside a
-	// function, CASE or list: their code still reads a bare column from the first source (#2615), so
-	// such a condition is left to the WHERE clause.
+	// columns). A bare column resolves through defcols, as Column.toJS resolves it, inside a
+	// function, CASE or list as well (#2917).
 	function sourcesRead(node, defcols) {
 		var aliases = [];
 		var known = true;
 
-		function walk(n, nested) {
+		function walk(n) {
 			if (!known || n === null || typeof n !== 'object') return;
 			if (Array.isArray(n)) {
 				// the list of IN (1, 2, 3)
 				n.forEach(function (item) {
-					walk(item, true);
+					walk(item);
 				});
 			} else if (n instanceof yy.Column) {
-				var alias = n.tableid || (!nested && defcols && defcols[n.columnid]);
+				var alias = n.tableid || (defcols && defcols[n.columnid]);
 				if (typeof alias !== 'string' || alias === '-' || alias === '.') {
 					known = false;
 				} else if (aliases.indexOf(alias) === -1) {
@@ -272,32 +271,32 @@ export default function install(alasql) {
 			} else if (n instanceof yy.Op) {
 				if (n.allsome || n.queriesidx !== undefined) known = false;
 				else {
-					walk(n.left, nested);
-					walk(n.right, nested);
-					walk(n.right1, nested); // BETWEEN
-					walk(n.right2, nested);
-					walk(n.escape, nested); // LIKE ... ESCAPE
+					walk(n.left);
+					walk(n.right);
+					walk(n.right1); // BETWEEN
+					walk(n.right2);
+					walk(n.escape); // LIKE ... ESCAPE
 				}
 			} else if (n instanceof yy.UniOp) {
-				walk(n.right, nested);
+				walk(n.right);
 			} else if (n instanceof yy.FuncValue) {
 				if (n.over) known = false;
 				else
 					(n.args || []).forEach(function (arg) {
-						walk(arg, true);
+						walk(arg);
 					});
 			} else if (n instanceof yy.Convert) {
-				walk(n.expression, true);
+				walk(n.expression);
 			} else if (n instanceof yy.CaseValue) {
-				walk(n.expression, true);
+				walk(n.expression);
 				(n.whens || []).forEach(function (w) {
-					walk(w.when, true);
-					walk(w.then, true);
+					walk(w.when);
+					walk(w.then);
 				});
-				walk(n.elses, true);
+				walk(n.elses);
 			} else if (n instanceof yy.ArrayValue) {
 				(n.value || []).forEach(function (item) {
-					walk(item, true);
+					walk(item);
 				});
 			} else if (
 				n instanceof yy.NumValue ||
@@ -314,7 +313,7 @@ export default function install(alasql) {
 			}
 		}
 
-		walk(node, false);
+		walk(node);
 		return known ? aliases : null;
 	}
 
