@@ -1236,6 +1236,13 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
 /* * Tests if a given value matches a pattern with optional escape character.
  * Supports SQL-like syntax with % and _ as wildcards and custom escape character.
  */
+// A character written literally in a regular expression: every character with a
+// meaning in a regular expression is escaped (#2748)
+var re_regexSyntax = /[\\^$.*+?()[\]{}|\/]/;
+var regexLiteral = function (c) {
+	return re_regexSyntax.test(c) ? '\\' + c : c;
+};
+
 var patternCache = new Map(); // escape character -> pattern -> RegExp
 var like = (utils.like = function (pattern, value, escape = '') {
 	var cache = patternCache.get(escape);
@@ -1249,9 +1256,10 @@ var like = (utils.like = function (pattern, value, escape = '') {
 			var currentChar = pattern[i];
 			var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
 
-			// Handle escape character.
+			// Handle escape character: the next character is taken literally.
+			// An escape character at the end of the pattern matches nothing, as in SQLite.
 			if (currentChar === escape) {
-				regexStr += '\\' + nextChar;
+				regexStr += nextChar === '' ? '(?!)' : regexLiteral(nextChar);
 				i++; // Skip next character as it's escaped.
 			}
 			// Handle negation within character classes.
@@ -1267,17 +1275,13 @@ var like = (utils.like = function (pattern, value, escape = '') {
 			else if (currentChar === '%') {
 				regexStr += '[\\s\\S]*';
 			}
-			// Replace '_' with regex to match any single character.
+			// Replace '_' with regex to match any single character, a newline included.
 			else if (currentChar === '_') {
-				regexStr += '.';
-			}
-			// Escape special regex characters.
-			else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
-				regexStr += '\\' + currentChar;
+				regexStr += '[\\s\\S]';
 			}
 			// Append literal characters.
 			else {
-				regexStr += currentChar;
+				regexStr += regexLiteral(currentChar);
 			}
 			i++;
 		}
@@ -1301,41 +1305,46 @@ var like = (utils.like = function (pattern, value, escape = '') {
  * @param {string} pattern - The glob pattern to match the value against.
  * @returns {boolean} - True if the value matches the pattern, false otherwise.
  */
+var globCache = new Map(); // pattern -> RegExp
 utils.glob = function (value, pattern) {
-	var currentIndex = 0; // Index for traversing the pattern string.
-	var regexPattern = '^'; // Start regex pattern to match from the beginning.
+	var re = globCache.get(pattern);
+	if (!re) {
+		// GLOB ignores case in alasql: pattern and value are compared in upper case.
+		// Upper-casing the pattern before the regex is built keeps the regex syntax intact.
+		var upperPattern = pattern.toUpperCase();
+		var currentIndex = 0; // Index for traversing the pattern string.
+		var regexPattern = '^'; // Start regex pattern to match from the beginning.
 
-	while (currentIndex < pattern.length) {
-		var currentChar = pattern[currentIndex];
-		var nextChar = currentIndex < pattern.length - 1 ? pattern[currentIndex + 1] : '';
+		while (currentIndex < upperPattern.length) {
+			var currentChar = upperPattern[currentIndex];
+			var nextChar = currentIndex < upperPattern.length - 1 ? upperPattern[currentIndex + 1] : '';
 
-		// Handle character sets and negation within them.
-		if (currentChar === '[' && nextChar === '^') {
-			regexPattern += '[^';
-			currentIndex++; // Include '^' as part of the set.
-		} else if (currentChar === '[' || currentChar === ']') {
-			// Directly append square brackets.
-			regexPattern += currentChar;
-		} else if (currentChar === '*') {
-			// Replace '*' with regex to match any character sequence.
-			regexPattern += '.*';
-		} else if (currentChar === '?') {
-			// Replace '?' with regex to match any single character.
-			regexPattern += '.';
-		} else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
-			// Escape special regex characters.
-			regexPattern += '\\' + currentChar;
-		} else {
-			// Append literal characters.
-			regexPattern += currentChar;
+			// Handle character sets and negation within them.
+			if (currentChar === '[' && nextChar === '^') {
+				regexPattern += '[^';
+				currentIndex++; // Include '^' as part of the set.
+			} else if (currentChar === '[' || currentChar === ']') {
+				// Directly append square brackets.
+				regexPattern += currentChar;
+			} else if (currentChar === '*') {
+				// Replace '*' with regex to match any character sequence, newlines included.
+				regexPattern += '[\\s\\S]*';
+			} else if (currentChar === '?') {
+				// Replace '?' with regex to match any single character, a newline included.
+				regexPattern += '[\\s\\S]';
+			} else {
+				// Append literal characters.
+				regexPattern += regexLiteral(currentChar);
+			}
+			currentIndex++;
 		}
-		currentIndex++;
+
+		regexPattern += '$'; // End regex pattern to match until the end.
+		re = RegExp(regexPattern);
+		globCache.set(pattern, re);
 	}
 
-	regexPattern += '$'; // End regex pattern to match until the end.
-
-	// Convert value to uppercase, compile the regex pattern in uppercase to perform a case-insensitive match.
-	return ('' + (value || '')).toUpperCase().search(RegExp(regexPattern.toUpperCase())) > -1;
+	return ('' + (value || '')).toUpperCase().search(re) > -1;
 };
 
 /**
