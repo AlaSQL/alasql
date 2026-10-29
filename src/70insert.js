@@ -124,6 +124,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 					);
 				}
 				self.columns.forEach(function (col, idx) {
+					// Leave the column out so the table default fills it
+					if (values[idx] instanceof yy.DefaultValue) return;
 					//console.log(db.tables, tableid, table);
 					//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 					//			console.log(rec[f.name.value]);
@@ -164,6 +166,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 						);
 					}
 					table.columns.forEach(function (col, idx) {
+						if (values[idx] instanceof yy.DefaultValue) return;
 						var q = "'" + col.columnid + "':";
 						//						var val = values[idx].toJS();
 
