@@ -96,11 +96,16 @@ describe('Test 2917 - bare column inside a function in a query over several tabl
 		);
 	});
 
-	it('H) an ambiguous bare column inside a function still fails as outside', function () {
-		alasql('CREATE TABLE r (id INT)');
-		assert.throws(
-			() => alasql('SELECT p.id FROM p, r WHERE UPPER(id) = "1"'),
-			/Cannot resolve column "id" because it exists in two source tables/
+	it('H) a column in two tables reads the first table inside a built-in function, as in 4.22.0', function () {
+		alasql('CREATE TABLE r (id INT, name STRING)');
+		alasql('INSERT INTO r VALUES (1, "r-ann"), (2, "r-bob")');
+		assert.deepStrictEqual(
+			alasql('SELECT r.name AS n FROM p, r WHERE p.id = r.id AND UPPER(name) = "BOB"'),
+			[{n: 'r-bob'}]
+		);
+		assert.deepStrictEqual(
+			alasql('SELECT p.name AS n FROM r JOIN p ON p.id = r.id WHERE UPPER(name) = "R-ANN"'),
+			[{n: 'ann'}]
 		);
 	});
 });
