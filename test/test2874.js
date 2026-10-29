@@ -41,6 +41,6 @@ describe(`Test ${testId} - IN and NOT IN with items that are not plain literals`
 
 	it('G) A negative number keeps the cached list', function () {
 		assert.deepStrictEqual(alasql('SELECT a FROM ? WHERE a IN (-1, 3)', [data]), [{a: -1}, {a: 3}]);
-		assert.ok(alasql.sets['-1,3'] instanceof Set);
+		assert.ok(alasql.sets['[-1,3]'] instanceof Set);
 	});
 });
