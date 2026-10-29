@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.21.0",
+	"version": "4.22.0",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -22,13 +22,15 @@
 	},
 	"typings": "types/alasql.d.ts",
 	"scripts": {
-		"test": "sh build.sh && yarn test-only",
+		"test": "yarn build-only && yarn test-only",
 		"test-ci": "(yarn test-format-all || 1) && yarn test-only && yarn install-g && alasql 'select 1 as Succes'",
 		"test-only": "bun test --dots --preload ./test/bun-setup.js ./test/test[0-9]*.js ./test/test-*.js",
 		"test-browser": "node test/browserTestRunner.js 7387",
+		"test-parity": "yarn build-only && bun test/parity/run.js record ref-044ab07a --ref 044ab07a --if-missing && bun test/parity/run.js record new --once && bun test/parity/run.js compare ref-044ab07a new",
+		"test-parity-smoke": "node test/parity/smoke.js --node=$(which node) --pack",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
-		"build-only": "sh build.sh",
+		"build-only": "bun build.js && bunx rexreplace@2.3 PACKAGE_VERSION $npm_package_version -Iq 'dist/**/*.js' && bunx rexreplace@2.3 BUILD_VERSION \"'$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)'.replace(/[^\\da-z-]+/gi, '.')\" -IqJ 'dist/**/*.js'",
 		"test-perf": "bun test/performance/vs-npm.js",
 		"test-perf-mini": "bun test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
@@ -38,23 +40,23 @@
 		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
 		"test-format": "yarn pretty-since-dev --list-different || (echo 'Please correct file formatting using `yarn format` and try again.' && exit 1)",
-		"test-format-all": "prettier --list-different '{.,src,test}/*.{js,ts,json}' || (echo 'Please correct file formatting using `yarn format-all` and try again.' && exit 1)",
+		"test-format-all": "prettier --list-different '{.,src,test}/**/*.{js,ts,json}' || (echo 'Please correct file formatting using `yarn format-all` and try again.' && exit 1)",
 		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
 		"repush": "yarn rebase && yarn push",
-		"amend": "git reset --soft HEAD~1 && sleep 1 && git add --all && git commit --file .git/COMMIT_EDITMSG # This works with husky hooks",
+		"amend": "git reset --soft HEAD~1 && sleep 1 && git add --all && git commit --file .git/COMMIT_EDITMSG",
 		"commit": "cmdmix 'git add --all && git commit -am \"%1\"'",
 		"add": "git add --all",
 		"goto": "git fetch && git checkout",
 		"todo": "git ls-tree --full-tree --name-only -r head | xargs grep -inEro '\\Wtodo[ :].*' #",
 		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
-		"prepare": "husky",
 		"preversion": "yarn && yarn test && npm login",
-		"prepublishOnly": "sh build.sh </dev/null",
-		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
+		"version": "bunx rexreplace@2.3 'alasql@\\d+(\\.\\d+){2}' alasql@$npm_package_version -q README.md && git add README.md",
+		"prepublishOnly": "yarn build-only",
+		"postversion": "npm publish && git push && git push origin v$npm_package_version && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
 		"cross-fetch": "4.1.0",
@@ -68,16 +70,8 @@
 		"cmdmix": "2.2.2",
 		"dom-storage": "2.1.0",
 		"esbuild": "0.28.2",
-		"git-branch-is": "5.0.0",
-		"husky": "9.1.7",
 		"jison": "^0.4.18",
-		"open": "11.0.4",
-		"prettier": "3.9.10",
-		"react-native-fetch-blob": "^0.10.8",
-		"rexreplace": "7.1.14",
-		"strftime": "0.10.3",
-		"tabletop": "^1.6.2",
-		"uglify-js": "3.19.3"
+		"prettier": "3.9.10"
 	},
 	"resolutions": {
 		"got": "16",
