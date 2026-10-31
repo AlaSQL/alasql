@@ -89,13 +89,13 @@
 		"semver": "7",
 		"follow-redirects": "^1.16.0",
 		"js-yaml": "5",
-		"glob": "^13.0.0",
+		"glob": "^14.0.0",
 		"rimraf": "^6.1.2"
 	},
 	"overrides": {
 		"axios": "^1.16.1",
 		"follow-redirects": "^1.16.0",
-		"glob": "^13.0.0",
+		"glob": "^14.0.0",
 		"rimraf": "^6.1.2"
 	},
 	"engines": {
