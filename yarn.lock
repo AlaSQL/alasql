@@ -619,9 +619,9 @@ gopd@^1.2.0:
   integrity sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==
 
 got@16:
-  version "16.1.0"
-  resolved "https://registry.yarnpkg.com/got/-/got-16.1.0.tgz#2223d2703eb5723f61e5dadcddd2918ab596bd70"
-  integrity sha512-LOvohAoc/3O8+Gi3E5RRvamkyXmJq9ewj/cimmqQYn+Me5OKCVHKQI9ygF0O882l573lrpLbKZpsydYRttpDEg==
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/got/-/got-16.2.0.tgz#854203a38077a197a8bbb728707f5358b59c2498"
+  integrity sha512-aOgWdlVL/pipu3Cqr9okwOdRZPsWwntgTup+eTn2fE1k4vky6oybjVUZxCSdAfOJkSxoyGKcGlgxf2+LcPdgVg==
   dependencies:
     "@sindresorhus/is" "^8.1.0"
     byte-counter "^0.1.0"
