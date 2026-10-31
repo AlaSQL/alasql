@@ -29,7 +29,7 @@ jobs:
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         uses: actions/setup-node@v7
         with:
-          node-version: '24.x'
+          node-version: '26.x'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -58,7 +58,7 @@ jobs:
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         uses: actions/setup-node@v7
         with:
-          node-version: '24.x'
+          node-version: '26.x'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
