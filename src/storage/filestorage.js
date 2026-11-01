@@ -227,37 +227,43 @@ export default function install(alasql, internal) {
 	FS.rollback = function (databaseid, cb) {
 		var res = 1;
 		var db = alasql.databases[databaseid];
-		schemaChanged(db);
-		wait();
-		function wait() {
+
+		// Put the database back to what is in the file, as ATTACH does
+		function restore(s) {
+			try {
+				db.data = JSON.parse(s);
+			} catch (err) {
+				throw new Error('Data in FileStorage database are corrupted');
+			}
+			db.tables = {};
+			for (var tbid in db.data.tables) {
+				db.tables[tbid] = extend({}, db.data.tables[tbid]);
+				if (!alasql.options.autocommit) {
+					db.tables[tbid].data = db.data[tbid];
+				}
+			}
+			schemaChanged(db);
+			if (cb) res = cb(res);
+		}
+
+		function fail(err) {
+			throw err;
+		}
+
+		if (!cb) {
+			loadFile(db.filename, false, restore, fail);
+			return res;
+		}
+
+		// Wait for a save in progress before the file is read
+		(function wait() {
 			setTimeout(function () {
 				if (db.issaving) {
 					return wait();
-				} else {
-					alasql.loadFile(db.filename, !!cb, function (data) {
-						db.data = data;
-						db.tables = {};
-						for (var tbid in db.data.tables) {
-							var tb = new alasql.Table({columns: db.data.tables[tbid].columns});
-							extend(tb, db.data.tables[tbid]);
-							db.tables[tbid] = tb;
-							if (!alasql.options.autocommit) {
-								db.tables[tbid].data = db.data[tbid];
-							}
-							db.tables[tbid].indexColumns();
-						}
-
-						delete alasql.databases[databaseid];
-						alasql.databases[databaseid] = new alasql.Database(databaseid);
-						extend(alasql.databases[databaseid], db);
-						alasql.databases[databaseid].engineid = 'FILESTORAGE';
-						alasql.databases[databaseid].filename = db.filename;
-
-						if (cb) res = cb(res);
-						// Todo: check why no return
-					});
 				}
+				loadFile(db.filename, true, restore, fail);
 			}, 100);
-		}
+		})();
+		return res;
 	};
 }
