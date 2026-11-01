@@ -73,7 +73,7 @@ export default function install(alasql) {
 				s += alasql.stdlib[funcid.toUpperCase()].apply(
 					this,
 					this.args.map(function (arg) {
-						return arg.toJS(context, tableid);
+						return arg.toJS(context, tableid, defcols);
 					})
 				);
 			} else {
