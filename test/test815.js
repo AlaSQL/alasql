@@ -1,6 +1,6 @@
 if (typeof exports === 'object') {
 	var assert = require('assert');
-	var {unlink} = require('fs');
+	var {existsSync, unlinkSync} = require('fs');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
@@ -11,10 +11,10 @@ if (typeof exports === 'object') {
 	var unixepoch = new Date(0);
 
 	before(() => {
-		unlink('test/test815.xlsx', () => {});
+		if (existsSync('test/test815.xlsx')) unlinkSync('test/test815.xlsx');
 	});
 	after(() => {
-		unlink('test/test815.xlsx', () => {});
+		if (existsSync('test/test815.xlsx')) unlinkSync('test/test815.xlsx');
 	});
 
 	it('1. stores date and retrieves date correctly', function (done) {
