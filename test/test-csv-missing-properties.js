@@ -18,4 +18,10 @@ describe('Test 369 - CSV export with missing properties', function () {
 		var res = alasql('SELECT * INTO CSV({headers:true, utf8Bom:false}) FROM ?', [data]);
 		assert.deepStrictEqual(res, '"a"\r\n"undefined"\r\n');
 	});
+
+	it('C) Export null as empty but preserve an explicit null string', function () {
+		var data = [{a: null, b: 'null'}];
+		var res = alasql('SELECT * INTO CSV({headers:true, utf8Bom:false}) FROM ?', [data]);
+		assert.deepStrictEqual(res, '"a";"b"\r\n;"null"\r\n');
+	});
 });

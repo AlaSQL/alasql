@@ -257,7 +257,8 @@ alasql.into.CSV = function (filename, opts, data, columns, cb) {
 			columns
 				.map(function (col) {
 					var s = d[col.columnid];
-					if (s === undefined) {
+					// Missing properties and null values both represent empty CSV fields.
+					if (s == null) {
 						s = '';
 					}
 					// escape the character wherever it appears in the field
