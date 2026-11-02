@@ -64,6 +64,9 @@ function structuredDate(unFormattedDate) {
  Convert one type to another
  */
 alasql.stdfn.CONVERT = function (value, args) {
+	// CAST/CONVERT of NULL is NULL for every target type (AlaSQL uses undefined for NULL)
+	if (value == null) return undefined;
+
 	var val = value;
 	var udbtypeid = args.dbtypeid?.toUpperCase();
 
