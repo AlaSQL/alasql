@@ -482,14 +482,19 @@ alasql.aggr.QUART3 = function (v, s, stage) {
 	return alasql.aggr.QUART(v, s, stage, 3);
 };
 
-// Standard deviation
+// NULL values (null, undefined or NaN) are skipped by the variance aggregates (#2481)
+var isAggrNull = function (v) {
+	return v == null || (typeof v === 'number' && isNaN(v));
+};
+
+// Sample variance
 alasql.aggr.VAR = function (v, s, stage) {
 	if (stage === 1) {
 		// Initialise sum, sum of squares, and count
-		return v === null ? {sum: 0, sumSq: 0, count: 0} : {sum: v, sumSq: v * v, count: 1};
+		return isAggrNull(v) ? {sum: 0, sumSq: 0, count: 0} : {sum: v, sumSq: v * v, count: 1};
 	} else if (stage === 2) {
 		// Update sum, sum of squares, and count
-		if (v !== null) {
+		if (!isAggrNull(v)) {
 			s.sum += v;
 			s.sumSq += v * v;
 			s.count++;
@@ -500,60 +505,57 @@ alasql.aggr.VAR = function (v, s, stage) {
 		// This avoids the need to store and iterate over all values
 		if (s.count > 1) {
 			return (s.sumSq - (s.sum * s.sum) / s.count) / (s.count - 1);
-		} else {
-			// Handling for cases with less than 2 values (variance is undefined or zero)
-			return 0;
 		}
+		// Sample variance needs at least two values, otherwise it is NULL
+		return undefined;
 	}
 };
 
+// Sample standard deviation
 alasql.aggr.STDEV = function (v, s, stage) {
 	if (stage === 1 || stage === 2) {
 		return alasql.aggr.VAR(v, s, stage);
-	} else {
-		return Math.sqrt(alasql.aggr.VAR(v, s, stage));
 	}
+	const variance = alasql.aggr.VAR(v, s, stage);
+	return variance === undefined ? undefined : Math.sqrt(variance);
 };
 
-alasql.aggr.STDEV = function (v, s, stage) {
-	if (stage === 1 || stage === 2) {
-		return alasql.aggr.VAR(v, s, stage);
-	} else {
-		return Math.sqrt(alasql.aggr.VAR(v, s, stage));
-	}
-};
-
+// Population variance
 alasql.aggr.VARP = function (value, accumulator, stage) {
 	if (stage === 1) {
 		// Initialise accumulator with count, sum, and sum of squares
-		return {count: 1, sum: value, sumSq: value * value};
+		return isAggrNull(value)
+			? {count: 0, sum: 0, sumSq: 0}
+			: {count: 1, sum: value, sumSq: value * value};
 	} else if (stage === 2) {
 		// Update accumulator
-		accumulator.count++;
-		accumulator.sum += value;
-		accumulator.sumSq += value * value;
+		if (!isAggrNull(value)) {
+			accumulator.count++;
+			accumulator.sum += value;
+			accumulator.sumSq += value * value;
+		}
 		return accumulator;
 	} else {
-		// Final stage: Calculate variance
+		// Final stage: Calculate variance, NULL if no values were aggregated
 		if (accumulator.count > 0) {
 			const mean = accumulator.sum / accumulator.count;
 			const variance = accumulator.sumSq / accumulator.count - mean * mean;
 			return variance;
-		} else {
-			return 0; // Return 0 variance if no values were aggregated
 		}
+		return undefined;
 	}
 };
 
+// Population standard deviation
 alasql.aggr.STD =
 	alasql.aggr.STDDEV =
 	alasql.aggr.STDEVP =
 		function (v, s, stage) {
 			if (stage == 1 || stage == 2) {
 				return alasql.aggr.VARP(v, s, stage);
-			} else {
-				return Math.sqrt(alasql.aggr.VARP(v, s, stage));
 			}
+			const variance = alasql.aggr.VARP(v, s, stage);
+			return variance === undefined ? undefined : Math.sqrt(variance);
 		};
 
 alasql._aggrOriginal = alasql.aggr;
