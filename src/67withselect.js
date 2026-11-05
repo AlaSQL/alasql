@@ -34,6 +34,26 @@ yy.WithSelect.prototype.toString = function () {
 	return s;
 };
 
+// Key of a column value for the UNION check of a recursive CTE. Unlike
+// JSON.stringify it keeps values of different types apart (NaN and NULL, a Date
+// and its ISO string) and does not throw on BigInt. null and undefined are both
+// NULL, and NaN equals NaN, so a cycle through them still ends. Values inside an
+// object are still compared as JSON.
+function cteValueKey(value) {
+	value = getValueOf(value);
+	if (value === null || value === undefined) return 'null';
+	if (value instanceof Date) return 'date:' + value.getTime();
+	if (typeof value === 'object') {
+		return (
+			'object:' +
+			JSON.stringify(value, function (key, v) {
+				return typeof v === 'bigint' ? 'bigint:' + v : v;
+			})
+		);
+	}
+	return typeof value + ':' + String(value);
+}
+
 // Execute a recursive CTE
 function executeRecursiveCTE(w, databaseid, params) {
 	var maxIterations = alasql.options.maxCteIterations || 1000;
@@ -100,7 +120,7 @@ function executeRecursiveCTE(w, databaseid, params) {
 		return rows.filter(function (row) {
 			var key = JSON.stringify(
 				columnNames.map(function (c) {
-					return row[c];
+					return cteValueKey(row[c]);
 				})
 			);
 			if (seen.has(key)) return false;
