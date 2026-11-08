@@ -1,13 +1,13 @@
 const alasql = require('../');
 const assert = require('assert');
 
-describe('Test JOIN index cache invalidation on UPDATE (#2924)', function () {
+describe('Test JOIN index cache invalidation on UPDATE (#2919)', function () {
 	before(function () {
-		alasql('CREATE DATABASE test2924; USE test2924;');
+		alasql('CREATE DATABASE test2919; USE test2919;');
 	});
 
 	after(function () {
-		alasql('DROP DATABASE test2924;');
+		alasql('DROP DATABASE test2919;');
 	});
 
 	it('should invalidate join index cache after UPDATE statement', function () {

@@ -113,7 +113,6 @@ yy.Update.prototype.compile = function (databaseid) {
 		}
 		// Mark table as dirty and clear cached join indexes after UPDATE
 		table.dirty = true;
-		table.indices = {};
 
 		var numrows = 0;
 		var updatedRows = [];
