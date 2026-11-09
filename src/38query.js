@@ -618,68 +618,6 @@ var preIndex = function (query) {
 					] = source.ix;
 				}
 			}
-
-			// Optimization for WHERE column = expression
-		} else if (source.wxleftfn) {
-			if (!alasql.databases[source.databaseid].engineid) {
-				// Check if index exists
-				ixx =
-					alasql.databases[source.databaseid].tables[source.tableid].indices[
-						hash(source.wxleftfns + '`')
-					];
-			}
-			if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
-				// Use old index if exists
-				source.ix = ixx;
-				// Reduce data (apply filter)
-				source.data = source.ix[source.wxrightfn(null, query.params, alasql)];
-			} else {
-				// Create new index
-				source.ix = {};
-				// Prepare scope
-				scope = {};
-				// Walking on each source line
-				i = 0;
-				ilen = source.data.length;
-				dataw;
-				//				while(source.getfn i<ilen) {
-
-				while (
-					(dataw = source.data[i]) ||
-					(source.getfn && (dataw = source.getfn(i))) ||
-					i < ilen
-				) {
-					if (source.getfn && !source.dontcache) source.data[i] = dataw;
-					//					for(var i=0, ilen=source.data.length; i<ilen; i++) {
-					scope[source.alias || source.tableid] = source.data[i];
-					// Create index entry
-					addr = source.wxleftfn(scope, query.params, alasql);
-					group = source.ix[addr];
-					if (!group) {
-						group = source.ix[addr] = [];
-					}
-					group.push(source.data[i]);
-					i++;
-				}
-				if (!alasql.databases[source.databaseid].engineid) {
-					alasql.databases[source.databaseid].tables[source.tableid].indices[
-						hash(source.wxleftfns + '`')
-					] = source.ix;
-				}
-			}
-			// Apply where filter to reduces rows
-			if (source.srcwherefns) {
-				if (source.data) {
-					scope = {};
-					source.data = source.data.filter(function (r) {
-						scope[source.alias] = r;
-						return source.srcwherefn(scope, query.params, alasql);
-					});
-				} else {
-					source.data = [];
-				}
-			}
-			// If there is no any optimization than apply srcwhere filter
 		} else if (source.srcwherefns && !source.dontcache) {
 			if (source.data) {
 				scope = {};
