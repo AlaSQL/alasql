@@ -84,8 +84,10 @@ function doJoin(query, scope, h) {
 				var left = source.onleftfn(scope, query.params, alasql);
 				var right = source.onrightfn(scope, query.params, alasql);
 				if (left instanceof String || left instanceof Number) left = left.valueOf();
-				if (right instanceof String || right instanceof Number) right = left.valueOf();
-				usingPassed = left == right;
+				if (right instanceof String || right instanceof Number) right = right.valueOf();
+				// NULL keys never match, as in SQL where NULL = NULL is not true. Without a key
+				// expression the whole ON clause is checked by onmiddlefn below instead.
+				usingPassed = !source.onleftfns || (left != null && right != null && left == right);
 			}
 
 			if (usingPassed) {
