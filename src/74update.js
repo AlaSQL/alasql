@@ -111,7 +111,9 @@ yy.Update.prototype.compile = function (databaseid) {
 		if (!table) {
 			throw new Error("Table '" + tableid + "' not exists");
 		}
-		//		table.dirty = true;
+		// Mark table as dirty and clear cached join indexes after UPDATE
+		table.dirty = true;
+
 		var numrows = 0;
 		var updatedRows = [];
 		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
