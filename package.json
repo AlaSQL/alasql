@@ -54,7 +54,7 @@
 		"prepare": "husky",
 		"preversion": "yarn && yarn test && npm login",
 		"prepublishOnly": "sh build.sh </dev/null",
-		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
+		"postversion": "npm publish && git push && git push origin v$npm_package_version && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
 		"cross-fetch": "4.1.0",
