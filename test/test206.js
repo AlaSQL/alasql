@@ -70,4 +70,10 @@ describe('Test 206 IF and BEGIN END', function () {
 		assert(res == 2);
 		done();
 	});
+
+	it('8. Serialize ELSE branch', function (done) {
+		var res = alasql.parse('IF FALSE SELECT VALUE 1 ELSE SELECT VALUE 2').toString();
+		assert.strictEqual(res, 'IF FALSE SELECT VALUE 1 ELSE SELECT VALUE 2');
+		done();
+	});
 });
