@@ -85,7 +85,7 @@ export default function install(alasql, internal) {
 					var left = source.onleftfn(scope, query.params, alasql);
 					var right = source.onrightfn(scope, query.params, alasql);
 					if (left instanceof String || left instanceof Number) left = left.valueOf();
-					if (right instanceof String || right instanceof Number) right = left.valueOf();
+					if (right instanceof String || right instanceof Number) right = right.valueOf();
 					usingPassed = left == right;
 				}
 

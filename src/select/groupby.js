@@ -356,11 +356,12 @@ export default function install(alasql, internal) {
 						} else if (col.aggregatorid === 'ARRAY') {
 							return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 						} else if (col.aggregatorid === 'MIN') {
+							// The first value of a group must be taken even when it is 0 or 0n, which are falsy (#2967)
 							if ('funcid' in col.expression) {
 								let colexp1 = colExpIfFunIdExists(col.expression);
 								return (
 									pre +
-									`if ((g['${colas}'] == null && ${colexp1} !== null) ? y = ${colexp} : 
+									`if ((g['${colas}'] == null && ${colexp1} !== null) ? (y = ${colexp}) || y === 0 || typeof y == 'bigint' : 
 									(g['${colas}'] !== null && ${colexp1} == null) ? y = g['${colas}'] : 
 									((y = ${colexp}) < g['${colas}'])) {
 									if (typeof y == 'number' || typeof y == 'bigint') {
@@ -380,7 +381,7 @@ export default function install(alasql, internal) {
 							}
 							return (
 								pre +
-								`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : 
+								`if((g['${colas}'] == null && ${colexp}!== null) ? (y = ${colexp}) || y === 0 || typeof y == 'bigint' : 
 								(g['${colas}']!== null && ${colexp} == null) ? y = g['${colas}'] : 
 								((y=${colexp}) < g['${colas}'])) { 
 								if(typeof y == 'number' || typeof y == 'bigint') {
@@ -403,7 +404,7 @@ export default function install(alasql, internal) {
 								//console.log(pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'])
 								return (
 									pre +
-									`if ((g['${colas}'] == null && ${colexp1} !== null) ? y = ${colexp} : 
+									`if ((g['${colas}'] == null && ${colexp1} !== null) ? (y = ${colexp}) || y === 0 || typeof y == 'bigint' : 
 									(g['${colas}'] !== null && ${colexp1} == null) ? y = g['${colas}'] : 
 									((y = ${colexp}) > g['${colas}'])) {
 									if (typeof y == 'number' || typeof y == 'bigint') {
@@ -423,7 +424,7 @@ export default function install(alasql, internal) {
 							}
 							return (
 								pre +
-								`if ((g['${colas}'] == null && ${colexp} !== null) ? y = ${colexp} : 
+								`if ((g['${colas}'] == null && ${colexp} !== null) ? (y = ${colexp}) || y === 0 || typeof y == 'bigint' : 
 								(g['${colas}'] !== null && ${colexp} == null) ? y = g['${colas}'] : 
 								((y = ${colexp}) > g['${colas}'])) {
 								if (typeof y == 'number' || typeof y == 'bigint') {
