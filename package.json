@@ -30,7 +30,7 @@
 		"test-parity-smoke": "node test/parity/smoke.js --node=$(which node) --pack",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
-		"build-only": "bun build.js && bunx rexreplace@2.3 PACKAGE_VERSION $npm_package_version -Iq 'dist/**/*.js' && bunx rexreplace@2.3 BUILD_VERSION \"'$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)'.replace(/[^\\da-z-]+/gi, '.')\" -IqJ 'dist/**/*.js'",
+		"build-only": "bun build.js && rexreplace PACKAGE_VERSION $npm_package_version -Iq 'dist/**/*.js' && rexreplace BUILD_VERSION \"'$(git rev-parse --abbrev-ref HEAD)-$(git rev-parse --short HEAD)'.replace(/[^\\da-z-]+/gi, '.')\" -Iqj 'dist/**/*.js'",
 		"test-perf": "bun test/performance/vs-npm.js",
 		"test-perf-mini": "bun test/performance/vs-npm.js --scale=0.5 --runs=2 --runtime=node --fail-above=105",
 		"install-g": "yarn build && npm uninstall alasql -g && npm install -g .",
@@ -54,7 +54,7 @@
 		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
 		"preversion": "yarn && yarn test && npm login",
-		"version": "bunx rexreplace@2.3 'alasql@\\d+(\\.\\d+){2}' alasql@$npm_package_version -q README.md && git add README.md",
+		"version": "rexreplace 'alasql@\\d+(\\.\\d+){2}' alasql@$npm_package_version -q README.md && git add README.md",
 		"prepublishOnly": "yarn build-only",
 		"postversion": "npm publish && git push && git push origin v$npm_package_version && echo \"Successfully released version $npm_package_version\""
 	},
@@ -71,7 +71,8 @@
 		"dom-storage": "2.1.0",
 		"esbuild": "0.28.2",
 		"jison": "^0.4.18",
-		"prettier": "3.9.10"
+		"prettier": "3.9.10",
+		"rexreplace": "7.1.16"
 	},
 	"resolutions": {
 		"got": "16",

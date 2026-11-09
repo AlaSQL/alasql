@@ -424,6 +424,26 @@ export default function install(alasql, internal) {
 			);
 		}
 
+		// Rebuild one key index from the current rows. If they hold duplicate keys, the last one wins.
+		function rebuildKeyIndex(table, key) {
+			var index = (table.uniqs[key.hh] = {});
+			table.data.forEach(function (row) {
+				index[key.onrightfn(row)] = row;
+			});
+		}
+
+		// table.data can be replaced from outside (alasql.tables.t.data = rows), which leaves
+		// the key indexes describing the old rows, so check before a statement relies on them.
+		var keyedData = table.data;
+		function syncKeyIndexes(table) {
+			if (table.data === keyedData) return;
+			keyedData = table.data;
+			if (table.pk) rebuildKeyIndex(table, table.pk);
+			(table.uk || []).forEach(function (uk) {
+				rebuildKeyIndex(table, uk);
+			});
+		}
+
 		table.insert = function (r, orreplace, ignore) {
 			var oldinserted = alasql.inserted;
 			alasql.inserted = [r];
@@ -497,6 +517,7 @@ export default function install(alasql, internal) {
 					throw new Error('Wrong NULL value in NOT NULL column ' + column.columnid);
 				}
 			});
+			syncKeyIndexes(table);
 			if (table.pk) {
 				var pk = table.pk;
 				var addr = pk.onrightfn(r);
@@ -635,6 +656,7 @@ export default function install(alasql, internal) {
 			}
 			if (escape) return;
 
+			syncKeyIndexes(table);
 			if (this.pk) {
 				var pk = this.pk;
 				var addr = pk.onrightfn(r);
@@ -674,38 +696,20 @@ export default function install(alasql, internal) {
 
 			var pk;
 			// PART 1 - PRECHECK
+			syncKeyIndexes(this);
 			if (this.pk) {
 				pk = this.pk;
 				pk.pkaddr = pk.onrightfn(r, params);
+				// The row may have been added to table.data without going through INSERT.
 				if (typeof this.uniqs[pk.hh][pk.pkaddr] === 'undefined') {
-					// If index is not populated (e.g., data was directly assigned), rebuild it.
-					// This allows UPDATE to work when data bypasses normal INSERT validation.
-					// Note: If data contains duplicate PKs, last occurrence wins (matches direct assignment semantics).
-					// This rebuild happens at most once per table since the index will be populated afterward.
-					this.uniqs[pk.hh] = {};
-					for (var j = 0; j < this.data.length; j++) {
-						var addr = pk.onrightfn(this.data[j]);
-						this.uniqs[pk.hh][addr] = this.data[j];
-					}
-					// Recalculate pkaddr after rebuilding
-					pk.pkaddr = pk.onrightfn(r, params);
+					rebuildKeyIndex(this, pk);
 				}
 			}
 			if (table.uk && table.uk.length) {
 				table.uk.forEach(function (uk) {
 					uk.ukaddr = uk.onrightfn(r);
 					if (typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
-						// If index is not populated (e.g., data was directly assigned), rebuild it.
-						// This allows UPDATE to work when data bypasses normal INSERT validation.
-						// Note: If data contains duplicate unique keys, last occurrence wins (matches direct assignment semantics).
-						// This rebuild happens at most once per table since the index will be populated afterward.
-						table.uniqs[uk.hh] = {};
-						for (var j = 0; j < table.data.length; j++) {
-							var addr = uk.onrightfn(table.data[j]);
-							table.uniqs[uk.hh][addr] = table.data[j];
-						}
-						// Recalculate ukaddr after rebuilding
-						uk.ukaddr = uk.onrightfn(r);
+						rebuildKeyIndex(table, uk);
 					}
 				});
 			}

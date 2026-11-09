@@ -1979,6 +1979,8 @@ SetColumn
 	: Column EQ Expression
 /* TODO Replace columnid with column */
 		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
+	| Column EQ DEFAULT
+		{ $$ = new yy.SetColumn({column:$1, expression:new yy.DefaultValue()})}
 	| (AT|DOLLAR) Literal EQ Expression
 		{ $$ = new yy.SetColumn({variable:$2, expression:$4, method:$1})}
 	;
@@ -2073,8 +2075,12 @@ ValuesListsList
 ValuesList
 	: Expression
 		{ $$ = [$1]; }
+	| DEFAULT
+		{ $$ = [new yy.DefaultValue()]; }
 	| ValuesList COMMA Expression
 		{$$ = $1; $1.push($3)}
+	| ValuesList COMMA DEFAULT
+		{$$ = $1; $1.push(new yy.DefaultValue())}
 	;
 
 Value
