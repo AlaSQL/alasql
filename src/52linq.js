@@ -25,6 +25,7 @@ yy.Select.prototype.exec = function (params, cb) {
 	if (!statement) return;
 	statement.sql = sql;
 	statement.dbversion = db.dbversion;
+	statement.schemaVersion = alasql.schemaVersion;
 
 	// Secure sqlCache size
 	if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {

@@ -6,10 +6,11 @@
 //
 */
 
-// Control flow exception types for BREAK and CONTINUE statements
+// Control flow exception types for BREAK and CONTINUE statements.
+// A WHILE loop catches them; the message is only seen when there is no loop.
 function createControlFlowException(name) {
 	var Exception = function () {
-		this.message = name;
+		this.message = name + ' can only be used inside a WHILE loop';
 	};
 	Exception.prototype = Object.create(Error.prototype);
 	Exception.prototype.constructor = Exception;
@@ -36,18 +37,25 @@ yy.While.prototype.execute = function (databaseid, params, cb) {
 	var fn = new Function('params,alasql,p', 'var y;return ' + this.expression.toJS());
 	//	console.log('cb',!!cb);
 	if (cb) {
-		var first = false;
-		var loop = function (data) {
-			if (first) {
-				res.push(data);
-			} else {
-				first = true;
-			}
+		var loop = function () {
 			setTimeout(function () {
-				if (fn(params, alasql)) {
-					self.loopstat.execute(databaseid, params, loop);
-				} else {
+				if (!fn(params, alasql)) {
 					res = cb(res);
+					return;
+				}
+				try {
+					self.loopstat.execute(databaseid, params, function (data) {
+						res.push(data);
+						loop();
+					});
+				} catch (err) {
+					if (err instanceof yy.BreakException) {
+						res = cb(res);
+					} else if (err instanceof yy.ContinueException) {
+						loop();
+					} else {
+						throw err;
+					}
 				}
 			}, 0);
 		};

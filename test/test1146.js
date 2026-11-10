@@ -42,7 +42,7 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 			{age_group: '50-59', customer_count: 1},
 		];
 
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('B) GROUP BY with CASE WHEN and ELSE clause', function () {
@@ -64,7 +64,7 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 		// Should return three unique groups, not just '30+'
 		var expected = [{age_group: '10-19'}, {age_group: '20-29'}, {age_group: '30+'}];
 
-		assert.deepEqual(result.sort(), expected.sort());
+		assert.deepStrictEqual(result.sort(), expected.sort());
 	});
 
 	it('C) GROUP BY with function expression alias', function () {
@@ -85,7 +85,7 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 			{upper_name: 'BOB', cnt: 2},
 		];
 
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('D) GROUP BY with multiple CASE expressions', function () {
@@ -120,7 +120,7 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 			{age_group: '30+', score_group: 'Low', cnt: 1},
 		];
 
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('E) GROUP BY with WHERE and CASE expression alias', function () {
@@ -150,6 +150,6 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 			{age_group: '30+', cnt: 2},
 		];
 
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 });

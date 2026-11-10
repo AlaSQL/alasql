@@ -25,10 +25,12 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	var table = db.tables[tableid];
 	var indexid = this.indexid;
 	db.indices[indexid] = tableid;
+	// The schema changed, so statements in the statement cache must be compiled again
+	schemaChanged(db);
 
 	var rightfns = this.columns
 		.map(function (expr) {
-			return expr.expression.toJS('r', '');
+			return indexColumnToJS(expr.expression, table);
 		})
 		.join("+'`'+");
 
@@ -41,7 +43,10 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 		table.uk.push(uniqueConstraint);
 		uniqueConstraint.columns = this.columns;
 		uniqueConstraint.onrightfns = rightfns;
-		uniqueConstraint.onrightfn = rightfn;
+		// Callers pass only the row, so pass alasql here for keys like ROUND(a) (#2876)
+		uniqueConstraint.onrightfn = function (r, params) {
+			return rightfn(r, params, alasql);
+		};
 		uniqueConstraint.hh = hash(rightfns);
 
 		// Store in uniqdefs for reference

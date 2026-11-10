@@ -18,7 +18,7 @@ yy.Source.prototype.toString = function () {
 // SOURCE FILE
 yy.Source.prototype.execute = function (databaseid, params, cb) {
 	var res;
-	loadFile(
+	alasql.utils.loadFile(
 		this.url,
 		!!cb,
 		function (data) {
