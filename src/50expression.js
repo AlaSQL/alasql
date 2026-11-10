@@ -409,8 +409,8 @@
 					// If correlated, we cannot cache the results as they depend on the current row
 					const cacheKey = `notIn${this.queriesidx}`;
 					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
+					const cachedLookup = `alasql.utils.notIn((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))), alasql.utils.getValueOf(${leftJS()}))`;
+					const uncachedLookup = `alasql.utils.notIn(new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)), alasql.utils.getValueOf(${leftJS()}))`;
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					// Empty array: everything is NOT IN an empty set, always true
@@ -425,14 +425,14 @@
 						this.right.some(value => value instanceof yy.ParamValue)
 					) {
 						// Leverage JS Set for faster lookups than arrays
-						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
+						s = `alasql.utils.notIn(new Set([${this.right.map(ref).join(',')}]), alasql.utils.getValueOf(${leftJS()}))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query, keyed as for IN
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const key = JSON.stringify(allValues);
 						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
-						s = `!alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
+						s = `alasql.utils.notIn(alasql.sets[${JSON.stringify(key)}], alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
