@@ -57,16 +57,28 @@ yy.FuncValue.prototype.findAggregator = function (query) {
 	}
 };
 
+// A bare column found in two tables has always been read from the first table inside a built-in
+// function, and queries rely on that; only a column of one table resolves through defcols (#2615)
+function stdlibDefcols(defcols, tableid) {
+	if (!defcols) return defcols;
+	var cols = Object.create(defcols);
+	for (var columnid in defcols) {
+		if (defcols[columnid] === '-') cols[columnid] = tableid;
+	}
+	return cols;
+}
+
 yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 	var s = '';
 	var funcid = this.funcid;
 	// IF this is standard compile functions
 	if (!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
 		if (this.args && this.args.length > 0) {
+			var argcols = stdlibDefcols(defcols, tableid);
 			s += alasql.stdlib[funcid.toUpperCase()].apply(
 				this,
 				this.args.map(function (arg) {
-					return arg.toJS(context, tableid);
+					return arg.toJS(context, tableid, argcols);
 				})
 			);
 		} else {
@@ -215,24 +227,12 @@ stdlib.RANDOM = function (r) {
 		return '(Math.random()*(' + r + ')|0)';
 	}
 };
-stdlib.ROUND = function (s, d) {
-	if (arguments.length == 2) {
-		return (
-			'(__alasql_tmp = (' +
-			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp*Math.pow(10,(' +
-			d +
-			')))/Math.pow(10,(' +
-			d +
-			'))))'
-		);
-	} else {
-		return (
-			'(__alasql_tmp = (' +
-			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp)))'
-		);
-	}
+stdfn.ROUND = function (s, d) {
+	if (s == null || (typeof s === 'string' && s.trim() === '')) return undefined;
+	s = Number(s);
+	if (isNaN(s)) return undefined;
+	if (arguments.length < 2) return Math.round(s);
+	return Math.round(s * Math.pow(10, d)) / Math.pow(10, d);
 };
 stdlib.CEIL = stdlib.CEILING = function (s) {
 	return 'Math.ceil(' + s + ')';
@@ -567,9 +567,10 @@ Object.keys(alasql._aggrOriginal).forEach(function (k) {
 
 // String functions
 stdfn.REPLACE = function (target, pattern, replacement) {
-	return String(target ?? '')
-		.split(String(pattern ?? ''))
-		.join(String(replacement ?? ''));
+	var targetString = String(target ?? '');
+	// A NULL pattern keeps its old result: NULL handling changes only in a major version
+	if (pattern === '') return targetString;
+	return targetString.split(String(pattern ?? '')).join(String(replacement ?? ''));
 };
 
 // This array is required for fast GUID generation

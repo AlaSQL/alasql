@@ -96,8 +96,42 @@ function queryfn3(query) {
 	// Level of Joins
 	var h = 0;
 
+	// A join run in another order than FROM collects its rows here, see compileWhereJoins
+	if (query.joinsorted) {
+		query.joinrows = [];
+		query.joinat = [];
+		query.sources.forEach(function (source) {
+			if (source.optimization == 'ix') {
+				source.rowat = new Map();
+				source.data.forEach(function (row, i) {
+					if (!source.rowat.has(row)) source.rowat.set(row, i);
+				});
+			}
+		});
+	}
+
 	// Start walking over data
 	doJoin(query, scope, h);
+
+	if (query.joinsorted) {
+		query.joinrows.sort(function (a, b) {
+			for (var k = 0; k < a.at.length; k++) {
+				if (a.at[k] !== b.at[k]) return a.at[k] - b.at[k];
+			}
+			return 0;
+		});
+		query.joinrows.forEach(function (row) {
+			if (query.groupfn) {
+				query.groupfn(row.scope, query.params, alasql);
+			} else {
+				query.data.push(query.selectfn(row.scope, query.params, alasql));
+			}
+		});
+		query.joinrows = query.joinat = undefined;
+		query.sources.forEach(function (source) {
+			source.rowat = undefined;
+		});
+	}
 
 	// If grouping, then filter groups with HAVING function
 	if (query.groupfn) {
@@ -181,6 +215,10 @@ function queryfn3(query) {
 	// apply ORDER BY and LIMIT to the first SELECT before combining.
 	// This handles the pattern: SELECT ... ORDER BY ... LIMIT ... UNION ALL SELECT ... ORDER BY ... LIMIT ...
 	// We only do this if the UNION branch also has ORDER BY/LIMIT (pattern 2), not if ORDER BY is at the end (pattern 1).
+	// The compiled query is reused by the statement cache and alasql.compile(), so record
+	// what was already applied in this run instead of clearing it on the query.
+	var orderApplied = false;
+	var limitApplied = false;
 	var unionBranchHasOrder = ['unionallfn', 'unionfn', 'exceptfn', 'intersectfn'].some(
 		function (fnName) {
 			var fn = query[fnName];
@@ -212,15 +250,23 @@ function queryfn3(query) {
 				}
 			}
 			query.data = query.data.sort(query.orderfn);
-			// Clear orderfn so it doesn't get applied again after UNION
-			query.orderfn = null;
+			// The order keys were only needed for this sort. Remove them, so these rows
+			// compare equal to the rows of the other SELECT in UNION, EXCEPT and INTERSECT
+			if (query.orderColumns) {
+				for (var i = 0, ilen = query.data.length; i < ilen; i++) {
+					for (var idx = 0; idx < query.orderColumns.length; idx++) {
+						delete query.data[i]['$$$' + idx];
+					}
+				}
+			}
+			// Don't apply orderfn again after UNION
+			orderApplied = true;
 		}
 		// Apply limit to first SELECT's data
 		if (query.limit) {
 			doLimit(query);
-			// Clear limit so it doesn't get applied again after UNION
-			query.limit = null;
-			query.offset = null;
+			// Don't apply limit again after UNION
+			limitApplied = true;
 		}
 	}
 
@@ -331,6 +377,7 @@ function queryfn3(query) {
 	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
 	if (
 		query.orderfn &&
+		!orderApplied &&
 		query.orderColumns &&
 		(query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn)
 	) {
@@ -357,7 +404,7 @@ function queryfn3(query) {
 	}
 
 	// Ordering
-	if (query.orderfn) {
+	if (query.orderfn && !orderApplied) {
 		if (query.explain) var ms = Date.now();
 		query.data = query.data.sort(query.orderfn);
 		if (query.explain) {
@@ -369,8 +416,18 @@ function queryfn3(query) {
 		}
 	}
 
+	// DISTINCT ON: after ordering, keep the first row of each key
+	if (query.distinctOn) {
+		var seen = new Set();
+		query.data = query.data.filter(function (r) {
+			if (seen.has(r['$$distinctOn'])) return false;
+			seen.add(r['$$distinctOn']);
+			return true;
+		});
+	}
+
 	// Reduce to limit and offset
-	doLimit(query);
+	if (!limitApplied) doLimit(query);
 
 	// TODO: Check what artefacts rest from Angular.js
 	if (typeof angular != 'undefined') {

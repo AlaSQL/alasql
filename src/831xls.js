@@ -254,7 +254,7 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 						typestyle = 'mso-number-format:"Short Date";';
 					} else {
 						// FOr other types is saved
-						if (opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
+						if (opts && opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
 							typestyle = opts.types[typeid].typestyle;
 						}
 					}

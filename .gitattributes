@@ -15,3 +15,4 @@ yarn.lock binary
 src/alasqlparser.js binary
 
 
+src/alasqlparser.js merge=ours

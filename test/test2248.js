@@ -15,7 +15,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		alasql('drop database test' + test);
 	});
 
-	// NOTE: Tests should use assert.deepEqual to verify the complete expected output
+	// NOTE: Tests should use assert.deepStrictEqual to verify the complete expected output
 	// against the actual result object. This ensures comprehensive validation and
 	// makes test failures more informative by showing the full diff.
 

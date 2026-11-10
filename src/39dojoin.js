@@ -8,8 +8,15 @@ function doJoin(query, scope, h) {
 		// Todo: check if this runs once too many
 		// Then apply where and select
 		if (query.wherefn(scope, query.params, alasql)) {
-			// If there is a GROUP BY then pipe to grouping function
-			if (query.groupfn) {
+			if (query.joinrows) {
+				// The position of each source's row, in FROM order, to sort by in queryfn3
+				var at = [];
+				for (var k = 0; k < query.sources.length; k++) {
+					at[query.sources[k].fromidx] = query.joinat[k];
+				}
+				query.joinrows.push({at: at, scope: Object.assign({}, scope)});
+			} else if (query.groupfn) {
+				// If there is a GROUP BY then pipe to grouping function
 				query.groupfn(scope, query.params, alasql);
 			} else {
 				query.data.push(query.selectfn(scope, query.params, alasql));
@@ -69,6 +76,7 @@ function doJoin(query, scope, h) {
 		while ((dataw = data[i]) || (!opt && source.getfn && (dataw = source.getfn(i))) || i < ilen) {
 			if (!opt && source.getfn && !source.dontcache) data[i] = dataw;
 			scope[tableid] = dataw;
+			if (query.joinrows) query.joinat[h] = opt ? source.rowat.get(dataw) : i;
 
 			// Reduce with ON and USING clause
 			var usingPassed = !source.onleftfn;

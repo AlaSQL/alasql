@@ -296,6 +296,8 @@
 			let op = this.op;
 			let skipNullCheck = false; // Flag to skip null checking for deterministic empty set operations
 			let _this = this;
+			// In HAVING a correlated subquery reads the outer row by table alias, as in a scalar subquery
+			const subContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
 			let ref = function (expr) {
 				if (expr.toJS) {
 					expr = expr.toJS(context, tableid, defcols);
@@ -393,8 +395,8 @@
 					// If correlated, we cannot cache the results as they depend on the current row
 					const cacheKey = `in${this.queriesidx}`;
 					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
+					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					// Empty array: nothing is IN an empty set, always false
@@ -411,12 +413,13 @@
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
-						// Use a cache to avoid re-creating the Set on every identical query
+						// Use a cache to avoid re-creating the Set on every identical query. The key keeps the
+						// type of each value, so IN (5) and IN ('5') get their own Set (#2912)
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const key = JSON.stringify(allValues);
+						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
+						s = `alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
@@ -427,8 +430,8 @@
 					// If correlated, we cannot cache the results as they depend on the current row
 					const cacheKey = `notIn${this.queriesidx}`;
 					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
+					const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					// Empty array: everything is NOT IN an empty set, always true
@@ -445,12 +448,12 @@
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
-						// Use a cache to avoid re-creating the Set on every identical query
+						// Use a cache to avoid re-creating the Set on every identical query, keyed as for IN
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
-						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `!alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const key = JSON.stringify(allValues);
+						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
+						s = `!alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
@@ -460,8 +463,7 @@
 			if (this.allsome === 'ALL') {
 				var s;
 				if (this.right instanceof yy.Select) {
-					s =
-						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
+					s = `alasql.utils.flatArray(this.query.queriesfn[${this.queriesidx}](params,null,${subContext}))`;
 
 					s += '.every(function(b){return (';
 					s += leftJS() + ')' + op + 'b})';
@@ -481,8 +483,7 @@
 			if (this.allsome === 'SOME' || this.allsome === 'ANY') {
 				var s;
 				if (this.right instanceof yy.Select) {
-					s =
-						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
+					s = `alasql.utils.flatArray(this.query.queriesfn[${this.queriesidx}](params,null,${subContext}))`;
 					s += '.some(function(b){return (';
 					s += leftJS() + ')' + op + 'b})';
 				} else if (Array.isArray(this.right)) {
@@ -662,6 +663,13 @@
 		}
 	}
 
+	// DEFAULT in SET or VALUES. INSERT and UPDATE put the column default in its place, elsewhere it is NULL
+	class DefaultValue extends NullValue {
+		toString() {
+			return 'DEFAULT';
+		}
+	}
+
 	class ParamValue {
 		constructor(params) {
 			assign(this, params);
@@ -768,6 +776,19 @@
 			return id;
 		}
 
+		// Value of an unqualified column from the first source that has it, even when it is null (#2873).
+		// A table with column definitions is decided here, as its rows leave out columns that were
+		// not inserted; any other source is decided per row by whether the row has the key.
+		static fromAnySource(context, aliases, columnid, sources) {
+			return aliases.reduceRight((rest, alias) => {
+				const columns = sources?.[alias];
+				if (columns instanceof Set) {
+					return columns.has(columnid) ? `${context}['${alias}']?.['${columnid}']` : rest;
+				}
+				return `('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`;
+			}, 'undefined');
+		}
+
 		toString() {
 			const colNeedsBrackets = Column.needsBrackets(this.columnid);
 			let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
@@ -820,6 +841,15 @@
 					return this.columnid !== '_'
 						? `${context}['${tbid}']['${this.columnid}']`
 						: `${context}['${tbid}']`;
+				} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
+					// Not a column of any table here, so it comes from a subquery, parameter
+					// or table without column definitions (#832)
+					return Column.fromAnySource(
+						context,
+						Object.keys(defcols['.']),
+						this.columnid,
+						defcols['.']
+					);
 				} else {
 					return this.columnid !== '_'
 						? `${context}['${this.tableid || tableid}']['${this.columnid}']`
@@ -928,6 +958,7 @@
 		AggrValue,
 		ArrayValue,
 		Column,
+		DefaultValue,
 		DomainValueValue,
 		Expression,
 		ExpressionStatement,

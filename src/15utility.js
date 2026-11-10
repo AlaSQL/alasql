@@ -954,11 +954,13 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 		return +obj;
 	}
 
-	var temp = new obj.constructor(); // changed
+	// An own constructor comes from the data, so it is never called
+	var ctor = Object.prototype.hasOwnProperty.call(obj, 'constructor') ? Object : obj.constructor;
+	var temp = typeof ctor === 'function' ? new ctor() : {};
 
 	for (var key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			temp[key] = cloneDeep(obj[key]);
+		if (Object.prototype.hasOwnProperty.call(obj, key)) {
+			setOwn(temp, key, cloneDeep(obj[key]));
 		}
 	}
 	return temp;
@@ -1074,12 +1076,52 @@ var distinctArray = (utils.distinctArray = function (data) {
 var extend = (utils.extend = function extend(a, b) {
 	a = a || {};
 	for (var key in b) {
-		if (b.hasOwnProperty(key)) {
-			a[key] = b[key];
+		if (Object.prototype.hasOwnProperty.call(b, key)) {
+			setOwn(a, key, b[key]);
 		}
 	}
 	return a;
 });
+
+/**
+  Set one key on an object. Assigning a "__proto__" key from data would replace
+  the prototype of the object, so that key becomes an own property instead
+  */
+var setOwn = (utils.setOwn = function setOwn(target, key, value) {
+	if (key === '__proto__') {
+		Object.defineProperty(target, key, {
+			value: value,
+			writable: true,
+			enumerable: true,
+			configurable: true,
+		});
+	} else {
+		target[key] = value;
+	}
+});
+
+/**
+  The same as setOwn, as code for compiled queries
+  */
+var setOwnJS = function (target, key, value) {
+	return (
+		'if(' +
+		key +
+		'==="__proto__"){Object.defineProperty(' +
+		target +
+		',' +
+		key +
+		',{value:' +
+		value +
+		',writable:true,enumerable:true,configurable:true})}else{' +
+		target +
+		'[' +
+		key +
+		']=' +
+		value +
+		'}'
+	);
+};
 
 /**
  * Extracts the primitive data
@@ -1194,9 +1236,12 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
 /* * Tests if a given value matches a pattern with optional escape character.
  * Supports SQL-like syntax with % and _ as wildcards and custom escape character.
  */
-var patternCache = {};
+var patternCache = new Map(); // escape character -> pattern -> RegExp
 var like = (utils.like = function (pattern, value, escape = '') {
-	if (!patternCache[pattern]) {
+	var cache = patternCache.get(escape);
+	if (!cache) patternCache.set(escape, (cache = new Map()));
+	var re = cache.get(pattern);
+	if (!re) {
 		var regexStr = '^'; // Start regex pattern to match from the beginning.
 		var i = 0; // Index for traversing the pattern string.
 
@@ -1239,11 +1284,12 @@ var like = (utils.like = function (pattern, value, escape = '') {
 
 		regexStr += '$'; // End regex pattern to match until the end.
 		// Compile and cache the regex pattern for future use.
-		patternCache[pattern] = RegExp(regexStr, 'i');
+		re = RegExp(regexStr, 'i');
+		cache.set(pattern, re);
 	}
 
 	// Convert value to string (handling null/undefined) and test against compiled pattern.
-	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
+	return ('' + (value ?? '')).search(re) > -1;
 });
 
 /**

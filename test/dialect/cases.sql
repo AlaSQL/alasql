@@ -1,0 +1,130 @@
+-- Dialect test cases (#2593): one statement per line, run in alasql and in SQLite.
+-- The tables are in fixtures.sql. Rows of a statement without ORDER BY are compared in any order.
+-- "-- sqlite: <sql>" after a line gives SQLite's spelling of the same question.
+-- First content: the 2026-10-13 comparison of 89 expressions (#2593), rebuilt from the issue.
+
+-- NULL handling
+SELECT NULL IS NULL
+SELECT NULL = NULL
+SELECT 1 = NULL
+SELECT NULL <> 1
+SELECT COALESCE(NULL, 2)
+SELECT COALESCE(NULL, NULL, 'x')
+SELECT IFNULL(NULL, 3)
+SELECT NULLIF(1, 1)
+SELECT NULLIF(1, 2)
+SELECT NULL + 1
+SELECT 'a' || NULL
+SELECT CONCAT('a', NULL, 'b')
+SELECT a, b, c FROM ni ORDER BY id
+SELECT id FROM ni WHERE a IS NULL
+
+-- Three-valued logic
+SELECT NOT (NULL = 1)
+SELECT NULL AND FALSE
+SELECT NULL AND TRUE
+SELECT NULL OR TRUE
+SELECT NULL OR FALSE
+SELECT 2 IN (1, NULL)
+SELECT 2 NOT IN (1, NULL)
+SELECT 1 IN (1, NULL)
+SELECT id FROM t WHERE NOT (n = 5) ORDER BY id
+SELECT id FROM t WHERE n <> 5 ORDER BY id
+SELECT id FROM t WHERE n IS NOT NULL ORDER BY id
+SELECT ja.id AS a, jb.id AS b FROM ja JOIN jb ON ja.g = jb.g ORDER BY a, b
+SELECT ja.id AS a, jb.id AS b FROM ja LEFT JOIN jb ON ja.g = jb.g ORDER BY a, b
+
+-- MIN and MAX
+SELECT MAX(n) FROM t
+SELECT MIN(n) FROM t
+SELECT MAX(s) FROM t
+SELECT MIN(s) FROM t
+SELECT MAX(n) FROM e
+SELECT GREATEST(1, NULL)  -- sqlite: SELECT max(1, NULL)
+SELECT LEAST(1, NULL)  -- sqlite: SELECT min(1, NULL)
+SELECT GREATEST(NULL, 1)  -- sqlite: SELECT max(NULL, 1)
+SELECT GREATEST(10, '9')  -- sqlite: SELECT max(10, '9')
+SELECT GREATEST(3, 7, 5)  -- sqlite: SELECT max(3, 7, 5)
+SELECT LEAST(3, 7, 5)  -- sqlite: SELECT min(3, 7, 5)
+
+-- Strings
+SELECT 'abc' LIKE 'A%'
+SELECT 'abc' LIKE 'a_c'
+SELECT 'abc' NOT LIKE '%d'
+SELECT "dq"
+SELECT 1 || 2
+SELECT 'a' || 'b'
+SELECT UPPER('straße')
+SELECT LOWER('ABC')
+SELECT LENGTH('abc')
+SELECT LENGTH(123)
+SELECT LENGTH('')
+SELECT SUBSTR('abcdef', 2, 3)
+SELECT SUBSTR('abcdef', 0, 3)
+SELECT SUBSTR('abcdef', -1, 3)
+SELECT SUBSTR('abcdef', -2)
+SELECT SUBSTR('abcdef', -7, 3)
+SELECT SUBSTR('abcdef', 2, -1)
+SELECT SUBSTR(12345, 2, 2)
+SELECT REPLACE('abcabc', 'b', 'x')
+SELECT TRIM('  a  ')
+SELECT INSTR('abc', 'c')
+
+-- Numbers
+SELECT 1 + 2 * 3
+SELECT 1 / 2
+SELECT 7 / 2
+SELECT -7 / 2
+SELECT 1 / 0
+SELECT 7 % 3
+SELECT 1.5 + 1
+SELECT 0.1 + 0.2 = 0.3
+SELECT '5' + 3
+SELECT 'abc' + 1
+SELECT '5' = 5
+SELECT '5' < 10
+SELECT 10 < '9'
+SELECT ABS(-4)
+SELECT ROUND(2.5)
+SELECT ROUND(-2.5)
+SELECT ROUND(1.2345, 2)
+
+-- Casts
+SELECT CAST(3.7 AS INT)
+SELECT CAST(-3.7 AS INT)
+SELECT CAST('42' AS INT)
+SELECT CAST('' AS INT)
+SELECT CAST('12abc' AS INT)
+SELECT CAST(NULL AS INT)
+SELECT CAST(12 AS TEXT)
+SELECT CAST('1.5' AS REAL)
+
+-- Aggregates
+SELECT COUNT(*) FROM t
+SELECT COUNT(n) FROM t
+SELECT COUNT(s) FROM t
+SELECT SUM(n) FROM t
+SELECT AVG(n) FROM t
+SELECT SUM(n) FROM e
+SELECT COUNT(*) FROM e
+SELECT AVG(n) FROM e
+SELECT COUNT(DISTINCT g) FROM t
+
+-- Grouping
+SELECT g, COUNT(*) FROM t GROUP BY g
+SELECT g, SUM(n) FROM t GROUP BY g
+SELECT g, MAX(s) FROM t GROUP BY g
+SELECT g, COUNT(*) FROM t GROUP BY g HAVING COUNT(*) > 1
+
+-- WHERE
+SELECT id FROM t WHERE n > 0 ORDER BY id
+SELECT id FROM t WHERE s > 'a' ORDER BY id
+SELECT id FROM t WHERE n BETWEEN -3 AND 2 ORDER BY id
+SELECT id FROM t WHERE s IN ('a', 'c') ORDER BY id
+SELECT id FROM t WHERE g IS NULL ORDER BY id
+
+-- ORDER BY
+SELECT n FROM t ORDER BY n
+SELECT n FROM t ORDER BY n DESC
+SELECT s FROM t ORDER BY s
+SELECT s FROM t ORDER BY s DESC
