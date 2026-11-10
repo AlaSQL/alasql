@@ -47,6 +47,9 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		var dbid = this.databaseid;
 		if (alasql.databases[dbid]) {
+			if (this.ifnotexists) {
+				return cb ? cb(0) : 0;
+			}
 			throw new Error("Database '" + dbid + "' already exists");
 		}
 		var a = new alasql.Database(dbid);
@@ -80,6 +83,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (!alasql.engines[this.engineid]) {
 		throw new Error('Engine "' + this.engineid + '" is not defined.');
 	}
+	schemaChanged();
 	var res = alasql.engines[this.engineid].attachDatabase(
 		this.databaseid,
 		this.as,
@@ -131,6 +135,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 			filename = alasql.databases[dbid].filename || '';
 
 		delete alasql.databases[dbid];
+		schemaChanged();
 
 		if (isFS) {
 			// Create a detached FS database
@@ -202,6 +207,7 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 		}
 
 		delete alasql.databases[dbid];
+		schemaChanged();
 		if (dbid === alasql.useid) {
 			alasql.use();
 		}

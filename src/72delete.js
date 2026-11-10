@@ -86,10 +86,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 			var newtable = [];
 			var deletedRows = [];
+			// Track deleted rows for the OUTPUT clause and AFTER DELETE triggers
+			var keepDeleted = self.output || Object.keys(table.afterdelete || {}).length > 0;
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 				if (wherefn(table.data[i], params, alasql)) {
-					// Track deleted row for OUTPUT clause and AFTER DELETE trigger
-					if (self.output || table.afterdelete) {
+					if (keepDeleted) {
 						deletedRows.push(cloneDeep(table.data[i]));
 					}
 					// Check for transaction - if it is not possible then return all back
@@ -130,7 +131,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 						if (col.columnid === '*') {
 							// For *, expand all properties
 							for (var key in r) {
-								outputRow[key] = r[key];
+								setOwn(outputRow, key, r[key]);
 							}
 						} else {
 							var colname = col.as || col.columnid;
@@ -201,7 +202,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 						if (col.columnid === '*') {
 							// For *, expand all properties
 							for (var key in r) {
-								outputRow[key] = r[key];
+								setOwn(outputRow, key, r[key]);
 							}
 						} else {
 							var colname = col.as || col.columnid;

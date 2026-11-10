@@ -103,8 +103,42 @@ function queryfn3(query) {
 	// Level of Joins
 	var h = 0;
 
+	// A join run in another order than FROM collects its rows here, see compileWhereJoins
+	if (query.joinsorted) {
+		query.joinrows = [];
+		query.joinat = [];
+		query.sources.forEach(function (source) {
+			if (source.optimization == 'ix') {
+				source.rowat = new Map();
+				source.data.forEach(function (row, i) {
+					if (!source.rowat.has(row)) source.rowat.set(row, i);
+				});
+			}
+		});
+	}
+
 	// Start walking over data
 	doJoin(query, scope, h);
+
+	if (query.joinsorted) {
+		query.joinrows.sort(function (a, b) {
+			for (var k = 0; k < a.at.length; k++) {
+				if (a.at[k] !== b.at[k]) return a.at[k] - b.at[k];
+			}
+			return 0;
+		});
+		query.joinrows.forEach(function (row) {
+			if (query.groupfn) {
+				query.groupfn(row.scope, query.params, alasql);
+			} else {
+				query.data.push(query.selectfn(row.scope, query.params, alasql));
+			}
+		});
+		query.joinrows = query.joinat = undefined;
+		query.sources.forEach(function (source) {
+			source.rowat = undefined;
+		});
+	}
 
 	// If grouping, then filter groups with HAVING function
 	if (query.groupfn) {
@@ -223,6 +257,15 @@ function queryfn3(query) {
 				}
 			}
 			query.data = query.data.sort(query.orderfn);
+			// The order keys were only needed for this sort. Remove them, so these rows
+			// compare equal to the rows of the other SELECT in UNION, EXCEPT and INTERSECT
+			if (query.orderColumns) {
+				for (var i = 0, ilen = query.data.length; i < ilen; i++) {
+					for (var idx = 0; idx < query.orderColumns.length; idx++) {
+						delete query.data[i]['$$$' + idx];
+					}
+				}
+			}
 			// Don't apply orderfn again after UNION
 			orderApplied = true;
 		}
@@ -276,6 +319,16 @@ function queryfn3(query) {
 				ms: Date.now() - ms,
 			});
 		}
+	}
+
+	// DISTINCT ON: after ordering, keep the first row of each key
+	if (query.distinctOn) {
+		var seen = new Set();
+		query.data = query.data.filter(function (r) {
+			if (seen.has(r['$$distinctOn'])) return false;
+			seen.add(r['$$distinctOn']);
+			return true;
+		});
 	}
 
 	// Reduce to limit and offset

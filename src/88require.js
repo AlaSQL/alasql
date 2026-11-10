@@ -39,7 +39,7 @@ yy.Require.prototype.execute = function (databaseid, params, cb) {
 	var ss = '';
 	if (this.paths && this.paths.length > 0) {
 		this.paths.forEach(function (path) {
-			loadFile(path.value, !!cb, function (data) {
+			alasql.utils.loadFile(path.value, !!cb, function (data) {
 				res++;
 				ss += data;
 				if (res < self.paths.length) return;
@@ -51,15 +51,19 @@ yy.Require.prototype.execute = function (databaseid, params, cb) {
 		this.plugins.forEach(function (plugin) {
 			// If plugin is not loaded already
 			if (!alasql.plugins[plugin]) {
-				loadFile(alasql.path + '/alasql-' + plugin.toLowerCase() + '.js', !!cb, function (data) {
-					// Execute all plugins at the same time
-					res++;
-					ss += data;
-					if (res < self.plugins.length) return;
-					new Function('params,alasql', ss)(params, alasql);
-					alasql.plugins[plugin] = true; // Plugin is loaded
-					if (cb) res = cb(res);
-				});
+				alasql.utils.loadFile(
+					alasql.path + '/alasql-' + plugin.toLowerCase() + '.js',
+					!!cb,
+					function (data) {
+						// Execute all plugins at the same time
+						res++;
+						ss += data;
+						if (res < self.plugins.length) return;
+						new Function('params,alasql', ss)(params, alasql);
+						alasql.plugins[plugin] = true; // Plugin is loaded
+						if (cb) res = cb(res);
+					}
+				);
 			}
 		});
 	} else {

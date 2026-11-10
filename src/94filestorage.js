@@ -84,19 +84,29 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 		} catch (err) {
 			throw new Error('Data in FileStorage database are corrupted');
 		}
-		db.tables = db.data.tables;
-		// IF AUTOCOMMIT IS OFF then copy data to memory
-		if (!alasql.options.autocommit) {
-			if (db.tables) {
-				for (var tbid in db.tables) {
-					db.tables[tbid].data = db.data[tbid];
-				}
+		// Live tables are kept apart from the schema stored in the file, so storing a
+		// schema does not drop the keys and checks of the live table (#1846)
+		db.tables = {};
+		for (var tbid in db.data.tables) {
+			db.tables[tbid] = extend({}, db.data.tables[tbid]);
+			// IF AUTOCOMMIT IS OFF then copy data to memory
+			if (!alasql.options.autocommit) {
+				db.tables[tbid].data = db.data[tbid];
 			}
 		}
 		if (cb) res = cb(res);
 	});
 	return res;
 };
+
+// The part of a table that is stored in the file, beside its rows
+function fsTableSchema(table) {
+	return {
+		columns: table.columns,
+		defaultfns: table.defaultfns,
+		onupdatefns: table.onupdatefns,
+	};
+}
 
 FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var db = alasql.databases[databaseid];
@@ -107,11 +117,7 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
 	}
 	var table = alasql.databases[databaseid].tables[tableid];
-	db.data.tables[tableid] = {
-		columns: table.columns,
-		defaultfns: table.defaultfns,
-		onupdatefns: table.onupdatefns,
-	};
+	db.data.tables[tableid] = fsTableSchema(table);
 	db.data[tableid] = [];
 
 	FS.updateFile(databaseid);
@@ -175,13 +181,22 @@ FS.intoTable = function (databaseid, tableid, value, columns, cb) {
 
 FS.loadTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
-	db.tables[tableid].data = db.data[tableid];
+	var table = db.tables[tableid];
+	// After ATTACH a table is only its stored schema: make it a table that statements can change (#1107)
+	if (!(table instanceof alasql.Table)) {
+		table = db.tables[tableid] = new alasql.Table(fsTableSchema(table));
+		table.indexColumns();
+	}
+	table.data = db.data[tableid];
 };
 
 FS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
-	db.data[tableid] = db.tables[tableid].data;
-	db.tables[tableid].data = null;
+	var table = db.tables[tableid];
+	// The schema is saved with the rows, so ALTER TABLE is kept (#1107)
+	db.data.tables[tableid] = fsTableSchema(table);
+	db.data[tableid] = table.data;
+	table.data = null;
 	FS.updateFile(databaseid);
 };
 
@@ -207,36 +222,42 @@ FS.begin = FS.commit;
 FS.rollback = function (databaseid, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
-	db.dbversion++;
-	wait();
-	function wait() {
+
+	// Put the database back to what is in the file, as ATTACH does
+	function restore(s) {
+		try {
+			db.data = JSON.parse(s);
+		} catch (err) {
+			throw new Error('Data in FileStorage database are corrupted');
+		}
+		db.tables = {};
+		for (var tbid in db.data.tables) {
+			db.tables[tbid] = extend({}, db.data.tables[tbid]);
+			if (!alasql.options.autocommit) {
+				db.tables[tbid].data = db.data[tbid];
+			}
+		}
+		schemaChanged(db);
+		if (cb) res = cb(res);
+	}
+
+	function fail(err) {
+		throw err;
+	}
+
+	if (!cb) {
+		loadFile(db.filename, false, restore, fail);
+		return res;
+	}
+
+	// Wait for a save in progress before the file is read
+	(function wait() {
 		setTimeout(function () {
 			if (db.issaving) {
 				return wait();
-			} else {
-				alasql.loadFile(db.filename, !!cb, function (data) {
-					db.data = data;
-					db.tables = {};
-					for (var tbid in db.data.tables) {
-						var tb = new alasql.Table({columns: db.data.tables[tbid].columns});
-						extend(tb, db.data.tables[tbid]);
-						db.tables[tbid] = tb;
-						if (!alasql.options.autocommit) {
-							db.tables[tbid].data = db.data[tbid];
-						}
-						db.tables[tbid].indexColumns();
-					}
-
-					delete alasql.databases[databaseid];
-					alasql.databases[databaseid] = new alasql.Database(databaseid);
-					extend(alasql.databases[databaseid], db);
-					alasql.databases[databaseid].engineid = 'FILESTORAGE';
-					alasql.databases[databaseid].filename = db.filename;
-
-					if (cb) res = cb(res);
-					// Todo: check why no return
-				});
 			}
+			loadFile(db.filename, true, restore, fail);
 		}, 100);
-	}
+	})();
+	return res;
 };

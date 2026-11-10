@@ -15,7 +15,7 @@ describe(`Test ${testId} - multiple statements`, function () {
 		alasql('drop database test' + testId);
 	});
 
-	// NOTE: Always assert.deepEqual the final and complete output of the last call to alasql
+	// NOTE: Always assert.deepStrictEqual the final and complete output of the last call to alasql
 
 	it('A) From single lines', function () {
 		let res = [];

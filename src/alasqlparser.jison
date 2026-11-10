@@ -26,7 +26,7 @@
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
-(["](\\.|[^"]|\\\")*?["])+              return 'STRING'
+(["](\\.|[^"]|\\\")*?["])+              return 'DQSTRING'
 
 
 "--"(.*?)($|\r\n|\r|\n)							return /* its a COMMENT */
@@ -118,7 +118,7 @@ DATABASE(S)?									return 'DATABASE'
 'DELETED'                                       return 'DELETED'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
-'DISTINCT'                                      return 'DISTINCT'
+'DISTINCT'                                      yytext = 'DISTINCT';return 'DISTINCT'
 /* DOUBLE\s+PRECISION								return 'LITERAL' */
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
@@ -276,6 +276,8 @@ SETS                                        	return 'SET'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
+/* A number with an exponent (1e5, 2E-3) before LITERAL, which would take 1e5 as a name */
+\d+(\.\d*)?[eE][+-]?\d+(?![a-zA-Z_0-9])				return 'NUMBER'
 /* LITERAL must come before NUMBER to match identifiers like 50k, 100x as single tokens */
 [0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?(?![a-zA-Z_0-9])				return 'NUMBER'
@@ -680,7 +682,7 @@ SearchSelector
 		{ $$ = {srchid:"CLASS", args:[$3]}; }
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
-	| STRING
+	| AnyString
 		{ $$ = {srchid:"NAME", args: [$1.substr(1,$1.length-2)]}; }
 	| SLASH
 		{ $$ = {srchid:"CHILD"}; }
@@ -813,6 +815,8 @@ SelectClause
 
 	SelectModifier DISTINCT TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1); yy.extend($$, $3); }
+	| SelectModifier DISTINCT ON LPAR ExprList RPAR TopClause ResultColumns
+		{ $$ = new yy.Select({ columns:$8, distinctOn: $5 }); yy.extend($$, $1); yy.extend($$, $7); }
 	| SelectModifier UNIQUE TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier  ALL TopClause ResultColumns
@@ -866,7 +870,7 @@ IntoClause
 		{$$ = {into: $2} }
 	| INTO VarValue
 		{$$ = {into: $2} }
-	| INTO STRING
+	| INTO AnyString
 		{
 			var s = $2;
 			s = s.substr(1,s.length-2);
@@ -976,7 +980,7 @@ FromTableAlias
 	;
 
 FromString
-	: STRING
+	: AnyString
 		{
 			var s = $1;
 			s = s.substr(1,s.length-2);
@@ -1010,7 +1014,7 @@ Table
 	;
 
 TargetTable
-	: Table
+	: TableName
 		{ $$ = $1; }
 	| ParamValue
 		{ $$ = $1; }
@@ -1517,7 +1521,7 @@ GroupConcatOrderClause
 GroupConcatSeparatorClause
 	:
 		{ $$ = undefined; }
-	| SEPARATOR STRING
+	| SEPARATOR AnyString
 		{ 
 			var str = $2.substring(1, $2.length-1);
 			// Process common escape sequences
@@ -1563,16 +1567,12 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
 	| CURRENT_DATE LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
-	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
+	| DATEADD LPAR DatePart COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
-	| DATEDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
-	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
+	| DATEDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
-	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| TIMESTAMPDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[$3,$5,$7]}) }
 	| INTERVAL Expression Literal
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
@@ -1596,9 +1596,28 @@ LogicValue
 		{ $$ = new yy.LogicValue({value:false}); }
 	;
 
-StringValue
+/* The date part of DATEADD, DATEDIFF and TIMESTAMPDIFF: day, 'day' or "day" (#2616) */
+DatePart
+	: Literal
+		{ $$ = new yy.StringValue({value:$1}); }
+	| StringValue
+		{ $$ = $1; }
+	;
+
+/* A string in single or double quotes. Where a name is expected, double quotes make a name (#989) */
+AnyString
 	: STRING
-		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
+		{ $$ = $1; }
+	| DQSTRING
+		{ $$ = $1; }
+	;
+
+StringValue
+	: AnyString
+		{
+			$$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
+			if ($1[0] == '"') $$.doubleQuoted = true;
+		}
 	| NSTRING
 		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	;
@@ -1962,6 +1981,8 @@ SetColumn
 	: Column EQ Expression
 /* TODO Replace columnid with column */
 		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
+	| Column EQ DEFAULT
+		{ $$ = new yy.SetColumn({column:$1, expression:new yy.DefaultValue()})}
 	| (AT|DOLLAR) Literal EQ Expression
 		{ $$ = new yy.SetColumn({variable:$2, expression:$4, method:$1})}
 	;
@@ -2056,8 +2077,12 @@ ValuesListsList
 ValuesList
 	: Expression
 		{ $$ = [$1]; }
+	| DEFAULT
+		{ $$ = [new yy.DefaultValue()]; }
 	| ValuesList COMMA Expression
 		{$$ = $1; $1.push($3)}
+	| ValuesList COMMA DEFAULT
+		{$$ = $1; $1.push(new yy.DefaultValue())}
 	;
 
 Value
@@ -2079,7 +2104,7 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TableClass IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+	:  CREATE TemporaryClause TableClass IfNotExists TableName LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -2088,7 +2113,7 @@ CreateTable
 			yy.extend($$,$7);
 			yy.extend($$,$9);
 		}
-	| CREATE TemporaryClause TableClass IfNotExists Table
+	| CREATE TemporaryClause TableClass IfNotExists TableName
 		{
 			$$ = new yy.CreateTable({table:$5});
 			yy.extend($$,$2);
@@ -2096,6 +2121,28 @@ CreateTable
 			yy.extend($$,$4);
 		}
 ;
+
+/*
+ A name where a string cannot appear: a word, [name], `name` or "name", as SQLite writes them (#989).
+ In double quotes it keeps its case and "" stands for one ". Names are placed in generated code,
+ so it cannot be empty or hold ' or \ ([name] and `name` cannot hold ' either).
+*/
+Name
+	: Literal
+		{ $$ = $1; }
+	| DQSTRING
+		{
+			$$ = $1.slice(1, -1).replace(/""/g, '"');
+			if (!$$ || /['\\]/.test($$)) throw new SyntaxError('Not a valid name: ' + $1);
+		}
+	;
+
+TableName
+	: Name
+		{ $$ = new yy.Table({tableid: $1}); }
+	| Name DOT Name
+		{ $$ = new yy.Table({databaseid: $1, tableid: $3}); }
+	;
 
 TableClass
 	: TABLE
@@ -2165,7 +2212,7 @@ Constraint
 
 ConstraintName
 	:   { $$ = undefined; }
-	| CONSTRAINT Literal
+	| CONSTRAINT Name
 		{ $$ = $2; }
 	;
 
@@ -2180,14 +2227,36 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList?
-	     OnReferentialActions
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES TableName ParColsList?
+	     OnReferentialActions DeferrableClause?
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; yy.extend($$, $9); }
 	;
 
 ParColsList
 	: LPAR ColsList RPAR
 		{ $$ = $2; }
+	;
+
+/* DEFERRABLE [INITIALLY DEFERRED|IMMEDIATE] is parsed and ignored (#989) */
+DeferrableClause
+	: LITERAL
+		{
+			if ($1.toUpperCase() !== 'DEFERRABLE') {
+				throw new SyntaxError('Unexpected ' + $1 + ' after REFERENCES clause');
+			}
+			$$ = undefined;
+		}
+	| LITERAL LITERAL LITERAL
+		{
+			if (
+				$1.toUpperCase() !== 'DEFERRABLE' ||
+				$2.toUpperCase() !== 'INITIALLY' ||
+				['DEFERRED', 'IMMEDIATE'].indexOf($3.toUpperCase()) === -1
+			) {
+				throw new SyntaxError('Expected DEFERRABLE [INITIALLY DEFERRED|IMMEDIATE], got ' + [$1, $2, $3].join(' '));
+			}
+			$$ = undefined;
+		}
 	;
 
 OnReferentialActions
@@ -2226,14 +2295,14 @@ ReferentialAction
 	;
 
 UniqueKey
-	: UNIQUE KEY? Literal? LPAR OrderExpressionsList RPAR
+	: UNIQUE KEY? Name? LPAR OrderExpressionsList RPAR
 		{
 			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}
 	;
 
 IndexKey
-	: INDEX Literal LPAR IndexColsList RPAR
+	: INDEX Name LPAR IndexColsList RPAR
 		{ $$ = {type: 'INDEX', indexid: $2, columns: $4.columns, prefixes: $4.prefixes}; }
 	;
 
@@ -2246,22 +2315,16 @@ IndexColsList
 
 /* A column of an index, with an optional prefix length as in MySQL: a(10) (#406) */
 IndexCol
-	: Literal
+	: Name
 		{ $$ = {columnid: $1}; }
-	| STRING
-		{ $$ = {columnid: $1}; }
-	| Literal LPAR NUMBER RPAR
+	| Name LPAR NUMBER RPAR
 		{ $$ = {columnid: $1, prefix: +$3}; }
 	;
 
 ColsList
-	: Literal
+	: Name
 		{ $$ = [$1]; }
-	| STRING
-		{ $$ = [$1]; }
-	| ColsList COMMA Literal
-		{ $$ = $1; $1.push($3); }
-	| ColsList COMMA STRING
+	| ColsList COMMA Name
 		{ $$ = $1; $1.push($3); }
 	;
 
@@ -2285,11 +2348,11 @@ ColumnDefsList
 	;
 
 ColumnDef
-	: Literal ColumnType ColumnConstraintsClause
+	: Name ColumnType ColumnConstraintsClause
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| Literal ColumnConstraints
+	| Name ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	| Literal
+	| Name
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
@@ -2348,16 +2411,16 @@ ColumnConstraintsList
 	;
 
 ParLiteral
-	: LPAR Literal RPAR
+	: LPAR Name RPAR
 		{ $$ = $2; }
 	;
 
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Table ParLiteral? OnReferentialActions
+	| FOREIGN KEY REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$4, columnid: $5}}; yy.extend($$.foreignkey, $6);}
-	| REFERENCES Table ParLiteral? OnReferentialActions
+	| REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$2, columnid: $3}}; yy.extend($$.foreignkey, $4);}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
@@ -2365,6 +2428,10 @@ ColumnConstraint
 		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
 		{$$ = {"default":$2};}
+	| DEFAULT MINUS NumValue
+		{$$ = {"default":new yy.UniOp({op:'-', right:$3})};}
+	| DEFAULT PLUS NumValue
+		{$$ = {"default":new yy.UniOp({op:'+', right:$3})};}
 	| DEFAULT LPAR Expression RPAR
 		{$$ = {"default":$3};}
 	| DEFAULT FuncValue
@@ -2391,9 +2458,9 @@ DropTable
 	;
 
 TablesList
-	: TablesList COMMA Table
+	: TablesList COMMA TableName
 		{ $1.push($3); $$=$1; }
-	| Table
+	| TableName
 		{ $$ = [$1]; }
 	;
 
@@ -2407,20 +2474,20 @@ IfExists
 /* ALTER TABLE */
 
 AlterTable
-	: ALTER TABLE Table RENAME TO Literal
+	: ALTER TABLE TableName RENAME TO Name
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
-	| ALTER TABLE Table ADD COLUMN ColumnDef
+	| ALTER TABLE TableName ADD COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
-	| ALTER TABLE Table MODIFY COLUMN ColumnDef
+	| ALTER TABLE TableName MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
-	| ALTER TABLE Table RENAME COLUMN Literal TO Literal
+	| ALTER TABLE TableName RENAME COLUMN Name TO Name
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| ALTER TABLE Table DROP COLUMN Literal
+	| ALTER TABLE TableName DROP COLUMN Name
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
 
 RenameTable
-	: RENAME TABLE Table TO Literal
+	: RENAME TABLE TableName TO Name
 		{ $$ = new yy.AlterTable({table:$3, renameto: $5});}
 	;
 
@@ -2444,7 +2511,7 @@ DetachDatabase
 
 CreateDatabase
 	: CREATE DATABASE IfNotExists Literal
-		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$4); }
+		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$3); }
 	| CREATE Literal DATABASE IfNotExists Literal AsClause
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, as:$6 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
@@ -2481,16 +2548,16 @@ DropDatabase
 
 CreateIndex
 	:
-	 CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	 CREATE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
 	|
 
-	CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	CREATE UNIQUE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
 DropIndex
-	: DROP INDEX Literal
+	: DROP INDEX Name
 		{ $$ = new yy.DropIndex({indexid:$3});}
 	;
 
@@ -2540,13 +2607,13 @@ ShowCreateTable
 	;
 
 CreateView
-	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select SubqueryRestriction?
+	:  CREATE TemporaryClause VIEW IfNotExists TableName LPAR ColumnsList RPAR AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7});
 			yy.extend($$,$2);
 			yy.extend($$,$4);
 		}
-	| CREATE TemporaryClause VIEW IfNotExists Table AS Select SubqueryRestriction?
+	| CREATE TemporaryClause VIEW IfNotExists TableName AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$7});
 			yy.extend($$,$2);
@@ -2626,7 +2693,7 @@ Assert
 		{ $$ = new yy.Assert({value:$2}); }
 	| ASSERT PrimitiveValue
 		{ $$ = new yy.Assert({value:$2.value}); }
-	| ASSERT STRING COMMA Json
+	| ASSERT AnyString COMMA Json
 		{ $$ = new yy.Assert({value:$4, message:$2}); }
 	;
 
@@ -2704,13 +2771,13 @@ JsonPropertiesList
 	;
 
 JsonProperty
-	: STRING COLON JsonValue
+	: AnyString COLON JsonValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
 	| Literal COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
-	| STRING COLONDASH NumValue
+	| AnyString COLONDASH NumValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = -$3.value; }
 	| NUMBER COLONDASH NumValue
 		{ $$ = {}; $$[$1] = -$3.value; }
@@ -2929,7 +2996,7 @@ DeclareItem
 	;
 
 TruncateTable
-	: TRUNCATE TABLE Table
+	: TRUNCATE TABLE TableName
 		{ $$ = new yy.TruncateTable({table:$3});}
 	;
 
@@ -3159,7 +3226,7 @@ GraphAtClause
 	;
 
 GraphElement2
-	:  Literal? SharpLiteral? STRING? ColonLiteral?
+	:  Literal? SharpLiteral? AnyString? ColonLiteral?
 		{
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
@@ -3167,17 +3234,17 @@ GraphElement2
 	;
 
 GraphElement
-	:  Literal SharpLiteral? STRING? ColonLiteral?
+	:  Literal SharpLiteral? AnyString? ColonLiteral?
 		{
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
 		}
-	|  SharpLiteral STRING? ColonLiteral?
+	|  SharpLiteral AnyString? ColonLiteral?
 		{
 			var s2 = $2;
 			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3};
 		}
-	|  STRING ColonLiteral?
+	|  AnyString ColonLiteral?
 		{
 			var s1 = $1;
 			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2};
@@ -3283,7 +3350,7 @@ DropTrigger
 	;
 
 Reindex
-	: REINDEX Literal
+	: REINDEX Name
 		{ $$ = new yy.Reindex({indexid:$2});}
 	;
 
@@ -3310,6 +3377,7 @@ NonReserved
 	|BOM
 	|BREADTH
 	|C
+	|CALL
 	|CASCADE
 	|CATALOG
 	|CATALOG_NAME
@@ -3347,6 +3415,7 @@ NonReserved
 	|DATETIME_INTERVAL_CODE
 	|DATETIME_INTERVAL_PRECISION
 	|DB
+	|DEFAULT
 	|DEFAULTS
 	|DEFERRABLE
 	|DEFERRED
@@ -3408,6 +3477,7 @@ NonReserved
 	|KEY_MEMBER
 	|KEY_TYPE
 	|LAST
+	|LEFT
 	|LENGTH
 	|LEVEL
 	|LIBRARY
@@ -3467,6 +3537,7 @@ NonReserved
 	|PATH
 	|PERMISSION
 	|PLACING
+	|PLAN
 	|PLI
 	|PRECEDING
 	|PRESERVE
@@ -3487,6 +3558,7 @@ NonReserved
 	|RETURNED_OCTET_LENGTH
 	|RETURNED_SQLSTATE
 	|RETURNING
+	|RIGHT
 	|ROLE
 	|ROUTINE
 	|ROUTINE_CATALOG
@@ -3510,6 +3582,7 @@ NonReserved
 	|SERVER_NAME
 	|SESSION
 	|SETS
+	|SHOW
 	|SIMPLE
 	|SIZE
 	|SOURCE
@@ -3524,6 +3597,8 @@ NonReserved
 	|SUBCLASS_ORIGIN
 	|T
 	|TABLE_NAME
+	|TARGET
+	|TEMP
 	|TEMPORARY
 	|TIES
 	|TOKEN
@@ -3551,6 +3626,8 @@ NonReserved
 	|USER_DEFINED_TYPE_NAME
 	|USER_DEFINED_TYPE_SCHEMA
 	|VALID
+	|VALUE
+	|VALUES
 	|VERSION
 	|VIEW
 	|WHITESPACE
@@ -3589,6 +3666,7 @@ var nonReserved = ["A"
 	,"BOM"
 	,"BREADTH"
 	,"C"
+	,"CALL"
 	,"CASCADE"
 	,"CATALOG"
 	,"CATALOG_NAME"
@@ -3626,6 +3704,7 @@ var nonReserved = ["A"
 	,"DATETIME_INTERVAL_CODE"
 	,"DATETIME_INTERVAL_PRECISION"
 	,"DB"
+	,"DEFAULT"
 	,"DEFAULTS"
 	,"DEFERRABLE"
 	,"DEFERRED"
@@ -3687,6 +3766,7 @@ var nonReserved = ["A"
 	,"KEY_MEMBER"
 	,"KEY_TYPE"
 	,"LAST"
+	,"LEFT"
 	,"LENGTH"
 	,"LEVEL"
 	,"LIBRARY"
@@ -3746,6 +3826,7 @@ var nonReserved = ["A"
 	,"PATH"
 	,"PERMISSION"
 	,"PLACING"
+	,"PLAN"
 	,"PLI"
 	,"PRECEDING"
 	,"PRESERVE"
@@ -3766,6 +3847,7 @@ var nonReserved = ["A"
 	,"RETURNED_OCTET_LENGTH"
 	,"RETURNED_SQLSTATE"
 	,"RETURNING"
+	,"RIGHT"
 	,"ROLE"
 	,"ROUTINE"
 	,"ROUTINE_CATALOG"
@@ -3789,6 +3871,7 @@ var nonReserved = ["A"
 	,"SERVER_NAME"
 	,"SESSION"
 	,"SETS"
+	,"SHOW"
 	,"SIMPLE"
 	,"SIZE"
 	,"SOURCE"
@@ -3803,6 +3886,8 @@ var nonReserved = ["A"
 	,"SUBCLASS_ORIGIN"
 	,"T"
 	,"TABLE_NAME"
+	,"TARGET"
+	,"TEMP"
 	,"TEMPORARY"
 	,"TIES"
 	,"TOKEN"
@@ -3830,6 +3915,8 @@ var nonReserved = ["A"
 	,"USER_DEFINED_TYPE_NAME"
 	,"USER_DEFINED_TYPE_SCHEMA"
 	,"VALID"
+	,"VALUE"
+	,"VALUES"
 	,"VERSION"
 	,"VIEW"
 	,"WHITESPACE"

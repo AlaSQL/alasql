@@ -72,10 +72,33 @@ function columnPrefixToJS(columnid, prefix) {
 }
 
 /**
+ Inside CREATE TABLE and CREATE INDEX a double-quoted string that names a column of the table is
+ that column, as SQLite reads CHECK ("a" >= 0) and UNIQUE ("a", "b"). Elsewhere it stays a string (#989)
+ */
+function quotedColumns(expr, columnids) {
+	if (expr instanceof yy.StringValue) {
+		return expr.doubleQuoted && columnids.indexOf(expr.value) > -1
+			? new yy.Column({columnid: expr.value})
+			: expr;
+	}
+	for (var key in expr) {
+		if (
+			Object.prototype.hasOwnProperty.call(expr, key) &&
+			expr[key] &&
+			typeof expr[key] === 'object'
+		) {
+			expr[key] = quotedColumns(expr[key], columnids);
+		}
+	}
+	return expr;
+}
+
+/**
  JS for one column of a UNIQUE constraint or CREATE INDEX. These take expressions, so a(N)
  is parsed as a function call. When a is a column of the table, it is a prefix (#406)
  */
 function indexColumnToJS(expr, table) {
+	expr = quotedColumns(expr, Object.keys(table.xcolumns || {}));
 	if (
 		expr instanceof yy.FuncValue &&
 		table.xcolumns &&
@@ -102,6 +125,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	var columns = this.columns;
 	var constraints = this.constraints || [];
+	var columnids = (columns || []).map(function (col) {
+		return col.columnid;
+	});
 
 	// IF NOT EXISTS
 	if (this.ifnotexists && db.tables[tableid]) {
@@ -119,6 +145,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
+	// The schema changed, so statements in the statement cache must be compiled again
+	schemaChanged(db);
 	// If this is a class
 	if (this.class) {
 		table.isclass = true;
@@ -155,7 +183,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (col.check) {
 				table.checks.push({
 					id: col.check.constrantid,
-					fn: new Function('r,params,alasql', 'var y;return ' + col.check.expression.toJS('r', '')),
+					fn: new Function(
+						'r,params,alasql',
+						'var y;return ' + quotedColumns(col.check.expression, columnids).toJS('r', '')
+					),
 				});
 			}
 
@@ -188,25 +219,28 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			// UNIQUE clause
 			if (col.foreignkey) {
 				var fk = col.foreignkey.table;
+				// The check uses the primary key of the referenced table, as in 4.x; a named
+				// column is used only when that table has no primary key in memory (#1846)
+				var fkcolumnid = col.foreignkey.columnid;
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
-				if (typeof fk.columnid === 'undefined') {
-					if (fktable.pk.columns && fktable.pk.columns.length > 0) {
-						fk.columnid = fktable.pk.columns[0];
-					} else {
-						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
-					}
+				if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
+					fkcolumnid = fktable.pk.columns[0];
+				} else if (typeof fkcolumnid === 'undefined') {
+					throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
 				}
 				// Store foreignkey property in column for later access
 				newcol.foreignkey = {
 					tableid: fk.tableid,
-					columnid: fk.columnid,
+					columnid: fkcolumnid,
 				};
 				var fkfn = function (r) {
 					var rr = {};
 					var val = r[col.columnid];
 					// Only check foreign key if value is not null, undefined, or NaN
 					if (val != null && !(typeof val === 'number' && isNaN(val))) {
-						rr[fk.columnid] = val;
+						rr[fkcolumnid] = val;
+						// Get the table when checking, as storage engines can replace the table object
+						var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 						var addr = fktable.pk.onrightfn(rr);
 						if (!fktable.uniqs[fktable.pk.hh][addr]) {
 							throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
@@ -252,7 +286,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			});
 		} else if (con.type === 'CHECK') {
-			checkfn = new Function('r,params,alasql', 'var y;return ' + con.expression.toJS('r', ''));
+			checkfn = new Function(
+				'r,params,alasql',
+				'var y;return ' + quotedColumns(con.expression, columnids).toJS('r', '')
+			);
 		} else if (con.type === 'UNIQUE') {
 			var uk = {};
 			table.uk = table.uk || [];
@@ -263,9 +300,28 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return indexColumnToJS(expr.expression, table);
 				})
 				.join("+'`'+");
-			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
+			// The key can call functions that compile to alasql.*, as UNIQUE (ROUND(a)) does (#2876)
+			var ukfn = new Function('r,params,alasql', 'var y;return ' + uk.onrightfns);
+			uk.onrightfn = function (r, params) {
+				return ukfn(r, params, alasql);
+			};
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
+		} else if (con.type === 'INDEX') {
+			// Register the index the way CREATE INDEX does, so INSERT keeps it up to date
+			var rightfns = con.columns
+				.map(function (columnid, i) {
+					var prefix = con.prefixes && con.prefixes[i];
+					if (prefix === undefined) {
+						return new yy.Column({columnid: columnid}).toJS('r', '');
+					}
+					return columnPrefixToJS(columnid, prefix);
+				})
+				.join("+'`'+");
+			var hh = hash(rightfns);
+			table.inddefs[con.indexid] = {rightfns: rightfns, hh: hh};
+			table.indices[hh] = {};
+			db.indices[con.indexid] = tableid;
 		} else if (con.type === 'FOREIGN KEY') {
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {
@@ -280,7 +336,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			fk.columns = con.columns;
 
 			if (fk.fkcolumns.length > fk.columns.length) {
-				throw new Error('Invalid foreign key on table ' + table.tableid);
+				throw new Error('Invalid foreign key on table ' + tableid);
 			}
 
 			// Mark columns with foreignkey property
@@ -311,7 +367,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return true;
 				}
 				if (Object.keys(rr).length !== fk.columns.length) {
-					throw new Error('Invalid foreign key on table ' + table.tableid);
+					throw new Error('Invalid foreign key on table ' + tableid);
 				}
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
@@ -359,6 +415,26 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			this.ifnotexists,
 			cb
 		);
+	}
+
+	// Rebuild one key index from the current rows. If they hold duplicate keys, the last one wins.
+	function rebuildKeyIndex(table, key) {
+		var index = (table.uniqs[key.hh] = {});
+		table.data.forEach(function (row) {
+			index[key.onrightfn(row)] = row;
+		});
+	}
+
+	// table.data can be replaced from outside (alasql.tables.t.data = rows), which leaves
+	// the key indexes describing the old rows, so check before a statement relies on them.
+	var keyedData = table.data;
+	function syncKeyIndexes(table) {
+		if (table.data === keyedData) return;
+		keyedData = table.data;
+		if (table.pk) rebuildKeyIndex(table, table.pk);
+		(table.uk || []).forEach(function (uk) {
+			rebuildKeyIndex(table, uk);
+		});
 	}
 
 	table.insert = function (r, orreplace, ignore) {
@@ -434,6 +510,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				throw new Error('Wrong NULL value in NOT NULL column ' + column.columnid);
 			}
 		});
+		syncKeyIndexes(table);
 		if (table.pk) {
 			var pk = table.pk;
 			var addr = pk.onrightfn(r);
@@ -474,7 +551,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			//			console.log();
 			table.update(
 				function (t) {
-					for (var f in r) t[f] = r[f];
+					for (var f in r) setOwn(t, f, r[f]);
 				},
 				table.data.indexOf(toreplace),
 				params
@@ -572,6 +649,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		}
 		if (escape) return;
 
+		syncKeyIndexes(table);
 		if (this.pk) {
 			var pk = this.pk;
 			var addr = pk.onrightfn(r);
@@ -611,38 +689,20 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		var pk;
 		// PART 1 - PRECHECK
+		syncKeyIndexes(this);
 		if (this.pk) {
 			pk = this.pk;
 			pk.pkaddr = pk.onrightfn(r, params);
+			// The row may have been added to table.data without going through INSERT.
 			if (typeof this.uniqs[pk.hh][pk.pkaddr] === 'undefined') {
-				// If index is not populated (e.g., data was directly assigned), rebuild it.
-				// This allows UPDATE to work when data bypasses normal INSERT validation.
-				// Note: If data contains duplicate PKs, last occurrence wins (matches direct assignment semantics).
-				// This rebuild happens at most once per table since the index will be populated afterward.
-				this.uniqs[pk.hh] = {};
-				for (var j = 0; j < this.data.length; j++) {
-					var addr = pk.onrightfn(this.data[j]);
-					this.uniqs[pk.hh][addr] = this.data[j];
-				}
-				// Recalculate pkaddr after rebuilding
-				pk.pkaddr = pk.onrightfn(r, params);
+				rebuildKeyIndex(this, pk);
 			}
 		}
 		if (table.uk && table.uk.length) {
 			table.uk.forEach(function (uk) {
 				uk.ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
-					// If index is not populated (e.g., data was directly assigned), rebuild it.
-					// This allows UPDATE to work when data bypasses normal INSERT validation.
-					// Note: If data contains duplicate unique keys, last occurrence wins (matches direct assignment semantics).
-					// This rebuild happens at most once per table since the index will be populated afterward.
-					table.uniqs[uk.hh] = {};
-					for (var j = 0; j < table.data.length; j++) {
-						var addr = uk.onrightfn(table.data[j]);
-						table.uniqs[uk.hh][addr] = table.data[j];
-					}
-					// Recalculate ukaddr after rebuilding
-					uk.ukaddr = uk.onrightfn(r);
+					rebuildKeyIndex(table, uk);
 				}
 			});
 		}

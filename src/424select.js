@@ -118,7 +118,8 @@ function compileSelectStar(query, aliases, joinstar) {
 					'var w=p["' + escapeq(alias) + '"];for(var k in w){r["' + escapeq(alias) + '_"+k]=w[k]};';
 			} else {
 				// Default overwrite mode
-				sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r[k]=w[k]};';
+				sp +=
+					'var w=p["' + escapeq(alias) + '"];for(var k in w){' + setOwnJS('r', 'k', 'w[k]') + '};';
 			}
 			//console.log(777, sp);
 			query.dirtyColumns = true;
@@ -254,15 +255,24 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
 
 							if (needsRuntimeResolution) {
-								// Try each table until column is found
-								var aliases = Object.keys(query.aliases);
-								var searchExpr = aliases
-									.map(function (alias) {
-										return "p['" + alias + "']['" + col.columnid + "']";
-									})
-									.join(' ?? ');
-
-								ss.push("'" + escapeq(col.as || col.columnid) + "':(" + searchExpr + ')');
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':" +
+										yy.Column.fromAnySource(
+											'p',
+											Object.keys(query.aliases),
+											col.columnid,
+											query.defcols['.']
+										)
+								);
+								// Only check it against the default table if no other source can have it
+								var inOtherSource = query.sources.some(
+									src =>
+										src.alias !== tbid &&
+										(!src.columns?.length || src.columns.some(c => c.columnid === col.columnid))
+								);
+								if (inOtherSource) tbid = undefined;
 							} else {
 								ss.push(
 									"'" +
@@ -468,6 +478,16 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 			query.removeKeys.push(key);
 		});
 	}
+	// Like ORDER BY, a name or number refers to an output column, anything else to the source row
+	if (this.distinctOn) {
+		var exprs = this.distinctOn.map(function (e) {
+			if (e instanceof yy.Column && query.xcolumns[e.columnid]) return "r['" + e.columnid + "']";
+			if (e instanceof yy.NumValue) return 'r[Object.keys(r)[' + (e.value - 1) + ']]';
+			return e.toJS('p', query.defaultTableid, query.defcols);
+		});
+		s += "r['$$distinctOn']=JSON.stringify([" + exprs.join(',') + ']);';
+		query.removeKeys.push('$$distinctOn');
+	}
 	return new Function('p,params,alasql', 'var y;' + s + 'return r');
 };
 
@@ -600,7 +620,7 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 			//			s += 'for(var k in g){r[k]=g[k]};';
 			//			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
 
-			s += 'for(var k in g) {r[k]=g[k]};';
+			s += 'for(var k in g) {' + setOwnJS('r', 'k', 'g[k]') + '};';
 			return '';
 
 			//			console.log(query);

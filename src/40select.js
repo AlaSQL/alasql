@@ -99,6 +99,9 @@ yy.Select = class Select {
 		if (this.distinct) {
 			s += 'DISTINCT ';
 		}
+		if (this.distinctOn) {
+			s += 'DISTINCT ON (' + this.distinctOn.map(e => e.toString()).join(',') + ') ';
+		}
 		if (this.top) {
 			s += 'TOP ' + this.top.toString() + ' ';
 			if (this.percent) {
@@ -231,6 +234,18 @@ yy.Select = class Select {
 		return s;
 	}
 
+	isFromDual(databaseid) {
+		if (!this.from || this.from.length !== 1 || this.joins) {
+			return false;
+		}
+		var fr = this.from[0];
+		if (!(fr instanceof yy.Table) || fr.tableid.toUpperCase() !== 'DUAL') {
+			return false;
+		}
+		var db = alasql.databases[fr.databaseid || databaseid];
+		return !!db && !Object.keys(db.tables).some(tableid => tableid.toUpperCase() === 'DUAL');
+	}
+
 	// Compile SELECT statement
 	/**
 	 Compile the set operations of this SELECT into a list of {kind, corresponding, fn},
@@ -263,6 +278,17 @@ yy.Select = class Select {
 
 	compile(databaseid, params) {
 		var db = alasql.databases[databaseid];
+
+		// FROM DUAL is the same as no FROM, unless the database has a table of that name (#2860)
+		if (this.isFromDual(databaseid)) {
+			var from = this.from;
+			this.from = undefined;
+			try {
+				return this.compile(databaseid, params);
+			} finally {
+				this.from = from;
+			}
+		}
 		// Create variable for query
 		var query = new Query();
 
@@ -347,6 +373,20 @@ yy.Select = class Select {
 
 		// 7. Compile DISTINCT, LIMIT and OFFSET
 		query.distinct = this.distinct;
+		query.distinctOn = !!this.distinctOn;
+		if (
+			this.distinctOn &&
+			(this.group ||
+				query.selectGroup.length > 0 ||
+				this.union ||
+				this.unionall ||
+				this.except ||
+				this.intersect)
+		) {
+			throw new Error(
+				'DISTINCT ON is not supported with GROUP BY, aggregates, UNION, INTERSECT or EXCEPT'
+			);
+		}
 
 		// 9. Compile PIVOT clause
 		if (this.pivot) query.pivotfn = this.compilePivot(query);

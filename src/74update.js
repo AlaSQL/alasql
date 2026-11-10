@@ -72,10 +72,15 @@ yy.Update.prototype.compile = function (databaseid) {
 	}
 
 	// Construct update function
-	var s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
+	var table = alasql.databases[databaseid].tables[tableid];
+	var s = table.onupdatefns || '';
 	s += ';';
 	this.columns.forEach(function (col) {
-		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
+		var value = col.expression.toJS('r', '');
+		if (col.expression instanceof yy.DefaultValue) {
+			value = '({' + (table.defaultfns || '') + '})[' + JSON.stringify(col.column.columnid) + ']';
+		}
+		s += "r['" + col.column.columnid + "']=" + value + ';';
 	});
 	// console.log(423623, s);
 	var assignfn = new Function('r,params,alasql', 'var y;' + s);
@@ -149,7 +154,7 @@ yy.Update.prototype.compile = function (databaseid) {
 					if (col.columnid === '*') {
 						// For *, use INSERTED values
 						for (var key in inserted) {
-							outputRow[key] = inserted[key];
+							setOwn(outputRow, key, inserted[key]);
 						}
 					} else {
 						var colname = col.as || col.columnid;
