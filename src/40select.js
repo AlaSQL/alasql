@@ -12,6 +12,93 @@
 
 /* global yy */
 
+/*
+ database.table.column references (#2186).
+ The parser reads `db.t1.id` as `(db.t1)->id`: column `t1` of table `db`, followed by a
+ property lookup. Whether it means a column of table `t1` in database `db`, or property `id`
+ of column `t1` of source `db` (alias.column.property), depends on the names, so it is
+ decided on the parsed query before compiling.
+*/
+
+// Sources of a SELECT: alias, and for tables the table and database they come from
+const databaseColumnSources = (select, databaseid) => {
+	const sources = [];
+	(select.from || []).forEach(fr => {
+		const isTable = fr instanceof yy.Table;
+		sources.push({
+			alias: fr.as || fr.tableid,
+			tableid: isTable ? fr.tableid : undefined,
+			databaseid: isTable ? fr.databaseid || databaseid : undefined,
+		});
+	});
+	(select.joins || []).forEach(jn => {
+		const table = jn.table;
+		sources.push({
+			alias: jn.as || (table && table.tableid),
+			tableid: table ? table.tableid : undefined,
+			databaseid: table ? table.databaseid || databaseid : undefined,
+		});
+	});
+	return sources;
+};
+
+// The column a `(db.t1)->id` expression refers to, or undefined when it is a property lookup.
+// scopes lists the sources of the current SELECT first, then those of the enclosing ones.
+const databaseColumnOf = (node, scopes) => {
+	if (!(node instanceof yy.Op) || node.op !== '->' || typeof node.right !== 'string') return;
+	const left = node.left;
+	if (!(left instanceof yy.Column) || !left.tableid || left.databaseid) return;
+	const databaseid = left.tableid;
+	const tableid = left.columnid;
+	if (!alasql.databases[databaseid]) return;
+	// A source with that name wins, so alias.column.property stays a property lookup
+	if (scopes.some(sources => sources.some(source => source.alias === databaseid))) return;
+
+	const ref = `${databaseid}.${tableid}.${node.right}`;
+	for (const sources of scopes) {
+		const table = sources.find(
+			source => source.tableid === tableid && source.databaseid === databaseid
+		);
+		if (table && table.alias === tableid) {
+			return new yy.Column({databaseid, tableid, columnid: node.right, as: node.as});
+		}
+		if (table) {
+			throw new Error(
+				`Table ${databaseid}.${tableid} has the alias ${table.alias} in this query, so use ${table.alias}.${node.right} instead of ${ref}`
+			);
+		}
+		const other = sources.find(source => source.alias === tableid);
+		if (other) {
+			throw new Error(
+				`Cannot resolve ${ref}: ${tableid} in this query is not a table of database ${databaseid}`
+			);
+		}
+	}
+	throw new Error(
+		`Cannot resolve ${ref}: table ${databaseid}.${tableid} is not used in this query`
+	);
+};
+
+// Replace every `(db.t1)->id` that refers to a column, in this SELECT and nested ones
+const resolveDatabaseColumns = (node, scopes, databaseid, seen) => {
+	if (seen.has(node)) return;
+	seen.add(node);
+	if (node instanceof yy.Select) {
+		scopes = [databaseColumnSources(node, databaseid), ...scopes];
+		node.databaseColumnsResolved = true;
+	}
+	Object.keys(node).forEach(key => {
+		const value = node[key];
+		if (!value || typeof value !== 'object') return;
+		const column = databaseColumnOf(value, scopes);
+		if (column) {
+			node[key] = column;
+		} else {
+			resolveDatabaseColumns(value, scopes, databaseid, seen);
+		}
+	});
+};
+
 yy.Select = class Select {
 	constructor(params) {
 		Object.assign(this, params);
@@ -180,6 +267,11 @@ yy.Select = class Select {
 				this.from = from;
 			}
 		}
+		// Resolve database.table.column references, once for the outermost SELECT (#2186)
+		if (!this.databaseColumnsResolved) {
+			resolveDatabaseColumns(this, [], databaseid, new WeakSet());
+		}
+
 		// Create variable for query
 		var query = new Query();
 
