@@ -88,32 +88,61 @@ describe('Test 7 - ORDER BY on multiple UNIONs', function () {
 
 	it('I) Mixed UNION and UNION ALL', function () {
 		var sql =
-			'SELECT 10 AS a UNION ALL SELECT 20 AS a UNION SELECT 10 AS a UNION ALL SELECT 30 AS a ORDER BY a ASC';
+			'SELECT 10 AS a UNION ALL (SELECT 20 AS a UNION (SELECT 10 AS a UNION ALL SELECT 30 AS a)) ORDER BY a ASC';
 		var res = alasql(sql);
-		// Structure: ((10 UNION ALL 20) UNION 10) UNION ALL 30, evaluated left to right (#202)
-		// First: [10, 20] UNION 10 = [10, 20] (UNION removes duplicate 10)
-		// Then: [10, 20] UNION ALL 30 = [10, 20, 30]
-		var expected = [{a: 10}, {a: 20}, {a: 30}];
+		// Grouped explicitly from the right, which is how the chain without parentheses was
+		// evaluated before #202: 10 UNION ALL (20 UNION [10, 30]) = [10, 20, 10, 30].
+		// Without parentheses the chain is evaluated left to right, see I2
+		var expected = [{a: 10}, {a: 10}, {a: 20}, {a: 30}];
 		assert.deepStrictEqual(res, expected, 'Mixed UNION and UNION ALL with ORDER BY');
 	});
 
 	it('J) INTERSECT with ORDER BY', function () {
 		var sql =
-			'SELECT 10 AS a UNION ALL SELECT 20 AS a INTERSECT SELECT 20 AS a UNION ALL SELECT 30 AS a ORDER BY a DESC';
+			'SELECT 10 AS a UNION ALL (SELECT 20 AS a INTERSECT (SELECT 20 AS a UNION ALL SELECT 30 AS a)) ORDER BY a DESC';
 		var res = alasql(sql);
-		// INTERSECT binds tighter than UNION (SQL standard, #202)
-		// Structure: (10 UNION ALL (20 INTERSECT 20)) UNION ALL 30 = [10, 20, 30]
-		// Ordered DESC: [30, 20, 10]
-		var expected = [{a: 30}, {a: 20}, {a: 10}];
+		// Grouped explicitly from the right, as the chain without parentheses was evaluated
+		// before #202: 10 UNION ALL (20 INTERSECT [20, 30]) = [10, 20], ordered DESC: [20, 10].
+		// Without parentheses INTERSECT binds tighter, see J2
+		var expected = [{a: 20}, {a: 10}];
 		assert.deepStrictEqual(res, expected, 'INTERSECT with ORDER BY');
 	});
 
 	it('K) EXCEPT with ORDER BY', function () {
 		var sql =
+			'SELECT 10 AS a UNION ALL (SELECT 20 AS a UNION ALL (SELECT 30 AS a EXCEPT SELECT 20 AS a)) ORDER BY a DESC';
+		var res = alasql(sql);
+		// Grouped explicitly from the right, as the chain without parentheses was evaluated
+		// before #202: 10 UNION ALL (20 UNION ALL (30 EXCEPT 20)) = [10, 20, 30].
+		// Without parentheses the chain is evaluated left to right, see K2
+		var expected = [{a: 30}, {a: 20}, {a: 10}];
+		assert.deepStrictEqual(res, expected, 'EXCEPT with ORDER BY');
+	});
+
+	it('I2) Mixed UNION and UNION ALL, evaluated left to right (#202)', function () {
+		var sql =
+			'SELECT 10 AS a UNION ALL SELECT 20 AS a UNION SELECT 10 AS a UNION ALL SELECT 30 AS a ORDER BY a ASC';
+		var res = alasql(sql);
+		// ((10 UNION ALL 20) UNION 10) UNION ALL 30
+		// [10, 20] UNION 10 = [10, 20] (UNION removes the duplicate 10), then UNION ALL 30
+		var expected = [{a: 10}, {a: 20}, {a: 30}];
+		assert.deepStrictEqual(res, expected, 'Mixed UNION and UNION ALL with ORDER BY');
+	});
+
+	it('J2) INTERSECT binds tighter than UNION ALL (#202)', function () {
+		var sql =
+			'SELECT 10 AS a UNION ALL SELECT 20 AS a INTERSECT SELECT 20 AS a UNION ALL SELECT 30 AS a ORDER BY a DESC';
+		var res = alasql(sql);
+		// (10 UNION ALL (20 INTERSECT 20)) UNION ALL 30 = [10, 20, 30], ordered DESC
+		var expected = [{a: 30}, {a: 20}, {a: 10}];
+		assert.deepStrictEqual(res, expected, 'INTERSECT with ORDER BY');
+	});
+
+	it('K2) EXCEPT after UNION ALL, evaluated left to right (#202)', function () {
+		var sql =
 			'SELECT 10 AS a UNION ALL SELECT 20 AS a UNION ALL SELECT 30 AS a EXCEPT SELECT 20 AS a ORDER BY a DESC';
 		var res = alasql(sql);
-		// Structure: (10 UNION ALL 20 UNION ALL 30) EXCEPT 20, evaluated left to right (#202)
-		// [10, 20, 30] EXCEPT [20] = [10, 30], ordered DESC: [30, 10]
+		// (10 UNION ALL 20 UNION ALL 30) EXCEPT 20 = [10, 30], ordered DESC
 		var expected = [{a: 30}, {a: 10}];
 		assert.deepStrictEqual(res, expected, 'EXCEPT with ORDER BY');
 	});

@@ -101,12 +101,12 @@ insert into c (col) values (1), (2), (5);
 		var res = alasql(`
       select col from a
       union
-      select col from b
+      (select col from b
       except
-      select col from c;
+      select col from c);
     `);
-		// (a UNION b) EXCEPT c, evaluated left to right (#202)
-		assert.deepStrictEqual(res.sort(), [3, 4]);
+		// Grouped from the right, as the chain without parentheses was evaluated before #202 (see 9B)
+		assert.deepStrictEqual(res.sort(), [1, 2, 3, 4]);
 		done();
 	});
 
@@ -114,12 +114,12 @@ insert into c (col) values (1), (2), (5);
 		var res = alasql(`
       select col from a
       except
-      select col from b
+      (select col from b
       union
-      select col from c;
+      select col from c);
     `);
-		// (a EXCEPT b) UNION c, evaluated left to right (#202)
-		assert.deepStrictEqual(res.sort(), [1, 2, 3, 5]);
+		// Grouped from the right, as the chain without parentheses was evaluated before #202 (see 10B)
+		assert.deepStrictEqual(res.sort(), [3]);
 		done();
 	});
 
@@ -140,12 +140,12 @@ insert into c (col) values (1), (2), (5);
 		var res = alasql(`
       select col from a
       intersect
-      select col from b
+      (select col from b
       union
-      select col from c;
+      select col from c);
     `);
-		// (a INTERSECT b) UNION c (#202)
-		assert.deepStrictEqual(res.sort(), [1, 2, 5]);
+		// Grouped from the right, as the chain without parentheses was evaluated before #202 (see 12B)
+		assert.deepStrictEqual(res.sort(), [1, 2]);
 		done();
 	});
 
@@ -172,6 +172,45 @@ insert into c (col) values (1), (2), (5);
     `);
 		//    console.log(res);
 		assert.deepStrictEqual(res.sort(), []);
+		done();
+	});
+
+	it('9B. UNION EXCEPT, evaluated left to right (#202)', function (done) {
+		var res = alasql(`
+      select col from a
+      union
+      select col from b
+      except
+      select col from c;
+    `);
+		// (a UNION b) EXCEPT c
+		assert.deepStrictEqual(res.sort(), [3, 4]);
+		done();
+	});
+
+	it('10B. EXCEPT UNION, evaluated left to right (#202)', function (done) {
+		var res = alasql(`
+      select col from a
+      except
+      select col from b
+      union
+      select col from c;
+    `);
+		// (a EXCEPT b) UNION c
+		assert.deepStrictEqual(res.sort(), [1, 2, 3, 5]);
+		done();
+	});
+
+	it('12B. INTERSECT UNION, evaluated left to right (#202)', function (done) {
+		var res = alasql(`
+      select col from a
+      intersect
+      select col from b
+      union
+      select col from c;
+    `);
+		// (a INTERSECT b) UNION c
+		assert.deepStrictEqual(res.sort(), [1, 2, 5]);
 		done();
 	});
 
