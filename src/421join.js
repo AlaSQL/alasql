@@ -80,11 +80,7 @@ yy.Select.prototype.compileJoins = function (query) {
 					);
 				};
 			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
-				source.datafn = function (query, params, cb, idx, alasql) {
-					let res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
-					if (cb) res = cb(res, idx, query);
-					return res;
-				};
+				source.datafn = viewDatafn(source);
 			} else {
 				source.datafn = function (query, params, cb, idx, alasql) {
 					let res = alasql.databases[source.databaseid].tables[source.tableid].data;
