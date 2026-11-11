@@ -170,7 +170,8 @@ yy.Select.prototype.compileGroup = function (query) {
 						query.removeKeys.push(`_SUM_${colas}`);
 						query.removeKeys.push(`_COUNT_${colas}`);
 
-						return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : t; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : (t || 0); })(),'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
+						// Like SUM, AVG takes only numbers: text is left out of the sum and the count (#2763)
+						return `'${colas}':(function() { var t = ${colexp}; return (typeof t == 'number' || typeof t == 'bigint') ? t : undefined; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : (typeof t == 'number' || typeof t == 'bigint') ? t : 0; })(),'_COUNT_${colas}':(function() { var t = ${colexp}; return (typeof t == 'number' || typeof t == 'bigint') ? 1 : 0; })(),`;
 					} else if (col.aggregatorid === 'AGGR') {
 						aft += `,g['${colas}']=${col.expression.toJS('g', -1)}`;
 						return '';
@@ -436,18 +437,21 @@ yy.Select.prototype.compileGroup = function (query) {
 					} else if (col.aggregatorid === 'AVG') {
 						return `${pre}
 							y= (${colexp});
-							g['_COUNT_${colas}'] += (typeof y == "undefined" || y === null) ? 0 : 1;
 							if (y instanceof Date || (g['_SUM_${colas}'] && g['_SUM_${colas}'] instanceof Date)) {
 							// AVG on Date objects doesn't make semantic sense - return undefined
 							g['_SUM_${colas}'] = undefined;
 							g['${colas}'] = undefined;
+							} else if (typeof y !== 'number' && typeof y !== 'bigint') {
+								// NULL and text are left out
 							} else if (typeof g['_SUM_${colas}'] === 'bigint' || typeof y === 'bigint') {
+								g['_COUNT_${colas}']++;
 								g['_SUM_${colas}'] = BigInt(g['_SUM_${colas}']);
-								g['_SUM_${colas}'] += BigInt(y || 0);
-    							g['${colas}'] = BigInt(g['_SUM_${colas}']) / BigInt(g['_COUNT_${colas}']); 
+								g['_SUM_${colas}'] += BigInt(y);
+    							g['${colas}'] = BigInt(g['_SUM_${colas}']) / BigInt(g['_COUNT_${colas}']);
     						} else {
-								g['_SUM_${colas}'] += (y || 0);
-    							g['${colas}'] = g['_SUM_${colas}'] / g['_COUNT_${colas}']; 
+								g['_COUNT_${colas}']++;
+								g['_SUM_${colas}'] += y;
+    							g['${colas}'] = g['_SUM_${colas}'] / g['_COUNT_${colas}'];
     						}
 							${post}`;
 					} else if (col.aggregatorid === 'AGGR') {
