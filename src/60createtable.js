@@ -144,6 +144,15 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		);
 	}
 
+	// CREATE TABLE new LIKE old (#2868)
+	if (this.like) {
+		var likeDb = alasql.databases[this.like.databaseid || databaseid];
+		var likeTable = likeDb && likeDb.tables[this.like.tableid];
+		if (!likeTable || likeTable.view) {
+			throw new Error('Table does not exist: ' + this.like.tableid);
+		}
+	}
+
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
 	// The schema changed, so statements in the statement cache must be compiled again
 	schemaChanged(db);
@@ -392,6 +401,31 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			});
 		}
 	});
+
+	// The columns, keys, checks and defaults of the other table, without its rows.
+	// Indexes made with CREATE INDEX are not copied.
+	if (likeTable) {
+		likeTable.columns.forEach(function (col) {
+			var newcol = Object.assign({}, col);
+			table.columns.push(newcol);
+			table.xcolumns[newcol.columnid] = newcol;
+		});
+		for (var identid in likeTable.identities) {
+			// Start from the first value of the column, not where the other table is now
+			var ident = (likeTable.xcolumns[identid] || {}).identity || likeTable.identities[identid];
+			table.identities[identid] = {value: +ident.value, step: +likeTable.identities[identid].step};
+		}
+		table.checks = likeTable.checks.slice();
+		table.defaultfns = likeTable.defaultfns;
+		table.onupdatefns = likeTable.onupdatefns;
+		if (likeTable.pk) table.pk = Object.assign({}, likeTable.pk);
+		if (likeTable.uk) {
+			table.uk = likeTable.uk.map(function (uk) {
+				return Object.assign({}, uk);
+			});
+		}
+		for (var hh in likeTable.uniqs) table.uniqs[hh] = {};
+	}
 
 	if (this.view && this.viewcolumns) {
 		var self = this;
