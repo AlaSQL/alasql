@@ -277,6 +277,11 @@ SETS                                        	return 'SET'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
 /* A number with an exponent (1e5, 2E-3) before LITERAL, which would take 1e5 as a name */
+/* Hexadecimal, octal and binary integers, and digits with underscores, as in SQL:2023 (#2820) */
+0[xX][0-9a-fA-F]+(_[0-9a-fA-F]+)*(?![a-zA-Z_0-9])		return 'NUMBER'
+0[oO][0-7]+(_[0-7]+)*(?![a-zA-Z_0-9])					return 'NUMBER'
+0[bB][01]+(_[01]+)*(?![a-zA-Z_0-9])					return 'NUMBER'
+\d+(_\d+)+(\.\d+(_\d+)*)?(?![a-zA-Z_0-9])				return 'NUMBER'
 \d+(\.\d*)?[eE][+-]?\d+(?![a-zA-Z_0-9])				return 'NUMBER'
 /* LITERAL must come before NUMBER to match identifiers like 50k, 100x as single tokens */
 [0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
@@ -1584,7 +1589,7 @@ ExprList
 
 NumValue
 	: NUMBER
-		{ $$ = new yy.NumValue({value:+$1}); }
+		{ $$ = new yy.NumValue({value:+$1.replace(/_/g, '')}); }
 	;
 
 LogicValue
