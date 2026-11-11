@@ -1,6 +1,10 @@
 {
 	const assign = Object.assign;
 
+	// Only a list of plain literals can share a cached Set. A column, a sign, arithmetic or a
+	// function in the list has no fixed value, so it is evaluated for each row (#2771)
+	const isLiteralValue = value => value instanceof yy.NumValue || value instanceof yy.StringValue;
+
 	class ExpressionStatement {
 		/** @param {object} params Initial parameters */
 		constructor(params) {
@@ -385,10 +389,7 @@
 						leftJS();
 						s = 'false';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (
-						!alasql.options.cache ||
-						this.right.some(value => value instanceof yy.ParamValue)
-					) {
+					} else if (!alasql.options.cache || !this.right.every(isLiteralValue)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
@@ -420,10 +421,7 @@
 						leftJS();
 						s = 'true';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (
-						!alasql.options.cache ||
-						this.right.some(value => value instanceof yy.ParamValue)
-					) {
+					} else if (!alasql.options.cache || !this.right.every(isLiteralValue)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
