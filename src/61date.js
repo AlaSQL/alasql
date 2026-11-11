@@ -226,6 +226,72 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	return new Date(nd);
 };
 
+// PostgreSQL DATE_TRUNC(field, d) and DATE_PART(field, d), in local time (#2831)
+var TRUNC_FIELDS = ['second', 'minute', 'hour', 'day', 'week', 'month', 'quarter', 'year'];
+
+stdfn.DATE_TRUNC = function (field, d) {
+	if (field == null || d == null) return undefined;
+	field = String(field).toLowerCase();
+	var level = TRUNC_FIELDS.indexOf(field);
+	if (level < 0) throw new Error('Unknown date part: ' + field);
+	var r = newDate(d);
+	r.setMilliseconds(0);
+	if (level >= 1) r.setSeconds(0);
+	if (level >= 2) r.setMinutes(0);
+	if (level >= 3) r.setHours(0);
+	if (field === 'week') r.setDate(r.getDate() - ((r.getDay() + 6) % 7)); // ISO week starts on Monday
+	if (level >= 5) r.setDate(1);
+	if (field === 'quarter') r.setMonth(r.getMonth() - (r.getMonth() % 3));
+	if (field === 'year') r.setMonth(0);
+	return r;
+};
+
+stdfn.DATE_PART = function (field, d) {
+	if (field == null || d == null) return undefined;
+	var r = newDate(d);
+	switch (String(field).toLowerCase()) {
+		case 'year':
+			return r.getFullYear();
+		case 'quarter':
+			return Math.floor(r.getMonth() / 3) + 1;
+		case 'month':
+			return r.getMonth() + 1;
+		case 'day':
+			return r.getDate();
+		case 'hour':
+			return r.getHours();
+		case 'minute':
+			return r.getMinutes();
+		case 'second':
+			return r.getSeconds() + r.getMilliseconds() / 1000;
+		case 'milliseconds':
+			return r.getSeconds() * 1000 + r.getMilliseconds();
+		case 'dow':
+			return r.getDay();
+		case 'isodow':
+			return r.getDay() || 7;
+		case 'doy':
+			return (
+				Math.round(
+					(new Date(r.getFullYear(), r.getMonth(), r.getDate()) - new Date(r.getFullYear(), 0, 1)) /
+						864e5
+				) + 1
+			);
+		case 'week': {
+			// ISO week: the week with the year's first Thursday is week 1
+			var t = new Date(r.getFullYear(), r.getMonth(), r.getDate() + 3 - ((r.getDay() + 6) % 7));
+			var firstThursday = new Date(t.getFullYear(), 0, 4);
+			return (
+				1 + Math.round(((t - firstThursday) / 864e5 - 3 + ((firstThursday.getDay() + 6) % 7)) / 7)
+			);
+		}
+		case 'epoch':
+			return r.getTime() / 1000;
+		default:
+			throw new Error('Unknown date part: ' + field);
+	}
+};
+
 var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
 function newDate(d) {
 	if (typeof d === 'string') {
