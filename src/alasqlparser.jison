@@ -1370,8 +1370,9 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
+	/* A bare value in an expression is a column named value (#2670). Right after SELECT it stays the modifier */
 	| VALUE
-		{ $$ = new yy.DomainValueValue(); }
+		{ $$ = new yy.Column({columnid: alasql.options.casesensitive ? $1 : $1.toLowerCase()}); }
 	| Json
 		{ $$ = new yy.Json({value:$1}); }
 	| ArrayValue
