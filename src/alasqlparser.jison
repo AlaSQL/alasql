@@ -442,6 +442,8 @@ Statement
 	| RenameTable
 	| Select
 	| ParenthesizedSelect
+	| VALUES ValuesListsList
+		{ $$ = yy.Select.fromValues($2); }
 	| ShowCreateTable
 	| ShowColumns
 	| ShowDatabases
@@ -954,6 +956,10 @@ FromTablesList
 FromTable
 	: LPAR Select RPAR FromTableAlias?
 		{ $$ = $2; $$.as = $4 || 'default'; }
+	| LPAR VALUES ValuesListsList RPAR FromTableAlias?
+		{ $$ = yy.Select.fromValues($3); $$.as = $5 || 'default'; }
+	| LPAR VALUES ValuesListsList RPAR FromTableAlias LPAR ColsList RPAR
+		{ $$ = yy.Select.fromValues($3, $7); $$.as = $5; }
 	| Json AS? Literal?
 		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
 	| Table FromTableAlias?

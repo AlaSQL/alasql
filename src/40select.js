@@ -674,6 +674,20 @@ yy.Select = class Select {
 	}
 };
 
+// VALUES (1, 2), (3, 4) as a query: SELECT * over the rows, with the columns named
+// column1, column2 ... unless names are given
+yy.Select.fromValues = function (rows, names) {
+	rows.forEach(row => {
+		if (!Array.isArray(row)) throw new Error('Each row of VALUES as a query must be a list');
+	});
+	names = names || rows[0].map((_, i) => 'column' + (i + 1));
+	const value = rows.map(row => Object.fromEntries(names.map((name, i) => [name, row[i]])));
+	return new yy.Select({
+		columns: [new yy.Column({columnid: '*'})],
+		from: [new yy.Json({value})],
+	});
+};
+
 /**
  Modify res according modifier
  @function
