@@ -1293,6 +1293,48 @@ var like = (utils.like = function (pattern, value, escape = '') {
 });
 
 /**
+  SQL SIMILAR TO (#2827): % and _ as in LIKE, and | * + ? {} () [] as in regular expressions.
+  The pattern must match the whole text, case-sensitive. A backslash makes the next character literal.
+  @param {string} value Searched value
+  @param {string} pattern Search pattern
+  @param {boolean} negate True for NOT SIMILAR TO
+  @return {boolean|undefined} undefined (NULL) when the value or the pattern is NULL
+  */
+var similarCache = new Map();
+utils.similarTo = function (value, pattern, negate) {
+	if (value == null || pattern == null) return undefined;
+	pattern = '' + pattern;
+	var re = similarCache.get(pattern);
+	if (!re) {
+		var s = '';
+		var inSet = false;
+		for (var i = 0; i < pattern.length; i++) {
+			var c = pattern[i];
+			if (c === '\\' && i + 1 < pattern.length) {
+				s += '\\' + pattern[++i];
+			} else if (inSet) {
+				if (c === ']') inSet = false;
+				s += c;
+			} else if (c === '[') {
+				inSet = true;
+				s += c;
+			} else if (c === '%') {
+				s += '[\\s\\S]*';
+			} else if (c === '_') {
+				s += '[\\s\\S]';
+			} else if ('.^$/'.indexOf(c) > -1) {
+				s += '\\' + c;
+			} else {
+				s += c;
+			}
+		}
+		re = new RegExp('^(?:' + s + ')$');
+		similarCache.set(pattern, re);
+	}
+	return re.test('' + value) !== !!negate;
+};
+
+/**
  * Tests if a given value matches a glob pattern.
  * The function supports '*', '?' as wildcards where '*' matches any sequence of characters,
  * and '?' matches any single character. Square brackets can be used for character sets and ranges.
