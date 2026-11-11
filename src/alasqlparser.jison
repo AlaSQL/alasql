@@ -256,6 +256,8 @@ SETS                                        	return 'SET'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRANSACTION'
 'TRANSACTION'									return 'TRANSACTION'
+TRIM\s*\(\s*(LEADING|TRAILING|BOTH)\b				return 'TRIM_SIDE'
+TRIM\s*\((?=[^()]*\bFROM\b)						return 'TRIM_FROM'
 'TRIGGER'										return 'TRIGGER'
 'TRUE'						  					return 'TRUE'
 'TRUNCATE'					  					return 'TRUNCATE'
@@ -1413,6 +1415,14 @@ Expression
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
 	| CURRENT_DATE
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_DATE'});}
+	| TRIM_SIDE FROM Expression RPAR
+		{ $$ = new yy.FuncValue({funcid:'TRIM', args:[$3, new yy.StringValue({value:' '}), new yy.StringValue({value:$1.match(/\w+$/)[0].toUpperCase()})]}); }
+	| TRIM_SIDE Expression FROM Expression RPAR
+		{ $$ = new yy.FuncValue({funcid:'TRIM', args:[$4, $2, new yy.StringValue({value:$1.match(/\w+$/)[0].toUpperCase()})]}); }
+	| TRIM_FROM Expression FROM Expression RPAR
+		{ $$ = new yy.FuncValue({funcid:'TRIM', args:[$4, $2, new yy.StringValue({value:'BOTH'})]}); }
+	| TRIM_FROM Expression RPAR
+		{ $$ = new yy.FuncValue({funcid:'TRIM', args:[$2]}); }
 /*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'});}
 */	;
