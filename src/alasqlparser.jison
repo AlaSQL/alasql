@@ -1797,23 +1797,23 @@ Op
 
 				if($1.left.op == 'AND') {
 					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
-						new yy.Op({left:$1.left.right, op:'BETWEEN',
-							right1:$1.right, right2:$3})
+						yy.notOutside(new yy.Op({left:$1.left.right, op:'BETWEEN',
+							right1:$1.right, right2:$3}))
 					});
 				} else {
-					$$ = new yy.Op({left:$1.left, op:'BETWEEN',
-						right1:$1.right, right2:$3});
+					$$ = yy.notOutside(new yy.Op({left:$1.left, op:'BETWEEN',
+						right1:$1.right, right2:$3}));
 				}
 
 			} else if($1.op == 'NOT BETWEEN1') {
 				if($1.left.op == 'AND') {
 					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
-						new yy.Op({left:$1.left.right, op:'NOT BETWEEN',
-							right1:$1.right, right2:$3})
+						yy.notOutside(new yy.Op({left:$1.left.right, op:'NOT BETWEEN',
+							right1:$1.right, right2:$3}))
 					});
 				} else {
-					$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN',
-						right1:$1.right, right2:$3});
+					$$ = yy.notOutside(new yy.Op({left:$1.left, op:'NOT BETWEEN',
+						right1:$1.right, right2:$3}));
 				}
 			} else {
 				$$ = new yy.Op({left:$1, op:'AND', right:$3});
@@ -1848,7 +1848,7 @@ Op
 			}
 			// Now add this SELECT to parent queries
 			yy.queries.push($4);
-			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length - 1});
+			$$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length - 1}));
 		}
 
 	| Expression NOT IN LPAR Select RPAR
@@ -1863,32 +1863,32 @@ Op
 			}
 			// Now add this SELECT to parent queries
 			yy.queries.push($5);
-			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length - 1});
+			$$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length - 1}));
 		}
 
 	| Expression IN LPAR ExprList RPAR
-		{ $$ = new yy.Op({left: $1, op:'IN', right:$4}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$4})); }
 
 	| Expression NOT IN LPAR ExprList RPAR
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$5}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$5})); }
 
 	| Expression IN LPAR RPAR
-		{ $$ = new yy.Op({left: $1, op:'IN', right:[]}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:[]})); }
 
 	| Expression NOT IN LPAR RPAR
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:[]}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:[]})); }
 
 	| Expression IN ColFunc
-		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$3})); }
 
 	| Expression NOT IN ColFunc
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$4})); }
 
 	| Expression IN VarValue
-		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$3})); }
 
 	| Expression NOT IN VarValue
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$4})); }
 
 	/*
 		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar.
