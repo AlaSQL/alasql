@@ -2118,6 +2118,21 @@ CreateTable
 			yy.extend($$,$3);
 			yy.extend($$,$4);
 		}
+	/* CREATE TABLE new LIKE old, and CREATE TABLE new (LIKE old) as PostgreSQL writes it (#2868) */
+	| CREATE TemporaryClause TableClass IfNotExists TableName LIKE TableName
+		{
+			$$ = new yy.CreateTable({table:$5, like:$7});
+			yy.extend($$,$2);
+			yy.extend($$,$3);
+			yy.extend($$,$4);
+		}
+	| CREATE TemporaryClause TableClass IfNotExists TableName LPAR LIKE TableName RPAR
+		{
+			$$ = new yy.CreateTable({table:$5, like:$8});
+			yy.extend($$,$2);
+			yy.extend($$,$3);
+			yy.extend($$,$4);
+		}
 ;
 
 /*
