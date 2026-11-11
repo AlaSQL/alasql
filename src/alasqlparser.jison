@@ -1548,6 +1548,11 @@ FuncValue
 		{
 			var funcid = $1;
 			var exprlist = $4;
+			/* POSITION(x IN c) parses its argument as the test x IN c, so split it (#2793) */
+			if(funcid.toUpperCase() == 'POSITION' && exprlist.length == 1 && exprlist[0] instanceof yy.Op
+				&& exprlist[0].op == 'IN' && !Array.isArray(exprlist[0].right) && !(exprlist[0].right instanceof yy.Select)) {
+				exprlist = [exprlist[0].left, exprlist[0].right];
+			}
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			} else if(alasql.aggr[$1]) {
@@ -1558,8 +1563,7 @@ FuncValue
 			};
 		}
 	| Literal LPAR RPAR OverClause
-		{ $$ = new yy.FuncValue({ funcid: $1, over: $4 }) }
-	| IF LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({ funcid: $1, over: $4 }) }	| IF LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	| REPLACE LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
@@ -1885,6 +1889,10 @@ Op
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
 	| Expression IN VarValue
+		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+
+	/* For POSITION('b' IN 'abc'), which FuncValue splits into two arguments (#2793) */
+	| Expression IN StringValue
 		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
 
 	| Expression NOT IN VarValue
