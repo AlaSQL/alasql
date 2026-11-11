@@ -260,6 +260,7 @@ SETS                                        	return 'SET'
 'TRUE'						  					return 'TRUE'
 'TRUNCATE'					  					return 'TRUNCATE'
 'UNION'                                         return 'UNION'
+UNIQUE(?=\s*\(\s*SELECT\b)                      return 'UNIQUE_SUBQUERY'
 'UNIQUE'                                        return 'UNIQUE'
 'UNPIVOT'                                       return 'UNPIVOT'
 'UPDATE'                                        return 'UPDATE'
@@ -1635,6 +1636,12 @@ ExistsValue
 		{
 			if(!yy.exists) yy.exists = [];
 			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length});
+			yy.exists.push($3);
+		}
+	| UNIQUE_SUBQUERY LPAR Select RPAR
+		{
+			if(!yy.exists) yy.exists = [];
+			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length, unique:true});
 			yy.exists.push($3);
 		}
 	;
