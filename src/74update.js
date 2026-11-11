@@ -8,6 +8,29 @@
 
 /* global yy alasql */
 
+// A subquery in UPDATE or DELETE that reads the changed row by the table name runs again for
+// every row, instead of reusing its first result (#2814)
+function compileRowSubqueries(queries, databaseid, tableid) {
+	return queries.map(function (q) {
+		var inner = (q.from || []).some(function (f) {
+			return (f.as || f.tableid) === tableid;
+		});
+		var correlated = !inner && readsTable(q, tableid);
+		var nq = q.compile(databaseid);
+		nq.query.modifier = 'RECORDSET';
+		nq.query.isCorrelated = correlated;
+		return nq;
+	});
+}
+
+function readsTable(node, tableid) {
+	if (!node || typeof node !== 'object') return false;
+	if (node instanceof yy.Column && node.tableid === tableid) return true;
+	return Object.keys(node).some(function (key) {
+		return readsTable(node[key], tableid);
+	});
+}
+
 yy.Update = function (params) {
 	return Object.assign(this, params);
 };
@@ -48,6 +71,8 @@ yy.Update.prototype.compile = function (databaseid) {
 
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
+	// The row is also reached by the table name, so t.u reads the same value as u (#2814)
+	var rowScope = 'var y,p={' + JSON.stringify(tableid) + ':r};';
 
 	if (this.where) {
 		if (this.exists) {
@@ -58,17 +83,13 @@ yy.Update.prototype.compile = function (databaseid) {
 			});
 		}
 		if (this.queries) {
-			this.queriesfn = this.queries.map(function (q) {
-				var nq = q.compile(databaseid);
-				nq.query.modifier = 'RECORDSET';
-				return nq;
-			});
+			this.queriesfn = compileRowSubqueries(this.queries, databaseid, tableid);
 		}
 
-		// console.log(73625, this.where.toJS('r', ''));
-		var wherefn = new Function('r,params,alasql', 'var y;return ' + this.where.toJS('r', '')).bind(
-			this
-		);
+		var wherefn = new Function(
+			'r,params,alasql',
+			rowScope + 'return ' + this.where.toJS('p', tableid)
+		).bind(this);
 	}
 
 	// Construct update function
@@ -76,14 +97,14 @@ yy.Update.prototype.compile = function (databaseid) {
 	var s = table.onupdatefns || '';
 	s += ';';
 	this.columns.forEach(function (col) {
-		var value = col.expression.toJS('r', '');
+		var value = col.expression.toJS('p', tableid);
 		if (col.expression instanceof yy.DefaultValue) {
 			value = '({' + (table.defaultfns || '') + '})[' + JSON.stringify(col.column.columnid) + ']';
 		}
 		s += "r['" + col.column.columnid + "']=" + value + ';';
 	});
 	// console.log(423623, s);
-	var assignfn = new Function('r,params,alasql', 'var y;' + s);
+	var assignfn = new Function('r,params,alasql', rowScope + s);
 
 	var statement = function (params, cb) {
 		var db = alasql.databases[databaseid];
