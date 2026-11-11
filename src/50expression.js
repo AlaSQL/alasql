@@ -799,6 +799,13 @@
 				// This handles cases like: SELECT a.id + 1 FROM ... GROUP BY a.id
 				// where the column in the expression doesn't have nick set, but the group stores it by columnid
 				const nickToUse = this.nick || this.columnid;
+				if (this.tableid && !this.nick && this.columnid !== '_') {
+					// GROUP BY a.id, b.id stores both under g['id'], so a qualified column
+					// reads its own table from the group's source row (#2637).
+					// A null in g (ROLLUP and CUBE subtotals) stays null.
+					const src = `((this.groupSources && this.groupSources.get(g)) || {})['${this.tableid}']`;
+					return `(g['${nickToUse}'] === null || !${src} ? g['${nickToUse}'] : ${src}['${this.columnid}'])`;
+				}
 				return `g['${nickToUse}']`;
 			}
 
