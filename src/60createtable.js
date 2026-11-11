@@ -242,7 +242,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 						// Get the table when checking, as storage engines can replace the table object
 						var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 						var addr = fktable.pk.onrightfn(rr);
-						if (!fktable.uniqs[fktable.pk.hh][addr]) {
+						// The key can hold only a prefix of the value, so compare the whole value (#2883)
+						var parent = fktable.uniqs[fktable.pk.hh][addr];
+						if (!parent || String(parent[fkcolumnid]) !== String(val)) {
 							throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
 						}
 					}
@@ -372,8 +374,15 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 				var addr = fktable.pk.onrightfn(rr);
+				// The key can hold only a prefix of the values, so compare the whole values (#2883)
+				var parent = fktable.uniqs[fktable.pk.hh][addr];
 
-				if (!fktable.uniqs[fktable.pk.hh][addr]) {
+				if (
+					!parent ||
+					fk.fkcolumns.some(function (colFk) {
+						return String(parent[colFk]) !== String(rr[colFk]);
+					})
+				) {
 					var keyValues = fk.columns.map(function (col) {
 						return r[col];
 					});
