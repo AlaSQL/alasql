@@ -219,6 +219,15 @@
 	class Op {
 		constructor(params) {
 			assign(this, params);
+			// A bare value is a column (#2670), but VALUE->x in a CHECK still reads the checked row
+			if (
+				this.op === '->' &&
+				this.left instanceof yy.Column &&
+				!this.left.tableid &&
+				this.left.columnid.toUpperCase() === 'VALUE'
+			) {
+				this.left = new yy.DomainValueValue();
+			}
 		}
 
 		toString() {
