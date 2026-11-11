@@ -3001,572 +3001,574 @@ case 6:return 339
 break;
 case 7:return 339
 break;
-case 8:return 337
+case 8: yy_.yytext = '0b' + yy_.yytext.slice(2, -1); return 140; 
 break;
-case 9:return 338
+case 9:return 337
 break;
-case 10:return /* its a COMMENT */
+case 10:return 338
 break;
-case 11:/* skip whitespace */
+case 11:return /* its a COMMENT */
 break;
-case 12:return 359
+case 12:/* skip whitespace */
 break;
-case 13:return 362
+case 13:return 359
 break;
-case 14:yy_.yytext = 'VALUE';return 96
+case 14:return 362
 break;
-case 15:yy_.yytext = 'VALUE';return 199
+case 15:yy_.yytext = 'VALUE';return 96
 break;
-case 16:yy_.yytext = 'ROW';return 199
+case 16:yy_.yytext = 'VALUE';return 199
 break;
-case 17:yy_.yytext = 'COLUMN';return 199
+case 17:yy_.yytext = 'ROW';return 199
 break;
-case 18:yy_.yytext = 'MATRIX';return 199
+case 18:yy_.yytext = 'COLUMN';return 199
 break;
-case 19:yy_.yytext = 'INDEX';return 199
+case 19:yy_.yytext = 'MATRIX';return 199
 break;
-case 20:yy_.yytext = 'RECORDSET';return 199
+case 20:yy_.yytext = 'INDEX';return 199
 break;
-case 21:yy_.yytext = 'TEXT';return 199
+case 21:yy_.yytext = 'RECORDSET';return 199
 break;
-case 22:yy_.yytext = 'SELECT';return 199
+case 22:yy_.yytext = 'TEXT';return 199
 break;
-case 23:return 575
+case 23:yy_.yytext = 'SELECT';return 199
 break;
-case 24:return 432
+case 24:return 575
 break;
-case 25:return 456
+case 25:return 432
 break;
-case 26:return 570
+case 26:return 456
 break;
-case 27:return 326
+case 27:return 570
 break;
-case 28:return 304
+case 28:return 326
 break;
 case 29:return 304
 break;
-case 30:return 173
+case 30:return 304
 break;
-case 31:return 454
+case 31:return 173
 break;
-case 32:return 179
+case 32:return 454
 break;
-case 33:return 252
+case 33:return 179
 break;
-case 34:return 175
+case 34:return 252
 break;
-case 35:return 218
+case 35:return 175
 break;
-case 36:return 327
+case 36:return 218
 break;
-case 37:return 82
+case 37:return 327
 break;
-case 38:return 472
+case 38:return 82
 break;
-case 39:return 270
+case 39:return 472
 break;
-case 40:return 458
+case 40:return 270
 break;
-case 41:return 402
+case 41:return 458
 break;
-case 42:return 325
+case 42:return 402
 break;
-case 43:return 569
+case 43:return 325
 break;
-case 44:return 492
+case 44:return 569
 break;
-case 45:return 373
+case 45:return 492
 break;
-case 46:return 497
+case 46:return 373
 break;
-case 47:return 374
+case 47:return 497
 break;
-case 48:return 358
+case 48:return 374
 break;
-case 49:return 128
+case 49:return 358
 break;
-case 50:return 121
+case 50:return 128
 break;
-case 51:return 358
+case 51:return 121
 break;
-case 52:return 121
+case 52:return 358
 break;
-case 53:return 358
+case 53:return 121
 break;
-case 54:return 121
+case 54:return 358
 break;
-case 55:return 358
+case 55:return 121
 break;
-case 56:return 563
+case 56:return 358
 break;
-case 57:return 346
+case 57:return 563
 break;
-case 58:return 429
+case 58:return 346
 break;
-case 59:return 306
+case 59:return 429
 break;
-case 60:return 414
+case 60:return 306
 break;
-case 61:return 139
+case 61:return 414
 break;
-case 62:return 8
+case 62:return 139
 break;
-case 63:return 271
+case 63:return 8
 break;
-case 64:return 200
+case 64:return 271
 break;
 case 65:return 200
 break;
-case 66:return 489
+case 66:return 200
 break;
-case 67:return 413
+case 67:return 489
 break;
-case 68:return 526
+case 68:return 413
 break;
-case 69:return 495
+case 69:return 526
 break;
-case 70:return 308
+case 70:return 495
 break;
-case 71:return 264
+case 71:return 308
 break;
-case 72:return 322
+case 72:return 264
 break;
-case 73:return 302
+case 73:return 322
 break;
-case 74:return 217
+case 74:return 302
 break;
-case 75:return 258
+case 75:return 217
 break;
-case 76:return 299
+case 76:return 258
 break;
-case 77:return 300
+case 77:return 299
 break;
 case 78:return 300
 break;
-case 79:return 'CURSOR'
+case 79:return 300
 break;
-case 80:return 459
+case 80:return 'CURSOR'
 break;
-case 81:return 330
+case 81:return 459
 break;
-case 82:return 332
+case 82:return 330
 break;
-case 83:return 333
+case 83:return 332
 break;
-case 84:return 505
+case 84:return 333
 break;
-case 85:return 381
+case 85:return 505
 break;
-case 86:return 383
+case 86:return 381
 break;
-case 87:return 287
+case 87:return 383
 break;
-case 88:return 270
+case 88:return 287
 break;
-case 89:return 460
+case 89:return 270
 break;
-case 90:yy_.yytext = 'DISTINCT';return 194
+case 90:return 460
 break;
-case 91:return 450
+case 91:yy_.yytext = 'DISTINCT';return 194
 break;
-case 92:return 504
+case 92:return 450
 break;
-case 93:return 144
+case 93:return 504
 break;
-case 94:return 349
+case 94:return 144
 break;
-case 95:return 441
+case 95:return 349
 break;
-case 96:return 353
+case 96:return 441
 break;
-case 97:return 357
+case 97:return 353
 break;
-case 98:return 178
+case 98:return 357
 break;
-case 99:return 563
+case 99:return 178
 break;
 case 100:return 563
 break;
-case 101:return 341
+case 101:return 563
 break;
-case 102:return 18
+case 102:return 341
 break;
-case 103:return 336
+case 103:return 18
 break;
-case 104:return 279
+case 104:return 336
 break;
-case 105:return 268
+case 105:return 279
 break;
-case 106:return 105
+case 106:return 268
 break;
-case 107:return 418
+case 107:return 105
 break;
-case 108:return 192
+case 108:return 418
 break;
-case 109:return 250
+case 109:return 192
 break;
-case 110:return 303
+case 110:return 250
 break;
-case 111:return 356
+case 111:return 303
 break;
-case 112:return 656
+case 112:return 356
 break;
-case 113:return 528
+case 113:return 656
 break;
-case 114:return 254
+case 114:return 528
 break;
-case 115:return 311
+case 115:return 254
 break;
-case 116:return 260
+case 116:return 311
 break;
-case 117:return 261
+case 117:return 260
 break;
-case 118:return 165
+case 118:return 261
 break;
-case 119:return 402
+case 119:return 165
 break;
-case 120:return 388
+case 120:return 402
 break;
-case 121:return 375
+case 121:return 388
 break;
-case 122:return 109
+case 122:return 375
 break;
-case 123:return 203
+case 123:return 109
 break;
-case 124:return 225
+case 124:return 203
 break;
-case 125:return 247
+case 125:return 225
 break;
-case 126:return 571
+case 126:return 247
 break;
-case 127:return 384
+case 127:return 571
 break;
-case 128:return 231
+case 128:return 384
 break;
-case 129:return 177
+case 129:return 231
 break;
-case 130:return 334
+case 130:return 177
 break;
-case 131:return 209
+case 131:return 334
 break;
-case 132:return 496
+case 132:return 209
 break;
-case 133:return 246
+case 133:return 496
 break;
-case 134:return 6
+case 134:return 246
 break;
-case 135:return 269
+case 135:return 6
 break;
-case 136:return 'LET'
+case 136:return 269
 break;
-case 137:return 498
+case 137:return 'LET'
 break;
-case 138:return 248
+case 138:return 498
 break;
-case 139:return 121
+case 139:return 248
 break;
-case 140:return 273
+case 140:return 121
 break;
-case 141:return 516
+case 141:return 273
 break;
-case 142:return 201
+case 142:return 516
 break;
-case 143:return 324
+case 143:return 201
 break;
-case 144:return 442
+case 144:return 324
 break;
-case 145:return 323
+case 145:return 442
 break;
-case 146:return 509
+case 146:return 323
 break;
-case 147:return 178
+case 147:return 509
 break;
-case 148:return 457
+case 148:return 178
 break;
-case 149:return 245
+case 149:return 457
 break;
-case 150:return 698
+case 150:return 245
 break;
-case 151:return 305
+case 151:return 698
 break;
-case 152:return 272
+case 152:return 305
 break;
-case 153:return 431
+case 153:return 272
 break;
-case 154:return 163
+case 154:return 431
 break;
-case 155:return 340
+case 155:return 163
 break;
-case 156:return 267
+case 156:return 340
 break;
-case 157:return 488
+case 157:return 267
 break;
-case 158:return 196
+case 158:return 488
 break;
-case 159:return 469
+case 159:return 196
 break;
-case 160:return 138
+case 160:return 469
 break;
-case 161:return 276
+case 161:return 138
 break;
-case 162:return 7
+case 162:return 276
 break;
-case 163:return 470
+case 163:return 7
 break;
-case 164:return 180
+case 164:return 470
 break;
-case 165:return 127
+case 165:return 180
 break;
-case 166:return 219
+case 166:return 127
 break;
-case 167:return 520
+case 167:return 219
 break;
-case 168:return 314
+case 168:return 520
 break;
-case 169:return 181
+case 169:return 314
 break;
-case 170:return 318
+case 170:return 181
 break;
-case 171:return 816
+case 171:return 318
 break;
-case 172:return 103
+case 172:return 816
 break;
-case 173:return 20
+case 173:return 103
 break;
-case 174:return 415
+case 174:return 20
 break;
-case 175:return 499
+case 175:return 415
 break;
-case 176:return 730
+case 176:return 499
 break;
-case 177:return 19
+case 177:return 730
 break;
-case 178:return 468
+case 178:return 19
 break;
-case 179:return 204
+case 179:return 468
 break;
-case 180:return 'REDUCE'
+case 180:return 204
 break;
-case 181:return 81
+case 181:return 'REDUCE'
 break;
-case 182:return 420
+case 182:return 81
 break;
-case 183:return 354
+case 183:return 420
 break;
-case 184:return 572
+case 184:return 354
 break;
-case 185:return 734
+case 185:return 572
 break;
-case 186:return 116
+case 186:return 734
 break;
-case 187:return 455
+case 187:return 116
 break;
-case 188:return 184
+case 188:return 455
 break;
-case 189:return 329
+case 189:return 184
 break;
-case 190:return 430
+case 190:return 329
 break;
-case 191:return 500
+case 191:return 430
 break;
-case 192:return 739
+case 192:return 500
 break;
-case 193:return 182
+case 193:return 739
 break;
 case 194:return 182
 break;
-case 195:return 249
+case 195:return 182
 break;
-case 196:return 491
+case 196:return 249
 break;
-case 197:return 257
+case 197:return 491
 break;
-case 198:return 159
+case 198:return 257
 break;
-case 199:return 817
+case 199:return 159
 break;
-case 200:return 459
+case 200:return 817
 break;
-case 201:return 96
+case 201:return 459
 break;
-case 202:return 251
+case 202:return 96
 break;
-case 203:return 9
+case 203:return 251
 break;
-case 204:return 155
+case 204:return 9
 break;
 case 205:return 155
 break;
-case 206:return 463
+case 206:return 155
 break;
-case 207:return 377
+case 207:return 463
 break;
-case 208:return 471
+case 208:return 377
 break;
-case 209:return 'STRATEGY'
+case 209:return 471
 break;
-case 210:return 'STORE'
+case 210:return 'STRATEGY'
 break;
-case 211:return 320
+case 211:return 'STORE'
 break;
-case 212:return 321
+case 212:return 320
 break;
-case 213:return 399
+case 213:return 321
 break;
 case 214:return 399
 break;
-case 215:return 519
+case 215:return 399
 break;
-case 216:return 403
+case 216:return 519
 break;
 case 217:return 403
 break;
-case 218:return 202
+case 218:return 403
 break;
-case 219:return 352
+case 219:return 202
 break;
-case 220:return 'TIMEOUT'
+case 220:return 352
 break;
-case 221:return 157
+case 221:return 'TIMEOUT'
 break;
-case 222:return 205
+case 222:return 157
 break;
-case 223:return 490
+case 223:return 205
 break;
 case 224:return 490
 break;
-case 225:return 564
+case 225:return 490
 break;
-case 226:return 335
+case 226:return 564
 break;
-case 227:return 508
+case 227:return 335
 break;
-case 228:return 171
+case 228:return 508
 break;
-case 229:return 197
+case 229:return 171
 break;
-case 230:return 108
+case 230:return 197
 break;
-case 231:return 378
+case 231:return 108
 break;
-case 232:return 462
+case 232:return 378
 break;
-case 233:return 253
+case 233:return 462
 break;
-case 234:return 158
+case 234:return 253
 break;
-case 235:return 389
+case 235:return 158
 break;
-case 236:return 143
+case 236:return 389
 break;
-case 237:return 464
+case 237:return 143
 break;
-case 238:return 351
+case 238:return 464
 break;
-case 239:return 137
+case 239:return 351
 break;
-case 240:return 494
+case 240:return 137
 break;
-case 241:return 77
+case 241:return 494
 break;
-case 242:return 490  /* Is this keyword required? */
+case 242:return 77
 break;
-case 243:return 140
+case 243:return 490  /* Is this keyword required? */
 break;
-case 244:return 4
+case 244:return 140
 break;
-case 245:return 140
+case 245:return 4
 break;
-case 246:return 124
+case 246:return 140
 break;
-case 247:return 146
+case 247:return 124
 break;
-case 248:return 188
+case 248:return 146
 break;
-case 249:return 360
+case 249:return 188
 break;
-case 250:return 189
+case 250:return 360
 break;
-case 251:return 142
+case 251:return 189
 break;
-case 252:return 147
+case 252:return 142
 break;
-case 253:return 369
+case 253:return 147
 break;
-case 254:return 366
+case 254:return 369
 break;
-case 255:return 368
+case 255:return 366
 break;
-case 256:return 365
+case 256:return 368
 break;
-case 257:return 363
+case 257:return 365
 break;
-case 258:return 361
+case 258:return 363
 break;
-case 259:return 362
+case 259:return 361
 break;
-case 260:return 151
+case 260:return 362
 break;
-case 261:return 150
+case 261:return 151
 break;
-case 262:return 148
+case 262:return 150
 break;
-case 263:return 364
+case 263:return 148
 break;
-case 264:return 367
+case 264:return 364
 break;
-case 265:return 149
+case 265:return 367
 break;
-case 266:return 133
+case 266:return 149
 break;
-case 267:return 367
+case 267:return 133
 break;
-case 268:return 83
+case 268:return 367
 break;
-case 269:return 84
+case 269:return 83
 break;
-case 270:return 478
+case 270:return 84
 break;
-case 271:return 480
+case 271:return 478
 break;
-case 272:return 343
+case 272:return 480
 break;
-case 273:return 483
+case 273:return 343
 break;
-case 274:return 562
+case 274:return 483
 break;
-case 275:return 131
+case 275:return 562
 break;
-case 276:return 125
+case 276:return 131
 break;
-case 277:return 79
+case 277:return 125
 break;
-case 278:return 376
+case 278:return 79
 break;
-case 279:return 161
+case 279:return 376
 break;
-case 280:return 815
+case 280:return 161
 break;
-case 281:return 152
+case 281:return 815
 break;
-case 282:return 190
+case 282:return 152
 break;
-case 283:return 145
+case 283:return 190
 break;
-case 284:return 132
+case 284:return 145
 break;
-case 285:return 355
+case 285:return 132
 break;
-case 286:return 154
+case 286:return 355
 break;
-case 287:return 14
+case 287:return 154
 break;
-case 288:return 'INVALID'
+case 288:return 14
+break;
+case 289:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:``([^\`])+``)/i,/^(?:\[\?\])/i,/^(?:@\[)/i,/^(?:ARRAY\[)/i,/^(?:\[([^\]'])*?\])/i,/^(?:`([^\`'])*?`)/i,/^(?:N(['](\\.|[^']|\\')*?['])+)/i,/^(?:X(['](\\.|[^']|\\')*?['])+)/i,/^(?:(['](\\.|[^']|\\')*?['])+)/i,/^(?:(["](\\.|[^"]|\\")*?["])+)/i,/^(?:--(.*?)($|\r\n|\r|\n))/i,/^(?:\s+)/i,/^(?:\|\|)/i,/^(?:\|)/i,/^(?:VALUE\s+OF\s+SEARCH\b)/i,/^(?:VALUE\s+OF\s+SELECT\b)/i,/^(?:ROW\s+OF\s+SELECT\b)/i,/^(?:COLUMN\s+OF\s+SELECT\b)/i,/^(?:MATRIX\s+OF\s+SELECT\b)/i,/^(?:INDEX\s+OF\s+SELECT\b)/i,/^(?:RECORDSET\s+OF\s+SELECT\b)/i,/^(?:TEXT\s+OF\s+SELECT\b)/i,/^(?:SELECT\b)/i,/^(?:ABSOLUTE\b)/i,/^(?:ACTION\b)/i,/^(?:ADD\b)/i,/^(?:AFTER\b)/i,/^(?:AGGR\b)/i,/^(?:AGGREGATE\b)/i,/^(?:AGGREGATOR\b)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:ANTI\b)/i,/^(?:ANY\b)/i,/^(?:APPLY\b)/i,/^(?:ARRAY\b)/i,/^(?:AS\b)/i,/^(?:ASSERT\b)/i,/^(?:ASC\b)/i,/^(?:ATTACH\b)/i,/^(?:AUTO(_)?INCREMENT\b)/i,/^(?:AVG\b)/i,/^(?:BEFORE\b)/i,/^(?:BEGIN\b)/i,/^(?:BETWEEN\b)/i,/^(?:BREAK\b)/i,/^(?:NOT\s+BETWEEN\b)/i,/^(?:NOT\s+LIKE\b)/i,/^(?:BY\b)/i,/^(?:~~\*)/i,/^(?:!~~\*)/i,/^(?:~~)/i,/^(?:!~~)/i,/^(?:ILIKE\b)/i,/^(?:NOT\s+ILIKE\b)/i,/^(?:CALL\b)/i,/^(?:CASE\b)/i,/^(?:CASCADE\b)/i,/^(?:CAST\b)/i,/^(?:CHECK\b)/i,/^(?:CLASS\b)/i,/^(?:CLOSE\b)/i,/^(?:COLLATE\b)/i,/^(?:COLUMN\b)/i,/^(?:COLUMNS\b)/i,/^(?:COMMIT\b)/i,/^(?:CONSTRAINT\b)/i,/^(?:CONTENT\b)/i,/^(?:CONTINUE\b)/i,/^(?:CONVERT\b)/i,/^(?:CORRESPONDING\b)/i,/^(?:COUNT\b)/i,/^(?:CREATE\b)/i,/^(?:CROSS\b)/i,/^(?:CUBE\b)/i,/^(?:CURRENT_TIMESTAMP\b)/i,/^(?:CURRENT_DATE\b)/i,/^(?:CURDATE\b)/i,/^(?:CURSOR\b)/i,/^(?:DATABASE(S)?)/i,/^(?:DATEADD\b)/i,/^(?:DATEDIFF\b)/i,/^(?:TIMESTAMPDIFF\b)/i,/^(?:DECLARE\b)/i,/^(?:DEFAULT\b)/i,/^(?:DELETE\b)/i,/^(?:DELETED\b)/i,/^(?:DESC\b)/i,/^(?:DETACH\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:ECHO\b)/i,/^(?:EDGE\b)/i,/^(?:END\b)/i,/^(?:ENUM\b)/i,/^(?:ELSE\b)/i,/^(?:ESCAPE\b)/i,/^(?:EXCEPT\b)/i,/^(?:EXEC\b)/i,/^(?:EXECUTE\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FETCH\b)/i,/^(?:FIRST\b)/i,/^(?:FOR\b)/i,/^(?:FOREIGN\b)/i,/^(?:FROM\b)/i,/^(?:FULL\b)/i,/^(?:FUNCTION\b)/i,/^(?:GLOB\b)/i,/^(?:GO\b)/i,/^(?:GRAPH\b)/i,/^(?:GROUP\b)/i,/^(?:GROUP_CONCAT\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:IF\b)/i,/^(?:IDENTITY\b)/i,/^(?:IGNORE\b)/i,/^(?:IS\b)/i,/^(?:IN\b)/i,/^(?:INDEX\b)/i,/^(?:INDEXED\b)/i,/^(?:INNER\b)/i,/^(?:INSTEAD\b)/i,/^(?:INSERT\b)/i,/^(?:INSERTED\b)/i,/^(?:INTERSECT\b)/i,/^(?:INTERVAL\b)/i,/^(?:INTO\b)/i,/^(?:ITERATE\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:LAST\b)/i,/^(?:LET\b)/i,/^(?:LEAVE\b)/i,/^(?:LEFT\b)/i,/^(?:LIKE\b)/i,/^(?:LIMIT\b)/i,/^(?:MATCHED\b)/i,/^(?:MATRIX\b)/i,/^(?:MAX\s*(?=\())/i,/^(?:MAX\s*(?=(,|\))))/i,/^(?:MIN\s*(?=\())/i,/^(?:MERGE\b)/i,/^(?:MINUS\b)/i,/^(?:MODIFY\b)/i,/^(?:NATURAL\b)/i,/^(?:NEXT\b)/i,/^(?:NEW\b)/i,/^(?:NOCASE\b)/i,/^(?:NO\b)/i,/^(?:NOT\b)/i,/^(?:NULL\b)/i,/^(?:NULLS\b)/i,/^(?:OFF\b)/i,/^(?:ON\b)/i,/^(?:ONLY\b)/i,/^(?:OF\b)/i,/^(?:OFFSET\b)/i,/^(?:OPEN\b)/i,/^(?:OPTION\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:OUTER\b)/i,/^(?:OUTPUT\b)/i,/^(?:OVER\b)/i,/^(?:PATH\b)/i,/^(?:PARTITION\b)/i,/^(?:PERCENT\b)/i,/^(?:PIVOT\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:PRINT\b)/i,/^(?:PRIOR\b)/i,/^(?:QUERY\b)/i,/^(?:READ\b)/i,/^(?:RECORDSET\b)/i,/^(?:REDUCE\b)/i,/^(?:RECURSIVE\b)/i,/^(?:REFERENCES\b)/i,/^(?:REGEXP\b)/i,/^(?:REINDEX\b)/i,/^(?:RELATIVE\b)/i,/^(?:REMOVE\b)/i,/^(?:RENAME\b)/i,/^(?:REPEAT\b)/i,/^(?:REPLACE\b)/i,/^(?:RESTRICT\b)/i,/^(?:REQUIRE\b)/i,/^(?:RESTORE\b)/i,/^(?:RETURN\b)/i,/^(?:RETURNS\b)/i,/^(?:RIGHT\b)/i,/^(?:ROLLBACK\b)/i,/^(?:ROLLUP\b)/i,/^(?:ROW\b)/i,/^(?:ROWS\b)/i,/^(?:SCHEMA(S)?)/i,/^(?:SEARCH\b)/i,/^(?:SEMI\b)/i,/^(?:SEPARATOR\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SHOW\b)/i,/^(?:SOME\b)/i,/^(?:SOURCE\b)/i,/^(?:STRATEGY\b)/i,/^(?:STORE\b)/i,/^(?:SUM\b)/i,/^(?:TOTAL\b)/i,/^(?:TABLE\b)/i,/^(?:TABLES\b)/i,/^(?:TARGET\b)/i,/^(?:TEMP\b)/i,/^(?:TEMPORARY\b)/i,/^(?:TEXTSTRING\b)/i,/^(?:THEN\b)/i,/^(?:TIMEOUT\b)/i,/^(?:TO\b)/i,/^(?:TOP\b)/i,/^(?:TRAN\b)/i,/^(?:TRANSACTION\b)/i,/^(?:TRIGGER\b)/i,/^(?:TRUE\b)/i,/^(?:TRUNCATE\b)/i,/^(?:UNION\b)/i,/^(?:UNIQUE\b)/i,/^(?:UNPIVOT\b)/i,/^(?:UPDATE\b)/i,/^(?:USE\b)/i,/^(?:USING\b)/i,/^(?:VALUE\b)/i,/^(?:VALUES\b)/i,/^(?:VERTEX\b)/i,/^(?:VIEW\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:WHILE\b)/i,/^(?:WITH\b)/i,/^(?:WORK\b)/i,/^(?:\d+(\.\d*)?[eE][+-]?\d+(?![a-zA-Z_0-9]))/i,/^(?:[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]*)/i,/^(?:(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?(?![a-zA-Z_0-9]))/i,/^(?:->)/i,/^(?:#)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:!===)/i,/^(?:===)/i,/^(?:!==)/i,/^(?:==)/i,/^(?:>=)/i,/^(?:&)/i,/^(?:\|)/i,/^(?:<<)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\])/i,/^(?::-)/i,/^(?:\?-)/i,/^(?:\.\.)/i,/^(?:\.)/i,/^(?:,)/i,/^(?:::)/i,/^(?::)/i,/^(?:;)/i,/^(?:\$)/i,/^(?:\?)/i,/^(?:!)/i,/^(?:\^)/i,/^(?:~)/i,/^(?:@)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288],"inclusive":true}}
+rules: [/^(?:``([^\`])+``)/i,/^(?:\[\?\])/i,/^(?:@\[)/i,/^(?:ARRAY\[)/i,/^(?:\[([^\]'])*?\])/i,/^(?:`([^\`'])*?`)/i,/^(?:N(['](\\.|[^']|\\')*?['])+)/i,/^(?:X(['](\\.|[^']|\\')*?['])+)/i,/^(?:[bB]['][01]+['])/i,/^(?:(['](\\.|[^']|\\')*?['])+)/i,/^(?:(["](\\.|[^"]|\\")*?["])+)/i,/^(?:--(.*?)($|\r\n|\r|\n))/i,/^(?:\s+)/i,/^(?:\|\|)/i,/^(?:\|)/i,/^(?:VALUE\s+OF\s+SEARCH\b)/i,/^(?:VALUE\s+OF\s+SELECT\b)/i,/^(?:ROW\s+OF\s+SELECT\b)/i,/^(?:COLUMN\s+OF\s+SELECT\b)/i,/^(?:MATRIX\s+OF\s+SELECT\b)/i,/^(?:INDEX\s+OF\s+SELECT\b)/i,/^(?:RECORDSET\s+OF\s+SELECT\b)/i,/^(?:TEXT\s+OF\s+SELECT\b)/i,/^(?:SELECT\b)/i,/^(?:ABSOLUTE\b)/i,/^(?:ACTION\b)/i,/^(?:ADD\b)/i,/^(?:AFTER\b)/i,/^(?:AGGR\b)/i,/^(?:AGGREGATE\b)/i,/^(?:AGGREGATOR\b)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:ANTI\b)/i,/^(?:ANY\b)/i,/^(?:APPLY\b)/i,/^(?:ARRAY\b)/i,/^(?:AS\b)/i,/^(?:ASSERT\b)/i,/^(?:ASC\b)/i,/^(?:ATTACH\b)/i,/^(?:AUTO(_)?INCREMENT\b)/i,/^(?:AVG\b)/i,/^(?:BEFORE\b)/i,/^(?:BEGIN\b)/i,/^(?:BETWEEN\b)/i,/^(?:BREAK\b)/i,/^(?:NOT\s+BETWEEN\b)/i,/^(?:NOT\s+LIKE\b)/i,/^(?:BY\b)/i,/^(?:~~\*)/i,/^(?:!~~\*)/i,/^(?:~~)/i,/^(?:!~~)/i,/^(?:ILIKE\b)/i,/^(?:NOT\s+ILIKE\b)/i,/^(?:CALL\b)/i,/^(?:CASE\b)/i,/^(?:CASCADE\b)/i,/^(?:CAST\b)/i,/^(?:CHECK\b)/i,/^(?:CLASS\b)/i,/^(?:CLOSE\b)/i,/^(?:COLLATE\b)/i,/^(?:COLUMN\b)/i,/^(?:COLUMNS\b)/i,/^(?:COMMIT\b)/i,/^(?:CONSTRAINT\b)/i,/^(?:CONTENT\b)/i,/^(?:CONTINUE\b)/i,/^(?:CONVERT\b)/i,/^(?:CORRESPONDING\b)/i,/^(?:COUNT\b)/i,/^(?:CREATE\b)/i,/^(?:CROSS\b)/i,/^(?:CUBE\b)/i,/^(?:CURRENT_TIMESTAMP\b)/i,/^(?:CURRENT_DATE\b)/i,/^(?:CURDATE\b)/i,/^(?:CURSOR\b)/i,/^(?:DATABASE(S)?)/i,/^(?:DATEADD\b)/i,/^(?:DATEDIFF\b)/i,/^(?:TIMESTAMPDIFF\b)/i,/^(?:DECLARE\b)/i,/^(?:DEFAULT\b)/i,/^(?:DELETE\b)/i,/^(?:DELETED\b)/i,/^(?:DESC\b)/i,/^(?:DETACH\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:ECHO\b)/i,/^(?:EDGE\b)/i,/^(?:END\b)/i,/^(?:ENUM\b)/i,/^(?:ELSE\b)/i,/^(?:ESCAPE\b)/i,/^(?:EXCEPT\b)/i,/^(?:EXEC\b)/i,/^(?:EXECUTE\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FETCH\b)/i,/^(?:FIRST\b)/i,/^(?:FOR\b)/i,/^(?:FOREIGN\b)/i,/^(?:FROM\b)/i,/^(?:FULL\b)/i,/^(?:FUNCTION\b)/i,/^(?:GLOB\b)/i,/^(?:GO\b)/i,/^(?:GRAPH\b)/i,/^(?:GROUP\b)/i,/^(?:GROUP_CONCAT\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:IF\b)/i,/^(?:IDENTITY\b)/i,/^(?:IGNORE\b)/i,/^(?:IS\b)/i,/^(?:IN\b)/i,/^(?:INDEX\b)/i,/^(?:INDEXED\b)/i,/^(?:INNER\b)/i,/^(?:INSTEAD\b)/i,/^(?:INSERT\b)/i,/^(?:INSERTED\b)/i,/^(?:INTERSECT\b)/i,/^(?:INTERVAL\b)/i,/^(?:INTO\b)/i,/^(?:ITERATE\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:LAST\b)/i,/^(?:LET\b)/i,/^(?:LEAVE\b)/i,/^(?:LEFT\b)/i,/^(?:LIKE\b)/i,/^(?:LIMIT\b)/i,/^(?:MATCHED\b)/i,/^(?:MATRIX\b)/i,/^(?:MAX\s*(?=\())/i,/^(?:MAX\s*(?=(,|\))))/i,/^(?:MIN\s*(?=\())/i,/^(?:MERGE\b)/i,/^(?:MINUS\b)/i,/^(?:MODIFY\b)/i,/^(?:NATURAL\b)/i,/^(?:NEXT\b)/i,/^(?:NEW\b)/i,/^(?:NOCASE\b)/i,/^(?:NO\b)/i,/^(?:NOT\b)/i,/^(?:NULL\b)/i,/^(?:NULLS\b)/i,/^(?:OFF\b)/i,/^(?:ON\b)/i,/^(?:ONLY\b)/i,/^(?:OF\b)/i,/^(?:OFFSET\b)/i,/^(?:OPEN\b)/i,/^(?:OPTION\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:OUTER\b)/i,/^(?:OUTPUT\b)/i,/^(?:OVER\b)/i,/^(?:PATH\b)/i,/^(?:PARTITION\b)/i,/^(?:PERCENT\b)/i,/^(?:PIVOT\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:PRINT\b)/i,/^(?:PRIOR\b)/i,/^(?:QUERY\b)/i,/^(?:READ\b)/i,/^(?:RECORDSET\b)/i,/^(?:REDUCE\b)/i,/^(?:RECURSIVE\b)/i,/^(?:REFERENCES\b)/i,/^(?:REGEXP\b)/i,/^(?:REINDEX\b)/i,/^(?:RELATIVE\b)/i,/^(?:REMOVE\b)/i,/^(?:RENAME\b)/i,/^(?:REPEAT\b)/i,/^(?:REPLACE\b)/i,/^(?:RESTRICT\b)/i,/^(?:REQUIRE\b)/i,/^(?:RESTORE\b)/i,/^(?:RETURN\b)/i,/^(?:RETURNS\b)/i,/^(?:RIGHT\b)/i,/^(?:ROLLBACK\b)/i,/^(?:ROLLUP\b)/i,/^(?:ROW\b)/i,/^(?:ROWS\b)/i,/^(?:SCHEMA(S)?)/i,/^(?:SEARCH\b)/i,/^(?:SEMI\b)/i,/^(?:SEPARATOR\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SHOW\b)/i,/^(?:SOME\b)/i,/^(?:SOURCE\b)/i,/^(?:STRATEGY\b)/i,/^(?:STORE\b)/i,/^(?:SUM\b)/i,/^(?:TOTAL\b)/i,/^(?:TABLE\b)/i,/^(?:TABLES\b)/i,/^(?:TARGET\b)/i,/^(?:TEMP\b)/i,/^(?:TEMPORARY\b)/i,/^(?:TEXTSTRING\b)/i,/^(?:THEN\b)/i,/^(?:TIMEOUT\b)/i,/^(?:TO\b)/i,/^(?:TOP\b)/i,/^(?:TRAN\b)/i,/^(?:TRANSACTION\b)/i,/^(?:TRIGGER\b)/i,/^(?:TRUE\b)/i,/^(?:TRUNCATE\b)/i,/^(?:UNION\b)/i,/^(?:UNIQUE\b)/i,/^(?:UNPIVOT\b)/i,/^(?:UPDATE\b)/i,/^(?:USE\b)/i,/^(?:USING\b)/i,/^(?:VALUE\b)/i,/^(?:VALUES\b)/i,/^(?:VERTEX\b)/i,/^(?:VIEW\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:WHILE\b)/i,/^(?:WITH\b)/i,/^(?:WORK\b)/i,/^(?:\d+(\.\d*)?[eE][+-]?\d+(?![a-zA-Z_0-9]))/i,/^(?:[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]*)/i,/^(?:(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?(?![a-zA-Z_0-9]))/i,/^(?:->)/i,/^(?:#)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:!===)/i,/^(?:===)/i,/^(?:!==)/i,/^(?:==)/i,/^(?:>=)/i,/^(?:&)/i,/^(?:\|)/i,/^(?:<<)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\])/i,/^(?::-)/i,/^(?:\?-)/i,/^(?:\.\.)/i,/^(?:\.)/i,/^(?:,)/i,/^(?:::)/i,/^(?::)/i,/^(?:;)/i,/^(?:\$)/i,/^(?:\?)/i,/^(?:!)/i,/^(?:\^)/i,/^(?:~)/i,/^(?:@)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275,276,277,278,279,280,281,282,283,284,285,286,287,288,289],"inclusive":true}}
 });
 return lexer;
 })();
