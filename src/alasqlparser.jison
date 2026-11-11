@@ -69,6 +69,9 @@ AUTO(_)?INCREMENT                               return 'IDENTITY'
 'AVG'                                      		return 'AVG'
 
 'BEFORE'                                      	return 'BEFORE'
+/* BEGIN on its own and START TRANSACTION start a transaction, so START stays a name (#2859) */
+BEGIN(?=\s*(?:\;|$))								return 'BEGIN_TRANSACTION'
+START\s+(?:TRANSACTION|TRAN|WORK)\b				return 'BEGIN_TRANSACTION'
 'BEGIN'											return 'BEGIN'
 'BETWEEN'										return 'BETWEEN'
 'BREAK'											return 'BREAK'
@@ -2844,15 +2847,21 @@ OnOff
 CommitTransaction
 	: COMMIT TRANSACTION
 		{ $$ = new yy.CommitTransaction(); }
+	| COMMIT
+		{ $$ = new yy.CommitTransaction(); }
 	;
 
 RollbackTransaction
 	: ROLLBACK TRANSACTION
 		{ $$ = new yy.RollbackTransaction(); }
+	| ROLLBACK
+		{ $$ = new yy.RollbackTransaction(); }
 	;
 
 BeginTransaction
 	: BEGIN TRANSACTION
+		{ $$ = new yy.BeginTransaction(); }
+	| BEGIN_TRANSACTION
 		{ $$ = new yy.BeginTransaction(); }
 	;
 
