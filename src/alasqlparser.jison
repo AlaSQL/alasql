@@ -101,6 +101,7 @@ COLUMNS 										return 'COLUMN'
 "CONVERT"										return 'CONVERT'
 "CORRESPONDING"									return 'CORRESPONDING'
 "COUNT"											return 'COUNT'
+CREATE\s+DOMAIN\b								return 'CREATE_DOMAIN'
 'CREATE'										return 'CREATE'
 "CROSS"											return 'CROSS'
 'CUBE'											return 'CUBE'
@@ -120,6 +121,7 @@ DATABASE(S)?									return 'DATABASE'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      yytext = 'DISTINCT';return 'DISTINCT'
 /* DOUBLE\s+PRECISION								return 'LITERAL' */
+DROP\s+DOMAIN\b									return 'DROP_DOMAIN'
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
@@ -425,6 +427,8 @@ Statement
 	| CreateIndex
 	| CreateGraph
 	| CreateTable
+	| CreateDomain
+	| DropDomain
 	| CreateView
 	| CreateEdge
 	| CreateVertex
@@ -2446,6 +2450,30 @@ ColumnConstraint
 		{$$ = {"onupdate":$3};}
 	| ON UPDATE LPAR Expression RPAR
 		{$$ = {"onupdate":$4};}
+	;
+
+/* CREATE DOMAIN and DROP DOMAIN */
+
+CreateDomain
+	: CREATE_DOMAIN Literal AS ColumnType DomainConstraints
+		{ $$ = new yy.CreateDomain({domainid:$2, type:$4, constraints:$5}); }
+	| CREATE_DOMAIN Literal ColumnType DomainConstraints
+		{ $$ = new yy.CreateDomain({domainid:$2, type:$3, constraints:$4}); }
+	;
+
+DomainConstraints
+	: { $$ = []; }
+	| DomainConstraints ColumnConstraint
+		{ $1.push($2); $$ = $1; }
+	;
+
+DropDomain
+	: DROP_DOMAIN Literal
+		{ $$ = new yy.DropDomain({domainid:$2}); }
+	| DROP_DOMAIN Literal CASCADE
+		{ $$ = new yy.DropDomain({domainid:$2}); }
+	| DROP_DOMAIN Literal RESTRICT
+		{ $$ = new yy.DropDomain({domainid:$2}); }
 	;
 
 /* DROP TABLE */
