@@ -54,4 +54,27 @@ describe('Test 2770 - GROUP BY with a column selected twice', function () {
 			{a: 91, b: 91},
 		]);
 	});
+	it('E) MATRIX keeps the select order for a column named by a number (#2766)', function () {
+		alasql('CREATE TABLE u (x INT)');
+		alasql('INSERT INTO u VALUES (1), (2), (3)');
+		assert.deepEqual(alasql('MATRIX OF SELECT COUNT(*), 17'), [[1, 17]]);
+		assert.deepEqual(alasql('MATRIX OF SELECT COUNT(*) AS n, 17 FROM u'), [[3, 17]]);
+		assert.deepEqual(alasql('MATRIX OF SELECT x, COUNT(*) AS n, 17 FROM u GROUP BY x'), [
+			[1, 1, 17],
+			[2, 1, 17],
+			[3, 1, 17],
+		]);
+		assert.deepEqual(alasql('MATRIX OF SELECT COUNT(*) AS n, x AS [5] FROM u GROUP BY x'), [
+			[1, 1],
+			[1, 2],
+			[1, 3],
+		]);
+		var res = alasql('RECORDSET OF SELECT COUNT(*) AS n, 17 FROM u');
+		assert.deepEqual(
+			res.columns.map(function (c) {
+				return c.columnid;
+			}),
+			['n', '17']
+		);
+	});
 });
