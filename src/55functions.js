@@ -610,3 +610,38 @@ stdfn.NEWID =
 				lut[(d3 >> 24) & 0xff]
 			);
 		};
+
+// PostgreSQL aggregates (#2831). Called with the argument(s), the accumulator and the stage:
+// 1 for the first row of a group, 2 for the next rows, 3 for the result
+function isNullValue(v) {
+	return v == null || (typeof v === 'number' && isNaN(v));
+}
+
+alasql.aggr.string_agg = alasql.aggr.STRING_AGG = function (v, separator, acc, stage) {
+	if (stage === 1) acc = {parts: [], separator: separator};
+	if (stage === 3) return acc.parts.length ? acc.parts.join(acc.separator) : undefined;
+	if (!isNullValue(v)) acc.parts.push(String(v));
+	return acc;
+};
+
+// ARRAY_AGG keeps NULL values, as in PostgreSQL
+alasql.aggr.array_agg = alasql.aggr.ARRAY_AGG = function (v, acc, stage) {
+	if (stage === 1) return [v];
+	if (stage === 3) return acc;
+	acc.push(v);
+	return acc;
+};
+
+function boolAggregate(all) {
+	return function (v, acc, stage) {
+		if (stage === 3) return acc;
+		if (isNullValue(v)) return stage === 1 ? undefined : acc;
+		v = !!v;
+		if (stage === 1 || acc === undefined) return v;
+		return all ? acc && v : acc || v;
+	};
+}
+
+alasql.aggr.bool_and = alasql.aggr.BOOL_AND = boolAggregate(true);
+alasql.aggr.every = alasql.aggr.EVERY = boolAggregate(true);
+alasql.aggr.bool_or = alasql.aggr.BOOL_OR = boolAggregate(false);
