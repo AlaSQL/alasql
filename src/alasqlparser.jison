@@ -2118,6 +2118,14 @@ CreateTable
 			yy.extend($$,$3);
 			yy.extend($$,$4);
 		}
+	/* CREATE TABLE new AS SELECT ... (#2824) */
+	| CREATE TemporaryClause TableClass IfNotExists TableName AS Select
+		{
+			$$ = new yy.CreateTable({table:$5, asselect:$7});
+			yy.extend($$,$2);
+			yy.extend($$,$3);
+			yy.extend($$,$4);
+		}
 ;
 
 /*
