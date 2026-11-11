@@ -24,6 +24,12 @@ function getGroupConcatParams(col) {
 	return `,${separator},${orderDir}`;
 }
 
+// The key of a value for a DISTINCT aggregate. For COUNT(DISTINCT *) it is the whole row,
+// so rows with different values count apart (#2758)
+function distinctKeyJS(col, colexp) {
+	return col.expression.columnid === '*' ? 'JSON.stringify(p)' : colexp;
+}
+
 /**
  Compile group of statements
  */
@@ -124,7 +130,13 @@ yy.Select.prototype.compileGroup = function (query) {
 				if (col instanceof yy.AggrValue) {
 					if (col.distinct) {
 						aft +=
-							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
+							",g['$$_VALUES_" +
+							colas +
+							"']={},g['$$_VALUES_" +
+							colas +
+							"'][" +
+							distinctKeyJS(col, colexp) +
+							']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
@@ -207,8 +219,9 @@ yy.Select.prototype.compileGroup = function (query) {
 					var pre = '',
 						post = '';
 					if (col.distinct) {
-						pre = `if(typeof ${colexp}!="undefined" && (!g['$$_VALUES_${colas}'][${colexp}])) {`;
-						post = `g['$$_VALUES_${colas}'][${colexp}]=true;}`;
+						var key = distinctKeyJS(col, colexp);
+						pre = `if(typeof ${key}!="undefined" && (!g['$$_VALUES_${colas}'][${key}])) {`;
+						post = `g['$$_VALUES_${colas}'][${key}]=true;}`;
 					}
 
 					if (col.aggregatorid === 'SUM') {
