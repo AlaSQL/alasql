@@ -8,6 +8,48 @@
 
 /* global alasql, yy, hash */
 
+// CREATE VIEW v (x, y) AS SELECT ...: name the select columns by position. A * or t.* is
+// first expanded to the columns of its tables, so it can be named too (#2794)
+function applyViewColumns(select, viewcolumns, databaseid) {
+	var sources = (select.from || []).map(function (tq) {
+		return {table: tq, alias: tq.as || tq.tableid};
+	});
+	(select.joins || []).forEach(function (jn) {
+		if (jn.table) sources.push({table: jn.table, alias: jn.as || jn.table.tableid});
+	});
+	var columns = [];
+	select.columns.forEach(function (col) {
+		if (!(col instanceof yy.Column && col.columnid === '*')) {
+			columns.push(col);
+			return;
+		}
+		sources.forEach(function (src) {
+			if (col.tableid && col.tableid !== src.alias) return;
+			var db = alasql.databases[src.table.databaseid || databaseid];
+			var table = src.table instanceof yy.Table && db && db.tables[src.table.tableid];
+			if (!table || !table.columns || !table.columns.length) {
+				throw new Error('Cannot name the columns of * in a view over ' + src.alias);
+			}
+			table.columns.forEach(function (tcol) {
+				columns.push(new yy.Column({columnid: tcol.columnid, tableid: src.alias}));
+			});
+		});
+	});
+	if (columns.length !== viewcolumns.length) {
+		throw new Error(
+			'The view has ' +
+				viewcolumns.length +
+				' column names but its SELECT gives ' +
+				columns.length +
+				' columns'
+		);
+	}
+	columns.forEach(function (col, idx) {
+		col.as = viewcolumns[idx].columnid;
+	});
+	select.columns = columns;
+}
+
 yy.ColumnDef = function (params) {
 	return Object.assign(this, params);
 };
@@ -142,6 +184,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				db.databaseid +
 				"'"
 		);
+	}
+
+	// Checked before the view exists, so a wrong column list leaves nothing behind (#2794)
+	if (this.view && this.viewcolumns) {
+		applyViewColumns(this.select, this.viewcolumns, databaseid);
 	}
 
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
@@ -392,13 +439,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			});
 		}
 	});
-
-	if (this.view && this.viewcolumns) {
-		var self = this;
-		this.viewcolumns.forEach(function (vcol, idx) {
-			self.select.columns[idx].as = vcol.columnid;
-		});
-	}
 
 	//Used in 420from queryfn when table.view = true!
 	if (this.view && this.select) {
