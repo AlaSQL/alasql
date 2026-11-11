@@ -785,6 +785,18 @@
 			return s;
 		}
 
+		// True when every source of the query has known columns and none of them is columnid,
+		// so an unqualified column must come from an enclosing query (#2644)
+		static isOuter(defcols, columnid) {
+			const sources = Object.values(defcols['.']);
+			return (
+				columnid !== '_' &&
+				columnid !== '*' &&
+				sources.length > 0 &&
+				sources.every(columns => columns instanceof Set && !columns.has(columnid))
+			);
+		}
+
 		toJS(context, tableid, defcols) {
 			if (!this.tableid && tableid === '' && !defcols) {
 				return this.columnid !== '_'
@@ -820,6 +832,8 @@
 					return this.columnid !== '_'
 						? `${context}['${tbid}']['${this.columnid}']`
 						: `${context}['${tbid}']`;
+				} else if (Column.isOuter(defcols, this.columnid)) {
+					return `alasql.utils.outerColumn(${context},${JSON.stringify(Object.keys(defcols['.']))},'${this.columnid}')`;
 				} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
 					// Not a column of any table here, so it comes from a subquery, parameter
 					// or table without column definitions (#832)
