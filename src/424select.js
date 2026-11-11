@@ -791,6 +791,9 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
 			} else if (v instanceof yy.Column && groupColMap[groupKey]) {
 				s += "r['" + key + "']=g['" + groupColMap[groupKey].nick + "'];";
+			} else if (!(v instanceof yy.Column) && query.groupColumns[escapeq(v.toString())]) {
+				// An expression of the group key, like LOWER(c) after GROUP BY LOWER(c)
+				s += "r['" + key + "']=g['" + query.groupColumns[escapeq(v.toString())] + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('g', '') + ';';
 			}
