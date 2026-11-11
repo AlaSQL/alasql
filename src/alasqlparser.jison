@@ -88,6 +88,9 @@ NOT\s+ILIKE										return 'NOT_LIKE'
 'CASE'											return 'CASE'
 'CASCADE'										return 'CASCADE'
 'CAST'											return 'CAST'
+/* EXTRACT(field FROM value) and OVERLAPS (#2785). Only in these forms, so the words stay names */
+EXTRACT\s*\(\s*(YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|TIMEZONE_HOUR|TIMEZONE_MINUTE)\s+FROM\b	{ yytext = yytext.replace(/^EXTRACT\s*\(\s*|\s+FROM$/gi, '').toUpperCase(); return 'EXTRACT_FIELD'; }
+OVERLAPS(?=\s*\()								return 'OVERLAPS'
 'CHECK'											return 'CHECK'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
@@ -1370,6 +1373,10 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
+	| EXTRACT_FIELD Expression RPAR
+		{ $$ = new yy.FuncValue({funcid: 'EXTRACT', args: [new yy.StringValue({value: $1}), $2]}); }
+	| LPAR Expression COMMA Expression RPAR OVERLAPS LPAR Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({funcid: 'OVERLAPS', args: [$2, $4, $8, $10]}); }
 	| VALUE
 		{ $$ = new yy.DomainValueValue(); }
 	| Json
