@@ -208,7 +208,31 @@ stdfn.REGEXP_LIKE = function (a, b, c) {
 	// [[:<:]] -> \b (start of word)
 	// [[:>:]] -> \b (end of word)
 	var pattern = b.replace(/\[\[:<:\]\]/g, '\\b').replace(/\[\[:>:\]\]/g, '\\b');
+	// POSIX classes inside a bracket expression, as [[:digit:]] or [^[:alpha:]_] (#2858)
+	pattern = pattern.replace(/\[:(\w+):\]/g, function (m, name) {
+		return POSIX_CLASSES.hasOwnProperty(name) ? POSIX_CLASSES[name] : m;
+	});
+	// A leading (?i) makes the match case-insensitive, JavaScript has no inline flags
+	if (pattern.slice(0, 4) === '(?i)') {
+		pattern = pattern.slice(4);
+		c = (c || '') + 'i';
+	}
 	return (a || '').search(RegExp(pattern, c)) > -1;
+};
+
+var POSIX_CLASSES = {
+	alpha: 'a-zA-Z',
+	digit: '0-9',
+	alnum: 'a-zA-Z0-9',
+	upper: 'A-Z',
+	lower: 'a-z',
+	xdigit: '0-9A-Fa-f',
+	space: '\\s',
+	blank: ' \\t',
+	punct: '!-\\/:-@\\[-`{-~',
+	cntrl: '\\x00-\\x1f\\x7f',
+	print: '\\x20-\\x7e',
+	graph: '\\x21-\\x7e',
 };
 
 // Here we uses undefined instead of null
