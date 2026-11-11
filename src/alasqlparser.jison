@@ -208,6 +208,7 @@ DATABASE(S)?									return 'DATABASE'
 'PRINT'                                        	return 'PRINT'
 'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
+READ\s+WRITE\b                                  return 'READ_WRITE'
 'READ'		                                    return 'READ'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
@@ -235,6 +236,10 @@ SCHEMA(S)?                                      return 'DATABASE'
 
 'SEMI'                                        	return 'SEMI'
 'SEPARATOR'                                     return 'SEPARATOR'
+SET\s+TRANSACTION\b                             return 'SET_TRANSACTION'
+SET\s+SESSION\s+AUTHORIZATION\b                 return 'SET_SESSION_AUTHORIZATION'
+ISOLATION\s+LEVEL\s+(READ\s+UNCOMMITTED|READ\s+COMMITTED|REPEATABLE\s+READ|SERIALIZABLE|SNAPSHOT)\b return 'ISOLATION_LEVEL'
+DIAGNOSTICS\s+SIZE\b                            return 'DIAGNOSTICS_SIZE'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
@@ -454,6 +459,7 @@ Statement
 	| DropTrigger
 
 	| BeginTransaction
+	| SetTransaction
 	| CommitTransaction
 	| RollbackTransaction
 	| EndTransaction
@@ -2854,6 +2860,31 @@ RollbackTransaction
 BeginTransaction
 	: BEGIN TRANSACTION
 		{ $$ = new yy.BeginTransaction(); }
+	;
+
+SetTransaction
+	: SET_TRANSACTION TransactionModesList
+		{ $$ = new yy.SetTransaction({modes:$2}); }
+	| SET_SESSION_AUTHORIZATION Expression
+		{ $$ = new yy.SetTransaction({authorization:$2}); }
+	;
+
+TransactionModesList
+	: TransactionModesList COMMA TransactionMode
+		{ $1.push($3); $$ = $1; }
+	| TransactionMode
+		{ $$ = [$1]; }
+	;
+
+TransactionMode
+	: READ ONLY
+		{ $$ = 'READ ONLY'; }
+	| READ_WRITE
+		{ $$ = 'READ WRITE'; }
+	| ISOLATION_LEVEL
+		{ $$ = $1.toUpperCase().replace(/\s+/g, ' '); }
+	| DIAGNOSTICS_SIZE NUMBER
+		{ $$ = 'DIAGNOSTICS SIZE ' + $2; }
 	;
 
 /*
