@@ -1000,7 +1000,11 @@ break;
 case 386:
 
 			this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
-			if ($$[$0][0] == '"') this.$.doubleQuoted = true;
+			if ($$[$0][0] == '"') {
+				this.$.doubleQuoted = true;
+				/* In a double-quoted string "" stands for one ", as '' does in single quotes (#2622) */
+				this.$.value = this.$.value.replace(/""/g, '"');
+			}
 		
 break;
 case 387:
