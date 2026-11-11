@@ -37,6 +37,7 @@ yy.CommitTransaction.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		// alasql commit!!!
 	}
+	alasql.readOnlyTransaction = false;
 	if (cb) res = cb(res);
 	return res;
 };
@@ -55,6 +56,41 @@ yy.RollbackTransaction.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		// alasql commit!!!
 	}
+	alasql.readOnlyTransaction = false;
 	if (cb) res = cb(res);
 	return res;
 };
+
+// SET TRANSACTION and SET SESSION AUTHORIZATION (#2797). AlaSQL runs one statement
+// at a time, so the isolation level and the user are accepted and ignored. READ ONLY
+// makes INSERT, UPDATE and DELETE fail until COMMIT or ROLLBACK.
+yy.SetTransaction = function (params) {
+	return Object.assign(this, params);
+};
+yy.SetTransaction.prototype.toString = function () {
+	if (this.authorization) return 'SET SESSION AUTHORIZATION ' + this.authorization.toString();
+	return 'SET TRANSACTION ' + this.modes.join(', ');
+};
+
+yy.SetTransaction.prototype.execute = function (databaseid, params, cb) {
+	(this.modes || []).forEach(function (mode) {
+		if (mode === 'READ ONLY') alasql.readOnlyTransaction = true;
+		if (mode === 'READ WRITE') alasql.readOnlyTransaction = false;
+	});
+	var res = 1;
+	if (cb) res = cb(res);
+	return res;
+};
+
+['Insert', 'Update', 'Delete'].forEach(function (name) {
+	var compile = yy[name].prototype.compile;
+	yy[name].prototype.compile = function () {
+		var statement = compile.apply(this, arguments);
+		return Object.assign(function () {
+			if (alasql.readOnlyTransaction) {
+				throw new Error('Cannot change data in a READ ONLY transaction');
+			}
+			return statement.apply(this, arguments);
+		}, statement);
+	};
+});
