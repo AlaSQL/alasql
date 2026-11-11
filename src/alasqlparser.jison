@@ -2602,6 +2602,12 @@ ShowCreateTable
 		{ $$ = new yy.ShowCreateTable({table: $4});}
 	| SHOW CREATE TABLE Table FROM Literal
 		{ $$ = new yy.ShowCreateTable({table: $4, databaseid:$6});}
+	| SHOW CREATE VIEW Table
+		{ $$ = new yy.ShowCreateTable({table: $4, view: true});}
+	| SHOW Literal
+		{ $$ = new yy.ShowStatus({what: $2}); }
+	| SHOW Literal LIKE StringValue
+		{ $$ = new yy.ShowStatus({what: $2, like: $4}); }
 	;
 
 CreateView
