@@ -223,6 +223,7 @@ DATABASE(S)?									return 'DATABASE'
 'RESTRICT'										return 'RESTRICT'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
+RETURNING(?=\s+(\*|[a-zA-Z_\["]))(?!\s+(FROM|AS|AND|OR|WHERE|ORDER|GROUP|LIMIT|UNION|IS|IN|NOT|LIKE|BETWEEN|THEN|ELSE|END|WHEN)\b) return 'RETURNING'
 'RETURN'                                       	return 'RETURN'
 'RETURNS'                                       return 'RETURN'
 'RIGHT'                                        	return 'RIGHT'
@@ -3079,6 +3080,8 @@ MergeNotMatchedAction
 
 OutputClause
 	:
+	| RETURNING ResultColumns
+		{ $$ = {output:{columns:$2, returning:true}} }
 	| OUTPUT ResultColumns
 		{ $$ = {output:{columns:$2}} }
 	| OUTPUT ResultColumns INTO AtDollar Literal

@@ -29,7 +29,7 @@ yy.Insert.prototype.toString = function () {
 		s += this.setcolumns.map(col => col.toString()).join(', ');
 	}
 	if (this.output) {
-		s += ' OUTPUT ';
+		s += this.output.returning ? ' RETURNING ' : ' OUTPUT ';
 		s += this.output.columns.map(col => col.toString()).join(', ');
 		if (this.output.intovar) {
 			s += ' INTO ' + this.output.method + this.output.intovar;
