@@ -128,6 +128,26 @@ var doubleq = (utils.doubleq = function (s) {
 });
 
 /**
+  The right side of x IN name: the column of that name when the row has it,
+  else the first column of the table of that name, as SQLite reads x IN t1 (#2761)
+  */
+utils.inTableOrColumn = function (query, name, columnValue) {
+	var value;
+	try {
+		value = columnValue();
+	} catch (e) {
+		// No source to read the column from, as in SELECT 1 IN t1
+	}
+	if (value !== undefined) return value;
+	var table = query && query.database && query.database.tables[name];
+	if (!table || table.view) return value;
+	var columnid = table.columns && table.columns.length ? table.columns[0].columnid : undefined;
+	return table.data.map(function (row) {
+		return row[columnid === undefined ? Object.keys(row)[0] : columnid];
+	});
+};
+
+/**
   Replace single quote with escaped single quote
   @param {string} s Source string
   @return {string} Replaced string
