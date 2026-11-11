@@ -599,9 +599,9 @@ var preIndex = function (query) {
 					scope[source.alias || source.tableid] = dataw;
 
 					// Check if it apply to where function
-					if (source.srcwherefn(scope, query.params, alasql)) {
+					if (source.srcwherefn.call(query, scope, query.params, alasql)) {
 						// Create index entry for each address
-						var addr = source.onrightfn(scope, query.params, alasql);
+						var addr = source.onrightfn.call(query, scope, query.params, alasql);
 						var group = source.ix[addr];
 						if (!group) {
 							group = source.ix[addr] = [];
@@ -673,7 +673,7 @@ var preIndex = function (query) {
 					scope = {};
 					source.data = source.data.filter(function (r) {
 						scope[source.alias] = r;
-						return source.srcwherefn(scope, query.params, alasql);
+						return source.srcwherefn.call(query, scope, query.params, alasql);
 					});
 				} else {
 					source.data = [];
@@ -687,7 +687,7 @@ var preIndex = function (query) {
 
 				source.data = source.data.filter(function (r) {
 					scope[source.alias] = r;
-					return source.srcwherefn(scope, query.params, alasql);
+					return source.srcwherefn.call(query, scope, query.params, alasql);
 				});
 
 				scope = {};
@@ -702,7 +702,7 @@ var preIndex = function (query) {
 				) {
 					if (source.getfn && !source.dontcache) source.data[i] = dataw;
 					scope[source.alias] = dataw;
-					if (source.srcwherefn(scope, query.params, alasql)) res.push(dataw);
+					if (source.srcwherefn.call(query, scope, query.params, alasql)) res.push(dataw);
 					i++;
 				}
 				source.data = res;
