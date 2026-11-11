@@ -721,6 +721,11 @@
 
 			const rightJS = this.right.toJS(context, tableid, defcols);
 
+			// -NULL and +NULL are NULL, not NaN, so COUNT and AVG skip them (#2767)
+			if ((this.op === '-' || this.op === '+') && !(this.right instanceof NumValue)) {
+				return `((y=${rightJS})==null?undefined:${this.op}y)`;
+			}
+
 			if (toJsOpMapping.hasOwnProperty(this.op)) {
 				return `(${toJsOpMapping[this.op]}(${rightJS}))`;
 			}
