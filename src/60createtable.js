@@ -12,7 +12,7 @@ yy.ColumnDef = function (params) {
 	return Object.assign(this, params);
 };
 yy.ColumnDef.prototype.toString = function () {
-	let s = this.columnid;
+	let s = yy.Column.wrapId(this.columnid);
 	if (this.dbtypeid) {
 		s += ' ' + this.dbtypeid;
 	}
