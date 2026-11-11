@@ -144,6 +144,19 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		);
 	}
 
+	// CREATE TABLE new AS SELECT: the columns and rows of the query (#2824)
+	if (this.asselect) {
+		var asstatement = this.asselect.compile(this.table.databaseid || databaseid);
+		asstatement.query.modifier = 'RECORDSET';
+		var asresult = asstatement(params);
+		columns = asresult.columns.map(function (col) {
+			return {columnid: col.columnid, dbtypeid: col.dbtypeid || ''};
+		});
+		columnids = columns.map(function (col) {
+			return col.columnid;
+		});
+	}
+
 	var table = (db.tables[tableid] = new alasql.Table()); // TODO Can use special object?
 	// The schema changed, so statements in the statement cache must be compiled again
 	schemaChanged(db);
@@ -786,6 +799,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}
 		}
 	};
+
+	if (asresult) {
+		table.data = asresult.data.map(function (row) {
+			return Object.assign({}, row);
+		});
+	}
 
 	var res;
 
