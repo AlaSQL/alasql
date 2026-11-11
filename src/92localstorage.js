@@ -65,7 +65,14 @@ LS.storeTable = function (databaseid, tableid) {
 LS.restoreTable = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var tbl = LS.get(db.lsdbid + '.' + tableid);
-	var table = new alasql.Table();
+	// If this table was already created in this session, keep its instance instead of a
+	// plain new one: CREATE TABLE put table.insert() (and the PRIMARY KEY / UNIQUE checks
+	// it runs) on it, and storage only ever keeps columns/data/identities, so replacing it
+	// here would silently drop uniqueness checking on every reload (#1148)
+	var table = db.tables[tableid];
+	if (!(table instanceof alasql.Table)) {
+		table = new alasql.Table();
+	}
 	for (var f in tbl) {
 		table[f] = tbl[f];
 	}

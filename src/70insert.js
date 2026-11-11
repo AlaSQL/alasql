@@ -75,6 +75,19 @@ yy.Insert.prototype.compile = function (databaseid) {
 		throw "Table '" + tableid + "' could not be found";
 	}
 
+	// The engine's intoTable() just appends rows to storage, it does not know about PRIMARY
+	// KEY / UNIQUE, so a table with either of those has to go through table.insert() below,
+	// which does check them (#1148). Every table now has table.insert() (even engine-backed
+	// ones), so this also decides whether the VALUES below call it or just build up the row
+	// array for the engine's own fast insert.
+	var hasUniqueConstraint = !!table.pk || !!(table.uk && table.uk.length);
+	var useEngineFastInsert =
+		!!db.engineid &&
+		!!alasql.engines[db.engineid].intoTable &&
+		alasql.options.autocommit &&
+		!hasUniqueConstraint;
+	var useInsertMethod = !!table.insert && !useEngineFastInsert;
+
 	// Helper function to create error message for value/column count mismatch
 	var createValueCountMismatchError = function (valueCount, columnCount, columnType) {
 		return (
@@ -235,7 +248,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				s += 'db.objects[a.$id]=a;';
 			}
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
-			if (db.tables[tableid].insert) {
+			if (useInsertMethod) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
 				s +=
 					"var inserted=db.tables['" +
@@ -266,7 +279,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 		s33 = s3 + s;
 
-		if (db.tables[tableid].insert) {
+		if (useInsertMethod) {
 			//			s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(r);';
 		} else {
 			s +=
@@ -302,7 +315,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			s += 'output.push(outputRow);';
 			s += '}';
 			s += 'return output;';
-		} else if (db.tables[tableid].insert) {
+		} else if (useInsertMethod) {
 			if (db.tables[tableid].isclass) {
 				s += 'return a.$id;';
 			} else {
@@ -424,7 +437,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	//    console.log(1,s);
 	//    	console.log(s33);
 
-	if (db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
+	if (useEngineFastInsert) {
 		var statement = function (params, cb) {
 			var aa = new Function('db,params,alasql', 'var y;' + s33 + 'return aa;')(db, params, alasql);
 			//			console.log(s33);
