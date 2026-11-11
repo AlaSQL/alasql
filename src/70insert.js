@@ -7,6 +7,25 @@
 */
 
 /* global yy alasql*/
+
+// INSERT INTO t SELECT matches columns by name. When no selected name is a target
+// column, it matches them by position, as SQL does, in place of inserting empty rows (#2760)
+function matchInsertColumnsByPosition(rows, query, targetColumns) {
+	if (!rows.length || !targetColumns.length) return rows;
+	var names =
+		query && query.columns && query.columns.length
+			? query.columns.map(col => col.columnid)
+			: Object.keys(rows[0]);
+	if (names.some(name => targetColumns.includes(name))) return rows;
+	return rows.map(function (row) {
+		var r = {};
+		for (var i = 0; i < names.length && i < targetColumns.length; i++) {
+			r[targetColumns[i]] = row[names[i]];
+		}
+		return r;
+	});
+}
+
 yy.Insert = function (params) {
 	return Object.assign(this, params);
 };
@@ -346,8 +365,15 @@ yy.Insert.prototype.compile = function (databaseid) {
 				table.defaultfns +
 				'};for(var key in defaults){if(!(key in r)){r[key]=defaults[key]}}return r';
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
+			var targetColumns = self.columns
+				? self.columns.map(col => col.columnid)
+				: table.columns.map(col => col.columnid);
 			var insertfn = function (db, params, alasql) {
-				var res = selectfn(params).data;
+				var res = matchInsertColumnsByPosition(
+					selectfn(params).data,
+					selectfn.query,
+					targetColumns
+				);
 				var insertedRows = [];
 				if (db.tables[tableid].insert) {
 					// If insert() function exists (issue #92)
