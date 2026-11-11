@@ -106,6 +106,7 @@ yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 	if (db.tables[tableid]) {
 		db.tables[tableid].data = [];
+		rebuildIndexes(db.tables[tableid], params);
 	} else {
 		throw new Error('Cannot truncate table becaues it does not exist');
 	}
