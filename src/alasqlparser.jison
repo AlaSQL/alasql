@@ -1494,6 +1494,14 @@ AggrValue
 		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $4, distinct: true, order: $5, separator: $6}); }
 	;
 
+SubstringFromClause
+	: { $$ = undefined; }
+	| FROM Expression
+		{ $$ = [$2]; }
+	| FROM Expression FOR Expression
+		{ $$ = [$2, $4]; }
+	;
+
 OverClause
 	: { $$ = undefined; }
 	| OVER LPAR OverPartitionClause? OverOrderByClause? RPAR
@@ -1544,17 +1552,24 @@ Aggregator
 	;
 
 FuncValue
-	: Literal LPAR (DISTINCT|ALL)? ExprList RPAR OverClause
+	: Literal LPAR (DISTINCT|ALL)? ExprList SubstringFromClause RPAR OverClause
 		{
 			var funcid = $1;
 			var exprlist = $4;
+			if ($5) {
+				// SUBSTRING(x FROM start FOR length) of SQL-92 is SUBSTRING(x, start, length) (#2787)
+				if ($3 || exprlist.length != 1 || !/^substr(ing)?$/i.test(funcid)) {
+					throw new SyntaxError('Unexpected FROM in ' + funcid + '()');
+				}
+				exprlist = exprlist.concat($5);
+			}
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
-					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
+					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $7});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
-                      funcid: funcid, expression: exprlist[0], args: exprlist, distinct:($3=='DISTINCT'), over: $6 });
+                      funcid: funcid, expression: exprlist[0], args: exprlist, distinct:($3=='DISTINCT'), over: $7 });
 		    } else {
-			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
+			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $7});
 			};
 		}
 	| Literal LPAR RPAR OverClause
