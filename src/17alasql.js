@@ -292,6 +292,9 @@ function runStatement(statement, params, cb, scope) {
 		: cb;
 	try {
 		return statement(params, done, scope);
+	} catch (err) {
+		finish();
+		throw err;
 	} finally {
 		if (!cb) {
 			finish();
