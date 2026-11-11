@@ -955,7 +955,7 @@ FromTable
 	: LPAR Select RPAR FromTableAlias?
 		{ $$ = $2; $$.as = $4 || 'default'; }
 	| Json AS? Literal?
-		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
+		{ $$ = new yy.Json({value:$1, as:$3}); }
 	| Table FromTableAlias?
 		{ $$ = $1; if($2) $1.as = $2; }
 	| Table NOT INDEXED
