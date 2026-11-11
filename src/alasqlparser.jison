@@ -134,6 +134,8 @@ DATABASE(S)?									return 'DATABASE'
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
 'FETCH'											return 'FETCH'
+/* FILTER (WHERE ...) after an aggregate, read as one token so FILTER stays a name (#2828) */
+FILTER\s*\(\s*WHERE\b							return 'FILTER_WHERE'
 'FIRST'											return 'FIRST'
 'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
@@ -1488,6 +1490,22 @@ AggrValue
 	| Aggregator LPAR ALL Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
 		 over:$6}); }
+	/*
+	 AGG(x) FILTER (WHERE c) is AGG(CASE WHEN c THEN x END), as aggregates skip NULL (#2828).
+	 COUNT(*) counts CASE WHEN c THEN 1 END.
+	*/
+	| Aggregator LPAR ExprList RPAR FILTER_WHERE Expression RPAR
+		{
+			var fexpr = $3.pop();
+			if (fexpr instanceof yy.Column && fexpr.columnid == '*') fexpr = new yy.NumValue({value:1});
+			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(),
+				expression: new yy.CaseValue({whens: [{when: $6, then: fexpr}]})});
+		}
+	| Aggregator LPAR DISTINCT Expression RPAR FILTER_WHERE Expression RPAR
+		{
+			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), distinct: true,
+				expression: new yy.CaseValue({whens: [{when: $7, then: $4}]})});
+		}
 	| GROUP_CONCAT LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
 		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, order: $4, separator: $5}); }
 	| GROUP_CONCAT LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
