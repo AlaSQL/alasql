@@ -235,6 +235,9 @@ SCHEMA(S)?                                      return 'DATABASE'
 
 'SEMI'                                        	return 'SEMI'
 'SEPARATOR'                                     return 'SEPARATOR'
+/* MySQL system variables (#2862): SET GLOBAL x = 1, SET SESSION x = 1, SET NAMES utf8 */
+SET\s+(GLOBAL|SESSION|LOCAL|PERSIST)\s+(?=[a-zA-Z_]\w*\s*\=)	return 'SET_SYSVAR'
+SET\s+NAMES\b									return 'SET_NAMES'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
@@ -325,6 +328,7 @@ SETS                                        	return 'SET'
 
 '~'												return 'TILDA'
 
+'@@'((GLOBAL|SESSION|LOCAL)'.')?[a-zA-Z_]\w*		{ yytext = yytext.replace(/^@@((GLOBAL|SESSION|LOCAL)\.)?/i, ''); return 'SYSVAR'; }
 '@'												return 'AT'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
@@ -1628,6 +1632,8 @@ NullValue
 VarValue
 	: AT Literal
 		{ $$ = new yy.VarValue({variable:$2}); }
+	| SYSVAR
+		{ $$ = new yy.VarValue({variable:$1.toLowerCase(), system:true}); }
 	;
 
 ExistsValue
@@ -2809,6 +2815,14 @@ SetVariable
 		{ $$ = new yy.SetVariable({variable:$3, expression:$5, method:$2});}
 	| SET AtDollar Literal SetPropsList EQ Expression
 		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6, method:$2});}
+	| SET SYSVAR EQ Expression
+		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), expression:$4, method:'@@'});}
+	| SET_SYSVAR Literal EQ Expression
+		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), expression:$4, method:'@@'});}
+	| SET_NAMES Literal
+		{ $$ = new yy.SetVariable({variable:'names', expression:new yy.StringValue({value:$2}), method:'@@'});}
+	| SET_NAMES StringValue
+		{ $$ = new yy.SetVariable({variable:'names', expression:$2, method:'@@'});}
 	;
 
 AtDollar
