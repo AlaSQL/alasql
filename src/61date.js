@@ -133,6 +133,36 @@ stdfn.YEAR = function (d) {
 	return d.getFullYear();
 };
 
+// EXTRACT(field FROM value) (#2785)
+stdfn.EXTRACT = function (field, value) {
+	if (value == null) return undefined;
+	var d = newDate(value);
+	switch (field) {
+		case 'SECOND':
+			return d.getSeconds() + d.getMilliseconds() / 1000;
+		case 'TIMEZONE_HOUR':
+			return Math.trunc(-d.getTimezoneOffset() / 60);
+		case 'TIMEZONE_MINUTE':
+			return -d.getTimezoneOffset() % 60;
+		default:
+			return stdfn[field](d);
+	}
+};
+
+// (start1, end1) OVERLAPS (start2, end2), as SQL-92 defines it (#2785)
+stdfn.OVERLAPS = function (s1, t1, s2, t2) {
+	var v = [s1, t1, s2, t2].map(x => (x instanceof Date ? x.getTime() : x));
+	if (v.some(x => x == null)) return undefined;
+	// Each period runs from its earlier end to its later end
+	var a = v[0] <= v[1] ? [v[0], v[1]] : [v[1], v[0]];
+	var b = v[2] <= v[3] ? [v[2], v[3]] : [v[3], v[2]];
+	return (
+		(a[0] > b[0] && !(a[0] >= b[1] && a[1] >= b[1])) ||
+		(b[0] > a[0] && !(b[0] >= a[1] && b[1] >= a[1])) ||
+		a[0] === b[0]
+	);
+};
+
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
 	quarter: (1000 * 3600 * 24 * 365) / 4,
