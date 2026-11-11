@@ -104,6 +104,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				}
 			}
 			table.data = newtable;
+			rebuildIndexes(table, params);
 
 			// AFTER DELETE triggers - call for each deleted row
 			// Note: Triggers are called once per row per trigger (row-level triggers)

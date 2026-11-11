@@ -136,6 +136,7 @@ yy.Update.prototype.compile = function (databaseid) {
 				numrows++;
 			}
 		}
+		if (numrows) rebuildIndexes(table, params);
 
 		if (alasql.options.autocommit && db.engineid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, tableid);

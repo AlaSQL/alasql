@@ -6,6 +6,48 @@
 //
 */
 
+// The key function of a regular index (INDEX, CREATE INDEX), compiled once and not for every row (#2880)
+var indexKeyFns = {};
+function indexKeyFn(indexdef) {
+	return (indexKeyFns[indexdef.rightfns] =
+		indexKeyFns[indexdef.rightfns] ||
+		new Function('r,params,alasql', 'return ' + indexdef.rightfns));
+}
+
+function addToIndexes(table, r, params) {
+	for (var indexid in table.inddefs) {
+		var indexdef = table.inddefs[indexid];
+		var ix = table.indices[indexdef.hh];
+		if (!ix) continue;
+		var addr = indexKeyFn(indexdef)(r, params, alasql);
+		(ix[addr] = ix[addr] || []).push(r);
+	}
+}
+
+function removeFromIndexes(table, r, params) {
+	for (var indexid in table.inddefs) {
+		var indexdef = table.inddefs[indexid];
+		var ix = table.indices[indexdef.hh];
+		if (!ix) continue;
+		var addr = indexKeyFn(indexdef)(r, params, alasql);
+		var pos = ix[addr] ? ix[addr].indexOf(r) : -1;
+		if (pos > -1) ix[addr].splice(pos, 1);
+		if (ix[addr] && !ix[addr].length) delete ix[addr];
+	}
+}
+
+// Fill the regular indexes again from the rows, after DELETE, UPDATE or TRUNCATE (#2880)
+function rebuildIndexes(table, params) {
+	if (!table.inddefs || !Object.keys(table.inddefs).length) return;
+	for (var indexid in table.inddefs) {
+		var hh = table.inddefs[indexid].hh;
+		if (table.indices[hh]) table.indices[hh] = {};
+	}
+	table.data.forEach(function (r) {
+		addToIndexes(table, r, params);
+	});
+}
+
 yy.CreateIndex = function (params) {
 	return Object.assign(this, params);
 };
