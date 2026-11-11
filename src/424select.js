@@ -52,6 +52,7 @@ function compileSelectStar(query, aliases, joinstar) {
 		if (columns && columns.length > 0) {
 			columns.forEach(function (tcol) {
 				const escapedColumnId = escapeq(tcol.columnid);
+				var repeated = false;
 				if (joinstar && alasql.options.joinstar == 'underscore') {
 					ss.push(
 						"'" + alias + '_' + escapedColumnId + "':p['" + alias + "']['" + escapedColumnId + "']"
@@ -83,10 +84,13 @@ function compileSelectStar(query, aliases, joinstar) {
 							value + ' !== undefined ? ' + value + ' : ' + columnIds[tcol.columnid].value;
 						ss[columnIds[tcol.columnid].id] = columnIds[tcol.columnid].key + newValue;
 						columnIds[tcol.columnid].value = newValue;
+						// The row holds this column once, so list it once (#2636)
+						repeated = true;
 					}
 				}
 
 				query.selectColumns[escapedColumnId] = true;
+				if (repeated) return;
 
 				//			console.log('ok',tcol);
 
