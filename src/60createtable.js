@@ -156,6 +156,22 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	var uss = []; // ON UPDATE function components
 	if (columns) {
 		columns.forEach(function (col) {
+			// A column of a domain type gets the domain's type, default and checks (#2782)
+			var domain = db.domains && db.domains[col.dbtypeid];
+			if (domain) {
+				col = Object.assign(new yy.ColumnDef(), col, domain.type, {
+					default: col.default || domain.default,
+					notnull: col.notnull || domain.notnull,
+				});
+				domain.checks.forEach(function (checkfn) {
+					table.checks.push({
+						id: domain.domainid,
+						fn: function (r, params) {
+							return checkfn(r[col.columnid], params, alasql);
+						},
+					});
+				});
+			}
 			var dbtypeid = col.dbtypeid;
 			if (!alasql.fn[dbtypeid]) {
 				dbtypeid = dbtypeid.toUpperCase();
@@ -793,6 +809,64 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		res = 1;
 	}
 
+	if (cb) res = cb(res);
+	return res;
+};
+
+// CREATE DOMAIN name [AS] type [DEFAULT ...] [NOT NULL] [CHECK (...)] ... (#2782)
+yy.CreateDomain = function (params) {
+	return Object.assign(this, params);
+};
+yy.CreateDomain.prototype.toString = function () {
+	var type = this.type.dbtypeid;
+	if (this.type.dbsize) {
+		type +=
+			'(' + this.type.dbsize + (this.type.dbprecision ? ',' + this.type.dbprecision : '') + ')';
+	}
+	var s = 'CREATE DOMAIN ' + this.domainid + ' AS ' + type;
+	this.constraints.forEach(function (con) {
+		if (con.default) s += ' DEFAULT (' + con.default.toString() + ')';
+		if (con.notnull) s += ' NOT NULL';
+		if (con.check) s += ' CHECK (' + con.check.expression.toString() + ')';
+	});
+	return s;
+};
+yy.CreateDomain.prototype.execute = function (databaseid, params, cb) {
+	var db = alasql.databases[databaseid];
+	db.domains = db.domains || {};
+	if (db.domains[this.domainid]) {
+		throw new Error('Domain "' + this.domainid + '" already exists');
+	}
+	var domain = {domainid: this.domainid, type: this.type, checks: []};
+	this.constraints.forEach(function (con) {
+		if (con.default) domain.default = con.default;
+		if (con.notnull) domain.notnull = true;
+		if (con.check) {
+			// VALUE in the check is the value of the column
+			domain.checks.push(
+				new Function('v,params,alasql', 'var y;return ' + con.check.expression.toJS('v', ''))
+			);
+		}
+	});
+	db.domains[this.domainid] = domain;
+	var res = 1;
+	if (cb) res = cb(res);
+	return res;
+};
+
+yy.DropDomain = function (params) {
+	return Object.assign(this, params);
+};
+yy.DropDomain.prototype.toString = function () {
+	return 'DROP DOMAIN ' + this.domainid;
+};
+yy.DropDomain.prototype.execute = function (databaseid, params, cb) {
+	var db = alasql.databases[databaseid];
+	if (!db.domains || !db.domains[this.domainid]) {
+		throw new Error('Domain "' + this.domainid + '" does not exist');
+	}
+	delete db.domains[this.domainid];
+	var res = 1;
 	if (cb) res = cb(res);
 	return res;
 };
