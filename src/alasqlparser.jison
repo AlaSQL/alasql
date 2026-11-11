@@ -1614,7 +1614,11 @@ StringValue
 	: AnyString
 		{
 			$$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
-			if ($1[0] == '"') $$.doubleQuoted = true;
+			if ($1[0] == '"') {
+				$$.doubleQuoted = true;
+				/* In a double-quoted string "" stands for one ", as '' does in single quotes (#2622) */
+				$$.value = $$.value.replace(/""/g, '"');
+			}
 		}
 	| NSTRING
 		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
