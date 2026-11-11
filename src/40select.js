@@ -601,7 +601,7 @@ yy.Select = class Select {
 
 		// Helper function to detect if a subquery might be correlated
 		// A subquery is correlated if it references tables not in its own FROM clause
-		const isCorrelated = (subquery, outerQuery) => {
+		const isCorrelated = (subquery, defcols) => {
 			if (!subquery.from) return false;
 
 			// Get table names from subquery's FROM clause
@@ -618,6 +618,10 @@ yy.Select = class Select {
 				// Check Column nodes for tableid using instanceof
 				if (node instanceof yy.Column) {
 					if (node.tableid && !subqueryTables.has(node.tableid)) {
+						return true;
+					}
+					// An unqualified column that none of the subquery's tables has (#2644)
+					if (!node.tableid && defcols && yy.Column.isOuter(defcols, node.columnid)) {
 						return true;
 					}
 				}
@@ -643,7 +647,7 @@ yy.Select = class Select {
 			nq.query.modifier = 'RECORDSET';
 
 			// Mark as correlated if it references external tables
-			nq.query.isCorrelated = isCorrelated(q, query);
+			nq.query.isCorrelated = isCorrelated(q, nq.query.defcols);
 
 			// If the nested query has its own queries, ensure they're compiled too
 			// (e.g. IN/ALL/ANY subqueries that captured a nested queries list)

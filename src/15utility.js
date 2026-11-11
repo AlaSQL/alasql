@@ -675,6 +675,22 @@ var fileExists = (utils.fileExists = function (path, cb) {
 });
 
 /**
+  Value of an unqualified column from the nearest enclosing query that has it (#2644)
+  @param {object} scope Current row, with the outer query rows under their aliases
+  @param {string[]} own Aliases of the query's own sources
+  @param {string} columnid Column name
+  */
+utils.outerColumn = function (scope, own, columnid) {
+	var aliases = Object.keys(scope).reverse();
+	for (var i = 0; i < aliases.length; i++) {
+		var row = scope[aliases[i]];
+		if (own.indexOf(aliases[i]) === -1 && row && typeof row === 'object' && columnid in row) {
+			return row[columnid];
+		}
+	}
+};
+
+/**
   Save text file from anywhere
   @param {string} path File path
   @param {array} data Data object
