@@ -89,6 +89,9 @@ NOT\s+ILIKE										return 'NOT_LIKE'
 'CASCADE'										return 'CASCADE'
 'CAST'											return 'CAST'
 'CHECK'											return 'CHECK'
+/* Prepared statements (#2863). Only in these forms, so the words stay names */
+PREPARE(?=\s+[a-zA-Z_]\w*\s+FROM\b)				return 'PREPARE'
+DEALLOCATE\s+PREPARE\b							return 'DEALLOCATE_PREPARE'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
@@ -440,6 +443,7 @@ Statement
 	| Merge
 	| Reindex
 	| RenameTable
+	| Prepare
 	| Select
 	| ParenthesizedSelect
 	| ShowCreateTable
@@ -3302,6 +3306,27 @@ Query
 Call
 	: CALL FuncValue
 		{ $$ = new yy.ExpressionStatement({expression:$2}); }
+	| CALL Literal
+		{ $$ = new yy.Prepared({kind: 'EXECUTE', name: $2, using: []}); }
+	| CALL Literal USING PreparedVarsList
+		{ $$ = new yy.Prepared({kind: 'EXECUTE', name: $2, using: $4}); }
+	;
+
+/* PREPARE name FROM 'text', EXECUTE name [USING @a, ...] and DEALLOCATE PREPARE name (#2863) */
+Prepare
+	: PREPARE Literal FROM StringValue
+		{ $$ = new yy.Prepared({kind: 'PREPARE', name: $2, sql: $4.value}); }
+	| PREPARE Literal FROM AT Literal
+		{ $$ = new yy.Prepared({kind: 'PREPARE', name: $2, sqlvar: $5}); }
+	| DEALLOCATE_PREPARE Literal
+		{ $$ = new yy.Prepared({kind: 'DEALLOCATE PREPARE', name: $2}); }
+	;
+
+PreparedVarsList
+	: AT Literal
+		{ $$ = [$2]; }
+	| PreparedVarsList COMMA AT Literal
+		{ $$ = $1; $1.push($4); }
 	;
 
 CreateTrigger
