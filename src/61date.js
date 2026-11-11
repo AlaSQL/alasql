@@ -17,7 +17,8 @@ stdfn.EXTEND = alasql.utils.extend;
 
 stdfn.CHAR = String.fromCharCode.bind(String);
 stdfn.ASCII = function (a) {
-	return a.charCodeAt(0);
+	if (a == null) return undefined;
+	return (typeof a === 'number' ? String(a) : a).charCodeAt(0);
 };
 
 /**
