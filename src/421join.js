@@ -171,7 +171,11 @@ yy.Select.prototype.compileJoins = function (query) {
 			} else {
 				s += 'null, null, ';
 			}
-			s += 'cb, idx, query); return res';
+			s += 'cb, idx, query';
+			(args || []).slice(2).forEach(function (arg) {
+				s += ', ' + arg.toJS('query.oldscope');
+			});
+			s += '); return res';
 			source.datafn = new Function('query, params, cb, idx, alasql', s);
 
 			query.aliases[source.alias] = {type: 'funcvalue'};
