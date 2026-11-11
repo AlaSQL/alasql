@@ -26,6 +26,15 @@ function subqueryDatafn(source) {
 	};
 }
 
+// Read a view as rows of objects, like a FROM subquery, so a global
+// options.modifier such as MATRIX does not change its rows (#2772)
+function viewRows(select, params) {
+	if (!select.query) return select(params);
+	if (typeof select.query.modifier === 'undefined') select.query.modifier = 'RECORDSET';
+	const res = select(params);
+	return select.query.modifier === 'RECORDSET' ? res.data : res;
+}
+
 yy.Select.prototype.compileFrom = function (query) {
 	const self = this;
 	query.sources = [];
@@ -98,7 +107,7 @@ yy.Select.prototype.compileFrom = function (query) {
 						table.select = table.viewSelect.compile(table.viewDatabaseid);
 						table.selectSchemaVersion = alasql.schemaVersion;
 					}
-					let res = table.select(params);
+					let res = viewRows(table.select, params);
 					if (cb) res = cb(res, idx, query);
 					return res;
 				};

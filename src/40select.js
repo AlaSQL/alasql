@@ -789,7 +789,6 @@ function modify(query, res) {
 			return ar;
 
 		case 'MATRIX':
-			if (res.length === 0) return undefined;
 			return res.map(row => columns.map(col => row[col.columnid]));
 
 		case 'INDEX':
