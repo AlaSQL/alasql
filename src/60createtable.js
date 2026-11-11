@@ -36,6 +36,20 @@ yy.ColumnDef.prototype.toString = function () {
 	return s;
 };
 
+// Whether the referenced table has a row with the key values in rr. Without a primary key
+// the named columns are searched, as SQL-92 allows a foreign key to a UNIQUE column (#2779)
+function foreignKeyExists(fktable, rr) {
+	if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
+		return !!fktable.uniqs[fktable.pk.hh][fktable.pk.onrightfn(rr)];
+	}
+	var columnids = Object.keys(rr);
+	return fktable.data.some(function (row) {
+		return columnids.every(function (columnid) {
+			return row[columnid] != null && String(row[columnid]) === String(rr[columnid]);
+		});
+	});
+}
+
 yy.CreateTable = function (params) {
 	return Object.assign(this, params);
 };
@@ -241,8 +255,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 						rr[fkcolumnid] = val;
 						// Get the table when checking, as storage engines can replace the table object
 						var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
-						var addr = fktable.pk.onrightfn(rr);
-						if (!fktable.uniqs[fktable.pk.hh][addr]) {
+						if (!foreignKeyExists(fktable, rr)) {
 							throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
 						}
 					}
@@ -330,6 +343,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}
 			var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 			if (typeof fk.fkcolumns === 'undefined') {
+				if (!fktable.pk) {
+					throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
+				}
 				//Composite foreign keys
 				fk.fkcolumns = fktable.pk.columns;
 			}
@@ -371,9 +387,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
-				var addr = fktable.pk.onrightfn(rr);
-
-				if (!fktable.uniqs[fktable.pk.hh][addr]) {
+				if (!foreignKeyExists(fktable, rr)) {
 					var keyValues = fk.columns.map(function (col) {
 						return r[col];
 					});
