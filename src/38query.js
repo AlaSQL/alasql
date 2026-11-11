@@ -349,7 +349,7 @@ function queryfn3(query) {
 			}
 		}
 
-		query.data = arrayExceptDeep(query.data, ud);
+		query.data = arrayExceptDeep(query.data, ud, query.all);
 	} else if (query.intersectfn) {
 		if (query.corresponding) {
 			if (query.intersectfn.query && !query.intersectfn.query.modifier)
@@ -371,7 +371,7 @@ function queryfn3(query) {
 			}
 		}
 
-		query.data = arrayIntersectDeep(query.data, ud);
+		query.data = arrayIntersectDeep(query.data, ud, query.all);
 	}
 
 	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
