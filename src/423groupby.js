@@ -11,17 +11,19 @@
  * @param {Object} col - Column with aggregatorid and funcid
  * @returns {string} - Comma-separated parameter string for aggregator call
  */
-function getGroupConcatParams(col) {
+function getGroupConcatParams(col, tableid, defcols) {
 	if (!col.funcid || col.funcid.toUpperCase() !== 'GROUP_CONCAT') {
 		return '';
 	}
 	const separator = col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
-	// Extract direction from order expressions (MySQL GROUP_CONCAT orders by the value itself)
-	const orderDir =
-		col.order && col.order.length > 0 && col.order[0].direction
-			? JSON.stringify(col.order[0].direction)
-			: 'undefined';
-	return `,${separator},${orderDir}`;
+	if (!col.order || col.order.length === 0) {
+		return `,${separator},undefined`;
+	}
+	// The ORDER BY items are evaluated for each row and passed as its sort keys (#2658)
+	const orderDir = JSON.stringify(col.order[0].direction || 'ASC');
+	const keys = col.order.map(o => o.expression.toJS('p', tableid, defcols)).join(',');
+	const directions = JSON.stringify(col.order.map(o => o.direction || 'ASC'));
+	return `,${separator},${orderDir},[${keys}],${directions}`;
 }
 
 /**
@@ -176,7 +178,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
 						query.aggrKeys.push(col);
-						const extraParams = getGroupConcatParams(col);
+						const extraParams = getGroupConcatParams(col, tableid, defcols);
 						// Support multiple arguments for user-defined aggregates
 						if (col.args && col.args.length > 1) {
 							// Multiple arguments - pass all of them
@@ -455,7 +457,7 @@ yy.Select.prototype.compileGroup = function (query) {
 							g['${colas}']=${col.expression.toJS('g', -1)};
 							${post}`;
 					} else if (col.aggregatorid === 'REDUCE') {
-						const extraParams = getGroupConcatParams(col);
+						const extraParams = getGroupConcatParams(col, tableid, defcols);
 						// Support multiple arguments for user-defined aggregates
 						if (col.args && col.args.length > 1) {
 							// Multiple arguments - pass all of them
