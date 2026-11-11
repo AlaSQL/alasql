@@ -631,7 +631,14 @@ yy.Select = class Select {
 				return false;
 			};
 
-			return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
+			return (
+				referencesExternal(subquery.where) ||
+				referencesExternal(subquery.columns) ||
+				// A branch of UNION, EXCEPT or INTERSECT can read the outer row too (#2856)
+				['union', 'unionall', 'except', 'intersect'].some(
+					key => subquery[key] && isCorrelated(subquery[key], outerQuery)
+				)
+			);
 		};
 
 		// Compile each subquery. Nested scalar subqueries such as

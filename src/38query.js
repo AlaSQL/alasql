@@ -277,11 +277,11 @@ function queryfn3(query) {
 		if (query.corresponding) {
 			if (query.unionallfn.query && !query.unionallfn.query.modifier)
 				query.unionallfn.query.modifier = undefined;
-			ud = query.unionallfn(query.params);
+			ud = query.unionallfn(query.params, undefined, query.oldscope);
 		} else {
 			if (query.unionallfn.query && !query.unionallfn.query.modifier)
 				query.unionallfn.query.modifier = 'RECORDSET';
-			nd = query.unionallfn(query.params);
+			nd = query.unionallfn(query.params, undefined, query.oldscope);
 			ud = [];
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
@@ -305,11 +305,11 @@ function queryfn3(query) {
 		if (query.corresponding) {
 			if (query.unionfn.query && !query.unionfn.query.modifier)
 				query.unionfn.query.modifier = 'ARRAY';
-			ud = query.unionfn(query.params);
+			ud = query.unionfn(query.params, undefined, query.oldscope);
 		} else {
 			if (query.unionfn.query && !query.unionfn.query.modifier)
 				query.unionfn.query.modifier = 'RECORDSET';
-			nd = query.unionfn(query.params);
+			nd = query.unionfn(query.params, undefined, query.oldscope);
 			ud = [];
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
@@ -334,11 +334,11 @@ function queryfn3(query) {
 		if (query.corresponding) {
 			if (query.exceptfn.query && !query.exceptfn.query.modifier)
 				query.exceptfn.query.modifier = 'ARRAY';
-			var ud = query.exceptfn(query.params);
+			var ud = query.exceptfn(query.params, undefined, query.oldscope);
 		} else {
 			if (query.exceptfn.query && !query.exceptfn.query.modifier)
 				query.exceptfn.query.modifier = 'RECORDSET';
-			var nd = query.exceptfn(query.params);
+			var nd = query.exceptfn(query.params, undefined, query.oldscope);
 			var ud = [];
 			for (var i = 0, ilen = nd.data.length; i < ilen; i++) {
 				var r = {};
@@ -354,11 +354,11 @@ function queryfn3(query) {
 		if (query.corresponding) {
 			if (query.intersectfn.query && !query.intersectfn.query.modifier)
 				query.intersectfn.query.modifier = undefined;
-			ud = query.intersectfn(query.params);
+			ud = query.intersectfn(query.params, undefined, query.oldscope);
 		} else {
 			if (query.intersectfn.query && !query.intersectfn.query.modifier)
 				query.intersectfn.query.modifier = 'RECORDSET';
-			nd = query.intersectfn(query.params);
+			nd = query.intersectfn(query.params, undefined, query.oldscope);
 			ud = [];
 			ilen = nd.data.length;
 			for (i = 0; i < ilen; i++) {
