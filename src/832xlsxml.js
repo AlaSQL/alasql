@@ -30,17 +30,6 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	return res;
 
 	function toXML() {
-		// Helper function to escape XML special characters
-		function escapeXML(str) {
-			if (str === null || str === undefined) return '';
-			return String(str)
-				.replace(/&/g, '&amp;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;')
-				.replace(/"/g, '&quot;')
-				.replace(/'/g, '&apos;');
-		}
-
 		var s1 =
 			'<?xml version="1.0"?> \
 		<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" \
@@ -163,9 +152,9 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 
 			// Header
 			s3 +=
-				'<Worksheet ss:Name=' +
-				JSON.stringify(sheetid) +
-				'> \
+				'<Worksheet ss:Name="' +
+				escapeXML(sheetid) +
+				'"> \
 	  			<Table ss:ExpandedColumnCount="' +
 				columns.length +
 				'" ss:ExpandedRowCount="' +
