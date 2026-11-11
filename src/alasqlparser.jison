@@ -1563,6 +1563,8 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	| REPLACE LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
+	| REPEAT LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'REPEAT', args:$3 }) }
 	| CURRENT_DATE LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR DatePart COMMA Expression COMMA Expression RPAR
