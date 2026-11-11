@@ -169,7 +169,12 @@ yy.Select.prototype.compileFrom = function (query) {
 			} else {
 				ps += 'null,null,';
 			}
-			ps += 'cb,idx,query); return res';
+			ps += 'cb,idx,query';
+			// More arguments go after query, so the functions with two keep their signature (#2831)
+			(tq.args || []).slice(2).forEach(function (arg) {
+				ps += ',' + arg.toJS('query.oldscope');
+			});
+			ps += '); return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.FromData) {
 			source.datafn = (query, params, cb, idx, alasql) => {
