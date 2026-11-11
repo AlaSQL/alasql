@@ -74,6 +74,9 @@ AUTO(_)?INCREMENT                               return 'IDENTITY'
 'BREAK'											return 'BREAK'
 NOT\s+BETWEEN									return 'NOT_BETWEEN'
 NOT\s+LIKE									    return 'NOT_LIKE'
+/* SIMILAR TO as one token, so SIMILAR stays a name (#2827) */
+NOT\s+SIMILAR\s+TO\b							return 'NOT_SIMILAR_TO'
+SIMILAR\s+TO\b									return 'SIMILAR_TO'
 'BY'											return 'BY'
 
 /* Postgres aliases */
@@ -340,7 +343,7 @@ SETS                                        	return 'SET'
 %left NOT
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
-%left LIKE NOT_LIKE REGEXP GLOB
+%left LIKE NOT_LIKE REGEXP GLOB SIMILAR_TO NOT_SIMILAR_TO
 %left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
@@ -1705,6 +1708,10 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
 	| Expression NOT_LIKE Expression ESCAPE Expression
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3, escape:$5 }); }
+	| Expression SIMILAR_TO Expression
+		{ $$ = new yy.Op({left:$1, op:'SIMILAR TO', right:$3}); }
+	| Expression NOT_SIMILAR_TO Expression
+		{ $$ = new yy.Op({left:$1, op:'NOT SIMILAR TO', right:$3}); }
 	| Expression BARBAR Expression
 		{ $$ = new yy.Op({left:$1, op:'||', right:$3}); }
 	| Expression PLUS Expression

@@ -209,6 +209,8 @@
 		'NOT IN',
 		'LIKE',
 		'NOT LIKE',
+		'SIMILAR TO',
+		'NOT SIMILAR TO',
 		'REGEXP',
 		'GLOB',
 		'BETWEEN',
@@ -361,6 +363,8 @@
 				s = `(''+(${leftJS()} || '') + (${rightJS()} || ''))`;
 			} else if (this.op === 'LIKE' || this.op === 'NOT LIKE') {
 				s = `(${this.op === 'NOT LIKE' ? '!' : ''}alasql.utils.like(${rightJS()}, ${leftJS()}${this.escape ? `, ${ref(this.escape)}` : ''}))`;
+			} else if (this.op === 'SIMILAR TO' || this.op === 'NOT SIMILAR TO') {
+				s = `alasql.utils.similarTo(${leftJS()}, ${rightJS()}, ${this.op === 'NOT SIMILAR TO'})`;
 			} else if (this.op === 'REGEXP') {
 				s = `alasql.stdfn.REGEXP_LIKE(${leftJS()}, ${rightJS()})`;
 			} else if (this.op === 'GLOB') {
