@@ -2184,6 +2184,10 @@ CreateTableDefClause
 		{ $$ = {columns: $1, constraints: $3}; }
 	| ColumnDefsList
 		{ $$ = {columns: $1}; }
+	| ConstraintsList COMMA ColumnDefsList
+		{ $$ = {columns: $3, constraints: $1}; }
+	| ConstraintsList COMMA ColumnDefsList COMMA ConstraintsList
+		{ $$ = {columns: $3, constraints: $1.concat($5)}; }
 	| AS Select
 		{ $$ = {as: $2} }
 	;
@@ -2416,6 +2420,8 @@ ParLiteral
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
+	| CONSTRAINT Name ColumnConstraint
+		{ $$ = $3; if($3.check) $3.check.constraintid = $2; }
 	| FOREIGN KEY REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
 		{$$ = {foreignkey:{table:$4, columnid: $5}}; yy.extend($$.foreignkey, $6);}
 	| REFERENCES TableName ParLiteral? OnReferentialActions DeferrableClause?
