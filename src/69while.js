@@ -20,6 +20,38 @@ function createControlFlowException(name) {
 yy.BreakException = createControlFlowException('BREAK');
 yy.ContinueException = createControlFlowException('CONTINUE');
 
+// An asynchronous WHILE loop gives the event loop a turn after this many milliseconds
+var WHILE_YIELD_MS = 16;
+
+// Give the event loop a turn. Browsers make nested timers wait at least 4 ms,
+// so a timer is only the last choice.
+var yieldToEventLoop = (function () {
+	if (typeof scheduler === 'object' && scheduler && typeof scheduler.yield === 'function') {
+		return function (fn) {
+			scheduler.yield().then(fn);
+		};
+	}
+	if (typeof setImmediate === 'function') {
+		return function (fn) {
+			setImmediate(fn);
+		};
+	}
+	if (typeof MessageChannel === 'function') {
+		var queue = [];
+		var channel = new MessageChannel();
+		channel.port1.onmessage = function () {
+			queue.shift()();
+		};
+		return function (fn) {
+			queue.push(fn);
+			channel.port2.postMessage(null);
+		};
+	}
+	return function (fn) {
+		setTimeout(fn, 0);
+	};
+})();
+
 yy.While = function (params) {
 	return Object.assign(this, params);
 };
@@ -37,27 +69,54 @@ yy.While.prototype.execute = function (databaseid, params, cb) {
 	var fn = new Function('params,alasql,p', 'var y;return ' + this.expression.toJS());
 	//	console.log('cb',!!cb);
 	if (cb) {
+		var lastYield = Date.now();
+		var running = false;
+		var again = false;
+
+		// Run the next round. A round that ends at once only marks that another one follows,
+		// so a long loop does not grow the stack.
 		var loop = function () {
-			setTimeout(function () {
-				if (!fn(params, alasql)) {
+			if (running) {
+				again = true;
+				return;
+			}
+			running = true;
+			try {
+				do {
+					again = false;
+					round();
+				} while (again);
+			} finally {
+				running = false;
+			}
+		};
+
+		var round = function () {
+			if (Date.now() - lastYield >= WHILE_YIELD_MS) {
+				yieldToEventLoop(function () {
+					lastYield = Date.now();
+					loop();
+				});
+				return;
+			}
+			if (!fn(params, alasql)) {
+				res = cb(res);
+				return;
+			}
+			try {
+				self.loopstat.execute(databaseid, params, function (data) {
+					res.push(data);
+					loop();
+				});
+			} catch (err) {
+				if (err instanceof yy.BreakException) {
 					res = cb(res);
-					return;
+				} else if (err instanceof yy.ContinueException) {
+					loop();
+				} else {
+					throw err;
 				}
-				try {
-					self.loopstat.execute(databaseid, params, function (data) {
-						res.push(data);
-						loop();
-					});
-				} catch (err) {
-					if (err instanceof yy.BreakException) {
-						res = cb(res);
-					} else if (err instanceof yy.ContinueException) {
-						loop();
-					} else {
-						throw err;
-					}
-				}
-			}, 0);
+			}
 		};
 		loop();
 	} else {
