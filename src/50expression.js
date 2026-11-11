@@ -216,6 +216,17 @@
 		'IS NULL',
 		'IS NOT NULL',
 	]);
+
+	// A constant IN list keeps its Set in alasql.sets. A column or an expression in the list
+	// has no fixed value, so that list is built again for each row (#2753)
+	function isLiteralValue(value) {
+		return (
+			value instanceof yy.NumValue ||
+			value instanceof yy.StringValue ||
+			value instanceof yy.LogicValue
+		);
+	}
+
 	class Op {
 		constructor(params) {
 			assign(this, params);
@@ -385,10 +396,7 @@
 						leftJS();
 						s = 'false';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (
-						!alasql.options.cache ||
-						this.right.some(value => value instanceof yy.ParamValue)
-					) {
+					} else if (!alasql.options.cache || !this.right.every(isLiteralValue)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
@@ -420,10 +428,7 @@
 						leftJS();
 						s = 'true';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (
-						!alasql.options.cache ||
-						this.right.some(value => value instanceof yy.ParamValue)
-					) {
+					} else if (!alasql.options.cache || !this.right.every(isLiteralValue)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
