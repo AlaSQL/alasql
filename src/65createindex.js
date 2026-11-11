@@ -12,7 +12,12 @@ yy.CreateIndex = function (params) {
 yy.CreateIndex.prototype.toString = function () {
 	var s = 'CREATE';
 	if (this.unique) s += ' UNIQUE';
-	s += ' INDEX ' + this.indexid + ' ON ' + this.table.toString();
+	s +=
+		' INDEX ' +
+		(this.ifnotexists ? 'IF NOT EXISTS ' : '') +
+		this.indexid +
+		' ON ' +
+		this.table.toString();
 	s += '(' + this.columns.toString() + ')';
 	return s;
 };
@@ -24,6 +29,9 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	var tableid = this.table.tableid;
 	var table = db.tables[tableid];
 	var indexid = this.indexid;
+	if (this.ifnotexists && db.indices[indexid]) {
+		return cb ? cb(0) : 0;
+	}
 	db.indices[indexid] = tableid;
 	// The schema changed, so statements in the statement cache must be compiled again
 	schemaChanged(db);
