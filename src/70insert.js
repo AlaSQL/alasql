@@ -66,14 +66,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 	}
 
 	databaseid = self.into.databaseid || databaseid;
-	var db = alasql.databases[databaseid];
-	//	console.log(self);
 	var tableid = self.into.tableid;
-	var table = db.tables[tableid];
-
-	if (!table) {
-		throw "Table '" + tableid + "' could not be found";
-	}
+	var table = getTable(databaseid, tableid);
+	var db = alasql.databases[databaseid];
 
 	// Helper function to create error message for value/column count mismatch
 	var createValueCountMismatchError = function (valueCount, columnCount, columnType) {

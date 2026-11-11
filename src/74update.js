@@ -48,6 +48,7 @@ yy.Update.prototype.compile = function (databaseid) {
 
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
+	var table = getTable(databaseid, tableid);
 
 	if (this.where) {
 		if (this.exists) {
@@ -72,7 +73,6 @@ yy.Update.prototype.compile = function (databaseid) {
 	}
 
 	// Construct update function
-	var table = alasql.databases[databaseid].tables[tableid];
 	var s = table.onupdatefns || '';
 	s += ';';
 	this.columns.forEach(function (col) {
