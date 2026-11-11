@@ -74,8 +74,19 @@ alasql.stdfn.CONVERT = function (value, args) {
 		args.dbtypeid == 'Date' ||
 		['DATE', 'DATETIME', 'DATETIME2'].indexOf(udbtypeid) > -1
 	) {
-		if (/\d{8}/.test(val)) {
-			t = new Date(+val.substr(0, 4), +val.substr(4, 2) - 1, +val.substr(6, 2));
+		// MySQL reads a number with 8 or 14 digits as YYYYMMDD or YYYYMMDDhhmmss (#2853)
+		if (typeof val === 'number' && /^\d{8}(\d{6})?$/.test(val)) {
+			val = String(val);
+		}
+		if (typeof val === 'string' && /\d{8}/.test(val)) {
+			t = new Date(
+				+val.substr(0, 4),
+				+val.substr(4, 2) - 1,
+				+val.substr(6, 2),
+				+val.substr(8, 2) || 0,
+				+val.substr(10, 2) || 0,
+				+val.substr(12, 2) || 0
+			);
 		} else {
 			t = newDate(val);
 		}
