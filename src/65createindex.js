@@ -110,3 +110,48 @@ yy.Reindex.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+
+// MySQL's ANALYZE, OPTIMIZE, CHECK and REPAIR TABLE, FLUSH, and LOCK and UNLOCK TABLES (#2864).
+// An in-memory database has nothing to do for them, so they only check the tables
+yy.TableMaintenance = function (params) {
+	return Object.assign(this, params);
+};
+yy.TableMaintenance.prototype.toString = function () {
+	var s = this.op.toUpperCase();
+	if (this.what) return s + ' ' + this.what;
+	s += this.op.toUpperCase() === 'FLUSH' || /LOCK$/i.test(this.op) ? ' TABLES' : ' TABLE';
+	if (this.tables.length) {
+		s +=
+			' ' +
+			this.tables
+				.map(function (t) {
+					return t.toString() + (t.lock ? ' ' + t.lock : '');
+				})
+				.join(', ');
+	}
+	return s;
+};
+yy.TableMaintenance.prototype.execute = function (databaseid, params, cb) {
+	var op = this.op.toUpperCase();
+	var res;
+	if (['ANALYZE', 'OPTIMIZE', 'CHECK', 'REPAIR'].includes(op)) {
+		// One row per table, as MySQL gives
+		res = this.tables.map(function (t) {
+			var dbid = t.databaseid || databaseid;
+			if (!alasql.databases[dbid].tables[t.tableid]) {
+				throw new Error("Table '" + dbid + '.' + t.tableid + "' does not exist");
+			}
+			return {
+				Table: dbid + '.' + t.tableid,
+				Op: op.toLowerCase(),
+				Msg_type: 'status',
+				Msg_text: 'OK',
+			};
+		});
+	} else {
+		// FLUSH, LOCK and UNLOCK
+		res = [];
+	}
+	if (cb) res = cb(res);
+	return res;
+};

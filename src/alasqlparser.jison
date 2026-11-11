@@ -89,6 +89,11 @@ NOT\s+ILIKE										return 'NOT_LIKE'
 'CASCADE'										return 'CASCADE'
 'CAST'											return 'CAST'
 'CHECK'											return 'CHECK'
+/* MySQL table maintenance (#2864). Only before TABLE(S) or a FLUSH option, so the words stay names */
+(ANALYZE|OPTIMIZE|REPAIR)(?=\s+TABLES?\b)		return 'TABLE_MAINTENANCE'
+FLUSH(?=\s+(TABLES?|PRIVILEGES|STATUS|LOGS|HOSTS)\b)	return 'FLUSH'
+LOCK(?=\s+TABLES?\b)							return 'LOCK_TABLES'
+UNLOCK(?=\s+TABLES?\b)							return 'UNLOCK_TABLES'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
@@ -443,6 +448,7 @@ Statement
 	| Select
 	| ParenthesizedSelect
 	| ShowCreateTable
+	| TableMaintenance
 	| ShowColumns
 	| ShowDatabases
 	| ShowIndex
@@ -2679,6 +2685,45 @@ Help
 ExpressionStatement
 	: EQ Expression
 		{ $$ = new yy.ExpressionStatement({expression:$2}); }
+	;
+
+/* MySQL: ANALYZE, OPTIMIZE, CHECK and REPAIR TABLE, FLUSH, LOCK and UNLOCK TABLES (#2864) */
+TableMaintenance
+	: TABLE_MAINTENANCE TABLE MaintenanceTablesList
+		{ $$ = new yy.TableMaintenance({op: $1, tables: $3}); }
+	| CHECK TABLE MaintenanceTablesList
+		{ $$ = new yy.TableMaintenance({op: 'CHECK', tables: $3}); }
+	| FLUSH TABLE
+		{ $$ = new yy.TableMaintenance({op: $1, tables: []}); }
+	| FLUSH TABLE MaintenanceTablesList
+		{ $$ = new yy.TableMaintenance({op: $1, tables: $3}); }
+	| FLUSH Literal
+		{ $$ = new yy.TableMaintenance({op: $1, what: $2, tables: []}); }
+	| LOCK_TABLES TABLE MaintenanceTablesList
+		{ $$ = new yy.TableMaintenance({op: $1, tables: $3}); }
+	| UNLOCK_TABLES TABLE
+		{ $$ = new yy.TableMaintenance({op: $1, tables: []}); }
+	;
+
+MaintenanceTablesList
+	: MaintenanceTable
+		{ $$ = [$1]; }
+	| MaintenanceTablesList COMMA MaintenanceTable
+		{ $$ = $1; $1.push($3); }
+	;
+
+/* A table, with the lock mode of LOCK TABLES: READ [LOCAL], WRITE, LOW_PRIORITY WRITE */
+MaintenanceTable
+	: TableName
+		{ $$ = $1; }
+	| TableName READ
+		{ $$ = $1; $1.lock = 'READ'; }
+	| TableName READ Literal
+		{ $$ = $1; $1.lock = 'READ ' + $3; }
+	| TableName Literal
+		{ $$ = $1; $1.lock = $2; }
+	| TableName Literal Literal
+		{ $$ = $1; $1.lock = $2 + ' ' + $3; }
 	;
 
 Source
