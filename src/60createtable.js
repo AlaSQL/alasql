@@ -408,15 +408,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		table.viewDatabaseid = this.table.databaseid || databaseid;
 	}
 
-	if (db.engineid) {
-		return alasql.engines[db.engineid].createTable(
-			this.table.databaseid || databaseid,
-			tableid,
-			this.ifnotexists,
-			cb
-		);
-	}
-
 	// Rebuild one key index from the current rows. If they hold duplicate keys, the last one wins.
 	function rebuildKeyIndex(table, key) {
 		var index = (table.uniqs[key.hh] = {});
@@ -786,6 +777,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}
 		}
 	};
+
+	// Persist the table on the storage engine (localStorage, FILESTORAGE, ...). This runs
+	// after table.insert is wired up above, so inserts on an engine-backed table still go
+	// through the PRIMARY KEY / UNIQUE / CHECK checks instead of skipping them (#1148).
+	if (db.engineid) {
+		return alasql.engines[db.engineid].createTable(
+			this.table.databaseid || databaseid,
+			tableid,
+			this.ifnotexists,
+			cb
+		);
+	}
 
 	var res;
 
