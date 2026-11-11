@@ -6,6 +6,19 @@
 //
 */
 
+// The table of a statement, or an error that names the missing database or table (#2790)
+function getTable(databaseid, tableid) {
+	var db = alasql.databases[databaseid];
+	if (!db) {
+		throw new Error('Database does not exist: ' + databaseid);
+	}
+	var table = db.tables[tableid];
+	if (!table) {
+		throw new Error('Table does not exist: ' + tableid);
+	}
+	return table;
+}
+
 yy.Select.prototype.compileDefCols = function (query, databaseid) {
 	//	console.log('defcols');
 	var defcols = {'.': {}};
@@ -18,12 +31,7 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 				//				console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 				//console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 				//console.log(alasql.databases);
-				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
-				//console.log(table);
-
-				if (undefined === table) {
-					throw new Error('Table does not exist: ' + fr.tableid);
-				}
+				var table = getTable(fr.databaseid || databaseid, fr.tableid);
 
 				if (table.columns) {
 					// Kept per source, so an unqualified column is decided by the table definition (#2873)
@@ -60,19 +68,7 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 			//			console.log(jn);
 			if (jn.table) {
 				var alias = jn.as || jn.table.tableid;
-				var databaseId = jn.table.databaseid || databaseid;
-				var database = alasql.databases[databaseId];
-
-				if (database === undefined) {
-					throw new Error('Database does not exist: ' + databaseId);
-				}
-
-				var table = database.tables[jn.table.tableid];
-				//				console.log(jn.table.tableid, jn.table.databaseid);
-
-				if (table === undefined) {
-					throw new Error('Table does not exist: ' + jn.table.tableid);
-				}
+				var table = getTable(jn.table.databaseid || databaseid, jn.table.tableid);
 
 				if (table.columns) {
 					if (table.columns.length) {
