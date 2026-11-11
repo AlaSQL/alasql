@@ -91,7 +91,7 @@ describe('Test CLI - Command Line Interface)', function () {
 
 	it('10. Should handle redirected file input with txt() function', function () {
 		const result = execSync(
-			`node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`
+			`node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < "${testSqlFile}"`
 		).toString();
 		assert.deepStrictEqual(
 			[
