@@ -109,6 +109,8 @@ LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 		LS.set('alasql', ls);
 		LS.set(lsdbid, {databaseid: lsdbid, tables: {}}); // Create database record
 	} else {
+		// The database is listed but its record can be gone (e.g. removed from storage)
+		if (!LS.get(lsdbid)) LS.set(lsdbid, {databaseid: lsdbid, tables: {}});
 		res = 0;
 	}
 	if (cb) res = cb(res);
@@ -144,8 +146,10 @@ LS.dropDatabase = function (lsdbid, ifexists, cb) {
 
 		// 2. Remove tables definitions
 		var db = LS.get(lsdbid);
-		for (var tableid in db.tables) {
-			localStorage.removeItem(lsdbid + '.' + tableid);
+		if (db) {
+			for (var tableid in db.tables) {
+				localStorage.removeItem(lsdbid + '.' + tableid);
+			}
 		}
 
 		// 3. Remove database definition
@@ -169,10 +173,16 @@ LS.attachDatabase = function (lsdbid, databaseid, args, params, cb) {
 		throw new Error('Unable to attach database as "' + databaseid + '" because it already exists');
 	}
 	if (!databaseid) databaseid = lsdbid;
+	var lsdb = LS.get(lsdbid);
+	if (!lsdb) {
+		throw new Error(
+			'localStorage: Cannot attach database "' + lsdbid + '" because there is no such database'
+		);
+	}
 	var db = new alasql.Database(databaseid);
 	db.engineid = 'LOCALSTORAGE';
 	db.lsdbid = lsdbid;
-	db.tables = LS.get(lsdbid).tables;
+	db.tables = lsdb.tables;
 	// IF AUTOABORT IS OFF then copy data to memory
 	if (!alasql.options.autocommit) {
 		if (db.tables) {
