@@ -513,7 +513,7 @@ case 194:
  this.$ = $$[$0-2]; this.$.as = $$[$0] || 'default'; 
 break;
 case 195:
- this.$ = new yy.Json({value:$$[$0-2]}); $$[$0-2].as = $$[$0] 
+ this.$ = new yy.Json({value:$$[$0-2], as:$$[$0]}); 
 break;
 case 196:
  this.$ = $$[$0-1]; if($$[$0]) $$[$0-1].as = $$[$0]; 
