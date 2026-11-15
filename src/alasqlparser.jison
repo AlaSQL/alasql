@@ -2546,17 +2546,17 @@ DropDatabase
 
 CreateIndex
 	:
-	 CREATE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
+	 CREATE INDEX IfNotExists Name ON TableName LPAR OrderExpressionsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8}); yy.extend($$, $3); }
 	|
 
-	CREATE UNIQUE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
+	CREATE UNIQUE INDEX IfNotExists Name ON TableName LPAR OrderExpressionsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$5, table:$7, columns:$9, unique:true}); yy.extend($$, $4); }
 	;
 
 DropIndex
-	: DROP INDEX Name
-		{ $$ = new yy.DropIndex({indexid:$3});}
+	: DROP INDEX IfExists Name
+		{ $$ = new yy.DropIndex({indexid:$4}); yy.extend($$, $3); }
 	;
 
 /* SHOW COMMAND */
@@ -3305,21 +3305,24 @@ Call
 	;
 
 CreateTrigger
-	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
+	: CREATE TRIGGER IfNotExists Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
 		{
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$9});
-			if($9.exists) $$.exists = $9.exists;
-			if($9.queries) $$.queries = $9.queries;
+			$$ = new yy.CreateTrigger({trigger:$4, when:$5, action:$6, table:$8, statement:$10});
+			yy.extend($$, $3);
+			if($10.exists) $$.exists = $10.exists;
+			if($10.queries) $$.queries = $10.queries;
 		}
-	| CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table Literal
+	| CREATE TRIGGER IfNotExists Literal BeforeAfter InsertDeleteUpdate ON Table Literal
 		{
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8});
+			$$ = new yy.CreateTrigger({trigger:$4, when:$5, action:$6, table:$8, funcid:$9});
+			yy.extend($$, $3);
 		}
-	| CREATE TRIGGER Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
+	| CREATE TRIGGER IfNotExists Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
 		{
-			$$ = new yy.CreateTrigger({trigger:$3, when:$5, action:$6, table:$4, statement:$9});
-			if($9.exists) $$.exists = $9.exists;
-			if($9.queries) $$.queries = $9.queries;
+			$$ = new yy.CreateTrigger({trigger:$4, when:$6, action:$7, table:$5, statement:$10});
+			yy.extend($$, $3);
+			if($10.exists) $$.exists = $10.exists;
+			if($10.queries) $$.queries = $10.queries;
 		}
 	;
 
@@ -3343,8 +3346,8 @@ InsertDeleteUpdate
 	;
 
 DropTrigger
-	: DROP TRIGGER Literal
-		{ $$ = new yy.DropTrigger({trigger:$3}); }
+	: DROP TRIGGER IfExists Literal
+		{ $$ = new yy.DropTrigger({trigger:$4}); yy.extend($$, $3); }
 	;
 
 Reindex
