@@ -224,8 +224,14 @@ yy.Select.prototype.compileGroup = function (query) {
 						post = '';
 					if (col.distinct) {
 						var key = distinctKeyJS(col, colexp);
-						pre = `if(typeof ${key}!="undefined" && (!g['$$_VALUES_${colas}'][${key}])) {`;
-						post = `g['$$_VALUES_${colas}'][${key}]=true;}`;
+						if (key !== colexp) {
+							// Build the row key once per row, as it walks every column of the row
+							pre = `var dk=${key};if(typeof dk!="undefined" && (!g['$$_VALUES_${colas}'][dk])) {`;
+							post = `g['$$_VALUES_${colas}'][dk]=true;}`;
+						} else {
+							pre = `if(typeof ${key}!="undefined" && (!g['$$_VALUES_${colas}'][${key}])) {`;
+							post = `g['$$_VALUES_${colas}'][${key}]=true;}`;
+						}
 					}
 
 					if (col.aggregatorid === 'SUM') {
