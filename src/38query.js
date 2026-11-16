@@ -583,7 +583,13 @@ var preIndex = function (query) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
-				if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
+				// A view is re-executed on every query, so an index cached on it
+				// can be stale after its base tables change (#3065)
+				if (
+					!alasql.databases[source.databaseid].tables[source.tableid].dirty &&
+					!alasql.databases[source.databaseid].tables[source.tableid].view &&
+					ixx
+				) {
 					source.ix = ixx;
 				}
 			}
@@ -619,8 +625,13 @@ var preIndex = function (query) {
 					i++;
 				}
 
-				if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
-					// Save index to original table
+				if (
+					source.databaseid &&
+					alasql.databases[source.databaseid].tables[source.tableid] &&
+					!alasql.databases[source.databaseid].tables[source.tableid].view
+				) {
+					// Save index to original table (but not to a view, whose rows
+					// change with its base tables, see #3065)
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					] = source.ix;
