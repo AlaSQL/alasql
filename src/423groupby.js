@@ -24,10 +24,14 @@ function getGroupConcatParams(col) {
 	return `,${separator},${orderDir}`;
 }
 
-// The key of a value for a DISTINCT aggregate. For COUNT(DISTINCT *) it is the whole row,
-// so rows with different values count apart (#2758)
+// The key of a value for a DISTINCT aggregate. For COUNT(DISTINCT *) it is the row of all
+// tables, and for COUNT(DISTINCT t.*) the row of t (#2758)
 function distinctKeyJS(col, colexp) {
-	return col.expression.columnid === '*' ? 'JSON.stringify(p)' : colexp;
+	var e = col.expression;
+	if (e.columnid !== '*') return colexp;
+	return (
+		'alasql.utils.distinctRowKey(p' + (e.tableid ? "['" + escapeq(e.tableid) + "']" : '') + ')'
+	);
 }
 
 /**
