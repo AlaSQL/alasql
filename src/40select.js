@@ -696,9 +696,13 @@ yy.Select = class Select {
 		const isCorrelated = (subquery, outerQuery) => {
 			// A branch of UNION, EXCEPT or INTERSECT can read the outer row too (#2856).
 			// Check it first, as the first branch may have no FROM.
+			// The same for set operations after a parenthesized chain, as in (A UNION B) EXCEPT C (#202)
+			const setOpHolders = [subquery].concat(subquery.outerSetOps || []);
 			if (
-				['union', 'unionall', 'except', 'intersect'].some(
-					key => subquery[key] && isCorrelated(subquery[key], outerQuery)
+				setOpHolders.some(holder =>
+					['union', 'unionall', 'except', 'intersect'].some(
+						key => holder[key] && isCorrelated(holder[key], outerQuery)
+					)
 				)
 			) {
 				return true;

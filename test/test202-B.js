@@ -154,4 +154,10 @@ describe(`Test ${testId} B - set operation chains are evaluated left to right`, 
 			'SELECT a, b FROM cx EXCEPT CORRESPONDING SELECT b, a FROM cy EXCEPT CORRESPONDING SELECT b, a FROM cz',
 		].forEach(sql => assert.deepStrictEqual(alasql(toSQL(sql)), alasql(sql), sql));
 	});
+
+	it('Correlated subquery whose outer reference is after a parenthesized chain', function () {
+		// e4 = {2,5}: only e1.a = 2 has a matching row, so the IN set depends on the outer row
+		const sql = `SELECT a FROM e1 WHERE a IN ((${S('e2')} WHERE a = 0 EXCEPT ${S('e3')}) UNION ${S('e4')} WHERE e4.a = e1.a)`;
+		assert.deepStrictEqual(alasql(sql), [{a: 2}]);
+	});
 });
