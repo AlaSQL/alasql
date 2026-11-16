@@ -79,8 +79,7 @@
 		"uglify-js": "3.19.3"
 	},
 	"resolutions": {
-		"underscore": "1",
-		"glob-parent": "6"
+		"underscore": "1"
 	},
 	"engines": {
 		"node": ">=15"
