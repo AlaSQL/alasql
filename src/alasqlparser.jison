@@ -960,6 +960,12 @@ FromTable
 		{ $$ = $1; if($2) $1.as = $2; }
 	| Table NOT INDEXED
 		{ $$ = $1; }
+	| Table INDEXED BY Literal
+		{ $$ = $1; }
+	| Table FromTableAlias NOT INDEXED
+		{ $$ = $1; $1.as = $2; }
+	| Table FromTableAlias INDEXED BY Literal
+		{ $$ = $1; $1.as = $2; }
 	| ParamValue FromTableAlias?
 		{ $$ = $1; $1.as = $2 || 'default'; }
 	| FuncValue FromTableAlias?
@@ -1490,6 +1496,8 @@ AggrValue
 		 over:$6}); }
 	| GROUP_CONCAT LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
 		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, order: $4, separator: $5}); }
+	| GROUP_CONCAT LPAR Expression COMMA AnyString RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, separator: $5.substring(1, $5.length-1)}); }
 	| GROUP_CONCAT LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
 		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $4, distinct: true, order: $5, separator: $6}); }
 	;
