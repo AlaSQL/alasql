@@ -957,4 +957,15 @@
 		VarValue,
 		View,
 	});
+
+	// NOT binds looser than IN and BETWEEN, but the grammar reads NOT x IN (...) as
+	// (NOT x) IN (...). This takes the NOT out of the left operand again (#2768)
+	yy.notOutside = function (op) {
+		if (op.left instanceof UniOp && op.left.op === 'NOT') {
+			var not = op.left;
+			op.left = not.right;
+			return new UniOp({op: 'NOT', right: yy.notOutside(op)});
+		}
+		return op;
+	};
 }

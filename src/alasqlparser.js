@@ -1180,23 +1180,23 @@ case 445:
 
 				if($$[$0-2].left.op == 'AND') {
 					this.$ = new yy.Op({left:$$[$0-2].left.left,op:'AND',right:
-						new yy.Op({left:$$[$0-2].left.right, op:'BETWEEN',
-							right1:$$[$0-2].right, right2:$$[$0]})
+						yy.notOutside(new yy.Op({left:$$[$0-2].left.right, op:'BETWEEN',
+							right1:$$[$0-2].right, right2:$$[$0]}))
 					});
 				} else {
-					this.$ = new yy.Op({left:$$[$0-2].left, op:'BETWEEN',
-						right1:$$[$0-2].right, right2:$$[$0]});
+					this.$ = yy.notOutside(new yy.Op({left:$$[$0-2].left, op:'BETWEEN',
+						right1:$$[$0-2].right, right2:$$[$0]}));
 				}
 
 			} else if($$[$0-2].op == 'NOT BETWEEN1') {
 				if($$[$0-2].left.op == 'AND') {
 					this.$ = new yy.Op({left:$$[$0-2].left.left,op:'AND',right:
-						new yy.Op({left:$$[$0-2].left.right, op:'NOT BETWEEN',
-							right1:$$[$0-2].right, right2:$$[$0]})
+						yy.notOutside(new yy.Op({left:$$[$0-2].left.right, op:'NOT BETWEEN',
+							right1:$$[$0-2].right, right2:$$[$0]}))
 					});
 				} else {
-					this.$ = new yy.Op({left:$$[$0-2].left, op:'NOT BETWEEN',
-						right1:$$[$0-2].right, right2:$$[$0]});
+					this.$ = yy.notOutside(new yy.Op({left:$$[$0-2].left, op:'NOT BETWEEN',
+						right1:$$[$0-2].right, right2:$$[$0]}));
 				}
 			} else {
 				this.$ = new yy.Op({left:$$[$0-2], op:'AND', right:$$[$0]});
@@ -1238,7 +1238,7 @@ case 453:
 			}
 			// Now add this SELECT to parent queries
 			yy.queries.push($$[$0-1]);
-			this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1], queriesidx: yy.queries.length - 1});
+			this.$ = yy.notOutside(new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1], queriesidx: yy.queries.length - 1}));
 		
 break;
 case 454:
@@ -1253,26 +1253,26 @@ case 454:
 			}
 			// Now add this SELECT to parent queries
 			yy.queries.push($$[$0-1]);
-			this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1], queriesidx: yy.queries.length - 1});
+			this.$ = yy.notOutside(new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1], queriesidx: yy.queries.length - 1}));
 		
 break;
 case 455:
- this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1]}); 
+ this.$ = yy.notOutside(new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1]})); 
 break;
 case 456:
- this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1]}); 
+ this.$ = yy.notOutside(new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1]})); 
 break;
 case 457:
- this.$ = new yy.Op({left: $$[$0-3], op:'IN', right:[]}); 
+ this.$ = yy.notOutside(new yy.Op({left: $$[$0-3], op:'IN', right:[]})); 
 break;
 case 458:
- this.$ = new yy.Op({left: $$[$0-4], op:'NOT IN', right:[]}); 
+ this.$ = yy.notOutside(new yy.Op({left: $$[$0-4], op:'NOT IN', right:[]})); 
 break;
 case 459: case 461:
- this.$ = new yy.Op({left: $$[$0-2], op:'IN', right:$$[$0]}); 
+ this.$ = yy.notOutside(new yy.Op({left: $$[$0-2], op:'IN', right:$$[$0]})); 
 break;
 case 460: case 462:
- this.$ = new yy.Op({left: $$[$0-3], op:'NOT IN', right:$$[$0]}); 
+ this.$ = yy.notOutside(new yy.Op({left: $$[$0-3], op:'NOT IN', right:$$[$0]})); 
 break;
 case 463:
 
