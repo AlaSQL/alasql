@@ -60,13 +60,17 @@ LS.storeTable = function (databaseid, tableid) {
 	Restore table structure and data
 	@param databaseid {string} AlaSQL database id (not external localStorage)
 	@param tableid {string} Table name
+	@param skipData {boolean} Restore the schema only and keep the rows in localStorage
 	@return Nothing
 */
-LS.restoreTable = function (databaseid, tableid) {
+LS.restoreTable = function (databaseid, tableid, skipData) {
 	var db = alasql.databases[databaseid];
 	var tbl = LS.get(db.lsdbid + '.' + tableid);
 	var table = new alasql.Table();
 	for (var f in tbl) {
+		// With AUTOCOMMIT ON the rows stay in localStorage until a statement reads them
+		// (see LS.fromTable), so only the schema is needed here
+		if (skipData && f === 'data') continue;
 		table[f] = tbl[f];
 	}
 	db.tables[tableid] = table;
@@ -173,12 +177,12 @@ LS.attachDatabase = function (lsdbid, databaseid, args, params, cb) {
 	db.engineid = 'LOCALSTORAGE';
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
-	// IF AUTOABORT IS OFF then copy data to memory
-	if (!alasql.options.autocommit) {
-		if (db.tables) {
-			for (var tbid in db.tables) {
-				LS.restoreTable(databaseid, tbid);
-			}
+	if (db.tables) {
+		for (var tbid in db.tables) {
+			// The schema is restored in both modes: INSERT compiles against
+			// db.tables[tableid] before a single row is read, so a table without it
+			// loses its DEFAULT values on the first statement after ATTACH (#1082)
+			LS.restoreTable(databaseid, tbid, !!alasql.options.autocommit);
 		}
 	}
 	if (cb) res = cb(res);
