@@ -445,10 +445,10 @@ function applySetOp(query, kind, fn, corresponding) {
 		var ud, nd;
 		if (corresponding) {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = undefined;
-			ud = fn(query.params);
+			ud = fn(query.params, undefined, query.oldscope);
 		} else {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
-			nd = fn(query.params);
+			nd = fn(query.params, undefined, query.oldscope);
 			ud = [];
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
@@ -471,10 +471,10 @@ function applySetOp(query, kind, fn, corresponding) {
 	} else if (kind === 'union') {
 		if (corresponding) {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = 'ARRAY';
-			ud = fn(query.params);
+			ud = fn(query.params, undefined, query.oldscope);
 		} else {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
-			nd = fn(query.params);
+			nd = fn(query.params, undefined, query.oldscope);
 			ud = [];
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
@@ -498,10 +498,10 @@ function applySetOp(query, kind, fn, corresponding) {
 	} else if (kind === 'except') {
 		if (corresponding) {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = 'ARRAY';
-			var ud = fn(query.params);
+			var ud = fn(query.params, undefined, query.oldscope);
 		} else {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
-			var nd = fn(query.params);
+			var nd = fn(query.params, undefined, query.oldscope);
 			var ud = [];
 			for (var i = 0, ilen = nd.data.length; i < ilen; i++) {
 				ud.push(setOperationRow(query, nd, nd.data[i]));
@@ -512,10 +512,10 @@ function applySetOp(query, kind, fn, corresponding) {
 	} else if (kind === 'intersect') {
 		if (corresponding) {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = undefined;
-			ud = fn(query.params);
+			ud = fn(query.params, undefined, query.oldscope);
 		} else {
 			if (fn.query && !fn.query.modifier) fn.query.modifier = 'RECORDSET';
-			nd = fn(query.params);
+			nd = fn(query.params, undefined, query.oldscope);
 			ud = [];
 			ilen = nd.data.length;
 			for (i = 0; i < ilen; i++) {
@@ -590,7 +590,13 @@ var preIndex = function (query) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
-				if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
+				// A view is re-executed on every query, so an index cached on it
+				// can be stale after its base tables change (#3065)
+				if (
+					!alasql.databases[source.databaseid].tables[source.tableid].dirty &&
+					!alasql.databases[source.databaseid].tables[source.tableid].view &&
+					ixx
+				) {
 					source.ix = ixx;
 				}
 			}
@@ -626,8 +632,13 @@ var preIndex = function (query) {
 					i++;
 				}
 
-				if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
-					// Save index to original table
+				if (
+					source.databaseid &&
+					alasql.databases[source.databaseid].tables[source.tableid] &&
+					!alasql.databases[source.databaseid].tables[source.tableid].view
+				) {
+					// Save index to original table (but not to a view, whose rows
+					// change with its base tables, see #3065)
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					] = source.ix;
