@@ -1285,6 +1285,8 @@ var like = (utils.like = function (pattern, value, escape = '') {
 		regexStr += '$'; // End regex pattern to match until the end.
 		// Compile and cache the regex pattern for future use.
 		re = RegExp(regexStr, 'i');
+		// Patterns built from user input would fill the cache without end (#2886)
+		if (cache.size >= alasql.MAXSQLCACHESIZE) cache.clear();
 		cache.set(pattern, re);
 	}
 
