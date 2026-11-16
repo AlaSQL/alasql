@@ -102,7 +102,23 @@ LS.removeTable = function (databaseid, tableid) {
 LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 	var res = 1;
 	var ls = LS.get('alasql'); // Read list of all databases
-	if (!(ifnotexists && ls && ls.databases && ls.databases[lsdbid])) {
+	// The database record itself decides if the database exists: the index
+	// record may be missing (removed by hand), and an existing database must
+	// not be overwritten with an empty one (#3070)
+	if (LS.get(lsdbid)) {
+		// Repair the missing index entry
+		if (!ls) ls = {databases: {}};
+		if (!ls.databases) ls.databases = {};
+		ls.databases[lsdbid] = true;
+		LS.set('alasql', ls);
+		if (ifnotexists) {
+			res = 0;
+		} else {
+			throw new Error(
+				'localStorage: Cannot create new database "' + lsdbid + '" because it already exists'
+			);
+		}
+	} else if (!(ifnotexists && ls && ls.databases && ls.databases[lsdbid])) {
 		if (!ls) ls = {databases: {}}; // Empty record
 		if (ls.databases && ls.databases[lsdbid]) {
 			throw new Error(
