@@ -86,4 +86,15 @@ describe(`Test ${testId} - correlated subquery with UNION, EXCEPT or INTERSECT`,
 			[{a: 1}, {a: 3}]
 		);
 	});
+
+	it('E) IN where the first branch has no FROM', function () {
+		assert.deepStrictEqual(
+			alasql('SELECT a FROM t1 WHERE 5 IN (SELECT 0 UNION SELECT c FROM t2 WHERE t2.a = t1.a)'),
+			[{a: 1}]
+		);
+		assert.deepStrictEqual(
+			alasql('SELECT a FROM t1 WHERE 5 NOT IN (SELECT 0 UNION SELECT c FROM t2 WHERE t2.a = t1.a)'),
+			[{a: 2}, {a: 3}]
+		);
+	});
 });
