@@ -550,6 +550,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			// Do UPDATE!!!
 			//			console.log();
 			var replaceidx = table.data.indexOf(toreplace);
+			var replaceKeys = indexKeys(table, toreplace, params);
 			table.update(
 				function (t) {
 					for (var f in r) setOwn(t, f, r[f]);
@@ -557,10 +558,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				replaceidx,
 				params
 			);
-			if (table.data[replaceidx] !== toreplace) {
-				removeFromIndexes(table, toreplace, params);
-				addToIndexes(table, table.data[replaceidx], params);
-			}
+			syncIndexes(table, [[toreplace, replaceKeys, table.data[replaceidx]]], params);
 		} else {
 			table.data.push(r);
 

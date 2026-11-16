@@ -77,6 +77,36 @@ describe(`Test ${testId} - regular indexes follow INSERT, DELETE and UPDATE`, fu
 		assert.deepStrictEqual(index('t5', 'ia5'), {4: [14, 15]});
 	});
 
+	it('G) UPDATE and DELETE of most rows', function () {
+		alasql('CREATE TABLE t7 (a INT, b INT, INDEX ia7 (a))');
+		alasql('INSERT INTO t7 VALUES (1,1),(1,2),(2,3),(3,4)');
+		alasql('UPDATE t7 SET a = 5 WHERE b < 4');
+		assert.deepStrictEqual(index('t7', 'ia7'), {3: [4], 5: [1, 2, 3]});
+		alasql('DELETE FROM t7 WHERE a = 5');
+		assert.deepStrictEqual(index('t7', 'ia7'), {3: [4]});
+	});
+
+	it('H) A row that keeps its key keeps its place in the bucket', function () {
+		alasql('CREATE TABLE t8 (a INT, b INT, INDEX ia8 (a))');
+		alasql('INSERT INTO t8 VALUES (1,1),(1,2),(1,3)');
+		alasql('UPDATE t8 SET b = 20 WHERE b = 2');
+		assert.deepStrictEqual(index('t8', 'ia8'), {1: [1, 20, 3]});
+	});
+
+	it('I) An UPDATE that fails on a later row', function () {
+		alasql('CREATE TABLE t9 (a INT, b INT, CHECK (a < 3), INDEX ia9 (a))');
+		alasql('INSERT INTO t9 VALUES (1,1),(1,2),(2,3)');
+		assert.throws(function () {
+			alasql('UPDATE t9 SET a = a + 1');
+		});
+		assert.deepStrictEqual(alasql('SELECT a, b FROM t9 ORDER BY b'), [
+			{a: 2, b: 1},
+			{a: 2, b: 2},
+			{a: 2, b: 3},
+		]);
+		assert.deepStrictEqual(index('t9', 'ia9'), {2: [3, 1, 2]});
+	});
+
 	it('F) An index on several columns with a prefix', function () {
 		alasql('CREATE TABLE t6 (a INT, b STRING, INDEX ia6 (a, b(2)))');
 		alasql("INSERT INTO t6 VALUES (1,'xyz'),(1,'xyw'),(2,'q')");

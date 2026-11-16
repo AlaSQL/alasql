@@ -24,19 +24,59 @@ function addToIndexes(table, r, params) {
 	}
 }
 
-function removeFromIndexes(table, r, params) {
+function hasRegularIndexes(table) {
+	return !!table.inddefs && Object.keys(table.inddefs).length > 0;
+}
+
+// The key of a row in each regular index, read before UPDATE changes the row in place
+function indexKeys(table, r, params) {
+	var keys = {};
+	for (var indexid in table.inddefs) {
+		var indexdef = table.inddefs[indexid];
+		if (table.indices[indexdef.hh]) keys[indexid] = indexKeyFn(indexdef)(r, params, alasql);
+	}
+	return keys;
+}
+
+// Bring the regular indexes in step after DELETE, UPDATE or REPLACE. Each change
+// holds the row before, its index keys before (read before UPDATE changes the
+// row in place) and the row after, which DELETE leaves out. Each bucket that a
+// change touches is read once, so a large change costs no more than a rebuild.
+function syncIndexes(table, changes, params) {
+	if (!changes.length) return;
 	for (var indexid in table.inddefs) {
 		var indexdef = table.inddefs[indexid];
 		var ix = table.indices[indexdef.hh];
 		if (!ix) continue;
-		var addr = indexKeyFn(indexdef)(r, params, alasql);
-		var pos = ix[addr] ? ix[addr].indexOf(r) : -1;
-		if (pos > -1) ix[addr].splice(pos, 1);
-		if (ix[addr] && !ix[addr].length) delete ix[addr];
+		var keyFn = indexKeyFn(indexdef);
+		// Bucket key, then each row before with the row that takes its place
+		var moves = new Map();
+		var added = [];
+		changes.forEach(function (change) {
+			var key = String(change[1] ? change[1][indexid] : keyFn(change[0], params, alasql));
+			var after = change[2];
+			var keyAfter = after ? String(keyFn(after, params, alasql)) : key;
+			if (!moves.has(key)) moves.set(key, new Map());
+			// A row that keeps its key stays where it is in the bucket
+			moves.get(key).set(change[0], after && keyAfter === key ? after : null);
+			if (after && keyAfter !== key) added.push([keyAfter, after]);
+		});
+		moves.forEach(function (rows, key) {
+			var bucket = [];
+			(ix[key] || []).forEach(function (r) {
+				var next = rows.has(r) ? rows.get(r) : r;
+				if (next) bucket.push(next);
+			});
+			if (bucket.length) ix[key] = bucket;
+			else delete ix[key];
+		});
+		added.forEach(function (a) {
+			(ix[a[0]] = ix[a[0]] || []).push(a[1]);
+		});
 	}
 }
 
-// Fill the regular indexes again from the rows, after DELETE, UPDATE or TRUNCATE (#2880)
+// Fill the regular indexes again from the rows (#2880)
 function rebuildIndexes(table, params) {
 	if (!table.inddefs || !Object.keys(table.inddefs).length) return;
 	for (var indexid in table.inddefs) {

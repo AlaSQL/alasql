@@ -88,10 +88,15 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var deletedRows = [];
 			// Track deleted rows for the OUTPUT clause and AFTER DELETE triggers
 			var keepDeleted = self.output || Object.keys(table.afterdelete || {}).length > 0;
+			var trackIndexes = hasRegularIndexes(table);
+			var removedRows = [];
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 				if (wherefn(table.data[i], params, alasql)) {
 					if (keepDeleted) {
 						deletedRows.push(cloneDeep(table.data[i]));
+					}
+					if (trackIndexes) {
+						removedRows.push([table.data[i]]);
 					}
 					// Check for transaction - if it is not possible then return all back
 					if (table.delete) {
@@ -104,7 +109,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				}
 			}
 			table.data = newtable;
-			rebuildIndexes(table, params);
+			syncIndexes(table, removedRows, params);
 
 			// AFTER DELETE triggers - call for each deleted row
 			// Note: Triggers are called once per row per trigger (row-level triggers)
