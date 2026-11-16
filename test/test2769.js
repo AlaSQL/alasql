@@ -41,6 +41,27 @@ describe('Test 2769 - HAVING with an alias for an expression', function () {
 		]);
 	});
 
+	it('E) alias that is also the GROUP BY key', function () {
+		assert.deepEqual(alasql('SELECT g*10 AS z FROM t GROUP BY z HAVING z > 15'), [{z: 20}]);
+		assert.deepEqual(alasql('SELECT g*10 AS z FROM t GROUP BY g*10 HAVING z > 15'), [{z: 20}]);
+		assert.deepEqual(alasql('SELECT ABS(g) AS z FROM t GROUP BY z HAVING z > 1'), [{z: 2}]);
+	});
+
+	it('F) HAVING reads the value the SELECT list computed', function () {
+		for (var i = 0; i < 20; i++) {
+			alasql('SELECT g, RANDOM() AS x FROM t GROUP BY g HAVING x < 0.5').forEach(function (row) {
+				assert.ok(row.x < 0.5, 'x is ' + row.x);
+			});
+		}
+	});
+
+	it('G) a compiled statement still works after the schema changes', function () {
+		var f = alasql.compile('SELECT g*10 AS z FROM t GROUP BY g HAVING z > 15');
+		assert.deepEqual(f(), [{z: 20}]);
+		alasql('CREATE TABLE t2769 (a INT)');
+		assert.deepEqual(f(), [{z: 20}]);
+	});
+
 	it('D) bare aggregate and bare column aliases still work', function () {
 		assert.deepEqual(alasql('SELECT g, COUNT(*) AS n FROM t GROUP BY g HAVING n > 1'), [
 			{g: 2, n: 2},
