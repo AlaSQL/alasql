@@ -162,11 +162,9 @@ yy.Delete.prototype.compile = function (databaseid) {
 				return alasql.engines[db.engineid].deleteFromTable(databaseid, tableid, null, params, cb);
 			}
 
-			if (
-				alasql.options.autocommit &&
-				db.engineid &&
-				(db.engineid == 'LOCALSTORAGE' || db.engineid == 'FILESTORAGE')
-			) {
+			// Any engine with loadTableData and saveTableData can hold the table, also one
+			// registered by the user, so the engine is not limited by name here
+			if (alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].loadTableData(databaseid, tableid);
 			}
 
@@ -194,11 +192,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				db.tables[tableid].indices[ix] = {};
 			}
 
-			if (
-				alasql.options.autocommit &&
-				db.engineid &&
-				(db.engineid == 'LOCALSTORAGE' || db.engineid == 'FILESTORAGE')
-			) {
+			if (alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
