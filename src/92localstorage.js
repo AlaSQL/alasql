@@ -102,23 +102,23 @@ LS.removeTable = function (databaseid, tableid) {
 LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 	var res = 1;
 	var ls = LS.get('alasql'); // Read list of all databases
-	// The database record itself decides if the database exists: the index
-	// record may be missing (removed by hand), and an existing database must
-	// not be overwritten with an empty one (#3070)
-	if (LS.get(lsdbid)) {
-		// Repair the missing index entry
+	var listed = !!(ls && ls.databases && ls.databases[lsdbid]);
+	var lsdb = LS.get(lsdbid);
+	if (!listed && lsdb && lsdb.databaseid === lsdbid && lsdb.tables) {
+		// The index record lost the entry while the database record is still there, so
+		// repair the index and never overwrite the database. Only a record with the shape
+		// of a database counts, as another app can keep JSON under the same key (#3070)
 		if (!ls) ls = {databases: {}};
 		if (!ls.databases) ls.databases = {};
 		ls.databases[lsdbid] = true;
 		LS.set('alasql', ls);
-		if (ifnotexists) {
-			res = 0;
-		} else {
+		if (!ifnotexists) {
 			throw new Error(
 				'localStorage: Cannot create new database "' + lsdbid + '" because it already exists'
 			);
 		}
-	} else if (!(ifnotexists && ls && ls.databases && ls.databases[lsdbid])) {
+		res = 0;
+	} else if (!(ifnotexists && listed)) {
 		if (!ls) ls = {databases: {}}; // Empty record
 		if (ls.databases && ls.databases[lsdbid]) {
 			throw new Error(
@@ -130,7 +130,7 @@ LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 		LS.set(lsdbid, {databaseid: lsdbid, tables: {}}); // Create database record
 	} else {
 		// The database is listed but its record can be gone (e.g. removed from storage)
-		if (!LS.get(lsdbid)) LS.set(lsdbid, {databaseid: lsdbid, tables: {}});
+		if (!lsdb) LS.set(lsdbid, {databaseid: lsdbid, tables: {}});
 		res = 0;
 	}
 	if (cb) res = cb(res);
