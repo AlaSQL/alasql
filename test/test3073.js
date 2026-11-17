@@ -70,4 +70,13 @@ describe('Test 3073 - toString() must keep brackets around a column name that is
 		assert.strictEqual(printed, 'SELECT id FROM t');
 		done();
 	});
+
+	it('6. qualified keyword column keeps its dot', function (done) {
+		// t[value] does not read as a column, so the dot must stay
+		var printed = roundtrip('SELECT t.[value]->a AS x FROM t');
+		assert.ok(printed.indexOf('t.[value]') > -1, 'toString() should keep t.[value]: ' + printed);
+		printed = roundtrip('SELECT a.id FROM t a JOIN t b ON a.[select] = b.[select]');
+		assert.ok(printed.indexOf('a.[select]') > -1, 'toString() should keep a.[select]: ' + printed);
+		done();
+	});
 });

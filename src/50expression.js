@@ -216,6 +216,7 @@
 				const token = parser.lexer.lex();
 				isKeyword = parser.terminals_[token] !== 'LITERAL';
 			}
+			if (keywordColumnCache.size >= alasql.MAXSQLCACHESIZE) keywordColumnCache.clear();
 			keywordColumnCache.set(upper, isKeyword);
 		}
 		return isKeyword;
@@ -810,8 +811,9 @@
 			let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
 
 			if (this.tableid) {
-				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1])
-				const separator = colNeedsBrackets ? '' : '.';
+				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1]),
+				// but keep it for a keyword column, as t[value] does not read as a column (#3073)
+				const separator = colNeedsBrackets && !isKeywordColumn(this.columnid) ? '' : '.';
 				s = Column.wrapId(this.tableid) + separator + s;
 
 				if (this.databaseid) {
