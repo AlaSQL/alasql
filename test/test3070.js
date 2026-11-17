@@ -52,7 +52,7 @@ describe('Test 3070 - CREATE LOCALSTORAGE DATABASE must not overwrite an existin
 	}
 
 	it('1. CREATE IF NOT EXISTS is a no-op and repairs the index record', function (done) {
-		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + lsdbid);
+		assert.strictEqual(alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + lsdbid), 0);
 		assert.ok(indexHasDatabase(), 'index record should list the database again');
 		// The database record must not have been overwritten with an empty one
 		assert.deepStrictEqual(JSON.parse(localStorage.getItem(lsdbid)).tables, {t1: true});
@@ -73,5 +73,17 @@ describe('Test 3070 - CREATE LOCALSTORAGE DATABASE must not overwrite an existin
 		var res = alasql('SELECT * FROM ' + lsdbid + '.t1');
 		assert.deepStrictEqual(res, [{a: 1}, {a: 2}]);
 		done();
+	});
+
+	it('3. A key of another app with the same name is not taken as a database', function () {
+		// Only a record with the shape of a database counts, not any JSON value
+		var appkey = 'settings' + 3070;
+		localStorage.setItem(appkey, JSON.stringify({theme: 'dark'}));
+		assert.strictEqual(alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + appkey), 1);
+		alasql('ATTACH LOCALSTORAGE DATABASE ' + appkey);
+		alasql('CREATE TABLE ' + appkey + '.t (a INT)');
+		alasql('INSERT INTO ' + appkey + '.t VALUES (1)');
+		assert.deepStrictEqual(alasql('SELECT * FROM ' + appkey + '.t'), [{a: 1}]);
+		alasql('DETACH DATABASE ' + appkey);
 	});
 });
