@@ -63,4 +63,22 @@ describe(`Test ${testId} - a subquery in JOIN ... ON`, function () {
 			]
 		);
 	});
+
+	it('E) The subquery result is read again after its table changes', function () {
+		// Tables filled through .data are not marked dirty, so a join index on them is kept
+		alasql('CREATE TABLE s (k INT, g INT); CREATE TABLE w (k INT, h INT); CREATE TABLE t (v INT)');
+		alasql.tables.s.data = [
+			{k: 1, g: 12},
+			{k: 2, g: 10},
+		];
+		alasql.tables.w.data = [
+			{k: 1, h: 20},
+			{k: 2, h: 40},
+		];
+		alasql.tables.t.data = [{v: 8}];
+		var sql = 'SELECT s.k, w.h FROM s JOIN w ON s.g = w.h - (SELECT MIN(v) FROM t)';
+		assert.deepStrictEqual(alasql(sql), [{k: 1, h: 20}]);
+		alasql.tables.t.data = [{v: 30}];
+		assert.deepStrictEqual(alasql(sql), [{k: 2, h: 40}]);
+	});
 });
