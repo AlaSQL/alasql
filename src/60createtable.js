@@ -39,10 +39,17 @@ yy.ColumnDef.prototype.toString = function () {
 // Whether the referenced table has a row with the key values in rr. Without a primary key
 // the named columns are searched, as SQL-92 allows a foreign key to a UNIQUE column (#2779)
 function foreignKeyExists(fktable, rr) {
-	if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
-		return !!fktable.uniqs[fktable.pk.hh][fktable.pk.onrightfn(rr)];
-	}
 	var columnids = Object.keys(rr);
+	if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
+		// The key can hold only a prefix of the values, so compare the whole values (#2883)
+		var parent = fktable.uniqs[fktable.pk.hh][fktable.pk.onrightfn(rr)];
+		return (
+			!!parent &&
+			columnids.every(function (columnid) {
+				return String(parent[columnid]) === String(rr[columnid]);
+			})
+		);
+	}
 	return fktable.data.some(function (row) {
 		return columnids.every(function (columnid) {
 			return row[columnid] != null && String(row[columnid]) === String(rr[columnid]);
