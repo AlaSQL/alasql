@@ -826,7 +826,7 @@ case 305:
  this.$ = new yy.Column({columnid: $$[$0]});
 break;
 case 320:
- this.$ = new yy.DomainValueValue(); 
+ this.$ = new yy.Column({columnid: alasql.options.casesensitive ? $$[$0] : $$[$0].toLowerCase(), valueKeyword: true}); 
 break;
 case 321:
  this.$ = new yy.Json({value:$$[$0]}); 
