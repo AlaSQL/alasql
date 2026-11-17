@@ -574,15 +574,20 @@ var preIndex = function (query) {
 		var scope, i, ilen, dataw, ixx, addr, group, res;
 		// If there is indexation rule
 		if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
+			// An index whose key reads a parameter, a variable or a user function is only
+			// valid for the values of this run, so it is neither reused nor kept (#3075)
+			var ixkeyfns = source.onrightfns + '`' + source.srcwherefns;
+			var ixparams = /\bparams\[|\balasql\.(vars|fn)\[/.test(ixkeyfns);
 			// If there is no table.indices - create it
-			if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
+			if (
+				!ixparams &&
+				source.databaseid &&
+				alasql.databases[source.databaseid].tables[source.tableid]
+			) {
 				if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
 					query.database.tables[source.tableid].indices = {};
 				// Check if index already exists
-				ixx =
-					alasql.databases[source.databaseid].tables[source.tableid].indices[
-						hash(source.onrightfns + '`' + source.srcwherefns)
-					];
+				ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(ixkeyfns)];
 				// A view is re-executed on every query, so an index cached on it
 				// can be stale after its base tables change (#3065)
 				if (
@@ -626,15 +631,15 @@ var preIndex = function (query) {
 				}
 
 				if (
+					!ixparams &&
 					source.databaseid &&
 					alasql.databases[source.databaseid].tables[source.tableid] &&
 					!alasql.databases[source.databaseid].tables[source.tableid].view
 				) {
 					// Save index to original table (but not to a view, whose rows
 					// change with its base tables, see #3065)
-					alasql.databases[source.databaseid].tables[source.tableid].indices[
-						hash(source.onrightfns + '`' + source.srcwherefns)
-					] = source.ix;
+					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(ixkeyfns)] =
+						source.ix;
 				}
 			}
 
