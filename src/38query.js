@@ -574,10 +574,10 @@ var preIndex = function (query) {
 		var scope, i, ilen, dataw, ixx, addr, group, res;
 		// If there is indexation rule
 		if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
-			// An index whose key reads a parameter is only valid for the current
-			// parameter values, so it is neither reused nor kept (#3075)
+			// An index whose key reads a parameter, a variable or a user function is only
+			// valid for the values of this run, so it is neither reused nor kept (#3075)
 			var ixkeyfns = source.onrightfns + '`' + source.srcwherefns;
-			var ixparams = /\bparams\[/.test(ixkeyfns);
+			var ixparams = /\bparams\[|\balasql\.(vars|fn)\[/.test(ixkeyfns);
 			// If there is no table.indices - create it
 			if (
 				!ixparams &&

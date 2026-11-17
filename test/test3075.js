@@ -62,4 +62,35 @@ describe(`Test ${testId} - JOIN index with a parameter is not reused`, function 
 		]);
 		assert.strictEqual(Object.keys(alasql.tables.w.indices).length, after);
 	});
+
+	it('E) Variable in the ON condition', function () {
+		const q = 'SELECT s.g, w.h FROM s JOIN w ON s.g = w.h + @d3075';
+		alasql('SET @d3075 = 1');
+		assert.deepStrictEqual(alasql(q), [
+			{g: 2, h: 1},
+			{g: 3, h: 2},
+		]);
+		alasql('SET @d3075 = 0');
+		assert.deepStrictEqual(alasql(q), [
+			{g: 1, h: 1},
+			{g: 2, h: 2},
+			{g: 3, h: 3},
+		]);
+		delete alasql.vars.d3075;
+	});
+
+	it('F) User function in the ON condition', function () {
+		let offset = 2;
+		alasql.fn.offset3075 = function () {
+			return offset;
+		};
+		const q = 'SELECT s.g, w.h FROM s JOIN w ON s.g = w.h + offset3075()';
+		assert.deepStrictEqual(alasql(q), [{g: 3, h: 1}]);
+		offset = 1;
+		assert.deepStrictEqual(alasql(q), [
+			{g: 2, h: 1},
+			{g: 3, h: 2},
+		]);
+		delete alasql.fn.offset3075;
+	});
 });
