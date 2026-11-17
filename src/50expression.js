@@ -219,6 +219,11 @@
 	class Op {
 		constructor(params) {
 			assign(this, params);
+			// The VALUE keyword is a column (#2670), but VALUE->x in a CHECK still reads the checked row.
+			// [value] and `value` are plain columns, so they keep -> on the column
+			if (this.op === '->' && this.left instanceof yy.Column && this.left.valueKeyword) {
+				this.left = new yy.DomainValueValue();
+			}
 		}
 
 		toString() {
@@ -786,6 +791,10 @@
 		}
 
 		toJS(context, tableid, defcols) {
+			// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
+			if (this.valueKeyword && context === 'x') {
+				return context;
+			}
 			if (!this.tableid && tableid === '' && !defcols) {
 				return this.columnid !== '_'
 					? `${context}['${this.columnid}']`
