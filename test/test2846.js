@@ -9,8 +9,9 @@ let testId = '2846'; // Use the ID of the issue being fixed by this PR
 (alasql.utils.isNode ? describe : describe.skip)(
 	`Test ${testId} - FILESTORAGE ATTACH and CREATE TABLE errors`,
 	function () {
-		const missing = 'test' + testId + '-missing.json';
-		const filename = 'test' + testId + '.json';
+		// Keep the files under test/, as the repo root must stay clean
+		const missing = __dirname + '/restest' + testId + '-missing.json';
+		const filename = __dirname + '/restest' + testId + '.json';
 
 		afterEach(function () {
 			alasql('USE alasql');
@@ -23,7 +24,7 @@ let testId = '2846'; // Use the ID of the issue being fixed by this PR
 		it('A) ATTACH of a missing file throws a clear error and does not keep the database', function () {
 			assert.throws(function () {
 				alasql('ATTACH FILESTORAGE DATABASE fsa' + testId + '("' + missing + '")');
-			}, /Cannot attach FileStorage database, because file "test2846-missing.json" can not be read/);
+			}, /Cannot attach FileStorage database, because file ".*restest2846-missing\.json" can not be read/);
 			assert.strictEqual(alasql.databases['fsa' + testId], undefined);
 		});
 
