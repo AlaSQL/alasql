@@ -574,6 +574,12 @@ var preIndex = function (query) {
 		var scope, i, ilen, dataw, ixx, addr, group, res;
 		// If there is indexation rule
 		if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
+			// An index whose key expression reads params depends on the
+			// parameter values of this run: caching it would reuse the first
+			// run's values for a later run with different values (#3075)
+			var keyReadsParams = /\bparams\b/.test(
+				(source.onrightfns || '') + '`' + (source.srcwherefns || '')
+			);
 			// If there is no table.indices - create it
 			if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 				if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
@@ -588,6 +594,7 @@ var preIndex = function (query) {
 				if (
 					!alasql.databases[source.databaseid].tables[source.tableid].dirty &&
 					!alasql.databases[source.databaseid].tables[source.tableid].view &&
+					!keyReadsParams &&
 					ixx
 				) {
 					source.ix = ixx;
@@ -628,7 +635,8 @@ var preIndex = function (query) {
 				if (
 					source.databaseid &&
 					alasql.databases[source.databaseid].tables[source.tableid] &&
-					!alasql.databases[source.databaseid].tables[source.tableid].view
+					!alasql.databases[source.databaseid].tables[source.tableid].view &&
+					!keyReadsParams
 				) {
 					// Save index to original table (but not to a view, whose rows
 					// change with its base tables, see #3065)
