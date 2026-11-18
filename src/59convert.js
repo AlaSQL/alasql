@@ -22,6 +22,11 @@ yy.Convert.prototype.toString = function () {
 	s += ')';
 	return s;
 };
+// Lets CAST(COUNT(*) AS INTEGER) find the aggregate inside, like any other function
+yy.Convert.prototype.findAggregator = function (query) {
+	if (this.expression.findAggregator) this.expression.findAggregator(query);
+};
+
 yy.Convert.prototype.toJS = function (context, tableid, defcols) {
 	return `alasql.stdfn.CONVERT(${this.expression.toJS(context, tableid, defcols)}, {
         dbtypeid: "${this.dbtypeid}",
