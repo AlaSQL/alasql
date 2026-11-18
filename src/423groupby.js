@@ -24,6 +24,16 @@ function getGroupConcatParams(col) {
 	return `,${separator},${orderDir}`;
 }
 
+// The key of a value for a DISTINCT aggregate. For COUNT(DISTINCT *) it is the row of all
+// tables, and for COUNT(DISTINCT t.*) the row of t (#2758)
+function distinctKeyJS(col, colexp) {
+	var e = col.expression;
+	if (e.columnid !== '*') return colexp;
+	return (
+		'alasql.utils.distinctRowKey(p' + (e.tableid ? "['" + escapeq(e.tableid) + "']" : '') + ')'
+	);
+}
+
 /**
  Compile group of statements
  */
@@ -124,7 +134,13 @@ yy.Select.prototype.compileGroup = function (query) {
 				if (col instanceof yy.AggrValue) {
 					if (col.distinct) {
 						aft +=
-							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
+							",g['$$_VALUES_" +
+							colas +
+							"']={},g['$$_VALUES_" +
+							colas +
+							"'][" +
+							distinctKeyJS(col, colexp) +
+							']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
@@ -207,8 +223,15 @@ yy.Select.prototype.compileGroup = function (query) {
 					var pre = '',
 						post = '';
 					if (col.distinct) {
-						pre = `if(typeof ${colexp}!="undefined" && (!g['$$_VALUES_${colas}'][${colexp}])) {`;
-						post = `g['$$_VALUES_${colas}'][${colexp}]=true;}`;
+						var key = distinctKeyJS(col, colexp);
+						if (key !== colexp) {
+							// Build the row key once per row, as it walks every column of the row
+							pre = `var dk=${key};if(typeof dk!="undefined" && (!g['$$_VALUES_${colas}'][dk])) {`;
+							post = `g['$$_VALUES_${colas}'][dk]=true;}`;
+						} else {
+							pre = `if(typeof ${key}!="undefined" && (!g['$$_VALUES_${colas}'][${key}])) {`;
+							post = `g['$$_VALUES_${colas}'][${key}]=true;}`;
+						}
 					}
 
 					if (col.aggregatorid === 'SUM') {
