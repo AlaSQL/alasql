@@ -71,8 +71,21 @@ function stdlibDefcols(defcols, tableid) {
 yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 	var s = '';
 	var funcid = this.funcid;
+	// Keyword functions (DATEDIFF, DATEADD, TIMESTAMPDIFF) always carry an
+	// uppercase funcid, while ordinary function calls are lowercased by the
+	// parser when casesensitive is false. A user function registered in
+	// lowercase (e.g. alasql.fn.datediff) must therefore also be found here,
+	// or the built-in would run silently (#3080).
+	var fnid = funcid;
+	if (
+		!alasql.fn[fnid] &&
+		alasql.options.casesensitive === false &&
+		alasql.fn[funcid.toLowerCase()]
+	) {
+		fnid = funcid.toLowerCase();
+	}
 	// IF this is standard compile functions
-	if (!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
+	if (!alasql.fn[fnid] && alasql.stdlib[funcid.toUpperCase()]) {
 		if (this.args && this.args.length > 0) {
 			var argcols = stdlibDefcols(defcols, tableid);
 			s += alasql.stdlib[funcid.toUpperCase()].apply(
@@ -84,7 +97,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		} else {
 			s += alasql.stdlib[funcid.toUpperCase()]();
 		}
-	} else if (!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
+	} else if (!alasql.fn[fnid] && alasql.stdfn[funcid.toUpperCase()]) {
 		if (this.newid) s += 'new ';
 		s += 'alasql.stdfn[' + JSON.stringify(this.funcid.toUpperCase()) + '](';
 		if (this.args && this.args.length > 0) {
@@ -100,7 +113,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		// TODO arguments!!!
 		//		var s = '';
 		if (this.newid) s += 'new ';
-		s += 'alasql.fn[' + JSON.stringify(this.funcid) + '](';
+		s += 'alasql.fn[' + JSON.stringify(fnid) + '](';
 		if (this.args && this.args.length > 0) {
 			s += this.args
 				.map(function (arg) {
