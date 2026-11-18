@@ -10,6 +10,24 @@
 yy.Insert = function (params) {
 	return Object.assign(this, params);
 };
+
+// In INSERT INTO t ("a", b) VALUES ... the parser reads the list after the table as a row of
+// values, as it only knows at VALUES or SELECT that it holds column names (#2618).
+// A double-quoted string there is a name, as in Name: it keeps its case.
+yy.Insert.columnsFromValues = function (lists) {
+	if (lists.length !== 1 || !Array.isArray(lists[0])) {
+		throw new SyntaxError('Wrong column list in INSERT');
+	}
+	return lists[0].map(function (v) {
+		if (v instanceof yy.Column) return v;
+		// A column named default (#2238)
+		if (v instanceof yy.DefaultValue) return new yy.Column({columnid: 'default'});
+		if (v instanceof yy.StringValue && v.doubleQuoted && v.value && !/['\\]/.test(v.value)) {
+			return new yy.Column({columnid: v.value});
+		}
+		throw new SyntaxError('Wrong column list in INSERT: ' + v);
+	});
+};
 yy.Insert.prototype.toString = function () {
 	var s = 'INSERT ';
 	if (this.orreplace) s += 'OR REPLACE ';
