@@ -960,11 +960,17 @@ FromTable
 	: LPAR Select RPAR FromTableAlias?
 		{ $$ = $2; $$.as = $4 || 'default'; }
 	| Json AS? Literal?
-		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
+		{ $$ = new yy.Json({value:$1, as:$3}); }
 	| Table FromTableAlias?
 		{ $$ = $1; if($2) $1.as = $2; }
 	| Table NOT INDEXED
 		{ $$ = $1; }
+	| Table INDEXED BY Literal
+		{ $$ = $1; }
+	| Table FromTableAlias NOT INDEXED
+		{ $$ = $1; $1.as = $2; }
+	| Table FromTableAlias INDEXED BY Literal
+		{ $$ = $1; $1.as = $2; }
 	| ParamValue FromTableAlias?
 		{ $$ = $1; $1.as = $2 || 'default'; }
 	| FuncValue FromTableAlias?
@@ -1375,8 +1381,9 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
+	/* A bare value in an expression is a column named value (#2670). Right after SELECT it stays the modifier */
 	| VALUE
-		{ $$ = new yy.DomainValueValue(); }
+		{ $$ = new yy.Column({columnid: alasql.options.casesensitive ? $1 : $1.toLowerCase(), valueKeyword: true}); }
 	| Json
 		{ $$ = new yy.Json({value:$1}); }
 	| ArrayValue
@@ -1495,6 +1502,8 @@ AggrValue
 		 over:$6}); }
 	| GROUP_CONCAT LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
 		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, order: $4, separator: $5}); }
+	| GROUP_CONCAT LPAR Expression COMMA AnyString RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, separator: $5.substring(1, $5.length-1)}); }
 	| GROUP_CONCAT LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
 		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $4, distinct: true, order: $5, separator: $6}); }
 	;
@@ -1802,23 +1811,23 @@ Op
 
 				if($1.left.op == 'AND') {
 					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
-						new yy.Op({left:$1.left.right, op:'BETWEEN',
-							right1:$1.right, right2:$3})
+						yy.notOutside(new yy.Op({left:$1.left.right, op:'BETWEEN',
+							right1:$1.right, right2:$3}))
 					});
 				} else {
-					$$ = new yy.Op({left:$1.left, op:'BETWEEN',
-						right1:$1.right, right2:$3});
+					$$ = yy.notOutside(new yy.Op({left:$1.left, op:'BETWEEN',
+						right1:$1.right, right2:$3}));
 				}
 
 			} else if($1.op == 'NOT BETWEEN1') {
 				if($1.left.op == 'AND') {
 					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
-						new yy.Op({left:$1.left.right, op:'NOT BETWEEN',
-							right1:$1.right, right2:$3})
+						yy.notOutside(new yy.Op({left:$1.left.right, op:'NOT BETWEEN',
+							right1:$1.right, right2:$3}))
 					});
 				} else {
-					$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN',
-						right1:$1.right, right2:$3});
+					$$ = yy.notOutside(new yy.Op({left:$1.left, op:'NOT BETWEEN',
+						right1:$1.right, right2:$3}));
 				}
 			} else {
 				$$ = new yy.Op({left:$1, op:'AND', right:$3});
@@ -1853,7 +1862,7 @@ Op
 			}
 			// Now add this SELECT to parent queries
 			yy.queries.push($4);
-			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length - 1});
+			$$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length - 1}));
 		}
 
 	| Expression NOT IN LPAR Select RPAR
@@ -1868,32 +1877,32 @@ Op
 			}
 			// Now add this SELECT to parent queries
 			yy.queries.push($5);
-			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length - 1});
+			$$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length - 1}));
 		}
 
 	| Expression IN LPAR ExprList RPAR
-		{ $$ = new yy.Op({left: $1, op:'IN', right:$4}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$4})); }
 
 	| Expression NOT IN LPAR ExprList RPAR
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$5}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$5})); }
 
 	| Expression IN LPAR RPAR
-		{ $$ = new yy.Op({left: $1, op:'IN', right:[]}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:[]})); }
 
 	| Expression NOT IN LPAR RPAR
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:[]}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:[]})); }
 
 	| Expression IN ColFunc
-		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$3})); }
 
 	| Expression NOT IN ColFunc
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$4})); }
 
 	| Expression IN VarValue
-		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$3})); }
 
 	| Expression NOT IN VarValue
-		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$4})); }
 
 	/*
 		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar.
@@ -2010,14 +2019,14 @@ Insert
 		{ $$ = new yy.Insert({into:$4, values: $6, ignore:true}); yy.extend($$,$7); }
 	| INSERT IGNORE Into TargetTable ValuesListsList OutputClause
 		{ $$ = new yy.Insert({into:$4, values: $5, ignore:true}); yy.extend($$,$6); }
-	| INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR Values ValuesListsList OutputClause
-		{ $$ = new yy.Insert({into:$4, columns: $6, values: $9, ignore:true}); yy.extend($$,$10); }
-	| INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
-		{ $$ = new yy.Insert({into:$4, columns: $6, values: $8, ignore:true}); yy.extend($$,$9); }
+	| INSERT IGNORE Into TargetTable ValuesListsList Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$4, columns: yy.Insert.columnsFromValues($5), values: $7, ignore:true}); yy.extend($$,$8); }
+	| INSERT IGNORE Into TargetTable ValuesListsList ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$4, columns: yy.Insert.columnsFromValues($5), values: $6, ignore:true}); yy.extend($$,$7); }
 	| INSERT IGNORE Into TargetTable Select OutputClause
 		{ $$ = new yy.Insert({into:$4, select: $5, ignore:true}); yy.extend($$,$6); }
-	| INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR Select OutputClause
-		{ $$ = new yy.Insert({into:$4, columns: $6, select: $8, ignore:true}); yy.extend($$,$9); }
+	| INSERT IGNORE Into TargetTable ValuesListsList Select OutputClause
+		{ $$ = new yy.Insert({into:$4, columns: yy.Insert.columnsFromValues($5), select: $6, ignore:true}); yy.extend($$,$7); }
 	| INSERT OR REPLACE Into TargetTable Values ValuesListsList OutputClause
 		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); yy.extend($$,$8); }
 	| INSERT OR REPLACE Into TargetTable ValuesListsList OutputClause
@@ -2028,16 +2037,16 @@ Insert
 		{ $$ = new yy.Insert({into:$3, values: $4, orreplace:true}); yy.extend($$,$5); }
 	| INSERT Into TargetTable DEFAULT Values OutputClause
 		{ $$ = new yy.Insert({into:$3, "default": true}); yy.extend($$,$6); }
-	| INSERT Into TargetTable LPAR ColumnsList RPAR Values ValuesListsList OutputClause
-		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); yy.extend($$,$9); }
-	| INSERT Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
-		{ $$ = new yy.Insert({into:$3, columns: $5, values: $7}); yy.extend($$,$8); }
+	| INSERT Into TargetTable ValuesListsList Values ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, columns: yy.Insert.columnsFromValues($4), values: $6}); yy.extend($$,$7); }
+	| INSERT Into TargetTable ValuesListsList ValuesListsList OutputClause
+		{ $$ = new yy.Insert({into:$3, columns: yy.Insert.columnsFromValues($4), values: $5}); yy.extend($$,$6); }
 	| INSERT Into TargetTable Select OutputClause
 		{ $$ = new yy.Insert({into:$3, select: $4}); yy.extend($$,$5); }
 	| INSERT OR REPLACE Into TargetTable Select OutputClause
 		{ $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); yy.extend($$,$7); }
-	| INSERT Into TargetTable LPAR ColumnsList RPAR Select OutputClause
-		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); yy.extend($$,$8); }
+	| INSERT Into TargetTable ValuesListsList Select OutputClause
+		{ $$ = new yy.Insert({into:$3, columns: yy.Insert.columnsFromValues($4), select: $5}); yy.extend($$,$6); }
 	| INSERT Into TargetTable SET SetColumnsList OutputClause
 		{ $$ = new yy.Insert({into:$3, setcolumns: $5}); yy.extend($$,$6); }
 	;
@@ -2551,17 +2560,17 @@ DropDatabase
 
 CreateIndex
 	:
-	 CREATE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
+	 CREATE INDEX IfNotExists Name ON TableName LPAR OrderExpressionsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8}); yy.extend($$, $3); }
 	|
 
-	CREATE UNIQUE INDEX Name ON TableName LPAR OrderExpressionsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
+	CREATE UNIQUE INDEX IfNotExists Name ON TableName LPAR OrderExpressionsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$5, table:$7, columns:$9, unique:true}); yy.extend($$, $4); }
 	;
 
 DropIndex
-	: DROP INDEX Name
-		{ $$ = new yy.DropIndex({indexid:$3});}
+	: DROP INDEX IfExists Name
+		{ $$ = new yy.DropIndex({indexid:$4}); yy.extend($$, $3); }
 	;
 
 /* SHOW COMMAND */
@@ -3310,21 +3319,24 @@ Call
 	;
 
 CreateTrigger
-	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
+	: CREATE TRIGGER IfNotExists Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
 		{
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$9});
-			if($9.exists) $$.exists = $9.exists;
-			if($9.queries) $$.queries = $9.queries;
+			$$ = new yy.CreateTrigger({trigger:$4, when:$5, action:$6, table:$8, statement:$10});
+			yy.extend($$, $3);
+			if($10.exists) $$.exists = $10.exists;
+			if($10.queries) $$.queries = $10.queries;
 		}
-	| CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table Literal
+	| CREATE TRIGGER IfNotExists Literal BeforeAfter InsertDeleteUpdate ON Table Literal
 		{
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8});
+			$$ = new yy.CreateTrigger({trigger:$4, when:$5, action:$6, table:$8, funcid:$9});
+			yy.extend($$, $3);
 		}
-	| CREATE TRIGGER Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
+	| CREATE TRIGGER IfNotExists Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
 		{
-			$$ = new yy.CreateTrigger({trigger:$3, when:$5, action:$6, table:$4, statement:$9});
-			if($9.exists) $$.exists = $9.exists;
-			if($9.queries) $$.queries = $9.queries;
+			$$ = new yy.CreateTrigger({trigger:$4, when:$6, action:$7, table:$5, statement:$10});
+			yy.extend($$, $3);
+			if($10.exists) $$.exists = $10.exists;
+			if($10.queries) $$.queries = $10.queries;
 		}
 	;
 
@@ -3348,8 +3360,8 @@ InsertDeleteUpdate
 	;
 
 DropTrigger
-	: DROP TRIGGER Literal
-		{ $$ = new yy.DropTrigger({trigger:$3}); }
+	: DROP TRIGGER IfExists Literal
+		{ $$ = new yy.DropTrigger({trigger:$4}); yy.extend($$, $3); }
 	;
 
 Reindex
