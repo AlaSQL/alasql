@@ -863,9 +863,9 @@ yy.CreateDomain.prototype.execute = function (databaseid, params, cb) {
 		if (con.default) domain.default = con.default;
 		if (con.notnull) domain.notnull = true;
 		if (con.check) {
-			// VALUE in the check is the value of the column
+			// VALUE in the check is the value of the column. It compiles as x, like in SEARCH
 			domain.checks.push(
-				new Function('v,params,alasql', 'var y;return ' + con.check.expression.toJS('v', ''))
+				new Function('x,params,alasql', 'var y;return ' + con.check.expression.toJS('x', ''))
 			);
 		}
 	});
