@@ -614,6 +614,16 @@ yy.Select = class Select {
 		// Helper function to detect if a subquery might be correlated
 		// A subquery is correlated if it references tables not in its own FROM clause
 		const isCorrelated = (subquery, outerQuery) => {
+			// A branch of UNION, EXCEPT or INTERSECT can read the outer row too (#2856).
+			// Check it first, as the first branch may have no FROM.
+			if (
+				['union', 'unionall', 'except', 'intersect'].some(
+					key => subquery[key] && isCorrelated(subquery[key], outerQuery)
+				)
+			) {
+				return true;
+			}
+
 			if (!subquery.from) return false;
 
 			// Get table names from subquery's FROM clause
