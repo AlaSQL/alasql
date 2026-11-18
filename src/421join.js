@@ -80,14 +80,7 @@ yy.Select.prototype.compileJoins = function (query) {
 					);
 				};
 			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
-				source.datafn = function (query, params, cb, idx, alasql) {
-					let res = viewRows(
-						alasql.databases[source.databaseid].tables[source.tableid].select,
-						params
-					);
-					if (cb) res = cb(res, idx, query);
-					return res;
-				};
+				source.datafn = viewDatafn(source);
 			} else {
 				source.datafn = function (query, params, cb, idx, alasql) {
 					let res = alasql.databases[source.databaseid].tables[source.tableid].data;
@@ -268,6 +261,10 @@ yy.Select.prototype.compileJoins = function (query) {
 				} else {
 					middlef = true;
 				}
+
+				// A subquery is not a fixed key: its result can change without the joined table
+				// changing, so an index on it would go stale, and a correlated one needs the row
+				if (/this\.(queriesfn|existsfn)/.test(ls + rs)) middlef = true;
 
 				if (middlef) {
 					rights = '';
