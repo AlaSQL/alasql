@@ -1575,11 +1575,11 @@ FuncValue
 	| CURRENT_DATE LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR DatePart COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
+		{ $$ = new yy.FuncValue({ funcid: alasql.options.casesensitive ? 'DATEADD' : 'dateadd', args:[$3,$5,$7]}) }
 	| DATEDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
+		{ $$ = new yy.FuncValue({ funcid: alasql.options.casesensitive ? 'DATEDIFF' : 'datediff', args:[$3,$5,$7]}) }
 	| TIMESTAMPDIFF LPAR DatePart COMMA Expression COMMA Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[$3,$5,$7]}) }
+		{ $$ = new yy.FuncValue({ funcid: alasql.options.casesensitive ? 'TIMESTAMPDIFF' : 'timestampdiff', args:[$3,$5,$7]}) }
 	| INTERVAL Expression Literal
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;

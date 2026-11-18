@@ -983,13 +983,13 @@ case 376:
  this.$ = new yy.FuncValue({ funcid: $$[$0-2] }) 
 break;
 case 377:
- this.$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
+ this.$ = new yy.FuncValue({ funcid: alasql.options.casesensitive ? 'DATEADD' : 'dateadd', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
 break;
 case 378:
- this.$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
+ this.$ = new yy.FuncValue({ funcid: alasql.options.casesensitive ? 'DATEDIFF' : 'datediff', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
 break;
 case 379:
- this.$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
+ this.$ = new yy.FuncValue({ funcid: alasql.options.casesensitive ? 'TIMESTAMPDIFF' : 'timestampdiff', args:[$$[$0-5],$$[$0-3],$$[$0-1]]}) 
 break;
 case 380:
  this.$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$$[$0-1],new yy.StringValue({value:($$[$0]).toLowerCase()})]}); 
