@@ -1067,6 +1067,36 @@ var distinctArray = (utils.distinctArray = function (data) {
 });
 
 /**
+  Key of a row for COUNT(DISTINCT *). Equal rows get the same key whatever the order
+  of their columns, and a NULL column counts as an omitted one. NULL in a numeric
+  column is stored as NaN, so NaN counts as NULL too (#2758)
+  @param {*} v
+  @return {string}
+  */
+function isNullValue(v) {
+	return v === null || v === undefined || (typeof v === 'number' && isNaN(v));
+}
+utils.distinctRowKey = function distinctRowKey(v) {
+	if (isNullValue(v)) return '';
+	if (typeof v === 'number' || typeof v === 'bigint') return 'n' + v;
+	if (v instanceof Date) return 'd' + v.getTime();
+	if (typeof v !== 'object') return typeof v + JSON.stringify(String(v));
+	return (
+		(Array.isArray(v) ? '[' : '{') +
+		Object.keys(v)
+			.sort()
+			.filter(function (k) {
+				return !isNullValue(v[k]);
+			})
+			.map(function (k) {
+				return JSON.stringify(k) + ':' + distinctRowKey(v[k]);
+			})
+			.join(',') +
+		'}'
+	);
+};
+
+/**
   Extend object a with properties of b
   @function
   @param {object} a
@@ -1285,6 +1315,8 @@ var like = (utils.like = function (pattern, value, escape = '') {
 		regexStr += '$'; // End regex pattern to match until the end.
 		// Compile and cache the regex pattern for future use.
 		re = RegExp(regexStr, 'i');
+		// Patterns built from user input would fill the cache without end (#2886)
+		if (cache.size >= alasql.MAXSQLCACHESIZE) cache.clear();
 		cache.set(pattern, re);
 	}
 
