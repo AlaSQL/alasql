@@ -75,27 +75,58 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 	if (alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
 	}
+	var prev = alasql.databases[dbid || fsdbid];
 	var db = new alasql.Database(dbid || fsdbid);
 	db.engineid = 'FILESTORAGE';
 	db.filename = args[0].value;
-	loadFile(db.filename, !!cb, function (s) {
-		try {
-			db.data = JSON.parse(s);
-		} catch (err) {
-			throw new Error('Data in FileStorage database are corrupted');
-		}
-		// Live tables are kept apart from the schema stored in the file, so storing a
-		// schema does not drop the keys and checks of the live table (#1846)
-		db.tables = {};
-		for (var tbid in db.data.tables) {
-			db.tables[tbid] = extend({}, db.data.tables[tbid]);
-			// IF AUTOCOMMIT IS OFF then copy data to memory
-			if (!alasql.options.autocommit) {
-				db.tables[tbid].data = db.data[tbid];
+	var attached = false;
+
+	// Do not leave a database without data behind when the file can not be used
+	function fail(err) {
+		if (attached) throw err; // an error thrown by the callback of a finished ATTACH
+		if (prev) alasql.databases[db.databaseid] = prev;
+		else delete alasql.databases[db.databaseid];
+		if (alasql.useid === db.databaseid && !prev) alasql.use();
+		if (!cb) throw err;
+		res = cb(null, err);
+	}
+
+	loadFile(
+		db.filename,
+		!!cb,
+		function (s) {
+			try {
+				db.data = JSON.parse(s);
+			} catch (err) {
+				return fail(new Error('Data in FileStorage database are corrupted'));
 			}
+			if (!db.data || typeof db.data.tables !== 'object' || db.data.tables === null) {
+				return fail(new Error('Data in FileStorage database are corrupted'));
+			}
+			// Live tables are kept apart from the schema stored in the file, so storing a
+			// schema does not drop the keys and checks of the live table (#1846)
+			db.tables = {};
+			for (var tbid in db.data.tables) {
+				db.tables[tbid] = extend({}, db.data.tables[tbid]);
+				// IF AUTOCOMMIT IS OFF then copy data to memory
+				if (!alasql.options.autocommit) {
+					db.tables[tbid].data = db.data[tbid];
+				}
+			}
+			attached = true;
+			if (cb) res = cb(res);
+		},
+		function (e) {
+			fail(
+				new Error(
+					'Cannot attach FileStorage database, because file "' +
+						db.filename +
+						'" can not be read' +
+						(e && e.message ? ': ' + e.message : '')
+				)
+			);
 		}
-		if (cb) res = cb(res);
-	});
+	);
 	return res;
 };
 
@@ -114,7 +145,7 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var res = 1;
 
 	if (tb && !ifnotexists) {
-		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
+		throw new Error('Table "' + tableid + '" already exists in the database "' + databaseid + '"');
 	}
 	var table = alasql.databases[databaseid].tables[tableid];
 	db.data.tables[tableid] = fsTableSchema(table);
