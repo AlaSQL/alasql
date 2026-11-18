@@ -219,6 +219,11 @@
 	class Op {
 		constructor(params) {
 			assign(this, params);
+			// The VALUE keyword is a column (#2670), but VALUE->x in a CHECK still reads the checked row.
+			// [value] and `value` are plain columns, so they keep -> on the column
+			if (this.op === '->' && this.left instanceof yy.Column && this.left.valueKeyword) {
+				this.left = new yy.DomainValueValue();
+			}
 		}
 
 		toString() {
@@ -789,6 +794,10 @@
 		}
 
 		toJS(context, tableid, defcols) {
+			// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
+			if (this.valueKeyword && context === 'x') {
+				return context;
+			}
 			if (!this.tableid && tableid === '' && !defcols) {
 				return this.columnid !== '_'
 					? `${context}['${this.columnid}']`
@@ -960,4 +969,15 @@
 		VarValue,
 		View,
 	});
+
+	// NOT binds looser than IN and BETWEEN, but the grammar reads NOT x IN (...) as
+	// (NOT x) IN (...). This takes the NOT out of the left operand again (#2768)
+	yy.notOutside = function (op) {
+		if (op.left instanceof UniOp && op.left.op === 'NOT') {
+			var not = op.left;
+			op.left = not.right;
+			return new UniOp({op: 'NOT', right: yy.notOutside(op)});
+		}
+		return op;
+	};
 }
