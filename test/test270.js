@@ -30,34 +30,34 @@ describe('Test 270 RECORDSET tests', function () {
 		done();
 	});
 
-	it.skip('2. Empty test on param throws error', function (done) {
+	it('2. Empty test on param throws error', function (done) {
 		assert.throws(function () {
 			var res = alasql('SELECT * FROM ?', []);
 		}, Error);
 		done();
 	});
 
-	it.skip('3. Empty test on param throws error', function (done) {
+	it('3. Empty test on param throws error', function (done) {
 		var res = alasql('SELECT * FROM ?', [emptydata]);
 		assert.deepStrictEqual(res, {data: [], columns: []});
 		done();
 	});
 
-	it.skip('4. Empty test on table with columns', function (done) {
+	it('4. Empty test on table with columns', function (done) {
 		var res = alasql('SELECT * FROM one');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it.skip('5. Test on empty table without column definitions', function (done) {
+	it('5. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT * FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, []);
 		done();
 	});
 
-	it.skip('6. Test on empty table without column definitions', function (done) {
+	it('6. Test on empty table without column definitions', function (done) {
 		alasql('SELECT * INTO three FROM ?', [data1]);
 		var res = alasql('SELECT * FROM three');
 		var colres = pluck(res.columns, 'columnid');
@@ -65,49 +65,49 @@ describe('Test 270 RECORDSET tests', function () {
 		done();
 	});
 
-	it.skip('7. Test on empty table without column definitions', function (done) {
+	it('7. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT a,b FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it.skip('8. Test on empty table without column definitions', function (done) {
+	it('8. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT b,a FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['b', 'a']);
 		done();
 	});
 
-	it.skip('9. Test on empty table without column definitions', function (done) {
+	it('9. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT a,b,a*a AS a2 FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b', 'a2']);
 		done();
 	});
 
-	it.skip('9a. Test on table without column definitions', function (done) {
+	it('9a. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT a,a*a AS a2,b FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'a2', 'b']);
 		done();
 	});
 
-	it.skip('9b. Test on table without column definitions', function (done) {
+	it('9b. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT a,* FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it.skip('9c. Test on table without column definitions', function (done) {
+	it('9c. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT *,a FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it.skip('9c1. Test on table without column definitions', function (done) {
+	it('9c1. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT b,*,a FROM three');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['b', 'a']);
@@ -121,21 +121,21 @@ describe('Test 270 RECORDSET tests', function () {
 		done();
 	});
 
-	it.skip('10. Array on param with *', function (done) {
+	it('10. Array on param with *', function (done) {
 		var res = alasql('SELECT * FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it.skip('11. Array with column', function (done) {
+	it('11. Array with column', function (done) {
 		var res = alasql('SELECT a,b FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it.skip('11a. Array with column', function (done) {
+	it('11a. Array with column', function (done) {
 		var res = alasql('SELECT b,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['b', 'a']);
@@ -149,35 +149,35 @@ describe('Test 270 RECORDSET tests', function () {
 		done();
 	});
 
-	it.skip('12. Array with column', function (done) {
+	it('12. Array with column', function (done) {
 		var res = alasql('SELECT a,a*a AS a2 FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'a2']);
 		done();
 	});
 
-	it.skip('12a. Array with column', function (done) {
+	it('12a. Array with column', function (done) {
 		var res = alasql('SELECT a,a*a AS a2,b FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'a2', 'b']);
 		done();
 	});
 
-	it.skip('13. Array with column from table', function (done) {
+	it('13. Array with column from table', function (done) {
 		var res = alasql('SELECT a,a*a AS a2 FROM one');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a', 'a2']);
 		done();
 	});
 
-	it.skip('14. Array with column in reversed order', function (done) {
+	it('14. Array with column in reversed order', function (done) {
 		var res = alasql('SELECT a*a AS a2,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a2', 'a']);
 		done();
 	});
 
-	it.skip('15. Array with column in reversed order', function (done) {
+	it('15. Array with column in reversed order', function (done) {
 		var res = alasql('SELECT a*a AS a2,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepStrictEqual(colres, ['a2', 'a']);
@@ -208,7 +208,7 @@ describe('Test 270 RECORDSET tests', function () {
 	});
 
 	/*
-  it.skip('3. VALUE', function(done) {
+  it('3. VALUE', function(done) {
     alasql.options.modifier = 'VALUE';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
     assert.deepStrictEqual(res,1);
@@ -216,7 +216,7 @@ describe('Test 270 RECORDSET tests', function () {
     done();
   });
 
-  it.skip('4. ROW', function(done) {
+  it('4. ROW', function(done) {
     alasql.options.modifier = 'ROW';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
     assert.deepStrictEqual(res,[1,10,100]);
@@ -224,7 +224,7 @@ describe('Test 270 RECORDSET tests', function () {
     done();
   });
 
-  it.skip('5. COLUMN', function(done) {
+  it('5. COLUMN', function(done) {
     alasql.options.modifier = 'COLUMN';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
     assert.deepStrictEqual(res,[1,2,3,undefined]);
@@ -233,7 +233,7 @@ describe('Test 270 RECORDSET tests', function () {
   });
 
 
-  it.skip('6. MATRIX', function(done) {
+  it('6. MATRIX', function(done) {
     alasql.options.modifier = 'MATRIX';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
 //console.log(res);
@@ -243,7 +243,7 @@ describe('Test 270 RECORDSET tests', function () {
     done();
   });
 
-  it.skip('6a. MATRIX', function(done) {
+  it('6a. MATRIX', function(done) {
     alasql.options.modifier = 'MATRIX';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b \
       ORDER BY a',[data1,data2]);
@@ -255,7 +255,7 @@ describe('Test 270 RECORDSET tests', function () {
   });
 
 
-  it.skip('7. RECORDSET', function(done) {
+  it('7. RECORDSET', function(done) {
     alasql.options.modifier = "RECORDSET";
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
 //console.log(res);
@@ -270,7 +270,7 @@ describe('Test 270 RECORDSET tests', function () {
     done();
   });
 
-  it.skip('8. INDEX', function(done) {
+  it('8. INDEX', function(done) {
     alasql.options.modifier = 'INDEX';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
     assert.deepStrictEqual(res,{ '1': 10, '2': 20, '3': 30, undefined: 40 });
@@ -278,7 +278,7 @@ describe('Test 270 RECORDSET tests', function () {
     done();
   });
 
-  it.skip('9. TEXTSTRING', function(done) {
+  it('9. TEXTSTRING', function(done) {
     alasql.options.modifier = 'TEXTSTRING';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
     assert.deepStrictEqual(res,'1\n2\n3\n');
