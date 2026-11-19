@@ -2460,7 +2460,7 @@ ColumnConstraint
 /* DROP TABLE */
 
 DropTable
-	: DROP (TABLE|CLASS) IfExists TablesList
+	: DROP (TABLE|CLASS) IfExists TablesList DropBehavior?
 		{ $$ = new yy.DropTable({tables:$4,type:$2}); yy.extend($$, $3); }
 	;
 
@@ -2489,8 +2489,14 @@ AlterTable
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
 	| ALTER TABLE TableName RENAME COLUMN Name TO Name
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| ALTER TABLE TableName DROP COLUMN Name
+	| ALTER TABLE TableName DROP COLUMN Name DropBehavior?
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
+	;
+
+/* SQL-92 drop behaviour. Accepted, but dependent objects are neither checked nor dropped */
+DropBehavior
+	: CASCADE
+	| RESTRICT
 	;
 
 RenameTable
@@ -2543,7 +2549,7 @@ UseDatabase
 	;
 
 DropDatabase
-	: DROP DATABASE IfExists Literal
+	: DROP DATABASE IfExists Literal DropBehavior?
 		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }
 	| DROP Literal DATABASE IfExists Literal
 		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }
@@ -2636,7 +2642,7 @@ SubqueryRestriction
 
 
 DropView
-	: DROP VIEW IfExists TablesList
+	: DROP VIEW IfExists TablesList DropBehavior?
 		{ $$ = new yy.DropTable({tables:$4, view:true}); yy.extend($$, $3); }
 	;
 /*
