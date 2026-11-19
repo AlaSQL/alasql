@@ -369,6 +369,8 @@ Literal
 		{ $$ = $1.toLowerCase(); }
 	| CLOSE
 		{ $$ = $1.toLowerCase(); }
+	| TIMEOUT
+		{ $$ = $1.toLowerCase(); }
 	| SEPARATOR
 		{ $$ = $1.toLowerCase(); }
 	| error NonReserved
@@ -3611,6 +3613,7 @@ NonReserved
 	|TEMP
 	|TEMPORARY
 	|TIES
+	|TIMEOUT
 	|TOKEN
 	|TOP_LEVEL_COUNT
 	|TRANSACTION
@@ -3900,6 +3903,7 @@ var nonReserved = ["A"
 	,"TEMP"
 	,"TEMPORARY"
 	,"TIES"
+	,"TIMEOUT"
 	,"TOKEN"
 	,"TOP_LEVEL_COUNT"
 	,"TRANSACTION"
