@@ -270,6 +270,110 @@ stdfn.CONCAT_WS = function () {
 	return args.slice(1, args.length).join(args[0] || '');
 };
 
+// PostgreSQL string functions (#2831). Each gives NULL when an argument is NULL
+function anyNull(args) {
+	return Array.prototype.some.call(args, function (v) {
+		return v == null || (typeof v === 'number' && isNaN(v));
+	});
+}
+
+function pad(s, n, fill, left) {
+	s = String(s);
+	n = Number(n);
+	fill = fill === undefined ? ' ' : String(fill);
+	if (n <= s.length || fill === '') return s.slice(0, Math.max(n, 0));
+	var padding = fill.repeat(Math.ceil((n - s.length) / fill.length)).slice(0, n - s.length);
+	return left ? padding + s : s + padding;
+}
+
+stdfn.LPAD = function (s, n, fill) {
+	if (anyNull(arguments)) return undefined;
+	return pad(s, n, fill, true);
+};
+
+stdfn.RPAD = function (s, n, fill) {
+	if (anyNull(arguments)) return undefined;
+	return pad(s, n, fill, false);
+};
+
+stdfn.REVERSE = function (s) {
+	if (anyNull(arguments)) return undefined;
+	return Array.from(String(s)).reverse().join('');
+};
+
+stdfn.INITCAP = function (s) {
+	if (anyNull(arguments)) return undefined;
+	return String(s)
+		.toLowerCase()
+		.replace(/(^|[^a-z0-9])([a-z])/g, function (m, before, letter) {
+			return before + letter.toUpperCase();
+		});
+};
+
+stdfn.REPEAT = function (s, n) {
+	if (anyNull(arguments)) return undefined;
+	return String(s).repeat(Math.max(Number(n), 0));
+};
+
+stdfn.CHR = function (n) {
+	if (anyNull(arguments)) return undefined;
+	return String.fromCodePoint(Number(n));
+};
+
+stdfn.STRPOS = function (s, sub) {
+	if (anyNull(arguments)) return undefined;
+	return String(s).indexOf(String(sub)) + 1;
+};
+
+stdfn.BTRIM = function (s, chars) {
+	if (anyNull(arguments)) return undefined;
+	s = String(s);
+	chars = chars === undefined ? ' ' : String(chars);
+	var start = 0;
+	var end = s.length;
+	while (start < end && chars.indexOf(s[start]) > -1) start++;
+	while (end > start && chars.indexOf(s[end - 1]) > -1) end--;
+	return s.slice(start, end);
+};
+
+stdfn.TRANSLATE = function (s, from, to) {
+	if (anyNull(arguments)) return undefined;
+	from = String(from);
+	to = String(to);
+	return Array.from(String(s))
+		.map(function (c) {
+			var i = from.indexOf(c);
+			// A character of from with no partner in to is removed
+			return i < 0 ? c : to.charAt(i);
+		})
+		.join('');
+};
+
+stdfn.SPLIT_PART = function (s, delimiter, n) {
+	if (anyNull(arguments)) return undefined;
+	n = Number(n);
+	if (n === 0) throw new Error('SPLIT_PART field position must not be zero');
+	var parts = String(delimiter) === '' ? [String(s)] : String(s).split(String(delimiter));
+	var part = n > 0 ? parts[n - 1] : parts[parts.length + n];
+	return part === undefined ? '' : part;
+};
+
+stdfn.STARTS_WITH = function (s, prefix) {
+	if (anyNull(arguments)) return undefined;
+	return String(s).startsWith(String(prefix));
+};
+
+stdfn.QUOTE_LITERAL = function (s) {
+	if (anyNull(arguments)) return undefined;
+	return "'" + String(s).replace(/'/g, "''") + "'";
+};
+
+stdfn.QUOTE_IDENT = function (s) {
+	if (anyNull(arguments)) return undefined;
+	s = String(s);
+	return /^[a-z_][a-z0-9_$]*$/.test(s) ? s : '"' + s.replace(/"/g, '""') + '"';
+};
+
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
