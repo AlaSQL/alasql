@@ -774,6 +774,21 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 		}
 	});
 
+	// The group row carries each GROUP BY expression under its text, but not
+	// the other SELECT expressions
+	var groupExpressionKeys = {};
+	(function collectGroupExpressions(items) {
+		(items || []).forEach(function (item) {
+			if (Array.isArray(item)) {
+				collectGroupExpressions(item);
+			} else if (item instanceof yy.GroupExpression) {
+				collectGroupExpressions(item.group);
+			} else if (!(item instanceof yy.Column)) {
+				groupExpressionKeys[escapeq(item.toString())] = true;
+			}
+		});
+	})(self.group);
+
 	// Only add order keys if there's no union operation (otherwise they'll be added later)
 	if (hasOrderColumns) {
 		this.orderColumns.forEach(function (v, idx) {
@@ -791,6 +806,9 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
 			} else if (v instanceof yy.Column && groupColMap[groupKey]) {
 				s += "r['" + key + "']=g['" + groupColMap[groupKey].nick + "'];";
+			} else if (!(v instanceof yy.Column) && groupExpressionKeys[escapeq(v.toString())]) {
+				// A GROUP BY expression, like LOWER(c) after GROUP BY LOWER(c)
+				s += "r['" + key + "']=g['" + escapeq(v.toString()) + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('g', '') + ';';
 			}
