@@ -130,12 +130,6 @@ export default function install(alasql, internal) {
 			return res;
 		}
 
-		if (gv instanceof yy.FuncValue) {
-			query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-			rememberKey(gv.toString(), gv, query);
-			return [`${gv.toString()}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
-		}
-
 		if (gv instanceof yy.Column) {
 			gv.nick = escapeq(gv.columnid);
 			query.groupColumns[gv.nick] = gv.nick;

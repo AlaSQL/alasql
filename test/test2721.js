@@ -109,7 +109,69 @@ describe(`Test ${testId} - A SELECT expression is matched to its GROUP BY expres
 		]);
 	});
 
-	it('J) Another expression is not matched', function () {
+	it('J) With CUBE over a function that has a string literal', function () {
+		var rows = [
+			{a: 1, b: 'x'},
+			{a: 1, b: 'y'},
+			{a: 2, b: 'x'},
+		];
+		var res = [];
+		res.push(
+			db.exec("SELECT CONCAT(b,'z') AS k, COUNT(*) AS n FROM ? GROUP BY CUBE(CONCAT(b,'z'))", [
+				rows,
+			])
+		);
+		res.push(
+			db.exec("SELECT (concat(b,'z')), COUNT(*) AS n FROM ? GROUP BY CUBE(CONCAT(b,'z'))", [rows])
+		);
+		assert.deepStrictEqual(res, [
+			[
+				{k: null, n: 3},
+				{k: 'xz', n: 2},
+				{k: 'yz', n: 1},
+			],
+			[
+				{"(CONCAT(b,'z'))": null, n: 3},
+				{"(CONCAT(b,'z'))": 'xz', n: 2},
+				{"(CONCAT(b,'z'))": 'yz', n: 1},
+			],
+		]);
+	});
+
+	it('K) With GROUPING SETS over a function that has a string literal', function () {
+		var rows = [
+			{a: 1, b: 'x'},
+			{a: 1, b: 'y'},
+			{a: 2, b: 'x'},
+		];
+		var res = [];
+		res.push(
+			db.exec(
+				"SELECT CONCAT(b,'z') AS k, COUNT(*) AS n FROM ? GROUP BY GROUPING SETS(CONCAT(b,'z'))",
+				[rows]
+			)
+		);
+		res.push(
+			db.exec(
+				"SELECT a, CONCAT(b,'z') AS k, COUNT(*) AS n FROM ? GROUP BY GROUPING SETS(a, CONCAT(b,'z'))",
+				[rows]
+			)
+		);
+		assert.deepStrictEqual(res, [
+			[
+				{k: 'xz', n: 2},
+				{k: 'yz', n: 1},
+			],
+			[
+				{a: 1, k: null, n: 2},
+				{a: null, k: 'xz', n: 2},
+				{a: null, k: 'yz', n: 1},
+				{a: 2, k: null, n: 1},
+			],
+		]);
+	});
+
+	it('L) Another expression is not matched', function () {
 		var res = db.exec('SELECT (a+2) AS x, COUNT(*) AS n FROM ? GROUP BY a+1', [data]);
 		assert.deepStrictEqual(res, [
 			{x: undefined, n: 2},
