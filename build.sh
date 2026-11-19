@@ -86,6 +86,7 @@ cat \
 	src/58json.js			\
 	src/59convert.js		\
 	src/60createtable.js	\
+	src/60range.js			\
 	src/61date.js			\
 	src/62droptable.js		\
 	src/63createvertex.js	\
