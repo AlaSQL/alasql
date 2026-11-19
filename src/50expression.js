@@ -191,6 +191,36 @@
 	const toTypeStringOps = new Set(['||']);
 	// Regex to detect identifiers that need bracket wrapping (spaces, dots, hyphens, square brackets)
 	const re_needsBrackets = /[\s.\-\[\]]/;
+
+	// Plain identifier shape, so only such names are offered to the lexer below
+	const re_plainIdentifier = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+	// Results of asking the lexer whether a name is a keyword, by uppercased name.
+	// The lexer is case-insensitive, so one entry covers every casing of a name.
+	const keywordColumnCache = new Map();
+
+	// Ask the parser's own lexer whether a name reads as a keyword rather than
+	// a plain identifier (LITERAL). Anything else (VALUE, SELECT, COUNT, ...) is
+	// a keyword, so it needs brackets in printed SQL (#3073). The lexer is only
+	// used here, after parsing has finished, and the next parse resets it with
+	// setInput; results are cached, so a name is probed at most once.
+	function isKeywordColumn(id) {
+		if (!re_plainIdentifier.test(id)) return false;
+		const upper = id.toUpperCase();
+		let isKeyword = keywordColumnCache.get(upper);
+		if (isKeyword === undefined) {
+			isKeyword = false;
+			const parser = typeof alasql !== 'undefined' && alasql.parser;
+			if (parser && parser.lexer && parser.terminals_) {
+				parser.lexer.setInput(id);
+				const token = parser.lexer.lex();
+				isKeyword = parser.terminals_[token] !== 'LITERAL';
+			}
+			if (keywordColumnCache.size >= alasql.MAXSQLCACHESIZE) keywordColumnCache.clear();
+			keywordColumnCache.set(upper, isKeyword);
+		}
+		return isKeyword;
+	}
 	const toTypeBoolOps = new Set([
 		'AND',
 		'OR',
@@ -750,7 +780,10 @@
 			// Numeric indices need brackets
 			if (id == +id) return true;
 			// Check for special characters that require brackets
-			return re_needsBrackets.test(id);
+			if (re_needsBrackets.test(id)) return true;
+			// A name the lexer reads as a keyword (e.g. VALUE, SELECT) must be
+			// bracketed, or the printed SQL parses as something else, or not at all (#3073)
+			return isKeywordColumn(id);
 		}
 
 		static wrapId(id) {
@@ -778,8 +811,9 @@
 			let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
 
 			if (this.tableid) {
-				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1])
-				const separator = colNeedsBrackets ? '' : '.';
+				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1]),
+				// but keep it for a keyword column, as t[value] does not read as a column (#3073)
+				const separator = colNeedsBrackets && !isKeywordColumn(this.columnid) ? '' : '.';
 				s = Column.wrapId(this.tableid) + separator + s;
 
 				if (this.databaseid) {
