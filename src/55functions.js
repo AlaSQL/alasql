@@ -241,6 +241,121 @@ stdlib.FLOOR = function (s) {
 	return 'Math.floor(' + s + ')';
 };
 
+// PostgreSQL number functions (#2831). NULL gives NULL, and a value outside the domain
+// (the logarithm of 0, a division by 0) gives NULL as in SQLite
+function numberArgs(args) {
+	var nums = [];
+	for (var i = 0; i < args.length; i++) {
+		if (args[i] == null) return undefined;
+		var n = Number(args[i]);
+		if (isNaN(n)) return undefined;
+		nums.push(n);
+	}
+	return nums;
+}
+
+function logOf(x, base) {
+	if (x <= 0 || base <= 0 || base === 1) return undefined;
+	// Math.log10 and Math.log2 are exact where the division is not (3 instead of 2.9999999999999996)
+	if (base === 10) return Math.log10(x);
+	if (base === 2) return Math.log2(x);
+	return Math.log(x) / Math.log(base);
+}
+
+stdfn.TRUNC = function (x, d) {
+	var n = numberArgs(arguments);
+	if (!n) return undefined;
+	var f = Math.pow(10, n[1] || 0);
+	return Math.trunc(n[0] * f) / f;
+};
+
+stdfn.SIGN = function (x) {
+	var n = numberArgs(arguments);
+	return n && Math.sign(n[0]);
+};
+
+stdfn.LN = function (x) {
+	var n = numberArgs(arguments);
+	return n && logOf(n[0], Math.E);
+};
+
+// LOG(x) is base 10, LOG(b, x) is base b
+stdfn.LOG = function (a, b) {
+	var n = numberArgs(arguments);
+	if (!n) return undefined;
+	return n.length > 1 ? logOf(n[1], n[0]) : logOf(n[0], 10);
+};
+
+stdfn.LOG10 = function (x) {
+	var n = numberArgs(arguments);
+	return n && logOf(n[0], 10);
+};
+
+stdfn.LOG2 = function (x) {
+	var n = numberArgs(arguments);
+	return n && logOf(n[0], 2);
+};
+
+stdfn.CBRT = function (x) {
+	var n = numberArgs(arguments);
+	return n && Math.cbrt(n[0]);
+};
+
+stdfn.PI = function () {
+	return Math.PI;
+};
+
+stdfn.MOD = function (a, b) {
+	var n = numberArgs(arguments);
+	if (!n || n[1] === 0) return undefined;
+	return n[0] % n[1];
+};
+
+// Integer quotient, truncated toward zero
+stdfn.DIV = function (a, b) {
+	var n = numberArgs(arguments);
+	if (!n || n[1] === 0) return undefined;
+	return Math.trunc(n[0] / n[1]);
+};
+
+stdfn.GCD = function (a, b) {
+	var n = numberArgs(arguments);
+	if (!n) return undefined;
+	var x = Math.abs(n[0]);
+	var y = Math.abs(n[1]);
+	while (y) {
+		var t = y;
+		y = x % y;
+		x = t;
+	}
+	return x;
+};
+
+stdfn.LCM = function (a, b) {
+	var n = numberArgs(arguments);
+	if (!n) return undefined;
+	if (n[0] === 0 || n[1] === 0) return 0;
+	return Math.abs(n[0] * n[1]) / stdfn.GCD(n[0], n[1]);
+};
+
+// Bucket number of x in count equal buckets from low to high, 0 below and count+1 above
+stdfn.WIDTH_BUCKET = function (x, low, high, count) {
+	var n = numberArgs(arguments);
+	if (!n || n[1] === n[2] || n[3] <= 0) return undefined;
+	x = n[0];
+	low = n[1];
+	high = n[2];
+	count = n[3];
+	if (low < high) {
+		if (x < low) return 0;
+		if (x >= high) return count + 1;
+		return Math.floor((count * (x - low)) / (high - low)) + 1;
+	}
+	if (x > low) return 0;
+	if (x <= high) return count + 1;
+	return Math.floor((count * (low - x)) / (low - high)) + 1;
+};
+
 stdlib.ROWNUM = function () {
 	return '1';
 };
