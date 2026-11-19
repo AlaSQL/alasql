@@ -39,6 +39,8 @@ yy.Delete.prototype.compile = function (databaseid) {
 	var tableid = this.table.tableid;
 	var statement;
 	var db = alasql.databases[databaseid];
+	// A storage engine may not list its tables until they are read
+	if (!db || !db.engineid) getTable(databaseid, tableid);
 
 	if (this.where) {
 		if (this.exists) {

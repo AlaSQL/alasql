@@ -200,7 +200,10 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			} else {
 				// If field, otherwise - expression
 				var tbid = col.tableid;
-				//				console.log(query.sources);
+				// Without FROM there is no table to read a column from (#2790)
+				if (!query.sources.length) {
+					throw new Error('Column does not exist: ' + col.columnid);
+				}
 				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
 				if (!tbid) tbid = query.defcols[col.columnid];
 				if (!tbid) tbid = query.defaultTableid;
