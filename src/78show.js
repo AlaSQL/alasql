@@ -124,13 +124,19 @@ yy.ShowCreateTable = function (params) {
 	return Object.assign(this, params);
 };
 yy.ShowCreateTable.prototype.toString = function () {
-	var s = 'SHOW CREATE TABLE ' + this.table.tableid;
+	var s = 'SHOW CREATE ' + (this.view ? 'VIEW ' : 'TABLE ') + this.table.tableid;
 	if (this.databaseid) s += ' FROM ' + this.databaseid;
 	return s;
 };
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
 	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
+	if (this.view) {
+		if (!table || !table.view) {
+			throw new Error('There is no such view "' + this.table.tableid + '"');
+		}
+		return 'CREATE VIEW ' + this.table.tableid + ' AS ' + table.viewSelect.toString();
+	}
 	if (table) {
 		var s = 'CREATE TABLE ' + this.table.tableid + ' (';
 		var ss = [];
@@ -149,4 +155,20 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 	} else {
 		throw new Error('There is no such table "' + this.table.tableid + '"');
 	}
+};
+
+// MySQL's SHOW WARNINGS, ERRORS, STATUS and VARIABLES. AlaSQL keeps none of these, so the result is empty
+yy.ShowStatus = function (params) {
+	return Object.assign(this, params);
+};
+yy.ShowStatus.prototype.toString = function () {
+	return 'SHOW ' + this.what.toUpperCase() + (this.like ? ' LIKE ' + this.like.toString() : '');
+};
+yy.ShowStatus.prototype.execute = function (databaseid, params, cb) {
+	if (!['WARNINGS', 'ERRORS', 'STATUS', 'VARIABLES'].includes(this.what.toUpperCase())) {
+		throw new Error('Unknown SHOW statement: SHOW ' + this.what);
+	}
+	var res = [];
+	if (cb) res = cb(res);
+	return res;
 };
