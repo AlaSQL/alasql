@@ -58,6 +58,11 @@ function sameValue(a, b) {
 	return keys.every(key => sameValue(a[key], b[key]));
 }
 
+/** Are two fields the same? A flag set to false is the same as a flag that is left out */
+function sameField(a, b) {
+	return sameValue(a === false ? undefined : a, b === false ? undefined : b);
+}
+
 export class Node {
 	constructor(params) {
 		Object.assign(this, params);
@@ -109,7 +114,7 @@ export class Node {
 	}
 
 	sameFields(other) {
-		return this.constructor.fields.every(field => sameValue(this[field], other[field]));
+		return this.constructor.fields.every(field => sameField(this[field], other[field]));
 	}
 
 	sameChildren(other) {

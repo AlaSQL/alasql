@@ -191,4 +191,22 @@ describe(`Test ${testId} - Expressions are compared by what they are made of, an
 			[{'SUM((a))': 4, 'SUM(a)': 4}],
 		]);
 	});
+
+	it('M) A flag set to false is the same as a flag that is left out', function () {
+		var yy = alasql.yy;
+		var unset = new yy.FuncValue({funcid: 'F', args: []});
+		var off = new yy.FuncValue({funcid: 'F', args: [], newid: false});
+		var on = new yy.FuncValue({funcid: 'F', args: [], newid: true});
+		var logic = pair('TRUE', 'FALSE');
+		assert.deepStrictEqual(
+			[
+				unset.equals(off),
+				off.equals(unset),
+				off.equals(on),
+				on.equals(unset),
+				logic[0].equals(logic[1]),
+			],
+			[true, true, false, false, false]
+		);
+	});
 });
