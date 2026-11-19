@@ -98,6 +98,27 @@ alasql.from.RANGE = function (start, finish, cb, idx, query) {
 };
 
 /**
+ * GENERATE_SERIES(start, stop [, step]) as in PostgreSQL: rows with a column
+ * generate_series from start to stop, step 1 by default (#2831)
+ */
+alasql.from.GENERATE_SERIES = function (start, stop, cb, idx, query, step) {
+	var res = [];
+	if (start != null && stop != null) {
+		start = Number(start);
+		stop = Number(stop);
+		step = step == null ? 1 : Number(step);
+		if (step === 0) throw new Error('GENERATE_SERIES step size cannot equal zero');
+		for (var i = start; step > 0 ? i <= stop : i >= stop; i += step) {
+			res.push({generate_series: i});
+		}
+	}
+	if (cb) {
+		res = cb(res, idx, query);
+	}
+	return res;
+};
+
+/**
  * UNNEST function - converts an array into a table for use in FROM clauses
  *
  * This function enables flattening of nested arrays when used with CROSS APPLY or OUTER APPLY.
