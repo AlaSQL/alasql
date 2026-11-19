@@ -80,3 +80,38 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 	if (cb) result = cb(result);
 	return result;
 };
+
+// Prepared statements: PREPARE name FROM 'text', EXECUTE name [USING @a, ...] and
+// DEALLOCATE PREPARE name (#2863). The text is kept by name and run with the values of the variables
+alasql.prepared = {};
+
+yy.Prepared = function (params) {
+	return Object.assign(this, params);
+};
+yy.Prepared.prototype.toString = function () {
+	let s = this.kind + ' ' + this.name;
+	if (this.kind === 'PREPARE') {
+		s += ' FROM ' + (this.sqlvar ? '@' + this.sqlvar : "'" + this.sql.replace(/'/g, "''") + "'");
+	} else if (this.using && this.using.length) {
+		s += ' USING ' + this.using.map(v => '@' + v).join(', ');
+	}
+	return s;
+};
+yy.Prepared.prototype.execute = function (databaseid, params, cb) {
+	const name = this.name.toLowerCase();
+	if (this.kind === 'PREPARE') {
+		const sql = this.sqlvar ? alasql.vars[this.sqlvar] : this.sql;
+		alasql.parse(sql); // A syntax error shows here, not at EXECUTE
+		alasql.prepared[name] = sql;
+	} else {
+		if (!(name in alasql.prepared)) throw new Error('Unknown prepared statement: ' + this.name);
+		if (this.kind === 'EXECUTE') {
+			const args = this.using.map(v => alasql.vars[v]);
+			return alasql.dexec(databaseid, alasql.prepared[name], args, cb);
+		}
+		delete alasql.prepared[name];
+	}
+	let res = 1;
+	if (cb) res = cb(res);
+	return res;
+};
