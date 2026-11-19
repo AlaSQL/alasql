@@ -32,7 +32,7 @@ Two checks, both run on 2026-10-21:
 
 ## What a recording holds
 
-One run of the whole suite (`bun test` with the usual preload plus `record.js`) and then the dialect cases, run twice (see Noise), with every statement in order: the SQL, the parameters, the result or the error, and the source of every function the engine made with `new Function` while the statement ran. Statements are recorded at `alasql.dexec`, which every SQL string reaches, and at `alasql.compile` and the runs of the compiled statement. Beside it: the API surface (`api.js`, every property path reachable from `alasql` with its kind) and the bytes and gzip size of every `dist` file.
+One run of the whole suite (`bun test` with the usual preload plus `record.js`) and then the dialect cases, run twice (see Noise), with every statement in order: the SQL, the parameters, the result or the error, and the source of every function the engine made with `new Function` while the statement ran. Statements are recorded at `alasql.dexec`, which every SQL string reaches, and at `alasql.compile` and the runs of the compiled statement. Beside it: the API surface (`api.js`, every property path reachable from `alasql` with its kind) and the bytes and gzip size of every `dist` file. A list of plain values, like the `children` and `fields` of a node class, is one path with its items as the value (`alasql.yy.Op.fields` is `Array/2 ["op", "allsome"]`). An item that is added, removed or changed shows as one changed path, and one line in `api-allowed.txt` allows it.
 
 Compared in order, grouped by test file, because a statement depends on the ones before it. Results by their text, which keeps what JSON loses: `undefined`, `NaN`, `Date`, class names, key order. Generated code by its text, so a module that compiles differently shows up even when the result is the same. The engine's own functions are not compared; they change when code moves into modules.
 
@@ -56,7 +56,7 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `run.js`: `record <label> [--ref [<version>|<commit>] | --dist <dir>]` and `compare <a> <b>`. Recordings are in `recordings/`, the downloaded or built references in `.ref/`; both are ignored by git.
 - `silent-files.txt`: the test files allowed to run tests without a statement, each with its reason.
 - `unstable-statements.txt`: statements the engine answers differently run by run; only their code is compared.
-- `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed.
+- `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed. A list of plain values is one path, so one line covers it.
 - `record.js`: the recorder, loaded by `bun test --preload`. It hooks `alasql.dexec`, `alasql.compile` and `globalThis.Function`.
 - `dialect-corpus.js`: runs the dialect cases through alasql under the recorder.
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.
