@@ -11,7 +11,7 @@ export default function install(alasql) {
 		return Object.assign(this, params);
 	};
 	yy.CreateTrigger.prototype.toString = function () {
-		var s = 'CREATE TRIGGER ' + this.trigger + ' ';
+		var s = 'CREATE TRIGGER ' + (this.ifnotexists ? 'IF NOT EXISTS ' : '') + this.trigger + ' ';
 		if (this.when) s += this.when + ' ';
 		s += this.action + ' ON ';
 		if (this.table.databaseid) s += this.table.databaseid + '.';
@@ -39,6 +39,10 @@ export default function install(alasql) {
 		const db = alasql.databases[databaseid];
 		const {tableid} = this.table;
 
+		if (this.ifnotexists && db.triggers[triggerid]) {
+			return cb ? cb(0) : 0;
+		}
+
 		const trigger = {
 			action: this.action,
 			when: this.when,
@@ -65,7 +69,7 @@ export default function install(alasql) {
 		return Object.assign(this, params);
 	};
 	yy.DropTrigger.prototype.toString = function () {
-		var s = 'DROP TRIGGER ' + this.trigger;
+		var s = 'DROP TRIGGER ' + (this.ifexists ? 'IF EXISTS ' : '') + this.trigger;
 		return s;
 	};
 
@@ -103,7 +107,7 @@ export default function install(alasql) {
 			} else {
 				throw new Error('Trigger Table not found');
 			}
-		} else {
+		} else if (!this.ifexists) {
 			throw new Error('Trigger not found');
 		}
 

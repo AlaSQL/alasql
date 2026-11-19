@@ -162,6 +162,12 @@ export default function install(alasql) {
 			};
 		} else {
 			statement = function (params, cb) {
+				if (db.engineid && alasql.engines[db.engineid].deleteFromTable) {
+					return alasql.engines[db.engineid].deleteFromTable(databaseid, tableid, null, params, cb);
+				}
+
+				// Any engine with loadTableData and saveTableData can hold the table, also one
+				// registered by the user, so the engine is not limited by name here
 				if (alasql.options.autocommit && db.engineid) {
 					alasql.engines[db.engineid].loadTableData(databaseid, tableid);
 				}

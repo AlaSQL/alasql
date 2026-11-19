@@ -9,3 +9,5 @@ yarn.lock
 .*
 *.log
 context/
+# Files that test runs leave in the root must never reach the package
+/test*.json

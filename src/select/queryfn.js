@@ -11,6 +11,23 @@ export default function install(alasql, internal) {
 	var doJoin = internal.doJoin;
 	var flatArray = alasql.utils.flatArray;
 	// Main query procedure
+	// A row of the second SELECT of EXCEPT or INTERSECT, on the column names of the first SELECT
+	// by position. When the first SELECT does not know its columns, as SELECT * FROM ? does not,
+	// the row keeps its own names, as in UNION (#2745)
+	function setOperationRow(query, nd, row) {
+		var r = {};
+		if (query.columns.length) {
+			for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
+				r[query.columns[j].columnid] = row[nd.columns[j].columnid];
+			}
+		} else {
+			for (var j = 0; j < nd.columns.length; j++) {
+				r[nd.columns[j].columnid] = row[nd.columns[j].columnid];
+			}
+		}
+		return r;
+	}
+
 	function queryfn(query, oldscope, cb, A, B) {
 		query.sourceslen = query.sources.length;
 		let slen = query.sourceslen;
@@ -289,11 +306,11 @@ export default function install(alasql, internal) {
 			if (query.corresponding) {
 				if (query.unionallfn.query && !query.unionallfn.query.modifier)
 					query.unionallfn.query.modifier = undefined;
-				ud = query.unionallfn(query.params);
+				ud = query.unionallfn(query.params, undefined, query.oldscope);
 			} else {
 				if (query.unionallfn.query && !query.unionallfn.query.modifier)
 					query.unionallfn.query.modifier = 'RECORDSET';
-				nd = query.unionallfn(query.params);
+				nd = query.unionallfn(query.params, undefined, query.oldscope);
 				ud = [];
 				ilen = nd.data.length;
 				for (var i = 0; i < ilen; i++) {
@@ -317,11 +334,11 @@ export default function install(alasql, internal) {
 			if (query.corresponding) {
 				if (query.unionfn.query && !query.unionfn.query.modifier)
 					query.unionfn.query.modifier = 'ARRAY';
-				ud = query.unionfn(query.params);
+				ud = query.unionfn(query.params, undefined, query.oldscope);
 			} else {
 				if (query.unionfn.query && !query.unionfn.query.modifier)
 					query.unionfn.query.modifier = 'RECORDSET';
-				nd = query.unionfn(query.params);
+				nd = query.unionfn(query.params, undefined, query.oldscope);
 				ud = [];
 				ilen = nd.data.length;
 				for (var i = 0; i < ilen; i++) {
@@ -346,18 +363,14 @@ export default function install(alasql, internal) {
 			if (query.corresponding) {
 				if (query.exceptfn.query && !query.exceptfn.query.modifier)
 					query.exceptfn.query.modifier = 'ARRAY';
-				var ud = query.exceptfn(query.params);
+				var ud = query.exceptfn(query.params, undefined, query.oldscope);
 			} else {
 				if (query.exceptfn.query && !query.exceptfn.query.modifier)
 					query.exceptfn.query.modifier = 'RECORDSET';
-				var nd = query.exceptfn(query.params);
+				var nd = query.exceptfn(query.params, undefined, query.oldscope);
 				var ud = [];
 				for (var i = 0, ilen = nd.data.length; i < ilen; i++) {
-					var r = {};
-					for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
-						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-					}
-					ud.push(r);
+					ud.push(setOperationRow(query, nd, nd.data[i]));
 				}
 			}
 
@@ -366,20 +379,15 @@ export default function install(alasql, internal) {
 			if (query.corresponding) {
 				if (query.intersectfn.query && !query.intersectfn.query.modifier)
 					query.intersectfn.query.modifier = undefined;
-				ud = query.intersectfn(query.params);
+				ud = query.intersectfn(query.params, undefined, query.oldscope);
 			} else {
 				if (query.intersectfn.query && !query.intersectfn.query.modifier)
 					query.intersectfn.query.modifier = 'RECORDSET';
-				nd = query.intersectfn(query.params);
+				nd = query.intersectfn(query.params, undefined, query.oldscope);
 				ud = [];
 				ilen = nd.data.length;
 				for (i = 0; i < ilen; i++) {
-					r = {};
-					jlen = Math.min(query.columns.length, nd.columns.length);
-					for (j = 0; j < jlen; j++) {
-						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
-					}
-					ud.push(r);
+					ud.push(setOperationRow(query, nd, nd.data[i]));
 				}
 			}
 
@@ -579,20 +587,24 @@ export default function install(alasql, internal) {
 			// If there is indexation rule
 			if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 				// An index built on the filtered rows depends on the parameters the filter reads, which
-				// are not in the cache key, so only an index of the whole table is cached on it
+				// are not in the cache key, so only an index of the whole table is cached on it.
+				// An index whose key reads a parameter, a variable or a user function is only
+				// valid for the values of this run, so it is neither reused nor kept (#3075).
+				// A view is re-executed on every query, so an index cached on it can be stale
+				// after its base tables change (#3065)
+				var ixkeyfns = source.onrightfns + '`';
 				var cacheable =
 					!source.srcwherefns &&
+					!/\bparams\[|\balasql\.(vars|fn)\[/.test(ixkeyfns) &&
 					source.databaseid &&
-					alasql.databases[source.databaseid].tables[source.tableid];
+					alasql.databases[source.databaseid].tables[source.tableid] &&
+					!alasql.databases[source.databaseid].tables[source.tableid].view;
 				// If there is no table.indices - create it
 				if (cacheable) {
 					if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
 						query.database.tables[source.tableid].indices = {};
 					// Check if index already exists
-					ixx =
-						alasql.databases[source.databaseid].tables[source.tableid].indices[
-							hash(source.onrightfns + '`')
-						];
+					ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(ixkeyfns)];
 					if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 						source.ix = ixx;
 					}
@@ -617,9 +629,9 @@ export default function install(alasql, internal) {
 						scope[source.alias || source.tableid] = dataw;
 
 						// Check if it apply to where function
-						if (source.srcwherefn(scope, query.params, alasql)) {
+						if (source.srcwherefn.call(query, scope, query.params, alasql)) {
 							// Create index entry for each address
-							var addr = source.onrightfn(scope, query.params, alasql);
+							var addr = source.onrightfn.call(query, scope, query.params, alasql);
 							var group = source.ix[addr];
 							if (!group) {
 								group = source.ix[addr] = [];
@@ -631,9 +643,8 @@ export default function install(alasql, internal) {
 
 					if (cacheable) {
 						// Save index to original table
-						alasql.databases[source.databaseid].tables[source.tableid].indices[
-							hash(source.onrightfns + '`')
-						] = source.ix;
+						alasql.databases[source.databaseid].tables[source.tableid].indices[hash(ixkeyfns)] =
+							source.ix;
 					}
 				}
 
@@ -691,7 +702,7 @@ export default function install(alasql, internal) {
 						scope = {};
 						source.data = source.data.filter(function (r) {
 							scope[source.alias] = r;
-							return source.srcwherefn(scope, query.params, alasql);
+							return source.srcwherefn.call(query, scope, query.params, alasql);
 						});
 					} else {
 						source.data = [];
@@ -705,7 +716,7 @@ export default function install(alasql, internal) {
 
 					source.data = source.data.filter(function (r) {
 						scope[source.alias] = r;
-						return source.srcwherefn(scope, query.params, alasql);
+						return source.srcwherefn.call(query, scope, query.params, alasql);
 					});
 
 					scope = {};
@@ -720,7 +731,7 @@ export default function install(alasql, internal) {
 					) {
 						if (source.getfn && !source.dontcache) source.data[i] = dataw;
 						scope[source.alias] = dataw;
-						if (source.srcwherefn(scope, query.params, alasql)) res.push(dataw);
+						if (source.srcwherefn.call(query, scope, query.params, alasql)) res.push(dataw);
 						i++;
 					}
 					source.data = res;
