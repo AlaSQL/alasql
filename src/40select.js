@@ -130,10 +130,18 @@ yy.Select = class Select {
 			s += ' UNION ALL ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.unionall.toString();
 		}
 		if (this.except) {
-			s += ' EXCEPT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.except.toString();
+			s +=
+				' EXCEPT ' +
+				(this.all ? 'ALL ' : '') +
+				(this.corresponding ? 'CORRESPONDING ' : '') +
+				this.except.toString();
 		}
 		if (this.intersect) {
-			s += ' INTERSECT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.intersect.toString();
+			s +=
+				' INTERSECT ' +
+				(this.all ? 'ALL ' : '') +
+				(this.corresponding ? 'CORRESPONDING ' : '') +
+				this.intersect.toString();
 		}
 		return s;
 	}
@@ -309,6 +317,7 @@ yy.Select = class Select {
 
 		// 9. Compile ordering function for UNION and UNIONALL
 		query.corresponding = this.corresponding; // If CORRESPONDING flag exists
+		query.all = this.all; // EXCEPT ALL and INTERSECT ALL keep duplicates
 		if (this.union) {
 			query.unionfn = this.union.compile(databaseid);
 			// ORDER BY is now at the top level, not in the union clause

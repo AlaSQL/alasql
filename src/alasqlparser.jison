@@ -1148,6 +1148,7 @@ UnionClause
 			$$ = {};
 			$$[$1.op] = $2;
 			if($1.corresponding) $$.corresponding = true;
+			if($1.all) $$.all = true;
 		}
 	;
 
@@ -1180,6 +1181,20 @@ UnionOp
 			yy.queriesStack.push(yy.queries || []);
 			yy.queries = [];
 			$$ = {op: 'intersect'}; 
+		}
+	| EXCEPT ALL
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'except', all: true}; 
+		}
+	| INTERSECT ALL
+		{ 
+			if(!yy.queriesStack) yy.queriesStack = [];
+			yy.queriesStack.push(yy.queries || []);
+			yy.queries = [];
+			$$ = {op: 'intersect', all: true}; 
 		}
 	| UNION CORRESPONDING
 		{ 

@@ -897,7 +897,19 @@ var arrayUnionDeep = (utils.arrayUnionDeep = function (a, b) {
 /**
   Arrays deep union (with records)
   */
-var arrayExceptDeep = (utils.arrayExceptDeep = function (a, b) {
+var arrayExceptDeep = (utils.arrayExceptDeep = function (a, b, all) {
+	if (all) {
+		// EXCEPT ALL: each row of b removes one matching row of a
+		var left = b.slice();
+		return a.filter(function (ai) {
+			var idx = left.findIndex(function (bi) {
+				return deepEqual(ai, bi);
+			});
+			if (idx === -1) return true;
+			left.splice(idx, 1);
+			return false;
+		});
+	}
 	var r = [];
 	a.forEach(function (ai) {
 		var found = false;
@@ -917,7 +929,19 @@ var arrayExceptDeep = (utils.arrayExceptDeep = function (a, b) {
 /**
   Arrays deep intersect (with records)
   */
-var arrayIntersectDeep = (utils.arrayIntersectDeep = function (a, b) {
+var arrayIntersectDeep = (utils.arrayIntersectDeep = function (a, b, all) {
+	if (all) {
+		// INTERSECT ALL: each row of b keeps one matching row of a
+		var left = b.slice();
+		return a.filter(function (ai) {
+			var idx = left.findIndex(function (bi) {
+				return deepEqual(ai, bi, true);
+			});
+			if (idx === -1) return false;
+			left.splice(idx, 1);
+			return true;
+		});
+	}
 	var r = [];
 	a.forEach(function (ai) {
 		var found = false;
