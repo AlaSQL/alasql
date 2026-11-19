@@ -255,8 +255,28 @@ stdlib.SQRT = function (s) {
 	return 'Math.sqrt(' + s + ')';
 };
 
-stdlib.TRIM = function (s) {
+// TRIM(s, chars, side) is the SQL-92 TRIM([LEADING | TRAILING | BOTH] [chars] FROM s)
+stdlib.TRIM = function (s, chars, side) {
+	if (arguments.length > 1) {
+		return 'alasql.utils.trimChars(' + s + ',' + chars + ',' + (side || "'BOTH'") + ')';
+	}
 	return und(s, 'y.trim()');
+};
+
+alasql.utils.trimChars = function (s, chars, side) {
+	if (s == null || chars == null) return undefined;
+	s = String(s);
+	chars = String(chars);
+	side = String(side).toUpperCase();
+	var start = 0;
+	var end = s.length;
+	if (side !== 'TRAILING') {
+		while (start < end && chars.indexOf(s[start]) > -1) start++;
+	}
+	if (side !== 'LEADING') {
+		while (end > start && chars.indexOf(s[end - 1]) > -1) end--;
+	}
+	return s.slice(start, end);
 };
 
 stdlib.UPPER = stdlib.UCASE = function (s) {
