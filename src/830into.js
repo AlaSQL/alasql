@@ -257,6 +257,10 @@ alasql.into.CSV = function (filename, opts, data, columns, cb) {
 			columns
 				.map(function (col) {
 					var s = d[col.columnid];
+					// Missing properties and null values both represent empty CSV fields.
+					if (s == null) {
+						s = '';
+					}
 					// escape the character wherever it appears in the field
 					if (opt.quote !== '') {
 						s = (s + '').replace(new RegExp('\\' + opt.quote, 'g'), opt.quote + opt.quote);
