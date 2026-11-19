@@ -50,16 +50,13 @@ yy.Delete.prototype.compile = function (databaseid) {
 		}
 
 		if (this.queries) {
-			this.queriesfn = this.queries.map(function (q) {
-				var nq = q.compile(databaseid);
-				nq.query.modifier = 'RECORDSET';
-				return nq;
-			});
+			this.queriesfn = compileRowSubqueries(this.queries, databaseid, tableid);
 		}
 
+		// The row is also reached by the table name, so t.u reads the same value as u (#2814)
 		var wherefn = new Function(
 			'r,params,alasql',
-			'var y;return (' + this.where.toJS('r', '') + ')'
+			'var y,p={' + JSON.stringify(tableid) + ':r};return (' + this.where.toJS('p', tableid) + ')'
 		).bind(this);
 
 		statement = function (params, cb) {
