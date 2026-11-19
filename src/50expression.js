@@ -316,6 +316,19 @@
 			var rightJS = function () {
 				return ref(_this.right);
 			};
+			// x IN t1: a bare name that is not a known column may be a table, as in SQLite (#2761).
+			// The name is read as a column first, so a column of that name still wins.
+			var inTableJS = function () {
+				const right = _this.right;
+				if (
+					!(right instanceof yy.Column) ||
+					right.tableid ||
+					(defcols && defcols[right.columnid])
+				) {
+					return '';
+				}
+				return `alasql.utils.inTableOrColumn(this, ${JSON.stringify(right.columnid)}, () => ${right.toJS(context, tableid, defcols)})`;
+			};
 
 			if (this.op === '=') {
 				op = '===';
@@ -405,6 +418,8 @@
 						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
 						s = `alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
+				} else if (inTableJS()) {
+					s = `(function(v){return v==null?undefined:v.indexOf(${leftJS()}) > -1})(${inTableJS()})`;
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
 				}
@@ -439,6 +454,8 @@
 						alasql.sets[key] = alasql.sets[key] || new Set(allValues);
 						s = `!alasql.sets[${JSON.stringify(key)}].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
+				} else if (inTableJS()) {
+					s = `(function(v){return v==null?undefined:v.indexOf(${leftJS()}) === -1})(${inTableJS()})`;
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
 				}
