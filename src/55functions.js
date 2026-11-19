@@ -161,6 +161,23 @@ stdlib.LEN = stdlib.LENGTH = function (s) {
 };
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
+// SQL-92 names for the length of a text (#2793)
+stdlib.CHAR_LENGTH = stdlib.CHARACTER_LENGTH = function (s) {
+	return stdlib.LENGTH(s);
+};
+
+// Bytes of the text in UTF-8
+stdfn.OCTET_LENGTH = function (s) {
+	if (s == null) return undefined;
+	return new TextEncoder().encode(String(s)).length;
+};
+
+// POSITION(x IN y): 1-based place of x in y, 0 when not found
+stdfn.POSITION = function (s, t) {
+	if (s == null || t == null) return undefined;
+	return String(t).indexOf(String(s)) + 1;
+};
+
 stdlib.LOWER = stdlib.LCASE = function (s) {
 	return und(s, 'String(y).toLowerCase()');
 };
