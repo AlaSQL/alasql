@@ -196,8 +196,10 @@ function queryfn3(query) {
 
 			if (gfn) gfn(g, query.params, alasql);
 
-			if (!query.havingfn || query.havingfn(g, query.params, alasql)) {
-				var d = query.selectgfn(g, query.params, alasql);
+			// HAVING can read a computed SELECT alias from the row (#2769)
+			var d = query.havingReadsRow ? query.selectgfn(g, query.params, alasql) : undefined;
+			if (!query.havingfn || query.havingfn(g, query.params, alasql, d)) {
+				if (!d) d = query.selectgfn(g, query.params, alasql);
 
 				for (const key in query.groupColumns) {
 					// only remove columns where the alias is also not a column in the result
