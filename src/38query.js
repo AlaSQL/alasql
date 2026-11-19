@@ -239,11 +239,11 @@ function queryfn3(query) {
 	var unionBranchHasOrder = ['unionallfn', 'unionfn', 'exceptfn', 'intersectfn'].some(
 		function (fnName) {
 			var fn = query[fnName];
-			return fn && fn.query && (fn.query.orderfn || fn.query.limit);
+			return fn && fn.query && (fn.query.orderfn || hasLimit(fn.query));
 		}
 	);
 
-	if (unionBranchHasOrder && (query.orderfn || query.limit)) {
+	if (unionBranchHasOrder && (query.orderfn || hasLimit(query))) {
 		// Apply ordering to first SELECT's data
 		if (query.orderfn) {
 			// Populate order keys before sorting (needed for UNION queries)
@@ -280,7 +280,7 @@ function queryfn3(query) {
 			orderApplied = true;
 		}
 		// Apply limit to first SELECT's data
-		if (query.limit) {
+		if (hasLimit(query)) {
 			doLimit(query);
 			// Don't apply limit again after UNION
 			limitApplied = true;
@@ -519,10 +519,16 @@ function queryfn3(query) {
 	return res;
 }
 
+// LIMIT 0 and TOP 0 still limit the result, so check for presence instead of truthiness.
+// A limit of undefined or null (a missing parameter) means no limit.
+function hasLimit(query) {
+	return query.limit !== undefined && query.limit !== null;
+}
+
 // Limiting
 function doLimit(query) {
 	//	console.log(query.limit, query.offset)
-	if (query.limit) {
+	if (hasLimit(query)) {
 		var offset = 0;
 		if (query.offset) {
 			offset = query.offset | 0 || 0;
