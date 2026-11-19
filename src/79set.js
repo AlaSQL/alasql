@@ -6,6 +6,9 @@
 //
 */
 
+// System variables, read as @@name and set with SET name = ..., SET @@name = ... or SET GLOBAL name = ...
+alasql.sysvars = {};
+
 yy.SetVariable = function (params) {
 	return Object.assign(this, params);
 };
@@ -70,8 +73,12 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 		} else {
 			if (this.method === '@') {
 				alasql.vars[this.variable] = res;
+			} else if (this.method === '@@') {
+				alasql.sysvars[this.variable] = res;
 			} else {
 				params[this.variable] = res;
+				// MySQL reads SET name = value back as @@name (#2862)
+				if (!this.method) alasql.sysvars[this.variable.toLowerCase()] = res;
 			}
 		}
 	}

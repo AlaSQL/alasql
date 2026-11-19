@@ -523,7 +523,7 @@
 		}
 
 		toString() {
-			return '@' + this.variable;
+			return (this.system ? '@@' : '@') + this.variable;
 		}
 
 		toType() {
@@ -531,7 +531,10 @@
 		}
 
 		toJS() {
-			return "alasql.vars['" + escapeq(this.variable) + "']";
+			// @@name reads a system variable (#2862)
+			return (
+				(this.system ? 'alasql.sysvars' : 'alasql.vars') + "['" + escapeq(this.variable) + "']"
+			);
 		}
 	}
 
