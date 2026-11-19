@@ -12,7 +12,7 @@ Inputs to improvement? [Open an issue](https://github.com/alasql/alasql/issues/n
 - Make sure you have git, Node and yarn installed (`npm install -g yarn`)
 - Fork the repo here on Github (button top right)
 - Clone your forked repo and install dependencies `git clone https://github.com/MYUSERNAME/alasql/ --depth 1 && cd alasql && yarn` 
-- Make sure you work with the develop branch `git checkout develop`
+- Make sure you work with the main branch `git checkout main`
 - Run tests to verify all is good `yarn test`
 - Implement a test that reflects the issue.
   - Add a new test file for the issue: Copy `test/test000.js` and replace `000` with a new number. Preferably the number of the issue you are solving.

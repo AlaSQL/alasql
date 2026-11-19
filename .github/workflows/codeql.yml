@@ -2,7 +2,7 @@ name: 'Code quality'
 
 on:
   push:
-    branches: ['develop']
+    branches: ['main']
   schedule:
     - cron: '32 13 * * 0'
 
