@@ -506,8 +506,9 @@ yy.Select = class Select {
 
 						// Group rows by partition
 						for (var i = 0, ilen = res.length; i < ilen; i++) {
-							var partitionKey =
-								config.partitionColumns && config.partitionColumns.length > 0
+							var partitionKey = config.partitionKey
+								? res[i][config.partitionKey]
+								: config.partitionColumns && config.partitionColumns.length > 0
 									? config.partitionColumns
 											.map(function (col) {
 												return res[i][col];
@@ -523,13 +524,14 @@ yy.Select = class Select {
 						for (var partitionKey in partitions) {
 							var rowIndices = partitions[partitionKey];
 							var values = [];
-							var colId = config.expression && config.expression.columnid;
+							var colId = config.valueKey || (config.expression && config.expression.columnid);
+							var countValues = config.valueKey || (colId && colId !== '*');
 
 							// Collect values from partition rows
-							if (config.aggregatorid !== 'COUNT' || (colId && colId !== '*')) {
+							if (config.aggregatorid !== 'COUNT' || countValues) {
 								for (var k = 0; k < rowIndices.length; k++) {
 									var val = res[rowIndices[k]][colId];
-									if (val != null) values.push(val);
+									if (val != null && !(typeof val === 'number' && isNaN(val))) values.push(val);
 								}
 							}
 
@@ -537,7 +539,7 @@ yy.Select = class Select {
 							var aggregateValue;
 							switch (config.aggregatorid) {
 								case 'COUNT':
-									aggregateValue = colId && colId !== '*' ? values.length : rowIndices.length;
+									aggregateValue = countValues ? values.length : rowIndices.length;
 									break;
 								case 'SUM':
 									aggregateValue = values.reduce(function (sum, v) {
@@ -565,6 +567,18 @@ yy.Select = class Select {
 								res[rowIndices[k]][config.as] = aggregateValue;
 							}
 						}
+					}
+					// Remove the hidden keys, then the duplicates they kept apart
+					query.windowaggrs.forEach(function (config) {
+						res.forEach(function (r) {
+							if (config.valueKey) delete r[config.valueKey];
+							if (config.partitionKey) delete r[config.partitionKey];
+						});
+					});
+					if (query.distinct) {
+						query.data = res;
+						doDistinct(query);
+						res = query.data;
 					}
 				}
 

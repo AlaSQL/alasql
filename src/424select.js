@@ -358,6 +358,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 					as: col.as,
 					aggregatorid: col.aggregatorid,
 					expression: col.expression,
+					partition: col.over.partition,
 					partitionColumns: col.over.partition
 						? col.over.partition.map(function (p) {
 								return p.columnid || p.toString();
@@ -447,6 +448,24 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			}
 		}
 	});
+	// A window aggregate takes its argument and partition from the source row, kept under
+	// hidden keys until the window is computed, as the output row may not have them (#2689)
+	if (!self.group) {
+		query.windowaggrs.forEach(function (config, idx) {
+			var expr = config.expression;
+			if (expr && !(expr instanceof yy.Column && expr.columnid === '*')) {
+				config.valueKey = '$$window' + idx;
+				ss.push("'" + config.valueKey + "':" + expr.toJS('p', query.defaultTableid, query.defcols));
+			}
+			if (config.partition) {
+				config.partitionKey = '$$windowPartition' + idx;
+				var keys = config.partition.map(function (p) {
+					return p.toJS('p', query.defaultTableid, query.defcols);
+				});
+				ss.push("'" + config.partitionKey + "':JSON.stringify([" + keys.join(',') + '])');
+			}
+		});
+	}
 	s += ss.join(',') + '};' + sp;
 	return s;
 	//console.log(42,753,query.xcolumns, query.selectColumns);
