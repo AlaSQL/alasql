@@ -118,6 +118,13 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				va = '(typeof (y=' + va + ")=='string'?y.toUpperCase():y)";
 				vb = '(typeof (y=' + vb + ")=='string'?y.toUpperCase():y)";
 			}
+			// JavaScript says false to both 10 > 'a' and 'a' > 10, so the sort had no defined
+			// result. As in SQLite, numbers come before text (#2812)
+			var ta = "typeof a['" + key + "']";
+			var tb = "typeof b['" + key + "']";
+			var numberFirst = ord.direction == 'ASC' ? -1 : 1;
+			s += 'if(' + ta + "=='number'&&" + tb + "=='string')return " + numberFirst + ';';
+			s += 'if(' + ta + "=='string'&&" + tb + "=='number')return " + -numberFirst + ';';
 			s += 'if(' + va + (ord.direction == 'ASC' ? '>' : '<') + vb + ')return 1;';
 			s += 'if(' + va + '==' + vb + '){';
 			//console.log(37,s);
