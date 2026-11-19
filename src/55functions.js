@@ -150,8 +150,10 @@ stdlib.IIF = function (a, b, c) {
 stdlib.IFNULL = function (a, b) {
 	return `((typeof ${a} === "undefined" || ${a} === null) ? ${b} : ${a})`;
 };
-stdlib.INSTR = function (s, p) {
-	return `((${s}).indexOf(${p}) + 1)`;
+// NULL in either argument gives NULL, and a number is searched as its text (MySQL, SQLite)
+stdfn.INSTR = function (s, p) {
+	if (s == null || p == null) return undefined;
+	return String(s).indexOf(String(p)) + 1;
 };
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
