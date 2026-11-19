@@ -65,7 +65,8 @@ export default function install(alasql, internal) {
 	 */
 	const groupingsets = (a, query) =>
 		a.reduce((acc, d) => {
-			acc = acc.concat(decartes(d, query));
+			// A nested CUBE, ROLLUP or GROUPING SETS adds all of its sets
+			acc = acc.concat(decartes(d instanceof yy.GroupExpression ? [d] : d, query));
 			return acc;
 		}, []);
 

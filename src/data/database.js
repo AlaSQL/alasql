@@ -69,6 +69,7 @@ export default function install(alasql) {
 		this.sqlCache = {}; // Cache for compiled SQL statements
 		this.sqlCacheSize = 0;
 		this.astCache = {}; // Cache for AST objects
+		this.astCacheSize = 0;
 	};
 
 	// Main SQL function

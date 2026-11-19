@@ -61,7 +61,7 @@ export default function install(alasql, internal) {
 					source.joinmode != 'ANTI' &&
 					source.optimization == 'ix'
 				) {
-					data = source.ix[source.onleftfn(scope, query.params, alasql)] || [];
+					data = source.ix[source.onleftfn.call(query, scope, query.params, alasql)] || [];
 					opt = true;
 				}
 			}
@@ -79,11 +79,12 @@ export default function install(alasql, internal) {
 				scope[tableid] = dataw;
 				if (query.joinrows) query.joinat[h] = opt ? source.rowat.get(dataw) : i;
 
-				// Reduce with ON and USING clause
+				// Reduce with ON and USING clause. These run with the query as this, as WHERE does,
+				// so a subquery in ON finds this.queriesfn (#2795)
 				var usingPassed = !source.onleftfn;
 				if (!usingPassed) {
-					var left = source.onleftfn(scope, query.params, alasql);
-					var right = source.onrightfn(scope, query.params, alasql);
+					var left = source.onleftfn.call(query, scope, query.params, alasql);
+					var right = source.onrightfn.call(query, scope, query.params, alasql);
 					if (left instanceof String || left instanceof Number) left = left.valueOf();
 					if (right instanceof String || right instanceof Number) right = right.valueOf();
 					usingPassed = left == right;
@@ -91,7 +92,7 @@ export default function install(alasql, internal) {
 
 				if (usingPassed) {
 					// For all non-standard JOINs like a-b=0
-					if (source.onmiddlefn(scope, query.params, alasql)) {
+					if (source.onmiddlefn.call(query, scope, query.params, alasql)) {
 						// Recursively call new join
 						if (source.joinmode != 'SEMI' && source.joinmode != 'ANTI') {
 							doJoin(query, scope, h + 1);

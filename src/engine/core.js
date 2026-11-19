@@ -296,6 +296,9 @@ export default function install(alasql, internal) {
 			: cb;
 		try {
 			return statement(params, done, scope);
+		} catch (err) {
+			finish();
+			throw err;
 		} finally {
 			if (!cb) {
 				finish();
@@ -355,7 +358,11 @@ export default function install(alasql, internal) {
 			// Create AST cache
 			ast = alasql.parse(sql);
 			if (ast) {
-				// add to AST cache
+				// add to AST cache, with the same size limit as the statement cache (#2886)
+				if (db.astCacheSize > alasql.MAXSQLCACHESIZE) {
+					db.resetSqlCache();
+				}
+				db.astCacheSize++;
 				db.astCache[hh] = ast;
 			}
 		} else {

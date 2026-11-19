@@ -15,7 +15,7 @@ export default function install(alasql) {
 		var s = 'IF' + ' ';
 		s += this.expression.toString();
 		s += ' ' + this.thenstat.toString();
-		if (this.elsestat) s += ' ELSE ' + this.thenstat.toString();
+		if (this.elsestat) s += ' ELSE ' + this.elsestat.toString();
 		return s;
 	};
 

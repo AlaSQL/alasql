@@ -116,7 +116,8 @@ export default function install(alasql) {
 			if (!table) {
 				throw new Error("Table '" + tableid + "' not exists");
 			}
-			//		table.dirty = true;
+			// INSERT and DELETE mark the table dirty too, so a JOIN does not reuse a stale cached index (#2919)
+			table.dirty = true;
 			var numrows = 0;
 			var updatedRows = [];
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
