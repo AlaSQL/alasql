@@ -239,83 +239,13 @@ SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 ORDER BY k % 2
   sqlite: [[null, 1, 0], [0, 2, 2], [1, 4, 6]]
   why: Not reviewed yet.
 
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2 HAVING SUM(gb.num) > 0
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2 HAVING COUNT(*) > 1
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY k % 2 ORDER BY k % 2
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2
-  alasql: [[undefined, 1, 0], [undefined, 2, 2], [undefined, 4, 6]]
-  sqlite: [[0, 2, 2], [1, 4, 6], [null, 1, 0]]
-  why: Not reviewed yet.
-
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 HAVING SUM(gb.num) > 0
-  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
-  sqlite: [[0, 2, 2], [1, 4, 6]]
-  why: Not reviewed yet.
-
-SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 HAVING COUNT(*) > 1
-  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
-  sqlite: [[0, 2, 2], [1, 4, 6]]
-  why: Not reviewed yet.
-
 SELECT (k % 2), COUNT(*), SUM(gb.num) FROM gb GROUP BY k % 2 ORDER BY k % 2
-  alasql: [[undefined, 4, 6], [undefined, 2, 2], [undefined, 1, 0]]
+  alasql: [[1, 4, 6], [0, 2, 2], [undefined, 1, 0]]
   sqlite: [[null, 1, 0], [0, 2, 2], [1, 4, 6]]
   why: Not reviewed yet.
 
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2)
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2) HAVING SUM(gb.num) > 0
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2) HAVING COUNT(*) > 1
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb WHERE gb.k = 1 GROUP BY (k % 2) ORDER BY (k % 2)
-  alasql: [[undefined, 2, 2]]
-  sqlite: [[1, 2, 2]]
-  why: Not reviewed yet.
-
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2)
-  alasql: [[undefined, 1, 0], [undefined, 2, 2], [undefined, 4, 6]]
-  sqlite: [[0, 2, 2], [1, 4, 6], [null, 1, 0]]
-  why: Not reviewed yet.
-
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2) HAVING SUM(gb.num) > 0
-  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
-  sqlite: [[0, 2, 2], [1, 4, 6]]
-  why: Not reviewed yet.
-
-SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2) HAVING COUNT(*) > 1
-  alasql: [[undefined, 2, 2], [undefined, 4, 6]]
-  sqlite: [[0, 2, 2], [1, 4, 6]]
-  why: Not reviewed yet.
-
 SELECT k % 2, COUNT(*), SUM(gb.num) FROM gb GROUP BY (k % 2) ORDER BY (k % 2)
-  alasql: [[undefined, 4, 6], [undefined, 2, 2], [undefined, 1, 0]]
+  alasql: [[1, 4, 6], [0, 2, 2], [undefined, 1, 0]]
   sqlite: [[null, 1, 0], [0, 2, 2], [1, 4, 6]]
   why: Not reviewed yet.
 

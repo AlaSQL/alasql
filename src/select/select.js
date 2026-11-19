@@ -1,3 +1,5 @@
+import {Node} from '../expression/node.js';
+
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	var Query = alasql.Query;
@@ -16,9 +18,19 @@ export default function install(alasql, internal) {
 
 	/* global yy */
 
-	yy.Select = class Select {
-		constructor(params) {
-			Object.assign(this, params);
+	yy.Select = class Select extends Node {
+		// The aggregates of a subquery are its own
+		collectAggregate() {
+			return false;
+		}
+
+		// The alias of a column or a source is kept on the node it names, and is part of the select
+		sameChildren(other) {
+			return (
+				super.sameChildren(other) &&
+				sameAliases(this.columns, other.columns) &&
+				sameAliases(this.from, other.from)
+			);
 		}
 
 		toString() {
@@ -689,6 +701,34 @@ export default function install(alasql, internal) {
 			})(query.queriesfn);
 		}
 	};
+
+	yy.Select.children = [
+		'columns',
+		'distinctOn',
+		'top',
+		'into',
+		'from',
+		'joins',
+		'where',
+		'group',
+		'having',
+		'order',
+		'limit',
+		'offset',
+		'union',
+		'unionall',
+		'except',
+		'intersect',
+		'pivot',
+		'unpivot',
+		'removecolumns',
+	];
+	yy.Select.fields = ['modifier', 'distinct', 'all', 'percent', 'corresponding', 'explain'];
+
+	function sameAliases(a, b) {
+		if (!Array.isArray(a) || !Array.isArray(b)) return (a && a.as) == (b && b.as);
+		return a.every((item, i) => (item && item.as) == (b[i] && b[i].as));
+	}
 
 	/**
  Modify res according modifier

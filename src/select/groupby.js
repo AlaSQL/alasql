@@ -51,6 +51,8 @@ export default function install(alasql, internal) {
 		}
 		var defcols = query.defcols;
 		query.groupSources = new WeakMap();
+		// The grouped expressions with their key in the group object: {key, node}
+		query.groupKeys = [];
 		var allgroup = [[]];
 		if (this.group) {
 			allgroup = decartes(this.group, query);

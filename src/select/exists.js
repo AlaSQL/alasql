@@ -1,3 +1,5 @@
+import {Node} from '../expression/node.js';
+
 export default function install(alasql) {
 	var yy = alasql.yy;
 	/*
@@ -9,11 +11,7 @@ export default function install(alasql) {
 //
 */
 
-	yy.ExistsValue = class ExistsValue {
-		constructor(params) {
-			Object.assign(this, params);
-		}
-
+	yy.ExistsValue = class ExistsValue extends Node {
 		toString() {
 			return 'EXISTS(' + this.value.toString() + ')';
 		}
@@ -28,6 +26,8 @@ export default function install(alasql) {
 			return `!!this.existsfn[${this.existsidx}](params, null, ${outerContext}).data.length`;
 		}
 	};
+
+	yy.ExistsValue.children = ['value'];
 
 	//
 	// Prepare subqueries and EXISTS

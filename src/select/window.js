@@ -1,3 +1,5 @@
+import {Node} from '../expression/node.js';
+
 export default function install(alasql) {
 	var yy = alasql.yy;
 	/*
@@ -8,9 +10,10 @@ export default function install(alasql) {
 //
 */
 
-	yy.Over = class Over {
-		constructor(params) {
-			Object.assign(this, params);
+	yy.Over = class Over extends Node {
+		// An aggregate in PARTITION BY or ORDER BY of a window belongs to the window
+		collectAggregate() {
+			return false;
 		}
 
 		toString() {
@@ -26,4 +29,5 @@ export default function install(alasql) {
 			return s;
 		}
 	};
+	yy.Over.children = ['partition', 'order'];
 }

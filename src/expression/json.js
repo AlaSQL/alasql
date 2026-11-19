@@ -1,3 +1,5 @@
+import {Node} from './node.js';
+
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
@@ -8,9 +10,8 @@ export default function install(alasql, internal) {
 //
 */
 
-	yy.Json = function (params) {
-		return Object.assign(this, params);
-	};
+	yy.Json = class Json extends Node {};
+	yy.Json.children = ['value'];
 	yy.Json.prototype.toString = function () {
 		var s = ''; // '@'
 		s += JSONtoString(this.value);

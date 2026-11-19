@@ -10,6 +10,19 @@ export default function install(alasql, internal) {
 //
 */
 
+	// The key of a grouped expression in the group object is its text. The expression is kept
+	// with the key, so that a SELECT item is matched to it by what it is, not by how it is written
+	function expressionKey(node, query) {
+		const key = escapeq(node.toString());
+		query.groupColumns[key] = key;
+		rememberKey(key, node, query);
+		return key;
+	}
+
+	function rememberKey(key, node, query) {
+		if (!query.groupKeys.some(gk => gk.key === key)) query.groupKeys.push({key, node});
+	}
+
 	/**
  Calculate ROLLUP() combination
  */
@@ -28,8 +41,7 @@ export default function install(alasql, internal) {
 					query.groupColumns[escapeq(a[i].columnid)] = a[i].nick;
 					aaa = `${a[i].nick}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
 				} else {
-					query.groupColumns[escapeq(a[i].toString())] = escapeq(a[i].toString());
-					aaa = `${escapeq(a[i].toString())}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
+					aaa = `${expressionKey(a[i], query)}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
 				}
 
 				if (mask & (1 << i)) ss.push(aaa);
@@ -96,11 +108,9 @@ export default function install(alasql, internal) {
 						r.concat(`${gv[t].nick}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`)
 					);
 				} else if (gv[t] instanceof yy.FuncValue) {
-					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
+					const key = expressionKey(gv[t], query);
 					res = res.map(r =>
-						r.concat(
-							`${escapeq(gv[t].toString())}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`
-						)
+						r.concat(`${key}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`)
 					);
 				} else if (gv[t] instanceof yy.GroupExpression) {
 					if (gv[t].type == 'ROLLUP') res = cartes(res, rollup(gv[t].group, query));
@@ -111,19 +121,13 @@ export default function install(alasql, internal) {
 				} else if (gv[t] === '') {
 					res = [['1\t1']];
 				} else {
+					const key = expressionKey(gv[t], query);
 					res = res.map(r =>
-						r.concat(
-							`${escapeq(gv[t].toString())}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`
-						)
+						r.concat(`${key}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`)
 					);
 				}
 			}
 			return res;
-		}
-
-		if (gv instanceof yy.FuncValue) {
-			query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-			return [`${gv.toString()}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
 		}
 
 		if (gv instanceof yy.Column) {
@@ -132,8 +136,7 @@ export default function install(alasql, internal) {
 			return [`${gv.nick}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
 		}
 
-		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-		return [`${escapeq(gv.toString())}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
+		return [`${expressionKey(gv, query)}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
 	}
 
 	internal.decartes = decartes;

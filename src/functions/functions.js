@@ -1,4 +1,5 @@
 import {und} from '../utils/helpers.js';
+import {Node} from '../expression/node.js';
 
 // Stateless, so other modules import it directly; install() also keeps it on alasql.utils, where users reach it.
 
@@ -14,9 +15,22 @@ export default function install(alasql) {
 //
 */
 
-	yy.FuncValue = function (params) {
-		return Object.assign(this, params);
+	yy.FuncValue = class FuncValue extends Node {
+		// The name of a built-in function is found in any case, as toString() writes it; a
+		// user-defined function is found by its exact name
+		sameFields(other) {
+			return sameFuncid(this.funcid, other.funcid) && super.sameFields(other);
+		}
 	};
+	yy.FuncValue.children = ['args', 'over'];
+	yy.FuncValue.fields = ['newid'];
+
+	function sameFuncid(a, b) {
+		if (a === b) return true;
+		if (typeof a !== 'string' || typeof b !== 'string') return false;
+		if (alasql.fn[a] || alasql.fn[b] || alasql.aggr[a] || alasql.aggr[b]) return false;
+		return a.toUpperCase() === b.toUpperCase();
+	}
 
 	yy.FuncValue.prototype.toString = function () {
 		let s = '';
@@ -54,14 +68,6 @@ export default function install(alasql) {
 		expr(params, alasql);
 		if (cb) res = cb(res);
 		return res;
-	};
-
-	yy.FuncValue.prototype.findAggregator = function (query) {
-		if (this.args && this.args.length > 0) {
-			this.args.forEach(function (arg) {
-				if (arg.findAggregator) arg.findAggregator(query);
-			});
-		}
 	};
 
 	// A bare column found in two tables has always been read from the first table inside a built-in
