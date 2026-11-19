@@ -25,6 +25,8 @@
 
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
+/* Bit-value literal b'101', read as the integer it holds (#2872) */
+[bB]['][01]+[']                         { yytext = '0b' + yytext.slice(2, -1); return 'NUMBER'; }
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+              return 'DQSTRING'
 
