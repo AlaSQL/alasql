@@ -280,14 +280,30 @@ stdfn.CONCAT_WS = function () {
 // SUBSTR
 // TRIM
 
+// Order of two GROUP_CONCAT values or sort keys, NULL last
+function compareGroupConcat(a, b, ascending) {
+	if (a === b) return 0;
+	if (a === null || a === undefined) return 1;
+	if (b === null || b === undefined) return -1;
+	if (typeof a === 'string' && typeof b === 'string') {
+		return ascending ? a.localeCompare(b) : b.localeCompare(a);
+	}
+	// For numbers and other types - add parentheses for clarity
+	return ascending ? (a < b ? -1 : 1) : b < a ? -1 : 1;
+}
+
 // Aggregator for joining strings
 // Can be called with options: alasql.aggr.GROUP_CONCAT(v, s, stage, separator, orderDirection)
+// With ORDER BY, orderKeys holds the values of the ORDER BY items for this row and
+// orderDirections their directions, and the values are sorted by these keys (#2658)
 alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 	v,
 	s,
 	stage,
 	separator,
-	orderDirection
+	orderDirection,
+	orderKeys,
+	orderDirections
 ) {
 	// Default separator is comma
 	if (separator === undefined) {
@@ -297,10 +313,17 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 	if (stage === 1) {
 		// Initialize: create array to collect values
 		// Store as object with values array and metadata
-		if (v === null || v === undefined) {
-			return {values: [], separator: separator, orderDirection: orderDirection};
+		s = {values: [], separator: separator, orderDirection: orderDirection};
+		if (orderKeys) {
+			s.keys = [];
+			s.orderDirections = orderDirections;
 		}
-		return {values: [v], separator: separator, orderDirection: orderDirection};
+		if (v === null || v === undefined) {
+			return s;
+		}
+		s.values.push(v);
+		if (orderKeys) s.keys.push(orderKeys);
+		return s;
 	} else if (stage === 2) {
 		// Accumulate: add to values array, skip null values
 		if (v === null || v === undefined) {
@@ -308,7 +331,15 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 		}
 		// If accumulator is null/undefined, initialize it
 		if (s === null || s === undefined) {
-			return {values: [v], separator: separator, orderDirection: orderDirection};
+			return alasql.aggr.GROUP_CONCAT(
+				v,
+				s,
+				1,
+				separator,
+				orderDirection,
+				orderKeys,
+				orderDirections
+			);
 		}
 		// Handle both old string format (for backwards compatibility) and new object format
 		if (typeof s === 'string') {
@@ -316,6 +347,7 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 			s = {values: s.split(','), separator: ',', orderDirection: undefined};
 		}
 		s.values.push(v);
+		if (s.keys) s.keys.push(orderKeys);
 		return s;
 	} else {
 		// Stage 3 (or final): sort if needed and join
@@ -334,25 +366,29 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 			return undefined;
 		}
 
-		// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
-		if (s.orderDirection && s.orderDirection !== undefined) {
+		if (s.keys) {
+			// Sort by the ORDER BY items, one after the other
+			let keys = s.keys;
+			let dirs = s.orderDirections;
+			values = values
+				.map((value, i) => i)
+				.sort((i, j) => {
+					for (let k = 0; k < dirs.length; k++) {
+						let res = compareGroupConcat(keys[i][k], keys[j][k], dirs[k] !== 'DESC');
+						if (res) return res;
+					}
+					return i - j;
+				})
+				.map(i => values[i]);
+		} else if (s.orderDirection && s.orderDirection !== undefined) {
+			// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
 			let ascending = s.orderDirection === 'ASC';
-			values = values.slice().sort((a, b) => {
-				if (a === b) return 0;
-				if (a === null || a === undefined) return 1;
-				if (b === null || b === undefined) return -1;
-				if (typeof a === 'string' && typeof b === 'string') {
-					return ascending ? a.localeCompare(b) : b.localeCompare(a);
-				}
-				// For numbers and other types - add parentheses for clarity
-				return ascending ? (a < b ? -1 : 1) : b < a ? -1 : 1;
-			});
+			values = values.slice().sort((a, b) => compareGroupConcat(a, b, ascending));
 		}
 
 		return values.join(s.separator);
 	}
 };
-
 alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	if (stage === 2) {
 		if (v !== null) {
