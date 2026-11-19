@@ -168,6 +168,15 @@ function mapColumnsToNames(data, sourceColumns, targetColumns) {
 	});
 }
 
+// Rename the columns of the rows by position to the names in the CTE column list.
+// The positions come from the keys of the first row.
+function renameColumns(data, columns) {
+	var columnNames = columns.map(function (c) {
+		return c.columnid;
+	});
+	return mapColumnsToNames(data, Object.keys(data[0] || {}), columnNames);
+}
+
 yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
 	var savedTables = [];
