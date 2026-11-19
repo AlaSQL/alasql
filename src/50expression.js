@@ -163,10 +163,10 @@
 		}
 
 		toString() {
-			var s = this.tableid;
+			var s = Column.wrapId(this.tableid);
 			//	if(this.joinmode)
 			if (this.databaseid) {
-				s = this.databaseid + '.' + s;
+				s = Column.wrapId(this.databaseid) + '.' + s;
 			}
 			return s;
 		}
