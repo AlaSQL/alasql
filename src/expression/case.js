@@ -1,3 +1,5 @@
+import {Node} from './node.js';
+
 export default function install(alasql) {
 	var yy = alasql.yy;
 	/*
@@ -8,9 +10,8 @@ export default function install(alasql) {
 //
 */
 
-	yy.CaseValue = function (params) {
-		return Object.assign(this, params);
-	};
+	yy.CaseValue = class CaseValue extends Node {};
+	yy.CaseValue.children = ['expression', 'whens', 'elses'];
 	yy.CaseValue.prototype.toString = function () {
 		var s = 'CASE ';
 		if (this.expression) s += this.expression.toString();
@@ -23,18 +24,6 @@ export default function install(alasql) {
 		}
 		s += ' END';
 		return s;
-	};
-
-	yy.CaseValue.prototype.findAggregator = function (query) {
-		//	console.log(this.toString());
-		if (this.expression && this.expression.findAggregator) this.expression.findAggregator(query);
-		if (this.whens && this.whens.length > 0) {
-			this.whens.forEach(function (w) {
-				if (w.when.findAggregator) w.when.findAggregator(query);
-				if (w.then.findAggregator) w.then.findAggregator(query);
-			});
-		}
-		if (this.elses && this.elses.findAggregator) this.elses.findAggregator(query);
 	};
 
 	yy.CaseValue.prototype.toJS = function (context, tableid, defcols) {

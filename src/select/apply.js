@@ -1,3 +1,5 @@
+import {Node} from '../expression/node.js';
+
 export default function install(alasql) {
 	var yy = alasql.yy;
 	/*
@@ -8,11 +10,7 @@ export default function install(alasql) {
 //
 */
 
-	yy.Apply = class Apply {
-		constructor(params) {
-			Object.assign(this, params);
-		}
-
+	yy.Apply = class Apply extends Node {
 		toString() {
 			let s = `${this.applymode} APPLY (${this.select.toString()})`;
 
@@ -23,4 +21,6 @@ export default function install(alasql) {
 			return s;
 		}
 	};
+	yy.Apply.children = ['select'];
+	yy.Apply.fields = ['applymode', 'as'];
 }

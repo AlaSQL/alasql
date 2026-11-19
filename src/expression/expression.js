@@ -1,4 +1,5 @@
 import {escapeq, returnTrue} from '../utils/helpers.js';
+import {Node} from './node.js';
 import {re_invalidFnNameChars} from '../functions/functions.js';
 
 export default function install(alasql) {
@@ -6,12 +7,7 @@ export default function install(alasql) {
 	{
 		const assign = Object.assign;
 
-		class ExpressionStatement {
-			/** @param {object} params Initial parameters */
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class ExpressionStatement extends Node {
 			/**
 			Convert AST to string
 			@return {string}
@@ -43,11 +39,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class Expression {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class Expression extends Node {
 			/**
 			Convert AST to string
 			@return {string}
@@ -64,16 +56,6 @@ export default function install(alasql) {
 					s += ' ' + this.direction;
 				}
 				return s;
-			}
-
-			/**
-			Find aggregator in AST subtree
-			@param {object} query Query object
-		*/
-			findAggregator(query) {
-				if (this.expression.findAggregator) {
-					this.expression.findAggregator(query);
-				}
 			}
 
 			/**
@@ -107,11 +89,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class JavaScript {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class JavaScript extends Node {
 			toString() {
 				var s = '``' + this.value + '``';
 				return s;
@@ -132,11 +110,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class Literal {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class Literal extends Node {
 			toString() {
 				var s = this.value;
 				if (this.value1) {
@@ -147,11 +121,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class Join {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class Join extends Node {
 			toString() {
 				var s = ' ';
 				if (this.joinmode) {
@@ -162,11 +132,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class Table {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class Table extends Node {
 			toString() {
 				var s = this.tableid;
 				//	if(this.joinmode)
@@ -177,11 +143,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class View {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class View extends Node {
 			toString() {
 				var s = this.viewid;
 				//	if(this.joinmode)
@@ -221,9 +183,9 @@ export default function install(alasql) {
 			'IS NULL',
 			'IS NOT NULL',
 		]);
-		class Op {
+		class Op extends Node {
 			constructor(params) {
-				assign(this, params);
+				super(params);
 				// The VALUE keyword is a column (#2670), but VALUE->x in a CHECK still reads the checked row.
 				// [value] and `value` are plain columns, so they keep -> on the column
 				if (this.op === '->' && this.left instanceof yy.Column && this.left.valueKeyword) {
@@ -257,23 +219,12 @@ export default function install(alasql) {
 				return `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
 			}
 
-			findAggregator(query) {
-				if (this.left && this.left.findAggregator) {
-					this.left.findAggregator(query);
-				}
-				// Handle BETWEEN operators which have right1 and right2
-				if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
-					if (this.right1 && this.right1.findAggregator) {
-						this.right1.findAggregator(query);
-					}
-					if (this.right2 && this.right2.findAggregator) {
-						this.right2.findAggregator(query);
-					}
-				}
-				// Do not go in > ALL
-				if (this.right && this.right.findAggregator && !this.allsome) {
-					this.right.findAggregator(query);
-				}
+			// A list on the right (IN, > ALL, = ANY, SOME) is not searched for aggregates, nor is the
+			// subquery of ALL, ANY and SOME: only the left side is, as before
+			collectAggregate(query) {
+				if (!this.allsome && !Array.isArray(this.right)) return;
+				if (this.left instanceof Node) this.left.findAggregator(query);
+				return false;
 			}
 
 			toType(tableid) {
@@ -522,11 +473,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class VarValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class VarValue extends Node {
 			toString() {
 				return '@' + this.variable;
 			}
@@ -540,11 +487,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class NumValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class NumValue extends Node {
 			toString() {
 				return this.value.toString();
 			}
@@ -558,11 +501,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class StringValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class StringValue extends Node {
 			toString() {
 				return "'" + this.value.toString() + "'";
 			}
@@ -576,11 +515,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class DomainValueValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class DomainValueValue extends Node {
 			toString() {
 				return 'VALUE';
 			}
@@ -594,11 +529,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class ArrayValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class ArrayValue extends Node {
 			toString() {
 				return 'ARRAY[]';
 			}
@@ -620,11 +551,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class LogicValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class LogicValue extends Node {
 			toString() {
 				return this.value ? 'TRUE' : 'FALSE';
 			}
@@ -638,11 +565,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class NullValue {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class NullValue extends Node {
 			toString() {
 				return 'NULL';
 			}
@@ -659,9 +582,10 @@ export default function install(alasql) {
 			}
 		}
 
-		class ParamValue {
-			constructor(params) {
-				assign(this, params);
+		class ParamValue extends Node {
+			// ? and $0 read the same parameter
+			sameFields(other) {
+				return String(this.param) === String(other.param) && super.sameFields(other);
 			}
 
 			toString() {
@@ -684,9 +608,10 @@ export default function install(alasql) {
 			NOT: '!',
 		};
 
-		class UniOp {
-			constructor(params) {
-				assign(this, params);
+		class UniOp extends Node {
+			// Without an operator it is the parentheses around an expression
+			bare() {
+				return this.op == null && this.right instanceof Node ? this.right.bare() : this;
 			}
 
 			toString() {
@@ -703,12 +628,6 @@ export default function install(alasql) {
 						return op + '(' + res + ')';
 					default:
 						return '(' + res + ')';
-				}
-			}
-
-			findAggregator(query) {
-				if (this.right.findAggregator) {
-					this.right.findAggregator(query);
 				}
 			}
 
@@ -743,11 +662,7 @@ export default function install(alasql) {
 			}
 		}
 
-		class Column {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class Column extends Node {
 			// Check if identifier needs to be wrapped in brackets
 			// (numeric values, or contains spaces, dots, or other special characters)
 			static needsBrackets(id) {
@@ -860,9 +775,9 @@ export default function install(alasql) {
 			}
 		}
 
-		class AggrValue {
-			constructor(params) {
-				assign(this, params);
+		class AggrValue extends Node {
+			sameFields(other) {
+				return !this.distinct === !other.distinct && super.sameFields(other);
 			}
 
 			toString() {
@@ -877,11 +792,12 @@ export default function install(alasql) {
 				return `${funcName}(${distinctPart}${expressionPart})${overPart}`;
 			}
 
-			findAggregator(query) {
+			// Registers the aggregate with the query. What is inside an aggregate is not searched
+			collectAggregate(query) {
 				// Skip adding window aggregates (aggregates with OVER clause) to selectGroup
 				// They will be handled separately as window functions
 				if (this.over) {
-					return;
+					return false;
 				}
 
 				// Check if an identical aggregate already exists in selectGroup
@@ -901,6 +817,7 @@ export default function install(alasql) {
 					this.aggrNick = this.nick;
 					query.selectGroup.push(this);
 				}
+				return false;
 			}
 
 			toType() {
@@ -929,25 +846,46 @@ export default function install(alasql) {
 			}
 		}
 
-		class OrderExpression {
-			constructor(params) {
-				assign(this, params);
-			}
-		}
+		class OrderExpression extends Node {}
 
 		OrderExpression.prototype.toString = Expression.prototype.toString;
 
-		class GroupExpression {
-			constructor(params) {
-				assign(this, params);
-			}
-
+		class GroupExpression extends Node {
 			toString() {
 				return this.type + '(' + this.group.toString() + ')';
 			}
 		}
 
+		// What each node is made of: the slots that hold nodes, and the values that say which node it is
+		ExpressionStatement.children = ['expression'];
+		Expression.children = ['expression', 'order'];
+		Expression.fields = ['direction', 'nocase', 'nullsOrder'];
+		JavaScript.fields = ['value'];
+		Literal.fields = ['value', 'value1'];
+		Join.children = ['table', 'select', 'param', 'func', 'on', 'using'];
+		Join.fields = ['joinmode', 'natural', 'as', 'variable', 'array'];
+		Table.fields = ['tableid', 'databaseid'];
+		View.fields = ['viewid', 'databaseid'];
+		Op.children = ['left', 'right', 'right1', 'right2', 'escape'];
+		Op.fields = ['op', 'allsome'];
+		VarValue.fields = ['variable'];
+		NumValue.fields = ['value'];
+		StringValue.fields = ['value'];
+		ArrayValue.children = ['value'];
+		LogicValue.fields = ['value'];
+		ParamValue.fields = ['array'];
+		UniOp.children = ['right'];
+		UniOp.fields = ['op'];
+		Column.fields = ['columnid', 'tableid', 'databaseid', 'valueKeyword'];
+		AggrValue.children = ['expression', 'args', 'over', 'order'];
+		AggrValue.fields = ['aggregatorid', 'funcid', 'separator'];
+		OrderExpression.children = ['expression'];
+		OrderExpression.fields = ['direction', 'nocase', 'nullsOrder'];
+		GroupExpression.children = ['group'];
+		GroupExpression.fields = ['type'];
+
 		assign(yy, {
+			Node,
 			AggrValue,
 			ArrayValue,
 			Column,
