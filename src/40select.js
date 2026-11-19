@@ -365,7 +365,9 @@ yy.Select = class Select {
 							var colDef = table.xcolumns && table.xcolumns[key];
 							converted[key] = alasql.utils.typeConverter(r[key], colDef ? colDef.dbtypeid : null);
 						}
-						table.data.push(converted);
+						// Go through table.insert() like INSERT does, so keys, CHECK and IDENTITY apply (#1054)
+						if (table.insert) table.insert(converted);
+						else table.data.push(converted);
 					`;
 				}
 			} else if (this.into instanceof yy.VarValue) {
