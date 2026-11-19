@@ -7,7 +7,7 @@
 [![OPEN open source software](https://img.shields.io/badge/Open--OSS-%E2%9C%94-brightgreen.svg)](http://open-oss.com)
 [![Release](https://img.shields.io/github/release/alasql/alasql.svg?label=npm&a)](https://www.npmjs.com/package/alasql)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/AlaSQL/alasql.svg)](http://isitmaintained.com/project/AlaSQL/alasql 'Average time to resolve an issue')
-[![Coverage](https://img.shields.io/codecov/c/github/alasql/alasql/develop.svg)](https://rawgit.com/alasql/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
+[![Coverage](https://img.shields.io/codecov/c/github/alasql/alasql/main.svg)](https://rawgit.com/alasql/alasql/main/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/AlaSQL/alasql/badge)](https://securityscorecards.dev/viewer/?uri=github.com/AlaSQL/alasql)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
 [![](https://data.jsdelivr.com/v1/package/npm/alasql/badge?style=rounded)](https://www.jsdelivr.com/package/npm/alasql)
@@ -147,7 +147,7 @@ Other links:
 ## Please note
 
 **All contributions are extremely welcome and greatly appreciated(!)** -
-The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/alasql/alasql/blob/develop/CONTRIBUTING.md)
+The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/alasql/alasql/blob/main/CONTRIBUTING.md)
 
 The AlaSQL project depends on your contribution of code and <s>may</s> have [bugs](https://github.com/alasql/alasql/labels/%21%20Bug). So please, submit any bugs and suggestions [as an issue](https://github.com/alasql/alasql/issues/new).
 
@@ -510,7 +510,7 @@ Warning: Alaserver is not multi-threaded, not concurrent, and not secured.
 
 ### Regression tests
 
-AlaSQL has more than 2,400 regression tests, but they only cover [![Coverage](https://img.shields.io/codecov/c/github/alasql/alasql/develop.svg)](https://rawgit.com/alasql/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html) of the codebase. They run with [Bun](https://bun.sh):
+AlaSQL has more than 2,400 regression tests, but they only cover [![Coverage](https://img.shields.io/codecov/c/github/alasql/alasql/main.svg)](https://rawgit.com/alasql/alasql/main/test/coverage/lcov-report/dist/alasql.fs.js.html) of the codebase. They run with [Bun](https://bun.sh):
 
 ```bash
 $ yarn test            # builds dist/ and runs the tests
@@ -559,7 +559,7 @@ AlaSQL is an [OPEN Open Source Project](https://openopensource.github.io/). This
 
 > Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
 
-We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/alasql/alasql/blob/develop/CONTRIBUTING.md)
+We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/alasql/alasql/blob/main/CONTRIBUTING.md)
 
 ## Sponsors
 

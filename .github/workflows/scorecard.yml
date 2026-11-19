@@ -3,7 +3,7 @@ on:
   push:
     # Only the default branch is supported.
     branches:
-      - develop
+      - main
   schedule:
     # Weekly on Saturdays.
     - cron: '30 1 * * 6'

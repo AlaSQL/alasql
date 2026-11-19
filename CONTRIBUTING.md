@@ -7,7 +7,7 @@ For you to submit a pull request:
 - Make sure you have git, Node and yarn installed (`npm install -g yarn`)
 - Fork the repo here on Github (button top right)
 - Clone your forked repo and install dependencies `git clone https://github.com/MYUSERNAME/alasql/ --depth 1 && cd alasql && yarn` 
-- Make sure you work with the develop branch `git checkout develop`
+- Make sure you work with the main branch `git checkout main`
 - Make sure you got dependencies installed `yarn`
 - Run tests to verify all is good `yarn test`
 - Implement a test that reflects the issue.
