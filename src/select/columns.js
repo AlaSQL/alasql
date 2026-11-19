@@ -785,11 +785,21 @@ export default function install(alasql) {
 				var key = (col.tableid || '') + '\t' + col.columnid;
 				groupCol = groupColMap[key];
 			}
+			// An expression is in GROUP BY when a grouped expression is the same expression, however
+			// either is written: (a+1) is a+1 (#2721)
+			var groupKey = null;
+			if (!groupCol && !(col instanceof yy.Column) && col instanceof yy.Node) {
+				groupKey = query.groupKeys.find(function (gk) {
+					return gk.node.equals(col);
+				});
+			}
 			var isInGroup =
-				(groupCol !== null && groupCol !== undefined) || query.ingroup.indexOf(col.nick) > -1;
+				(groupCol !== null && groupCol !== undefined) ||
+				!!groupKey ||
+				(col instanceof yy.Column && query.ingroup.indexOf(col.nick) > -1);
 			if (isInGroup) {
 				// For columns in GROUP BY, use the GROUP BY column's nick if available
-				var groupNick = (groupCol && groupCol.nick) || col.nick;
+				var groupNick = (groupCol && groupCol.nick) || (groupKey && groupKey.key) || col.nick;
 				s += "r['" + (col.as || col.nick) + "']=g['" + groupNick + "'];";
 			}
 		});

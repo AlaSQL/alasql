@@ -800,8 +800,10 @@ export default function install(alasql) {
 					return false;
 				}
 
-				// Check if an identical aggregate already exists in selectGroup
-				let existingAggr = query.selectGroup.find(agg => agg.toString() === this.toString());
+				// The same aggregate twice shares one accumulator. The same means the same expression,
+				// not the same text: the text leaves parts out (ESCAPE, the items of ARRAY[], the ELSE
+				// of a CASE, the separator of GROUP_CONCAT)
+				let existingAggr = query.selectGroup.find(agg => agg.equals(this));
 
 				if (existingAggr) {
 					// Reuse the existing aggregate's nick to share the same accumulator
