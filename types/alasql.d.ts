@@ -37,6 +37,12 @@ declare module 'alasql' {
 		sqlite: boolean;
 		orientdb: boolean;
 		excel?: xlsx.WorkBook; // now typed
+		progress: false | ((a: number, b: number) => void); // called while an async batch runs, or false for none
+		joinstar: 'overwrite' | 'underscore' | 'json'; // how SELECT * names the columns of joined tables
+		loopbreak: number; // maximum steps of a SEARCH before it stops
+		maxCteIterations: number; // maximum iterations of a recursive CTE
+		dateAsString: boolean; // GETDATE() and NOW() return a string instead of a Date
+		csvStringToNumber: boolean; // convert numeric strings to numbers when reading CSV
 	}
 
 	// compiled Statement
