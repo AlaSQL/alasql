@@ -115,27 +115,39 @@ yy.Update.prototype.compile = function (databaseid) {
 		table.dirty = true;
 		var numrows = 0;
 		var updatedRows = [];
-		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
-			if (!wherefn || wherefn(table.data[i], params, alasql)) {
-				// Track row state for OUTPUT clause (DELETED.*)
-				var oldRow = self.output ? cloneDeep(table.data[i]) : null;
+		var trackIndexes = hasRegularIndexes(table);
+		var indexChanges = [];
+		try {
+			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
+				if (!wherefn || wherefn(table.data[i], params, alasql)) {
+					// Track row state for OUTPUT clause (DELETED.*)
+					var oldRow = self.output ? cloneDeep(table.data[i]) : null;
+					var rowBefore = table.data[i];
+					var keysBefore = trackIndexes ? indexKeys(table, rowBefore, params) : null;
 
-				if (table.update) {
-					table.update(assignfn, i, params);
-				} else {
-					assignfn(table.data[i], params, alasql);
+					if (table.update) {
+						table.update(assignfn, i, params);
+					} else {
+						assignfn(table.data[i], params, alasql);
+					}
+					if (trackIndexes) {
+						indexChanges.push([rowBefore, keysBefore, table.data[i]]);
+					}
+
+					// Track updated row for OUTPUT clause (INSERTED.*)
+					if (self.output) {
+						updatedRows.push({
+							deleted: oldRow,
+							inserted: cloneDeep(table.data[i]),
+						});
+					}
+
+					numrows++;
 				}
-
-				// Track updated row for OUTPUT clause (INSERTED.*)
-				if (self.output) {
-					updatedRows.push({
-						deleted: oldRow,
-						inserted: cloneDeep(table.data[i]),
-					});
-				}
-
-				numrows++;
 			}
+		} finally {
+			// A failed check on a later row leaves the rows before it updated
+			syncIndexes(table, indexChanges, params);
 		}
 
 		if (alasql.options.autocommit && db.engineid) {

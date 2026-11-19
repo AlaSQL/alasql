@@ -570,13 +570,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if (toreplace) {
 			// Do UPDATE!!!
 			//			console.log();
+			var replaceidx = table.data.indexOf(toreplace);
+			var replaceKeys = indexKeys(table, toreplace, params);
 			table.update(
 				function (t) {
 					for (var f in r) setOwn(t, f, r[f]);
 				},
-				table.data.indexOf(toreplace),
+				replaceidx,
 				params
 			);
+			syncIndexes(table, [[toreplace, replaceKeys, table.data[replaceidx]]], params);
 		} else {
 			table.data.push(r);
 
@@ -613,24 +616,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				});
 			}
 
-			// Update regular indices (non-unique)
-			if (table.inddefs) {
-				for (var indexid in table.inddefs) {
-					var indexdef = table.inddefs[indexid];
-					var hh = indexdef.hh;
-					if (table.indices[hh]) {
-						var addr = new Function('r,params,alasql', 'return ' + indexdef.rightfns)(
-							r,
-							params,
-							alasql
-						);
-						if (!table.indices[hh][addr]) {
-							table.indices[hh][addr] = [];
-						}
-						table.indices[hh][addr].push(r);
-					}
-				}
-			}
+			addToIndexes(table, r, params);
 		}
 
 		// Trigger prevent functionality
