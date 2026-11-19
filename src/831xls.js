@@ -4,6 +4,17 @@
 // Generate XLS file with colors and styles
 // with Excel
 
+// Escape text for the markup that INTO XLS and INTO XLSXML write (#2638)
+function escapeXML(str) {
+	if (str === null || str === undefined) return '';
+	return String(str)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&apos;');
+}
+
 alasql.into.XLS = function (filename, opts, data, columns, cb) {
 	// If filename is not defined then output to the result
 	if (typeof filename == 'object') {
@@ -51,7 +62,7 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 		// Worksheets
 		s +=
 			' <x:ExcelWorksheet><x:Name>' +
-			sheet.sheetid +
+			escapeXML(sheet.sheetid) +
 			'</x:Name><x:WorksheetOptions><x:DisplayGridlines/>     </x:WorksheetOptions> \
 		</x:ExcelWorksheet>';
 
@@ -86,7 +97,7 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 				s += '" ';
 			}
 			s += '>';
-			s += caption.title;
+			s += escapeXML(caption.title);
 			s += '</caption>';
 		}
 
@@ -165,9 +176,9 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 				// Column title
 				if (typeof column.title != 'undefined') {
 					if (typeof column.title == 'function') {
-						s += column.title(sheet, column, columnidx);
+						s += escapeXML(column.title(sheet, column, columnidx));
 					} else {
-						s += column.title;
+						s += escapeXML(column.title);
 					}
 				}
 				s += '</th>';
@@ -280,19 +291,19 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 						s += '';
 					} else if (typeof format != 'undefined') {
 						if (typeof format == 'function') {
-							s += format(value);
+							s += escapeXML(format(value));
 						} else if (typeof format == 'string') {
-							s += value; // TODO - add string format
+							s += escapeXML(value); // TODO - add string format
 						} else {
 							throw new Error('Unknown format type. Should be function or string');
 						}
 					} else {
 						if (typeid == 'number' || typeid == 'date') {
-							s += value.toString();
+							s += escapeXML(value.toString());
 						} else if (typeid == 'money') {
 							s += (+value).toFixed(2);
 						} else {
-							s += value;
+							s += escapeXML(value);
 						}
 					}
 					s += '</td>';
