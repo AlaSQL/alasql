@@ -2,7 +2,7 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test162.json', {
+	global.localStorage = new DOMStorage(__dirname + '/restest162.json', {
 		strict: false,
 		ws: '',
 	});

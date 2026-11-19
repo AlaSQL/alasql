@@ -1,0 +1,15 @@
+# API paths allowed to differ from the reference build, one per line, with the reason after #.
+# compare.js reports them as allowed instead of failing; a path covers its prototype and
+# constructor. Every change to the alasql object made on purpose goes here, so that the API
+# snapshot keeps catching what was not on purpose.
+alasql.utils.hash           # stateless helpers are module exports now; as exports they have a .name, which a function assigned to utils.x did not have
+alasql.utils.deepEqual      # as above
+alasql.utils.arrayUnionDeep # as above
+alasql.utils.arrayExceptDeep # as above
+alasql.utils.arrayIntersectDeep # as above
+alasql.utils.escapeq        # as above
+alasql.utils.arrayUnion     # as above
+alasql.utils.arrayDiff      # as above
+alasql.utils.arrayIntersect # as above
+alasql.utils.distinctArray # as above
+alasql.utils.undoubleq # as above; the export is escapeqq, the bare name the old code used, so that is its .name

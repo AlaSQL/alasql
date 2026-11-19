@@ -2,32 +2,35 @@ name: 'CI build & test'
 
 on:
   push:
-    branches: '*'
+    branches: '**'
   pull_request:
-    branches: '*'
+    branches: '**'
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   verify-formatting:
     name: Verify code formatting
     permissions:
       contents: read
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
         with:
           egress-policy: audit
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node
-        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.x'
 
@@ -41,27 +44,32 @@ jobs:
     name: Build from source files
     needs: []
     permissions:
-      contents: write
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+      contents: read
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
         with:
           egress-policy: audit
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node
-        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.x'
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
       - name: Build project
         run: yarn build-only
@@ -84,7 +92,7 @@ jobs:
     permissions:
       contents: read
     needs: [build, verify-formatting]
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     strategy:
@@ -92,28 +100,30 @@ jobs:
         node-version: [16.x, 18.x, 20.x, 22.x, 24.x] # Dropped '23.x' (EOL) and 'latest' for stability
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
         with:
           egress-policy: audit
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Node
-        # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+        # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
         # uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
 
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: dist
           path: dist/
 
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: node_modules
           path: ./
@@ -129,18 +139,20 @@ jobs:
     permissions:
       contents: read
     needs: [build, verify-formatting]
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
         with:
           egress-policy: audit
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # master
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: dist
           path: dist/
@@ -156,38 +168,27 @@ jobs:
     needs: []
     permissions:
       contents: read
-    # Blacksmith is much faster and gives better dashboards than github actions, but we are not being sponsored anymore so had to revert. 
+    # Blacksmith sponsors AlaSQL and is faster with better dashboards, but our usage often peaks beyond the sponsored minutes with no auto fallback, so CI runs on GitHub's runners. We still love them and you should really convince your company to make its builds so much faster with a one-line change.
     # runs-on: blacksmith-4vcpu-ubuntu-2204
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
         with:
           egress-policy: audit
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
+          persist-credentials: false
 
-      - name: Get changed files
-        id: detect-changes
-        uses: tj-actions/changed-files@v47.0.6
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          files: src/alasqlparser.jison
+          node-version: '24.x'
 
-      - name: Setup Bun
-        if: steps.detect-changes.outputs.any_changed == 'true'
-        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-      - name: Build from src
-        # This step only runs if the jison file changed
-        if: steps.detect-changes.outputs.any_changed == 'true'
-        run: |
-          yarn install --frozen-lockfile
-          yarn jison
-          yarn test
-
-      - name: Check generated parser for changes
-        if: steps.detect-changes.outputs.any_changed == 'true'
-        run: |
-          git diff --exit-code -- src/alasqlparser.js || (echo "Please run 'yarn jison && yarn test' and commit again." && exit 1)
+      # Runs on every change, so the committed parser always matches its grammar
+      - name: Check that the parser matches the grammar
+        run: yarn test-parser || (echo "Please run 'yarn jison && yarn test' and commit again." && exit 1)

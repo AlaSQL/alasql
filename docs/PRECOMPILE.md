@@ -19,7 +19,7 @@ let res = selectPop([data]);
 // res will be [{city: 'Copenhagen', pop: 1300000}]
 ```
 
-This example is not useful in it self, as it is all done during exeuction time (you could just as well have used alasql.compile() directly). However, if you precompile the function at build time, it can be a significant performance boost as the execution don't have to parse the SQL. There is an example of how to do this with Bun in [examples/precompileJS](https://github.com/AlaSQL/alasql/tree/develop/examples/precompileJS)
+This example is not useful in it self, as it is all done during exeuction time (you could just as well have used alasql.compile() directly). However, if you precompile the function at build time, it can be a significant performance boost as the execution don't have to parse the SQL. There is an example of how to do this with Bun in [examples/precompile](https://github.com/AlaSQL/alasql/tree/main/examples/precompile)
 
 
 ---------

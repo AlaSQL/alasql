@@ -8,6 +8,11 @@ declare module 'alasql' {
 		(err: Error | null, data?: T): void;
 	}
 
+	// Callback of a compiled statement: data first, then the error (data is null when err is set)
+	export interface AlaSQLStatementCallback<T = unknown> {
+		(data: T | null, err?: Error): void;
+	}
+
 	export interface AlaSQLOptions {
 		errorlog: boolean;
 		valueof: boolean;
@@ -32,6 +37,12 @@ declare module 'alasql' {
 		sqlite: boolean;
 		orientdb: boolean;
 		excel?: xlsx.WorkBook; // now typed
+		progress: false | ((a: number, b: number) => void); // called while an async batch runs, or false for none
+		joinstar: 'overwrite' | 'underscore' | 'json'; // how SELECT * names the columns of joined tables
+		loopbreak: number; // maximum steps of a SEARCH before it stops
+		maxCteIterations: number; // maximum iterations of a recursive CTE
+		dateAsString: boolean; // GETDATE() and NOW() return a string instead of a Date
+		csvStringToNumber: boolean; // convert numeric strings to numbers when reading CSV
 	}
 
 	// compiled Statement
@@ -39,8 +50,10 @@ declare module 'alasql' {
 		<T = unknown>(params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 	}
 
-	// returned by alasql.compile(): a compiled statement with a promise helper
-	export interface AlaSQLCompiledStatement extends AlaSQLStatement {
+	// returned by alasql.compile(): a compiled statement with a promise helper. Only this one takes
+	// the data-first callback, so the older Statement.compile() types stay as they were in 4.x
+	export interface AlaSQLCompiledStatement {
+		<T = unknown>(params?: any, cb?: AlaSQLStatementCallback<T>, scope?: unknown): T;
 		promise<T = unknown>(params?: any): Promise<T>;
 	}
 
@@ -57,10 +70,17 @@ declare module 'alasql' {
 	export interface Op extends AlaSQLExpression {
 		left: ExpressionNode;
 		op: string;
-		// `->` with a bare property name (`a->b`, `tx.a.b`) puts the name as a string
-		right?: ExpressionNode | string;
+		right?: ExpressionNode;
 		right1?: ExpressionNode;
 		right2?: ExpressionNode;
+	}
+
+	// Not in the ExpressionNode union, so code that walks the tree compiles as it did before 4.21.0
+	export interface ArrowOp extends AlaSQLExpression {
+		left: ExpressionNode;
+		op: '->';
+		// a bare property name (`a->b`, `tx.a.b`) puts the name as a string
+		right: ExpressionNode | string;
 	}
 
 	export interface Column extends AlaSQLExpression {

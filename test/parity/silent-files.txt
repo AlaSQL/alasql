@@ -1,0 +1,23 @@
+# Test files that run tests without a statement reaching the recorder, with the reason.
+# compare.js fails on any other file that ran tests and recorded nothing: that means the
+# hook was missing (test1495 and test1889 reload alasql through require.cache).
+# A listed file that does record statements is reported so the list stays honest.
+test012.js    # the body is behind if (false)
+test053.js    # alasql.parse only
+test108.js    # new alasql.Database() only
+test162.js    # empty test, marked TODO
+test164.js    # empty test, marked TODO
+test188.js    # empty test, every query commented out
+test1740.js   # alasql.parse only
+test1796.js   # alasql.utils.uncomment only
+test2112.js   # alasql.utils.loadBinaryFile only
+test2149.js   # the CLI runs in a child process
+test221.js    # alasql.utils.uncomment only
+test608.js    # alasql.parse only
+test609.js    # alasql.parse only
+test620.js    # alasql.parse only
+test622.js    # alasql.parse only
+test804.js    # alasql.use only
+test806.js    # alasql.parse only
+test810.js    # builds yy nodes directly
+test816.js    # alasql.parse only

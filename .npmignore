@@ -2,9 +2,12 @@ examples/
 test/
 src/
 *.md
-gulpfile.js
+build.js
+bun.lock
+test*.json
 yarn.lock
-tslint.json
 .*
 *.log
 context/
+# Files that test runs leave in the root must never reach the package
+/test*.json
