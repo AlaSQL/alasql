@@ -13,7 +13,7 @@ yy.ExistsValue = class ExistsValue {
 	}
 
 	toString() {
-		return 'EXISTS(' + this.value.toString() + ')';
+		return (this.unique ? 'UNIQUE(' : 'EXISTS(') + this.value.toString() + ')';
 	}
 
 	toType() {
@@ -23,8 +23,24 @@ yy.ExistsValue = class ExistsValue {
 	toJS(context, tableid, defcols) {
 		// Updated to return a boolean value correctly
 		const outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
-		return `!!this.existsfn[${this.existsidx}](params, null, ${outerContext}).data.length`;
+		const result = `this.existsfn[${this.existsidx}](params, null, ${outerContext})`;
+		if (this.unique) return `alasql.utils.noEqualRows(${result})`;
+		return `!!${result}.data.length`;
 	}
+};
+
+// UNIQUE (subquery): true when no two rows are equal. Rows with a NULL never count as equal.
+alasql.utils.noEqualRows = function ({columns, data}) {
+	const seen = new Set();
+	for (const row of data) {
+		// Read by column, as a NULL can be missing from the row object
+		const values = columns.map(col => row[col.columnid]);
+		if (values.some(v => v == null || (typeof v === 'number' && isNaN(v)))) continue;
+		const key = JSON.stringify(values);
+		if (seen.has(key)) return false;
+		seen.add(key);
+	}
+	return true;
 };
 
 //
