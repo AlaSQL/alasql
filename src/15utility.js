@@ -878,21 +878,38 @@ var arrayIntersect = (utils.arrayIntersect = function (a, b) {
   Arrays deep union (with records)
   */
 var arrayUnionDeep = (utils.arrayUnionDeep = function (a, b) {
-	var r = b.slice(0);
-	a.forEach(function (ai) {
-		var found = false;
-
-		r.forEach(function (ri) {
-			//            found = found || equalDeep(ai, ri, true);
-			found = found || deepEqual(ai, ri);
-		});
-
-		if (!found) {
-			r.push(ai);
+	// One key per row in a Set, instead of comparing each row with every row kept so far.
+	// Duplicates inside b are removed too (#2744)
+	var seen = new Set();
+	var r = [];
+	b.concat(a).forEach(function (row) {
+		var key = rowKey(row);
+		if (!seen.has(key)) {
+			seen.add(key);
+			r.push(row);
 		}
 	});
 	return r;
 });
+
+// Key of a row for UNION: the same key for rows deepEqual finds equal, with the type of each
+// value kept apart (1 and '1'), dates by their time, and null and undefined both NULL
+function rowKey(row) {
+	if (typeof row !== 'object' || row === null) return valueKey(row);
+	return Object.keys(row)
+		.sort()
+		.map(function (k) {
+			return JSON.stringify(k) + ':' + valueKey(row[k]);
+		})
+		.join(',');
+}
+
+function valueKey(value) {
+	if (value === null || value === undefined) return 'null';
+	if (value instanceof Date) return 'date:' + value.getTime();
+	if (typeof value === 'object') return 'object:' + JSON.stringify(value);
+	return typeof value + ':' + String(value);
+}
 
 /**
   Arrays deep union (with records)
