@@ -613,6 +613,11 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 yy.Select.prototype.compileSelectGroup1 = function (query) {
 	var self = this;
 	var s = 'var r = {};';
+	// Keep the select list order, so MATRIX and RECORDSET show a repeated column twice
+	var hasStar = self.columns.some(function (col) {
+		return col instanceof yy.Column && col.columnid === '*';
+	});
+	query.columns = [];
 
 	self.columns.forEach(function (col) {
 		//		console.log(col);
@@ -635,6 +640,7 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 				}
 			}
 			query.groupColumns[colas] = col.nick;
+			if (!hasStar) query.columns.push({columnid: colas});
 
 			/*/*			if(typeof colas == 'undefined') {
 				if(col instanceof yy.Column) {
@@ -770,7 +776,9 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 		if (isInGroup) {
 			// For columns in GROUP BY, use the GROUP BY column's nick if available
 			var groupNick = (groupCol && groupCol.nick) || col.nick;
-			s += "r['" + (col.as || col.nick) + "']=g['" + groupNick + "'];";
+			// Same output key as compileSelectGroup1, so a repeated column does not add a 'c0:1' key
+			var colas = col.as || (col instanceof yy.Column ? escapeq(col.columnid) : col.nick);
+			s += "r['" + colas + "']=g['" + groupNick + "'];";
 		}
 	});
 
