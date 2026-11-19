@@ -15,7 +15,8 @@
 	  alasql.compile      one record for the compile, one per run of the returned statement.
 	  globalThis.Function the generated query code. A source is attached to the statement that
 	                      is running; a source made outside any statement (the fluent interface,
-	                      a library) gets a record of its own.
+	                      a library, an asynchronous loop after its first turn) gets a record
+	                      of its own, once until the next statement.
 
 	Environment (set by run.js):
 	  PARITY_OUT     path of the recording, JSON lines. Required.
@@ -119,14 +120,21 @@ function currentFile() {
 	return tag;
 }
 
+// The sources that have a record of their own since the last record of another kind
+const loose = new Set();
+
 function write(rec) {
+	if (rec.k !== 'code') loose.clear();
 	fs.writeSync(fd, JSON.stringify(rec) + '\n');
 }
 
 function begin(kind, build, sql, params) {
 	const rec = {i: seq++, k: kind, f: currentFile(), b: build, sql: String(sql), c: []};
 	if (params !== undefined) rec.p = capped(text(params), LIMIT.p);
-	if (!stack.length) clock += 1;
+	if (!stack.length) {
+		clock += 1;
+		reads = 0;
+	}
 	stack.push(rec);
 	return rec;
 }
@@ -174,9 +182,18 @@ Math.random = function () {
 // read from test code. NOW(), temp table names (UPDATE ? uses Date.now()) and dates written into
 // test files are then the same in two runs, also on different days. Dates made from arguments
 // are untouched, and instances are real Dates.
+//
+// It holds still for the first HOLD reads of a statement only. A statement that reads the clock
+// more often than that is measuring time: an asynchronous WHILE loop asks it every round and gives
+// the event loop a turn after 16 ms. With a clock that never moves the loop never does that, and
+// test2979 C, which waits for that turn, fails. From read HOLD on, every read moves the clock one
+// millisecond, as a read from test code does. The count of reads is the same in every run, so
+// the loop gives its turns at the same rounds in every run.
 const RealDate = Date;
+const HOLD = 1000;
 let clock = RealDate.UTC(2026, 9, 21, 12, 0, 0);
-const tick = () => (stack.length ? clock : (clock += 1));
+let reads = 0;
+const tick = () => (stack.length && ++reads <= HOLD ? clock : (clock += 1));
 function FixedDate() {
 	if (!new.target) return RealDate();
 	return arguments.length ? new RealDate(...arguments) : new RealDate(tick());
@@ -199,7 +216,10 @@ function RecordingFunction() {
 	}
 	const top = stack[stack.length - 1];
 	if (top) top.c.push(key);
-	else {
+	else if (!loose.has(key)) {
+		// Once until the next statement: an asynchronous WHILE loop that has given the event loop
+		// a turn goes on outside its statement and makes the same functions again in every round
+		loose.add(key);
 		const rec = {i: seq++, k: 'code', f: currentFile(), c: [key]};
 		if (process.env.PARITY_DEBUG) rec.st = (new Error().stack || '').split('\n').slice(2, 12);
 		write(rec);

@@ -408,8 +408,8 @@ function report(A, B, labelA, labelB, opts) {
 		console.log(
 			`\napi: ${r.total} paths; only in a: ${onlyA.length}; only in b: ${onlyB.length}; changed: ${changed.length}; allowed differences: ${allowedCount}`
 		);
-		for (const k of onlyA.slice(0, limit)) console.log('  only in a: ' + k);
-		for (const k of onlyB.slice(0, limit)) console.log('  only in b: ' + k);
+		for (const k of onlyA.slice(0, limit)) console.log(`  only in a: ${k}: ${A.api[k]}`);
+		for (const k of onlyB.slice(0, limit)) console.log(`  only in b: ${k}: ${B.api[k]}`);
 		for (const [k, va, vb] of changed.slice(0, limit))
 			console.log(`  changed: ${k}: ${va} -> ${vb}`);
 		failures += onlyA.length + onlyB.length + changed.length;
