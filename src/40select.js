@@ -357,6 +357,18 @@ yy.Select = class Select {
 					// Into AlaSQL tables - convert types based on column definitions
 					var dbid = this.into.databaseid || databaseid;
 					var tblid = this.into.tableid;
+					// SELECT ... INTO a table that does not exist creates it with the columns of the query (#2824)
+					var into = this.into;
+					query.intoNewTable = function () {
+						if (!alasql.databases[dbid].tables[tblid]) {
+							new yy.CreateTable({
+								table: into,
+								columns: query.columns.map(function (col) {
+									return {columnid: col.columnid, dbtypeid: col.dbtypeid || ''};
+								}),
+							}).execute(dbid);
+						}
+					};
 					query.intofns = `
 						var db = alasql.databases[${JSON.stringify(dbid)}];
 						var table = db.tables[${JSON.stringify(tblid)}];
