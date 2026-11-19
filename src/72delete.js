@@ -13,7 +13,7 @@ yy.Delete.prototype.toString = function () {
 	var s = 'DELETE FROM ' + this.table.toString();
 	if (this.where) s += ' WHERE ' + this.where.toString();
 	if (this.output) {
-		s += ' OUTPUT ';
+		s += this.output.returning ? ' RETURNING ' : ' OUTPUT ';
 		s += this.output.columns.map(col => col.toString()).join(', ');
 		if (this.output.intovar) {
 			s += ' INTO ' + this.output.method + this.output.intovar;
