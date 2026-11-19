@@ -156,8 +156,11 @@ stdlib.INSTR = function (s, p) {
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
 
+// A number is read as its text, as UPPER(12) is (#2852)
+var asText = '(typeof y=="number"?String(y):y)';
+
 stdlib.LEN = stdlib.LENGTH = function (s) {
-	return und(s, 'y.length');
+	return und(s, asText + '.length');
 };
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
@@ -169,13 +172,13 @@ stdlib.LOWER = stdlib.LCASE = function (s) {
 // Returns a character expression after it removes leading blanks.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql
 stdlib.LTRIM = function (s) {
-	return und(s, 'y.replace(/^[ ]+/,"")');
+	return und(s, asText + '.replace(/^[ ]+/,"")');
 };
 
 // Returns a character string after truncating all trailing spaces.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/rtrim-transact-sql
 stdlib.RTRIM = function (s) {
-	return und(s, 'y.replace(/[ ]+$/,"")');
+	return und(s, asText + '.replace(/[ ]+$/,"")');
 };
 
 stdlib.MAX = stdlib.GREATEST = function () {
@@ -198,8 +201,8 @@ stdlib.SUBSTRING =
 	stdlib.SUBSTR =
 	stdlib.MID =
 		function (a, b, c) {
-			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+			if (arguments.length == 2) return und(a, asText + '.substr(' + b + '-1)');
+			else if (arguments.length == 3) return und(a, asText + '.substr(' + b + '-1,' + c + ')');
 		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
@@ -256,7 +259,7 @@ stdlib.SQRT = function (s) {
 };
 
 stdlib.TRIM = function (s) {
-	return und(s, 'y.trim()');
+	return und(s, asText + '.trim()');
 };
 
 stdlib.UPPER = stdlib.UCASE = function (s) {
