@@ -227,10 +227,15 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 };
 
 var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
+var dateOnlyRegexp = /^\d{4}-\d{2}-\d{2}$/;
 function newDate(d) {
 	if (typeof d === 'string') {
 		if (dateRegexp.test(d)) {
 			d = d.replace('.', '-').replace('.', '-');
+		}
+		if (dateOnlyRegexp.test(d)) {
+			// Date-only strings are parsed as UTC; use local midnight to preserve calendar fields.
+			d += 'T00:00:00';
 		}
 	}
 	return new Date(d);
