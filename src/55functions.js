@@ -127,7 +127,8 @@ var stdlib = (alasql.stdlib = {});
 var stdfn = (alasql.stdfn = {});
 
 stdlib.ABS = function (a) {
-	return 'Math.abs(' + a + ')';
+	// ABS(NULL) is NULL, not NaN (#2767)
+	return '((y=' + a + ')==null?undefined:Math.abs(y))';
 };
 stdlib.CLONEDEEP = function (a) {
 	return 'alasql.utils.cloneDeep(' + a + ')';
