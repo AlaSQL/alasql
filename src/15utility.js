@@ -1437,12 +1437,59 @@ var reTypeConverter = {
 };
 
 /**
+ * Tell if a value can be read as a number, so that a numeric column can accept it
+ * @param {*} value - The value to check
+ * @return {boolean} True when the value is numeric
+ */
+function isNumericValue(value) {
+	if (typeof value === 'number' || typeof value === 'bigint' || typeof value === 'boolean') {
+		return true;
+	}
+	if (typeof value === 'string') {
+		return value.trim() !== '' && isFinite(Number(value));
+	}
+	return false;
+}
+
+/**
+ * Render a value for an error message
+ * @param {*} value - The value to render
+ * @return {string} A short, readable representation of the value
+ */
+function formatValueForTypeError(value) {
+	var text;
+	try {
+		text = typeof value === 'string' ? value : JSON.stringify(value);
+		if (text === undefined) {
+			text = String(value);
+		}
+	} catch (err) {
+		text = String(value);
+	}
+	return text.length > 50 ? text.substr(0, 47) + '...' : text;
+}
+
+/**
+ * Tell if a column type holds numbers, so INSERT should convert values to it. INT, INTEGER,
+ * SMALLINT, BIGINT, FLOAT, DOUBLE, REAL, NUMERIC, DECIMAL and MONEY all match.
+ * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
+ * @return {boolean} True when values of this type are numbers
+ */
+utils.isNumericType = function (dbtypeid) {
+	return reTypeConverter.int.test(dbtypeid) || reTypeConverter.num.test(dbtypeid);
+};
+
+/**
  * Convert a value to the appropriate type based on column definition
  * @param {*} value - The value to convert
  * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
+ * @param {{strict?: boolean, columnid?: string}} [options] - With <code>strict</code>, a value that
+ * can not be converted to a numeric or date column type throws instead of being returned unchanged
  * @return {*} The converted value
  */
-utils.typeConverter = function (value, dbtypeid) {
+utils.typeConverter = function (value, dbtypeid, options) {
+	var strict = !!(options && options.strict);
+
 	// If value is null or undefined, return as is
 	if (value === null || value === undefined) {
 		return value;
@@ -1458,16 +1505,45 @@ utils.typeConverter = function (value, dbtypeid) {
 		return value;
 	}
 
+	/**
+	 * Throw for a value that does not fit the column, naming the column when there is one
+	 * @param {string} typeid - The name of the column type as the user declared it
+	 */
+	function invalid(typeid) {
+		if (!strict) {
+			return;
+		}
+		var valueText = formatValueForTypeError(value);
+		if (options.columnid) {
+			throw new Error(
+				'Cannot insert value "' +
+					valueText +
+					'" into column "' +
+					options.columnid +
+					'" of type ' +
+					typeid
+			);
+		}
+		throw new Error('Cannot convert value "' + valueText + '" to type ' + typeid);
+	}
+
 	// Check type using regex patterns
 	if (reTypeConverter.str.test(dbtypeid)) {
 		return String(value);
 	}
 	if (reTypeConverter.int.test(dbtypeid)) {
-		var intVal = parseInt(value, 10);
+		if (strict && !isNumericValue(value)) {
+			invalid(dbtypeid);
+		}
+		// A boolean in a numeric column is stored as 1 or 0
+		var intVal = parseInt(typeof value === 'boolean' ? (value ? 1 : 0) : value, 10);
 		return isNaN(intVal) ? value : intVal;
 	}
 	if (reTypeConverter.num.test(dbtypeid)) {
-		var numVal = parseFloat(value);
+		if (strict && !isNumericValue(value)) {
+			invalid(dbtypeid);
+		}
+		var numVal = parseFloat(typeof value === 'boolean' ? (value ? 1 : 0) : value);
 		return isNaN(numVal) ? value : numVal;
 	}
 	if (reTypeConverter.bool.test(dbtypeid)) {
@@ -1477,7 +1553,11 @@ utils.typeConverter = function (value, dbtypeid) {
 		return Boolean(value);
 	}
 	if (reTypeConverter.date.test(dbtypeid)) {
-		return value instanceof Date ? value : new Date(value);
+		var dateVal = value instanceof Date ? value : new Date(value);
+		if (strict && isNaN(dateVal.getTime())) {
+			invalid(dbtypeid);
+		}
+		return dateVal;
 	}
 
 	// Unknown type, return as is

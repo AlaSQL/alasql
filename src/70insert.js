@@ -75,6 +75,58 @@ yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 	return s;
 };
 
+/**
+ JS for a value of an INSERT, converted to the type of the column it goes to. A value that does
+ not fit the declared column type raises an error instead of being stored as is (#926). Columns
+ without a declared type, and types registered as JavaScript classes, keep their old handling.
+ */
+function columnValueToJS(column, valueJS) {
+	if (!column.dbtypeid) {
+		return valueJS;
+	}
+	if (alasql.fn[column.dbtypeid]) {
+		return '(new ' + column.dbtypeid + '(' + valueJS + '))';
+	}
+	if (!alasql.utils.isNumericType(column.dbtypeid)) {
+		return valueJS;
+	}
+	return (
+		'(x=' +
+		valueJS +
+		',x==undefined?undefined:alasql.utils.typeConverter(x,' +
+		JSON.stringify(column.dbtypeid) +
+		',{strict:true,columnid:' +
+		JSON.stringify(column.columnid) +
+		'}))'
+	);
+}
+
+/**
+ Convert the values of a row read by an INSERT ... SELECT to the declared column types (#926)
+ */
+function convertRowToColumnTypes(table, row) {
+	if (!table.xcolumns) {
+		return row;
+	}
+	for (var columnid in row) {
+		if (!Object.prototype.hasOwnProperty.call(row, columnid)) {
+			continue;
+		}
+		var column = table.xcolumns[columnid];
+		if (!column || !column.dbtypeid || alasql.fn[column.dbtypeid]) {
+			continue;
+		}
+		if (!alasql.utils.isNumericType(column.dbtypeid)) {
+			continue;
+		}
+		row[columnid] = alasql.utils.typeConverter(row[columnid], column.dbtypeid, {
+			strict: true,
+			columnid: columnid,
+		});
+	}
+	return row;
+}
+
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
 
@@ -144,28 +196,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 				self.columns.forEach(function (col, idx) {
 					// Leave the column out so the table default fills it
 					if (values[idx] instanceof yy.DefaultValue) return;
-					//console.log(db.tables, tableid, table);
-					//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
-					//			console.log(rec[f.name.value]);
-					//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
-					//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
-					//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
 					var q = "'" + col.columnid + "':";
 					if (table.xcolumns && table.xcolumns[col.columnid]) {
-						if (
-							['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(table.xcolumns[col.columnid].dbtypeid) >=
-							0
-						) {
-							//q += ''
-							q += '(x=' + values[idx].toJS() + ',x==undefined?undefined:+x)';
-						} else if (alasql.fn[table.xcolumns[col.columnid].dbtypeid]) {
-							q += '(new ' + table.xcolumns[col.columnid].dbtypeid + '(';
-							q += values[idx].toJS();
-							q += '))';
-						} else {
-							q += values[idx].toJS();
-						}
+						q += columnValueToJS(table.xcolumns[col.columnid], values[idx].toJS());
 					} else {
 						q += values[idx].toJS();
 					}
@@ -186,17 +220,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 					table.columns.forEach(function (col, idx) {
 						if (values[idx] instanceof yy.DefaultValue) return;
 						var q = "'" + col.columnid + "':";
-						//						var val = values[idx].toJS();
-
-						if (['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(col.dbtypeid) >= 0) {
-							q += '+' + values[idx].toJS();
-						} else if (alasql.fn[col.dbtypeid]) {
-							q += '(new ' + col.dbtypeid + '(';
-							q += values[idx].toJS();
-							q += '))';
-						} else {
-							q += values[idx].toJS();
-						}
+						q += columnValueToJS(col, values[idx].toJS());
 						/*/*
 						 // if(table.xcolumns && table.xcolumns[col.columnid] &&
 						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
@@ -366,6 +390,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
+				// Convert the selected values to the types the destination columns declare (#926)
+				for (var ri = 0; ri < res.length; ri++) {
+					convertRowToColumnTypes(table, res[ri]);
+				}
 				var insertedRows = [];
 				if (db.tables[tableid].insert) {
 					// If insert() function exists (issue #92)
