@@ -38,8 +38,9 @@ describe(`Test ${testId} - HAVING may use a SELECT alias`, function () {
 
 	it('D) A column of the table is not replaced by an alias of the same name', function () {
 		// SQLite reads cnt from a row of the group here and keeps a = 2
-		var res = alasql('SELECT a, COUNT(*) AS cnt FROM t GROUP BY a HAVING cnt > 1');
-		assert.notDeepStrictEqual(res, [{a: 1, cnt: 2}]);
+		assert.deepStrictEqual(alasql('SELECT a, COUNT(*) AS cnt FROM t GROUP BY a HAVING cnt > 1'), [
+			{a: 2, cnt: 1},
+		]);
 		assert.deepStrictEqual(
 			alasql('SELECT a, COUNT(*) AS cnt FROM t GROUP BY a HAVING MAX(cnt) > 1'),
 			[{a: 2, cnt: 1}]
