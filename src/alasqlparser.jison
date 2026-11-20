@@ -1785,7 +1785,10 @@ Op
 			if(!yy.queries) yy.queries = [];
 			// Collect any nested queries that belong to this SELECT
 			var nestedQueries = yy.queries.slice();
-			yy.queries = [];
+			// Keep the queries in yy.queries: the enclosing statement still
+			// references them by their global position (see #2879), while
+			// this SELECT keeps the prefix copy so its own nested queries
+			// resolve at their global positions
 			// Assign nested queries to the SELECT
 			if(nestedQueries.length > 0) {
 				$5.queries = nestedQueries;
@@ -1850,7 +1853,10 @@ Op
 			if(!yy.queries) yy.queries = [];
 			// Collect any nested queries that belong to this SELECT
 			var nestedQueries = yy.queries.slice();
-			yy.queries = [];
+			// Keep the queries in yy.queries: the enclosing statement still
+			// references them by their global position (see #2879), while
+			// this SELECT keeps the prefix copy so its own nested queries
+			// resolve at their global positions
 			// Assign nested queries to the SELECT
 			if(nestedQueries.length > 0) {
 				$4.queries = nestedQueries;
@@ -1865,7 +1871,10 @@ Op
 			if(!yy.queries) yy.queries = [];
 			// Collect any nested queries that belong to this SELECT
 			var nestedQueries = yy.queries.slice();
-			yy.queries = [];
+			// Keep the queries in yy.queries: the enclosing statement still
+			// references them by their global position (see #2879), while
+			// this SELECT keeps the prefix copy so its own nested queries
+			// resolve at their global positions
 			// Assign nested queries to the SELECT
 			if(nestedQueries.length > 0) {
 				$5.queries = nestedQueries;
