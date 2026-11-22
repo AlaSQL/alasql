@@ -29,7 +29,7 @@ export default function install(alasql, internal) {
 		if (scope) {
 			try {
 				ref = internal.bind.column(col, scope);
-				read = internal.bind.read(ref, scope, place, col);
+				read = internal.bind.read(ref, scope, place);
 				written = internal.bind.write(read, scope, context, col);
 			} catch (err) {
 				ref = read = {error: err};
@@ -343,10 +343,23 @@ export default function install(alasql, internal) {
 								// the column of one source
 								var lookup;
 								if (needsRuntimeResolution) {
+									// An APPLY source has no entry in query.aliases and was not asked, so
+									// its bare column came out undefined (#3115). With one in the query
+									// every source is asked, in the order of FROM and JOIN.
+									var askAliases = Object.keys(query.aliases);
+									if (
+										query.sources.some(function (src) {
+											return src.applyselect;
+										})
+									) {
+										askAliases = query.sources.map(function (src) {
+											return src.alias;
+										});
+									}
 									lookup = function () {
 										return yy.Column.fromAnySource(
 											'p',
-											Object.keys(query.aliases),
+											askAliases,
 											col.columnid,
 											query.defcols['.']
 										);

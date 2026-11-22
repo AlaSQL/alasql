@@ -56,8 +56,7 @@ export default function install(alasql, internal) {
 	 */
 	function scope(select, databaseid, outer) {
 		const sources = [];
-		let applies = 0;
-		const add = (alias, ref, apply) => {
+		const add = (alias, ref) => {
 			let columns = null;
 			if (ref && ref.tableid) {
 				const db = table(ref, databaseid).db;
@@ -65,21 +64,16 @@ export default function install(alasql, internal) {
 				// the table's own list, not a copy: a scope is made for every compile
 				if (def && def.columns && def.columns.length) columns = def.columns;
 			}
-			if (apply) applies++;
-			sources.push({alias, columns, apply});
+			sources.push({alias, columns});
 		};
 		if (select.from) {
-			for (const fr of select.from)
-				add(fr.as || fr.tableid, fr instanceof alasql.yy.Table && fr, false);
+			for (const fr of select.from) add(fr.as || fr.tableid, fr instanceof alasql.yy.Table && fr);
 		}
 		if (select.joins) {
-			for (const jn of select.joins) {
-				add(jn.as || (jn.table && jn.table.tableid), jn.table, jn instanceof alasql.yy.Apply);
-			}
+			for (const jn of select.joins) add(jn.as || (jn.table && jn.table.tableid), jn.table);
 		}
 		// place is set while the arguments of a built-in function are compiled (bind.place)
-		// applies is the number of APPLY sources, for the 4.x rule notInApply
-		return {sources, outer, place: undefined, applies};
+		return {sources, outer, place: undefined};
 	}
 
 	function defines(columns, columnid) {
@@ -163,8 +157,6 @@ export default function install(alasql, internal) {
 			if (!(ref.ambiguous && ref.scope === 0)) return;
 			const any = [];
 			for (let i = 0; i < sc.sources.length; i++) {
-				// an APPLY source is not asked in this place: see notInApply
-				if (sc.sources[i].apply) continue;
 				const columns = sc.sources[i].columns;
 				if (columns === null) any.push(sc.sources[i].alias);
 				else if (defines(columns, ref.column)) {
@@ -176,24 +168,6 @@ export default function install(alasql, internal) {
 				? {scope: 0, source: any[0], column: ref.column}
 				: {scope: 0, any, column: ref.column};
 		},
-		// A bare name that an APPLY source has, alone in the select list of a query without
-		// grouping: 4.x does not ask an APPLY source there, so the value is undefined, or the
-		// value of another source that is asked per row. Written as source.column, and in every
-		// other place, the APPLY source is read. Removed by #3115.
-		notInApply(ref, sc, col) {
-			if (!sc.applies || col.tableid || ref.scope !== 0 || ref.unresolved || ref.ambiguous) return;
-			const list = ref.any || [ref.source];
-			const kept = [];
-			for (let i = 0; i < sc.sources.length; i++) {
-				const alias = sc.sources[i].alias;
-				if (!sc.sources[i].apply && list.indexOf(alias) !== -1) kept.push(alias);
-			}
-			if (kept.length === list.length) return;
-			if (!kept.length) return {unresolved: true, column: ref.column};
-			return kept.length === 1
-				? {scope: 0, source: kept[0], column: ref.column}
-				: {scope: 0, any: kept, column: ref.column};
-		},
 	};
 
 	// The rules of each place a column reference can stand in. In 'row', a plain expression, an
@@ -202,7 +176,7 @@ export default function install(alasql, internal) {
 		row: ['onlyTable'],
 		function: ['onlyTable', 'firstTable'],
 		group: ['onlyTable', 'firstTable'],
-		select: ['onlyTable', 'firstWithColumn', 'notInApply'],
+		select: ['onlyTable', 'firstWithColumn'],
 	};
 
 	/**
@@ -210,14 +184,13 @@ export default function install(alasql, internal) {
 	 * @param {object} ref The binding from column()
 	 * @param {object} sc The scope of the SELECT the reference is in
 	 * @param {string} [place] 'row' (the default), 'function', 'group' or 'select'
-	 * @param {object} col The yy.Column, for a rule that looks at how the reference is written
 	 * @returns {object} A binding as from column(), with rule and place when a rule was applied
 	 */
-	function read(ref, sc, place, col) {
+	function read(ref, sc, place) {
 		place = place || 'row';
 		const names = places[place];
 		for (let i = 0; i < names.length; i++) {
-			const res = rules4x[names[i]](ref, sc, col);
+			const res = rules4x[names[i]](ref, sc);
 			if (res) {
 				res.rule = names[i];
 				res.place = place;
@@ -292,7 +265,7 @@ export default function install(alasql, internal) {
 		beside(col, sc, place) {
 			try {
 				const ref = column(col, sc);
-				return {ref, read: read(ref, sc, place || sc.place, col)};
+				return {ref, read: read(ref, sc, place || sc.place)};
 			} catch (err) {
 				return {ref: {error: err}, read: {error: err}};
 			}
