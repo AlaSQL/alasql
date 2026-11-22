@@ -12,12 +12,21 @@
 	  - a Proxy is put in the prototype chain, so a write of a property that does not exist yet
 	    is recorded too (and the property is then made an accessor as well)
 	  - a plain array or object that was there when the compile ended is handed out through a
-	    Proxy that records writes inside it (query.columns.push, query.xcolumns[x] = ...)
+	    Proxy that records writes inside it (query.columns.push, query.xcolumns[x] = ...), and
+	    so is a Map, Set or WeakMap (query.groupSources.set)
 	A value that a run assigns (query.data = []) is stored as it is: what a run puts into its
 	own value is not shared state, the assignment is.
 
-	A write is a compile write while a Select.compile is the innermost frame (a parent that
-	sets up its subquery), else a run write. Only run writes are the list #2596 asks for.
+	A write is a compile write while the query has not run yet: the compile itself, a parent
+	that sets up its subquery, and the statement around a SELECT that gives it its modifier
+	right after the compile. From the first run on every write is a run write, also one made
+	by a later compile: the copy a run gets is planned at the first run. Only run writes are
+	the list #2596 asks for.
+
+	Since #2596 a run has its own copy of the compiled query and of each source, one level
+	deep. A write to a copy is not recorded: it is the run's own. The copy is made by reading
+	every property, so it gets the recording views of the lists and maps, and a push to a list
+	that was not copied for the run is still recorded.
 
 	Not seen: `delete query.x`, a write through a reference to a nested array or object that a
 	closure took during the compile, and writes to the parsed statement (the yy nodes).
@@ -40,9 +49,9 @@ const builds = [
 	[path.join(root, 'dist', 'alasql.js'), 'browser'],
 ];
 
-// 'compile' or 'run' per frame that is on the stack now
-const frames = [];
 const seen = new Map();
+// the queries that have run at least once
+const started = new WeakSet();
 let off = 0;
 
 // The first frames of the stack that are in a build, as "build:line:column"
@@ -67,9 +76,11 @@ function testFile() {
 	return typeof Bun !== 'undefined' && Bun.main ? path.basename(Bun.main) : '?';
 }
 
-function note(kind, prop) {
+function note(kind, prop, owner) {
 	if (off) return;
-	const phase = frames[frames.length - 1] === 'compile' ? 'compile' : 'run';
+	// a query that has not run yet is still being set up: the statement around it gives it its
+	// modifier right after the compile
+	const phase = started.has(owner) ? 'run' : 'compile';
 	const at = where();
 	const key = kind + '|' + prop + '|' + phase + '|' + at;
 	const n = seen.get(key);
@@ -86,7 +97,7 @@ const isPlain = v => {
 
 // A recording view of a plain array or object that the compile made
 const views = new WeakMap();
-function view(value, kind, name) {
+function view(value, kind, name, owner) {
 	let p = views.get(value);
 	if (p) return p;
 	const isArray = Array.isArray(value);
@@ -98,15 +109,37 @@ function view(value, kind, name) {
 			const d = Reflect.getOwnPropertyDescriptor(target, key);
 			// an invariant of Proxy: a property that cannot change must be given as it is
 			if (d && !d.configurable && !d.writable) return v;
-			return view(v, kind, child(key));
+			return view(v, kind, child(key), owner);
 		},
 		set(target, key, v, receiver) {
-			if (!(isArray && key === 'length')) note(kind, child(key));
+			if (!(isArray && key === 'length')) note(kind, child(key), owner);
 			return Reflect.set(target, key, v, target);
 		},
 		deleteProperty(target, key) {
-			note(kind, child(key) + ' (delete)');
+			note(kind, child(key) + ' (delete)', owner);
 			return Reflect.deleteProperty(target, key);
+		},
+	});
+	views.set(value, p);
+	return p;
+}
+
+// A recording view of a Map, Set or WeakMap that the compile made: its methods must run on the
+// thing itself, so they are bound to it, and the ones that change it are recorded
+const isKeyed = v => v instanceof Map || v instanceof Set || v instanceof WeakMap;
+function keyedView(value, kind, name, owner) {
+	let p = views.get(value);
+	if (p) return p;
+	p = new Proxy(value, {
+		get(target, key) {
+			const v = Reflect.get(target, key, target);
+			if (typeof v !== 'function') return v;
+			if (key !== 'set' && key !== 'add' && key !== 'delete' && key !== 'clear')
+				return v.bind(target);
+			return function () {
+				note(kind, name + '.' + key + '()', owner);
+				return v.apply(target, arguments);
+			};
 		},
 	});
 	views.set(value, p);
@@ -115,17 +148,27 @@ function view(value, kind, name) {
 
 const instrumented = new WeakSet();
 
-function accessor(obj, key, value, kind, compiled) {
+function accessor(obj, key, value, kind, compiled, owner) {
 	Object.defineProperty(obj, key, {
 		enumerable: true,
 		configurable: true,
 		get() {
-			return compiled && isPlain(value) && !instrumented.has(value)
-				? view(value, kind, key)
-				: value;
+			if (!compiled) return value;
+			if (isKeyed(value)) return keyedView(value, kind, key, owner);
+			return isPlain(value) && !instrumented.has(value) ? view(value, kind, key, owner) : value;
 		},
 		set(v) {
-			note(kind, key);
+			// an object that inherits from this one writes to itself
+			if (this !== obj) {
+				Object.defineProperty(this, key, {
+					value: v,
+					writable: true,
+					enumerable: true,
+					configurable: true,
+				});
+				return;
+			}
+			note(kind, key, owner);
 			// a view that comes back (query.columns = query.columns) is stored as the thing itself
 			compiled = false;
 			value = v;
@@ -133,13 +176,13 @@ function accessor(obj, key, value, kind, compiled) {
 	});
 }
 
-function instrument(obj, kind) {
+function instrument(obj, kind, owner) {
 	if (!obj || typeof obj !== 'object' || instrumented.has(obj)) return;
 	instrumented.add(obj);
 	for (const key of Object.keys(obj)) {
 		const d = Object.getOwnPropertyDescriptor(obj, key);
 		if (!d.configurable || !('value' in d)) continue;
-		accessor(obj, key, d.value, kind, true);
+		accessor(obj, key, d.value, kind, true, owner);
 	}
 	// A write of a property the object does not have goes up the prototype chain and meets this
 	// Proxy. Its target has the old prototype as its prototype, so instanceof still holds.
@@ -155,8 +198,8 @@ function instrument(obj, kind) {
 						enumerable: true,
 						configurable: true,
 					});
-				note(kind, key);
-				accessor(obj, key, v, kind, false);
+				note(kind, key, owner);
+				accessor(obj, key, v, kind, false, owner);
 				return true;
 			},
 		})
@@ -168,8 +211,8 @@ function instrumentQuery(query) {
 	off++;
 	try {
 		const sources = query.sources;
-		instrument(query, 'query');
-		if (Array.isArray(sources)) for (const s of sources) instrument(s, 'source');
+		instrument(query, 'query', query);
+		if (Array.isArray(sources)) for (const s of sources) instrument(s, 'source', query);
 	} finally {
 		off--;
 	}
@@ -180,24 +223,14 @@ function hook(alasql) {
 	if (!Select) return;
 	const compile = Select.prototype.compile;
 	Select.prototype.compile = function () {
-		frames.push('compile');
-		let statement;
-		try {
-			statement = compile.apply(this, arguments);
-		} finally {
-			frames.pop();
-		}
+		const statement = compile.apply(this, arguments);
 		if (typeof statement !== 'function' || !statement.query) return statement;
 		instrumentQuery(statement.query);
-		// The statement the callers get marks a run, so that a compile inside a run (a subquery
-		// compiled late, a nested alasql() call) and the run around it are told apart
+		// The statement the callers get marks the first run of its query
+		const query = statement.query;
 		const run = function () {
-			frames.push('run');
-			try {
-				return statement.apply(this, arguments);
-			} finally {
-				frames.pop();
-			}
+			started.add(query);
+			return statement.apply(this, arguments);
 		};
 		Object.assign(run, statement);
 		return run;
