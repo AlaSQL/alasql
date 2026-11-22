@@ -40,7 +40,8 @@ export default function install(alasql, internal) {
 
 		// For each table in the list
 		this.tables.forEach(function (table) {
-			var db = alasql.databases[table.databaseid || databaseid];
+			const ref = internal.bind.table(table, databaseid);
+			var db = ref.db;
 			var tableid = table.tableid;
 
 			/** @todo Test with AUTOCOMMIT flag is ON */
@@ -58,7 +59,7 @@ export default function install(alasql, internal) {
 				} else {
 					if (db.engineid /*&& alasql.options.autocommit*/) {
 						alasql.engines[db.engineid].dropTable(
-							table.databaseid || databaseid,
+							ref.databaseid,
 							tableid,
 							ifexists,
 							function (res1) {
@@ -97,15 +98,11 @@ export default function install(alasql, internal) {
 	};
 
 	yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
+		const ref = internal.bind.table(this.table, databaseid);
+		var db = ref.db;
 		var tableid = this.table.tableid;
 		if (db.engineid) {
-			return alasql.engines[db.engineid].truncateTable(
-				this.table.databaseid || databaseid,
-				tableid,
-				this.ifexists,
-				cb
-			);
+			return alasql.engines[db.engineid].truncateTable(ref.databaseid, tableid, this.ifexists, cb);
 		}
 		if (db.tables[tableid]) {
 			db.tables[tableid].data = [];

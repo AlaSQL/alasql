@@ -88,8 +88,9 @@ export default function install(alasql, internal) {
 			return yy.compileParamValue(self.into.param, 'INSERT', true, databaseid, self, 'into');
 		}
 
-		databaseid = self.into.databaseid || databaseid;
-		var db = alasql.databases[databaseid];
+		const ref = internal.bind.table(self.into, databaseid);
+		databaseid = ref.databaseid;
+		var db = ref.db;
 		//	console.log(self);
 		var tableid = self.into.tableid;
 		var table = db.tables[tableid];

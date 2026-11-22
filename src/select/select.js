@@ -180,7 +180,7 @@ export default function install(alasql, internal) {
 			if (!(fr instanceof yy.Table) || fr.tableid.toUpperCase() !== 'DUAL') {
 				return false;
 			}
-			var db = alasql.databases[fr.databaseid || databaseid];
+			var db = internal.bind.table(fr, databaseid).db;
 			return !!db && !Object.keys(db.tables).some(tableid => tableid.toUpperCase() === 'DUAL');
 		}
 
@@ -356,16 +356,14 @@ export default function install(alasql, internal) {
 			// SELECT INTO
 			if (this.into) {
 				if (this.into instanceof yy.Table) {
+					const into = internal.bind.table(this.into, databaseid);
 					// Save into the table in database
-					if (
-						alasql.options.autocommit &&
-						alasql.databases[this.into.databaseid || databaseid].engineid
-					) {
+					if (alasql.options.autocommit && into.db.engineid) {
 						// For external database when AUTOCOMMIT is ONs
 						query.intoallfns = `return alasql
-								.engines[${JSON.stringify(alasql.databases[this.into.databaseid || databaseid].engineid)}]
+								.engines[${JSON.stringify(into.db.engineid)}]
 								.intoTable(
-									${JSON.stringify(this.into.databaseid || databaseid)},
+									${JSON.stringify(into.databaseid)},
 									${JSON.stringify(this.into.tableid)},
 									this.data,
 									columns,
@@ -373,7 +371,7 @@ export default function install(alasql, internal) {
 								);`;
 					} else {
 						// Into AlaSQL tables - convert types based on column definitions
-						var dbid = this.into.databaseid || databaseid;
+						var dbid = into.databaseid;
 						var tblid = this.into.tableid;
 						query.intofns = `
 						var db = alasql.databases[${JSON.stringify(dbid)}];

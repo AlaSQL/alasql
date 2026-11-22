@@ -21,8 +21,9 @@ export default function install(alasql, internal) {
 	};
 
 	yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
-		var dbid = this.table.databaseid || databaseid;
-		let db = alasql.databases[dbid];
+		const ref = internal.bind.table(this.table, databaseid);
+		var dbid = ref.databaseid;
+		let db = ref.db;
 		schemaChanged(db);
 
 		if (this.renameto) {

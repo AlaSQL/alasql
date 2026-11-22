@@ -644,8 +644,12 @@ export default function install(alasql, internal) {
 			}
 
 			if (this.from instanceof yy.Column) {
-				var dbid = this.from.databaseid || databaseid;
-				fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
+				// FROM db.t is parsed as a Column: the database is in tableid, the table in columnid
+				var from = internal.bind.table(
+					{databaseid: this.from.databaseid || this.from.tableid, tableid: this.from.columnid},
+					databaseid
+				);
+				fromdata = from.db.tables[from.tableid].data;
 				//selectors.unshift({srchid:'CHILD'});
 			} else if (this.from instanceof yy.FuncValue && alasql.from[this.from.funcid.toUpperCase()]) {
 				var args = this.from.args.map(function (arg) {

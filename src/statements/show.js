@@ -1,4 +1,4 @@
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
 //
@@ -74,8 +74,10 @@ export default function install(alasql) {
 	};
 
 	yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
-		var dbid = this.table.databaseid || this.databaseid || databaseid;
-		var db = alasql.databases[dbid];
+		// SHOW COLUMNS FROM t FROM db: a database in the table name comes first
+		const ref = internal.bind.table(this.table, this.databaseid || databaseid);
+		var dbid = ref.databaseid;
+		var db = ref.db;
 		// A table in a storage engine may not be loaded yet (#1107)
 		if (alasql.options.autocommit && db.engineid && db.tables[this.table.tableid]) {
 			var engine = alasql.engines[db.engineid];
@@ -109,7 +111,7 @@ export default function install(alasql) {
 		return s;
 	};
 	yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
-		var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
+		var db = internal.bind.table(this.table, this.databaseid || databaseid).db;
 		var table = db.tables[this.table.tableid];
 		var res = [];
 		if (table && table.indices) {
@@ -131,7 +133,7 @@ export default function install(alasql) {
 		return s;
 	};
 	yy.ShowCreateTable.prototype.execute = function (databaseid) {
-		var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
+		var db = internal.bind.table(this.table, this.databaseid || databaseid).db;
 		var table = db.tables[this.table.tableid];
 		if (table) {
 			var s = 'CREATE TABLE ' + this.table.tableid + ' (';

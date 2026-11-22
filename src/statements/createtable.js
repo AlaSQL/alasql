@@ -141,7 +141,8 @@ export default function install(alasql, internal) {
 	//yy.CreateTable.prototype.compile = returnUndefined;
 	yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		//	var self = this;
-		var db = alasql.databases[this.table.databaseid || databaseid];
+		const ref = internal.bind.table(this.table, databaseid);
+		var db = ref.db;
 
 		var tableid = this.table.tableid;
 		if (!tableid) {
@@ -247,7 +248,8 @@ export default function install(alasql, internal) {
 					// The check uses the primary key of the referenced table, as in 4.x; a named
 					// column is used only when that table has no primary key in memory (#1846)
 					var fkcolumnid = col.foreignkey.columnid;
-					var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
+					var fkdb = internal.bind.table(fk, databaseid).db;
+					var fktable = fkdb.tables[fk.tableid];
 					if (fktable.pk && fktable.pk.columns && fktable.pk.columns.length > 0) {
 						fkcolumnid = fktable.pk.columns[0];
 					} else if (typeof fkcolumnid === 'undefined') {
@@ -265,7 +267,8 @@ export default function install(alasql, internal) {
 						if (val != null && !(typeof val === 'number' && isNaN(val))) {
 							rr[fkcolumnid] = val;
 							// Get the table when checking, as storage engines can replace the table object
-							var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
+							var fkdb = internal.bind.table(fk, databaseid).db;
+							var fktable = fkdb.tables[fk.tableid];
 							if (!foreignKeyExists(fktable, rr)) {
 								throw new Error(
 									'Foreign key "' + val + '" not found in table "' + fk.tableid + '"'
@@ -354,7 +357,8 @@ export default function install(alasql, internal) {
 					//Composite foreign keys
 					fk.fkcolumns = con.fkcolumns;
 				}
-				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
+				var fkdb = internal.bind.table(fk, databaseid).db;
+				var fktable = fkdb.tables[fk.tableid];
 				if (typeof fk.fkcolumns === 'undefined') {
 					if (!fktable.pk) {
 						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
@@ -399,7 +403,8 @@ export default function install(alasql, internal) {
 						throw new Error('Invalid foreign key on table ' + tableid);
 					}
 					//reset fkTable as we need an up to date uniqs
-					var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
+					var fkdb = internal.bind.table(fk, databaseid).db;
+					var fktable = fkdb.tables[fk.tableid];
 					if (!foreignKeyExists(fktable, rr)) {
 						var keyValues = fk.columns.map(function (col) {
 							return r[col];
@@ -432,16 +437,11 @@ export default function install(alasql, internal) {
 			table.view = true;
 			// Store the uncompiled select statement and databaseid for lazy compilation
 			table.viewSelect = this.select;
-			table.viewDatabaseid = this.table.databaseid || databaseid;
+			table.viewDatabaseid = ref.databaseid;
 		}
 
 		if (db.engineid) {
-			return alasql.engines[db.engineid].createTable(
-				this.table.databaseid || databaseid,
-				tableid,
-				this.ifnotexists,
-				cb
-			);
+			return alasql.engines[db.engineid].createTable(ref.databaseid, tableid, this.ifnotexists, cb);
 		}
 
 		// Rebuild one key index from the current rows. If they hold duplicate keys, the last one wins.
