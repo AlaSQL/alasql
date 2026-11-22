@@ -17,6 +17,39 @@ export default function install(alasql, internal) {
 	}
 
 	var yy = alasql.yy;
+
+	// The read of a column that stands alone in the select list of a grouped query. It is the
+	// first place where the code is written from the binding (#2723): bind.column says what the
+	// name refers to, bind.read applies the 4.x rule of this place (a name two tables define is
+	// read from the first table of FROM, #2928), and bind.write writes the read.
+	// Today's lookup stays for what the binding does not write, and for the case that the
+	// binding throws: it must not be able to break a query. With the default columns the lookup
+	// finds a bare name in the source that has it (#3110), and without them, for a name two
+	// tables define, it reads the first table.
+	function groupColumnJS(col, query) {
+		var context = '(this.groupSources.get(g) || g)';
+		var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
+		var defcols = ambiguous ? undefined : query.defcols;
+		var scope = internal.bind.current();
+		var ref, read, written;
+		if (scope) {
+			try {
+				ref = internal.bind.column(col, scope);
+				read = internal.bind.read(ref, scope, 'group');
+				written = internal.bind.write(read, scope, context, col);
+			} catch (err) {
+				ref = read = {error: err};
+				written = undefined;
+			}
+		}
+		// test mode: the lookup runs beside it, and the check compares the two (test/bind/)
+		var onBind = yy.Column.onBind;
+		if (onBind && scope) {
+			var js = col.lookupJS(context, query.defaultTableid, defcols);
+			onBind(col, ref, js, undefined, context, query.defaultTableid, defcols, scope, read, written);
+		}
+		return written !== undefined ? written : col.lookupJS(context, query.defaultTableid, defcols);
+	}
 	/*
 //
 // Select compiler part for Alasql.js
@@ -698,25 +731,7 @@ export default function install(alasql, internal) {
 				//			console.log(col);//,col.toJS('g',''));
 
 				if (col instanceof yy.Column) {
-					// With the default columns the lookup finds a bare name in the source that has
-					// it, not only in the first table (#3110). A name that two tables define keeps
-					// reading the first table here, as it did: making that an error is #2928.
-					var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
-					// test mode: this place has a 4.x rule of its own (bind.read)
-					var testing = yy.Column.onBind;
-					var placeBefore = testing && internal.bind.place('group');
-					try {
-						s +=
-							n2u(
-								col.toJS(
-									'(this.groupSources.get(g) || g)',
-									query.defaultTableid,
-									ambiguous ? undefined : query.defcols
-								)
-							) + ';';
-					} finally {
-						if (testing) internal.bind.place(placeBefore);
-					}
+					s += n2u(groupColumnJS(col, query)) + ';';
 				} else {
 					s += n2u(col.toJS('g', '')) + ';';
 				}

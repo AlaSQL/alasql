@@ -64,7 +64,7 @@ for (const line of fs.readFileSync(recording, 'utf8').split('\n')) {
 const rank = o =>
 	o.outcome === 'same'
 		? 0
-		: o.outcome.startsWith('same by')
+		: o.outcome.startsWith('same')
 			? 1
 			: o.outcome.startsWith('no source')
 				? 2
