@@ -3,7 +3,7 @@
 Does a build behave exactly like a reference build? Use it for changes that must not change behaviour: a refactor, a bundler or parser upgrade, performance work. The suite alone cannot show that: many tests check only part of a result, and the browser, worker, CLI and ESM paths are hardly covered. The dialect test in `test/dialect/` is a different check: alasql against SQLite.
 
 ```sh
-yarn test-parity          # record the reference, record the current build, compare; exit code 1 on any difference
+yarn test-parity          # record the merge base with main, record the current build, compare; exit code 1 on any difference
 yarn test-parity-smoke    # the smokes, including --pack, on the node in PATH
 ```
 
@@ -19,9 +19,22 @@ Record the build before a change and the build after it, and compare. When a cha
 
 ## The reference
 
-The reference is the build the change starts from. `--ref <version>` downloads a published version (`--ref` alone: 4.21.0); `--ref <commit>` takes a sha, a branch or a tag, extracts it with `git archive` under `.ref/` and builds it there once with its own build. Pick a reference with the same behaviour as the base of the change: a published version older than a merged fix shows that fix as a difference. `yarn test-parity` uses `ref-044ab07a`, `develop` with #2798. The published tarball is not always the build of its tag: 4.20.1 on npm carries a dist built from `develop-a98910ff` that calls itself 4.20.0 (fixed by #2731 for later releases); the recording's `meta` line shows what was really recorded.
+The reference is the build the change starts from. `--ref <version>` downloads a published version (`--ref` alone: 4.21.0); `--ref <commit>` takes a sha, a branch or a tag, extracts it with `git archive` under `.ref/` and builds it there once with its own build. Pick a reference with the same behaviour as the base of the change: a published version older than a merged fix shows that fix as a difference. `yarn test-parity` uses the merge base of `HEAD` with `origin/main`, the commit the branch starts from, so run `git fetch` first. The published tarball is not always the build of its tag: 4.20.1 on npm carries a dist built from `develop-a98910ff` that calls itself 4.20.0 (fixed by #2731 for later releases); the recording's `meta` line shows what was really recorded.
 
 After a recording against another dist, `dist/` is rebuilt with the project's `build-only` script, so a new build script is used as soon as it exists.
+
+## In CI
+
+The job "Parity check against the base of the pull request" (`.github/workflows/Build and test.yml`) runs on every pull request against `main`. It records the merge base with `main` and the pull request, both with the test files of the pull request, and writes the compare report to the job summary.
+
+A pull request that fixes something differs from its base on purpose. So the job compares with `--allow-differences`: a difference in a result, an error, parameters or generated code, and a statement or file in only one recording, is reported for the reviewer and does not fail. The job fails when:
+
+- a recording crashes: the build of the base fails, the suite run is killed, the dialect cases or the API snapshot fail;
+- a file diverged (no common statement within 200 records), because the rest of that file is not compared;
+- a file ran tests and recorded no statement and is not in `silent-files.txt`;
+- the API differs in a path that is not in `api-allowed.txt`.
+
+The last line of the report, `verdict`, gives these counts. Run the same compare by hand with `yarn test-parity --allow-differences`.
 
 ## Does it catch anything?
 
@@ -53,7 +66,7 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 
 ## Files
 
-- `run.js`: `record <label> [--ref [<version>|<commit>] | --dist <dir>]` and `compare <a> <b>`. Recordings are in `recordings/`, the downloaded or built references in `.ref/`; both are ignored by git.
+- `run.js`: `record <label> [--ref [<version>|<commit>] | --dist <dir>]` and `compare <a> <b> [--allow-differences]`. Recordings are in `recordings/`, the downloaded or built references in `.ref/`; both are ignored by git.
 - `silent-files.txt`: the test files allowed to run tests without a statement, each with its reason.
 - `unstable-statements.txt`: statements the engine answers differently run by run; only their code is compared.
 - `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed. A list of plain values is one path, so one line covers it.

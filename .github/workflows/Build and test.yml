@@ -192,3 +192,101 @@ jobs:
       # Runs on every change, so the committed parser always matches its grammar
       - name: Check that the parser matches the grammar
         run: yarn test-parser || (echo "Please run 'yarn jison && yarn test' and commit again." && exit 1)
+
+  dialect-test:
+    name: Dialect test against SQLite
+    permissions:
+      contents: read
+    needs: [build, verify-formatting]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+
+      # Fails on a difference from SQLite that is not listed in test/dialect/expected-differences,
+      # and on a listed one that changed. SQLite is the one inside Bun, so there is nothing to install.
+      - name: Run the dialect test
+        run: bun test/dialect/run.js
+
+  parity-check:
+    name: Parity check against the base of the pull request
+    # The reference is the commit the pull request starts from, so there is nothing to compare on a push
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    permissions:
+      contents: read
+    needs: [build, verify-formatting]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
+        with:
+          egress-policy: audit
+
+      # The whole history: the reference is the merge base with main, built from its own commit
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.x'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: node_modules
+          path: ./
+
+      - name: Unpack node_modules
+        run: tar -xf node_modules.tar
+
+      # Builds the base with its own build and runs the suite of the pull request on it, twice,
+      # to find the statements the base itself answers differently run by run.
+      # Then dist/ is rebuilt from the pull request.
+      - name: Record the base
+        run: |
+          base=$(git merge-base origin/main HEAD)
+          echo "PARITY_BASE=$base" >> "$GITHUB_ENV"
+          bun test/parity/run.js record base --ref "$base"
+
+      - name: Record the pull request
+        run: bun test/parity/run.js record pr --once
+
+      # A pull request that fixes something differs from its base on purpose, so a difference in
+      # a result, an error or generated code is reported and does not fail. The job fails on a
+      # crash of a recording (the two steps above), on a file that diverged, on a file that ran
+      # tests and recorded no statement, and on an API difference not in test/parity/api-allowed.txt.
+      - name: Compare and write the report to the job summary
+        run: |
+          status=0
+          bun test/parity/run.js compare base pr --allow-differences --limit 50 > parity-report.txt 2>&1 || status=$?
+          cat parity-report.txt
+          {
+            echo "### Parity check: base ${PARITY_BASE} (a) against this pull request (b)"
+            echo
+            echo 'Differences in results, errors and generated code are listed for the reviewer and do not fail the job. See `test/parity/README.md`.'
+            echo
+            echo '````text'
+            head -c 900000 parity-report.txt
+            echo
+            echo '````'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit $status

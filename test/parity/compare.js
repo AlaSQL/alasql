@@ -24,7 +24,11 @@
 	silent-files.txt with the reason (a file that only parses, or runs the CLI in a child process).
 	In the first calibration 379 of 532 files recorded nothing in both runs, and the compare passed.
 
-	Exit code 1 when any difference remains.
+	Exit code 1 when any difference remains. With --allow-differences, for a pull request that
+	changes behaviour on purpose, the differences in statements, results and code are reported
+	and do not fail. Exit code 1 then means the recordings cannot be trusted or the API changed:
+	a file that diverged, a file that ran tests and recorded no statement, or an API difference
+	that is not in api-allowed.txt.
 */
 
 const fs = require('fs');
@@ -363,22 +367,27 @@ function report(A, B, labelA, labelB, opts) {
 	console.log(
 		`  files compared: ${counts.files}; statements aligned: ${counts.aligned}; volatile (code only): ${counts.volatile}; unstable in one build (code only): ${counts.unstable}; code reordered: ${counts.reordered}`
 	);
-	const bad =
+	// What a change in behaviour looks like. A file that diverged is not among them: from there
+	// on the file is not compared, so the recordings do not show what changed.
+	const differences =
 		counts.params +
 		counts.result +
 		counts.error +
 		counts.code +
 		counts.onlyA +
 		counts.onlyB +
-		counts.diverged;
+		counts.filesOnlyA.length +
+		counts.filesOnlyB.length;
 	console.log(
 		`  differences: result ${counts.result}, error ${counts.error}, params ${counts.params}, code ${counts.code}, only in a ${counts.onlyA}, only in b ${counts.onlyB}, diverged ${counts.diverged}`
 	);
 	if (counts.filesOnlyA.length) console.log('  files only in a: ' + counts.filesOnlyA.join(', '));
 	if (counts.filesOnlyB.length) console.log('  files only in b: ' + counts.filesOnlyB.join(', '));
-	failures += bad + counts.filesOnlyA.length + counts.filesOnlyB.length;
-	failures += reportSilent(A, 'a') + reportSilent(B, 'b');
+	failures += counts.diverged + (opts.allowDifferences ? 0 : differences);
+	const silentFiles = reportSilent(A, 'a') + reportSilent(B, 'b');
+	failures += silentFiles;
 	const limit = opts.limit;
+	let apiDifferences = 0;
 	for (const d of diffs.slice(0, limit)) {
 		console.log(
 			`\n  ${d.file}: ${d.what}\n    sql: ${(d.sql || '(generated code outside a statement)').slice(0, 200)}`
@@ -412,7 +421,8 @@ function report(A, B, labelA, labelB, opts) {
 		for (const k of onlyB.slice(0, limit)) console.log(`  only in b: ${k}: ${B.api[k]}`);
 		for (const [k, va, vb] of changed.slice(0, limit))
 			console.log(`  changed: ${k}: ${va} -> ${vb}`);
-		failures += onlyA.length + onlyB.length + changed.length;
+		apiDifferences = onlyA.length + onlyB.length + changed.length;
+		failures += apiDifferences;
 	}
 
 	if (A.sizes && B.sizes) {
@@ -426,6 +436,10 @@ function report(A, B, labelA, labelB, opts) {
 			);
 		}
 	}
+	if (opts.allowDifferences)
+		console.log(
+			`\nverdict: ${failures ? 'FAIL' : 'pass'}. Failing: diverged ${counts.diverged}, files without a statement ${silentFiles}, api differences not allowed ${apiDifferences}. Reported only (--allow-differences): ${differences} differences in statements, results and code.`
+		);
 	return failures;
 }
 
@@ -441,7 +455,9 @@ if (require.main === module) {
 		(a, i) => !a.startsWith('--') && (i === 0 || !args[i - 1].startsWith('--'))
 	);
 	if (bases.length !== 2) {
-		console.error('usage: compare.js <recording-a> <recording-b> [--limit N] [--file test123.js]');
+		console.error(
+			'usage: compare.js <recording-a> <recording-b> [--limit N] [--file test123.js] [--allow-differences]'
+		);
 		process.exit(2);
 	}
 	const A = load(bases[0]);
@@ -449,6 +465,7 @@ if (require.main === module) {
 	const failures = report(A, B, path.basename(bases[0]), path.basename(bases[1]), {
 		limit: +opt('--limit', 20),
 		file: opt('--file'),
+		allowDifferences: args.includes('--allow-differences'),
 	});
 	process.exit(failures ? 1 : 0);
 }
