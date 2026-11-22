@@ -26,6 +26,10 @@
 	  same by the 4.x rule ...   the binding differs, and the rule gives what today's lookup reads
 	  new difference             neither. run.js fails on it, and on an error thrown by
 	                             bind.column() or a rule, which comes as {error}.
+
+	A place that writes its code from the binding (bind.write) hands over that code as well.
+	It has to be the very code of today's lookup, or it is a new difference. Where such a
+	place still falls back to the lookup, the outcome says so.
 */
 
 const fs = require('fs');
@@ -94,7 +98,7 @@ const show = x =>
 			? 'per row among ' + x.any.join(', ')
 			: x.kind + (x.how ? ' (' + x.how + ')' : '') + (x.text ? ' ' + x.text : '');
 
-function onBind(col, ref, js, err, context, tableid, defcols, scope, read) {
+function onBind(col, ref, js, err, context, tableid, defcols, scope, read, written) {
 	// COUNT(*) and the like: the star is no column reference
 	if (col.columnid === '*') return;
 	const sql = running[running.length - 1];
@@ -106,8 +110,16 @@ function onBind(col, ref, js, err, context, tableid, defcols, scope, read) {
 	let outcome;
 	if (failed) outcome = 'bind.column or a 4.x rule threw';
 	else if (a.kind === 'no source') outcome = 'no source today: ' + a.how;
-	else if (same(a, r)) {
+	else if (written !== undefined && written !== js) {
+		// a place that writes its code from the binding: it must be the code of today's lookup
+		outcome = 'new difference: the code written from the binding is not the code of the lookup';
+		a.kind = b.kind = 'code';
+		a.text = js;
+		b.text = written;
+	} else if (same(a, r)) {
 		outcome = read.rule ? `same by the 4.x rule ${read.rule} (place ${read.place})` : 'same';
+		if (written !== undefined) outcome += ', and the code is written from the binding';
+		else if (arguments.length > 9) outcome += ', but the code falls back to the lookup';
 	} else {
 		// One kind of difference: what each side says, without the names
 		const kind = x =>

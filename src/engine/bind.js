@@ -199,11 +199,51 @@ export default function install(alasql, internal) {
 		return ref;
 	}
 
+	/**
+	 * The JavaScript that reads a column, written from what read() says
+	 * @param {object} ref What 4.x reads: a binding, from read()
+	 * @param {object} sc The scope of the SELECT the reference is in
+	 * @param {string} context The JavaScript of the row object, which has one key per source
+	 * @param {object} col The yy.Column, to see whether it is written as source.column
+	 * @returns {string|undefined} undefined for what is not written from the binding yet: a
+	 *   column of an outer SELECT, a name that is unresolved or ambiguous after the rules, and
+	 *   `_`, which is the row of a source and no column. The caller keeps today's lookup for these.
+	 */
+	function write(ref, sc, context, col) {
+		const columnid = ref.column;
+		if (ref.scope !== 0 || ref.ambiguous || columnid === '_') return;
+		if (ref.any) return perRowJS(ref.any, context, columnid);
+		const source = ref.source;
+		if (!(ref.rule || col.tableid || sc.sources.length === 1)) {
+			// A bare name that only a source without column definitions can have. Beside other
+			// sources its row is asked for the key, as 4.x does (#832).
+			const sources = sc.sources;
+			for (let i = 0; i < sources.length; i++) {
+				if (sources[i].alias === source) {
+					if (sources[i].columns === null) return perRowJS([source], context, columnid);
+					break;
+				}
+			}
+		}
+		return `${context}['${source}']['${columnid}']`;
+	}
+
+	// Asked per row: the first of these sources whose row has the key
+	function perRowJS(aliases, context, columnid) {
+		let js = 'undefined';
+		for (let i = aliases.length - 1; i >= 0; i--) {
+			const row = `${context}['${aliases[i]}']`;
+			js = `('${columnid}' in Object(${row}) ? ${row}['${columnid}'] : ${js})`;
+		}
+		return js;
+	}
+
 	internal.bind = {
 		table,
 		scope,
 		column,
 		read,
+		write,
 		// For the test mode (Column.onBind): the binding of a column and what 4.x reads for it,
 		// in the place the reference stands in. An error goes into the result, never into the query.
 		beside(col, sc, place) {

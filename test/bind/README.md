@@ -46,11 +46,18 @@ In a plain expression an ambiguous name is an error in 4.x too, so there is no r
 
 A bare name in a grouped select list that only a later source has was a bug and is fixed (#3110).
 
+## Places that write their code from the binding
+
+The select list of a grouped query is the first place where the generated code is written from the binding (`groupColumnJS` in `src/select/columns.js`, with `bind.read` and `bind.write`). It runs on every compile, not only in the test mode. Today's lookup stays there as the fallback for what the binding does not write yet (`_`, a column of an outer SELECT) and for the case that the binding throws, so a mistake in it can not break a query.
+
+In the test mode such a place runs the lookup as well and hands both codes to `onBind`. The check fails unless they are the same text, and the outcome says whether the code was written from the binding or fell back.
+
 ## When it fails
 
 The exit code is 1 in these cases.
 
 - `bind.column()` or a 4.x rule threw.
+- The code a place wrote from the binding is not the code of today's lookup.
 - Today's lookup reads something else than the binding with the 4.x rule of the place applied. Then either the change is wrong, or a new test compiles a reference that 4.x reads in a way no rule describes. Such a case has to be decided, and gets a rule in `bind.js` with the issue that removes it, before the check passes again.
 - No reference was compared, which means `Column.onBind` is not called any more.
 - The suite run crashed.
