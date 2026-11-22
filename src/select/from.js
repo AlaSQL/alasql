@@ -58,7 +58,7 @@ export default function install(alasql, internal) {
 			if (tq instanceof yy.Table) {
 				query.aliases[alias] = {
 					tableid: tq.tableid,
-					databaseid: tq.databaseid || query.database.databaseid,
+					databaseid: internal.bind.table(tq, query.database.databaseid).databaseid,
 					type: 'table',
 				};
 			} else if (tq instanceof yy.Select) {
@@ -83,7 +83,8 @@ export default function install(alasql, internal) {
 
 			const source = {
 				alias: alias,
-				databaseid: tq.databaseid || query.database.databaseid,
+				// a subquery or a function in FROM has no database of its own: the query's database
+				databaseid: internal.bind.table(tq, query.database.databaseid).databaseid,
 				tableid: tq.tableid,
 				joinmode: 'INNER',
 				onmiddlefn: returnTrue,

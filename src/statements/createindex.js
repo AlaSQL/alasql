@@ -31,7 +31,7 @@ export default function install(alasql, internal) {
 	// CREATE TABLE
 	yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 		//	var self = this;
-		var db = alasql.databases[this.table.databaseid || databaseid];
+		var db = internal.bind.table(this.table, databaseid).db;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
 		var indexid = this.indexid;

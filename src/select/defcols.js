@@ -1,4 +1,4 @@
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
 //
@@ -20,7 +20,8 @@ export default function install(alasql) {
 					//				console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 					//console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 					//console.log(alasql.databases);
-					var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
+					var db = internal.bind.table(fr, databaseid).db;
+					var table = db.tables[fr.tableid];
 					//console.log(table);
 
 					if (undefined === table) {
@@ -62,8 +63,9 @@ export default function install(alasql) {
 				//			console.log(jn);
 				if (jn.table) {
 					var alias = jn.as || jn.table.tableid;
-					var databaseId = jn.table.databaseid || databaseid;
-					var database = alasql.databases[databaseId];
+					const ref = internal.bind.table(jn.table, databaseid);
+					var databaseId = ref.databaseid;
+					var database = ref.db;
 
 					if (database === undefined) {
 						throw new Error('Database does not exist: ' + databaseId);

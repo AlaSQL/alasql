@@ -1,6 +1,6 @@
 import {cloneDeep, setOwn} from '../utils/helpers.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
 //
@@ -50,7 +50,7 @@ export default function install(alasql) {
 			return yy.compileParamValue(this.table.param, 'UPDATE', false, databaseid, self, 'table');
 		}
 
-		databaseid = this.table.databaseid || databaseid;
+		databaseid = internal.bind.table(this.table, databaseid).databaseid;
 		var tableid = this.table.tableid;
 
 		if (this.where) {

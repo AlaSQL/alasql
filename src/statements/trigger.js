@@ -1,4 +1,4 @@
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
 //
@@ -35,8 +35,9 @@ export default function install(alasql) {
 	yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 		let res = 1; // No tables removed
 		const triggerid = this.trigger;
-		databaseid = this.table.databaseid || databaseid;
-		const db = alasql.databases[databaseid];
+		const ref = internal.bind.table(this.table, databaseid);
+		databaseid = ref.databaseid;
+		const db = ref.db;
 		const {tableid} = this.table;
 
 		if (this.ifnotexists && db.triggers[triggerid]) {

@@ -58,7 +58,7 @@ export default function install(alasql, internal) {
 				tq = jn.table;
 				source = {
 					alias: jn.as || tq.tableid,
-					databaseid: tq.databaseid || query.database.databaseid,
+					databaseid: internal.bind.table(tq, query.database.databaseid).databaseid,
 					tableid: tq.tableid,
 					joinmode: jn.joinmode,
 					onmiddlefn: returnTrue,
@@ -97,7 +97,7 @@ export default function install(alasql, internal) {
 
 				query.aliases[source.alias] = {
 					tableid: tq.tableid,
-					databaseid: tq.databaseid || query.database.databaseid,
+					databaseid: internal.bind.table(tq, query.database.databaseid).databaseid,
 				};
 			} else if (jn.select) {
 				tq = jn.select;
