@@ -18,7 +18,7 @@ When `alasql.yy.Column.onBind` is set, `Column.toJS` calls `bind.column()` for t
 
 - `same` means the same source, or the same list of sources where the source is decided per row.
 - `no source today` means the code reads the context itself, a group or the result row, so today's lookup named no source and there is nothing to compare.
-- `known case` is a difference that is one of the six cases below.
+- `known case` is a difference that is one of the five cases below.
 - `new difference` is any other difference.
 - `bind.column threw` is an error in the binding itself.
 
@@ -34,14 +34,15 @@ Every outcome but `same` is listed with what each side said and the first refere
 
 These are the cases where today's lookup and the rules of `bind.column()` do not agree. The next step of #2723 decides each of them before the generated code reads the binding. `knownCase` in `record.js` holds the rule for each.
 
-| Case | What it is                                                                                                                  | Today           | Binding                |
-| ---- | --------------------------------------------------------------------------------------------------------------------------- | --------------- | ---------------------- |
-| 1a   | A bare name that the only table does not define                                                                             | that table      | unresolved             |
-| 1b   | The same, where the name is an alias of the select list inside an aggregate in HAVING (#2878)                               | that table      | unresolved             |
-| 2a   | A bare name that two tables define, as the argument of a function                                                           | the first table | ambiguous              |
-| 2b   | The same, alone in the select list                                                                                          | the first table | ambiguous              |
-| 2c   | The same, in the select list of a query with GROUP BY                                                                       | the first table | ambiguous              |
-| 3    | A bare name in the select list of a query with GROUP BY, where the first table does not define it and another source has it | the first table | the source that has it |
+| Case | What it is                                                                                    | Today           | Binding    |
+| ---- | --------------------------------------------------------------------------------------------- | --------------- | ---------- |
+| 1a   | A bare name that the only table does not define                                               | that table      | unresolved |
+| 1b   | The same, where the name is an alias of the select list inside an aggregate in HAVING (#2878) | that table      | unresolved |
+| 2a   | A bare name that two tables define, as the argument of a function                             | the first table | ambiguous  |
+| 2b   | The same, alone in the select list                                                            | the first table | ambiguous  |
+| 2c   | The same, in the select list of a query with GROUP BY                                         | the first table | ambiguous  |
+
+A sixth case, a bare name in a grouped select list that only a later source has, was a bug and is fixed (#3110).
 
 The check sees the reference, its scope and the SQL text. It reads the alias of 1b and the function call of 2a from the text.
 

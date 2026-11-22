@@ -19,7 +19,7 @@
 	The same answer means the same source, or the same list of sources for a per-row decision.
 	A per-row decision over one source and that source are the same answer.
 
-	A difference is one of the six known cases (knownCase below, listed in README.md), or it
+	A difference is one of the five known cases (knownCase below, listed in README.md), or it
 	is new. run.js fails on a new one, and on an error thrown by bind.column(), which
 	Column.toJS hands over as {error}.
 
@@ -119,16 +119,6 @@ function knownCase(a, b, col, context, tableid, defcols, scope, sql) {
 			return '2a';
 		return;
 	}
-	// 3. a grouped select list reads the name from the first table, which does not define it
-	if (
-		b.kind === 'source' &&
-		!b.scope &&
-		grouped &&
-		first.columns &&
-		!first.columns.some(c => c.columnid === col.columnid)
-	) {
-		return '3';
-	}
 }
 
 const caseText = {
@@ -137,7 +127,6 @@ const caseText = {
 	'2a': 'a name two tables define, as the argument of a function',
 	'2b': 'a name two tables define, alone in the select list',
 	'2c': 'a name two tables define, in the select list of a GROUP BY query',
-	3: 'a name only another source has, in the select list of a GROUP BY query',
 };
 
 function onBind(col, ref, js, err, context, tableid, defcols, scope) {
