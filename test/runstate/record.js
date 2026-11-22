@@ -17,10 +17,11 @@
 	A value that a run assigns (query.data = []) is stored as it is: what a run puts into its
 	own value is not shared state, the assignment is.
 
-	A write is a compile write while a Select.compile is the innermost frame (a parent that
-	sets up its subquery) or while the query has not run yet (the statement around a SELECT
-	gives it its modifier right after the compile), else a run write. Only run writes are the
-	list #2596 asks for.
+	A write is a compile write while the query has not run yet: the compile itself, a parent
+	that sets up its subquery, and the statement around a SELECT that gives it its modifier
+	right after the compile. From the first run on every write is a run write, also one made
+	by a later compile: the copy a run gets is planned at the first run. Only run writes are
+	the list #2596 asks for.
 
 	Since #2596 a run has its own copy of the compiled query and of each source, one level
 	deep. A write to a copy is not recorded: it is the run's own. The copy is made by reading
@@ -48,8 +49,6 @@ const builds = [
 	[path.join(root, 'dist', 'alasql.js'), 'browser'],
 ];
 
-// 'compile' or 'run' per frame that is on the stack now
-const frames = [];
 const seen = new Map();
 // the queries that have run at least once
 const started = new WeakSet();
@@ -81,7 +80,7 @@ function note(kind, prop, owner) {
 	if (off) return;
 	// a query that has not run yet is still being set up: the statement around it gives it its
 	// modifier right after the compile
-	const phase = frames[frames.length - 1] === 'compile' || !started.has(owner) ? 'compile' : 'run';
+	const phase = started.has(owner) ? 'run' : 'compile';
 	const at = where();
 	const key = kind + '|' + prop + '|' + phase + '|' + at;
 	const n = seen.get(key);
@@ -224,26 +223,14 @@ function hook(alasql) {
 	if (!Select) return;
 	const compile = Select.prototype.compile;
 	Select.prototype.compile = function () {
-		frames.push('compile');
-		let statement;
-		try {
-			statement = compile.apply(this, arguments);
-		} finally {
-			frames.pop();
-		}
+		const statement = compile.apply(this, arguments);
 		if (typeof statement !== 'function' || !statement.query) return statement;
 		instrumentQuery(statement.query);
-		// The statement the callers get marks a run, so that a compile inside a run (a subquery
-		// compiled late, a nested alasql() call) and the run around it are told apart
+		// The statement the callers get marks the first run of its query
 		const query = statement.query;
 		const run = function () {
 			started.add(query);
-			frames.push('run');
-			try {
-				return statement.apply(this, arguments);
-			} finally {
-				frames.pop();
-			}
+			return statement.apply(this, arguments);
 		};
 		Object.assign(run, statement);
 		return run;

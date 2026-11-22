@@ -18,7 +18,7 @@ bun test/runstate/run.js --compile      # also the writes a later compile makes 
 - Every property becomes an accessor that records a write.
 - A Proxy in the prototype chain records a write of a property that does not exist yet.
 - An array or plain object that the compile made is handed out through a Proxy, so a write inside it is recorded too. Such a write is listed with `[]` (an array) or `.*` (an object) after the name. A Map, Set or WeakMap is handed out the same way.
-- A write is counted as part of the compile while the query has not run yet, as the statement around a SELECT gives it its modifier right after compiling it.
+- A write is counted as part of the compile while the query has not run yet, as the statement around a SELECT gives it its modifier right after compiling it. From the first run on every write is listed, also one made by a later compile.
 
 `run.js` runs the suite with the preload and turns each place in `dist/alasql.fs.js` into a file and a line in `src/`. A place given as `generated code` is a function made with `new Function`.
 

@@ -235,4 +235,23 @@ describe(`Test ${testId} - a statement from alasql.compile() running twice at on
 		alasql(star, [[{b: 1, c: 2}]]);
 		assert.strictEqual(cached(star).query.columns.length, columns);
 	});
+
+	it('L) A field of a compiled query that the copy of a run does not name still reaches the run', function () {
+		var seen = [];
+		alasql.from.PEEK2596 = function (a, b, cb, idx, query) {
+			seen.push([query.extra2596, query.sources[idx].extra2596, query === statement.query]);
+			var res = [{x: 1}];
+			if (cb) res = cb(res, idx, query);
+			return res;
+		};
+		var statement = alasql.compile('SELECT COLUMN x FROM PEEK2596()');
+		statement.query.extra2596 = 'q';
+		statement.query.sources[0].extra2596 = 's';
+		assert.deepStrictEqual(statement(), [1]);
+		assert.deepStrictEqual(statement(), [1]);
+		assert.deepStrictEqual(seen, [
+			['q', 's', false],
+			['q', 's', false],
+		]);
+	});
 });

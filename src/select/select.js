@@ -454,8 +454,9 @@ export default function install(alasql, internal) {
 			// The compiled query is shared by every run of the statement, so a run never writes to it.
 			// Each run gets its own copy of it (#2596). state holds what
 			// the statement around this one sets for the run (modifier, queriesfn).
+			var extra;
 			var statement = function (params, cb, oldscope, state) {
-				var run = newRun(query, state);
+				var run = newRun(query, state, extra || (extra = unlisted(query)));
 				run.params = params;
 				if (typeof run.limitParam !== 'undefined') {
 					run.limit = params ? params[run.limitParam] : undefined;
@@ -746,11 +747,124 @@ export default function install(alasql, internal) {
 	// The lists a run adds to are copied too. A copy and not Object.create(compiled): an object
 	// per run with the compiled query as its prototype has a shape of its own for every compiled
 	// statement, and Node ran a statement that is compiled on every run (a CTE) three times slower.
-	function newRun(compiled, state) {
-		var run = new Query(compiled);
+	//
+	// The copy names every field. A correlated subquery runs once per outer row, and a copy
+	// field by field in a loop (Object.assign) took a tenth to a third of such a query. A field
+	// that is not named here is found at the first run of a statement (unlisted) and copied by
+	// name after that, so a new field works without being added here; it is only slower.
+	function copyQuery(q) {
+		return {
+			alasql: q.alasql,
+			columns: q.columns,
+			xcolumns: q.xcolumns,
+			selectGroup: q.selectGroup,
+			groupColumns: q.groupColumns,
+			removeKeys: q.removeKeys,
+			aggrKeys: q.aggrKeys,
+			explain: q.explain,
+			explaination: q.explaination,
+			explid: q.explid,
+			modifier: q.modifier,
+			database: q.database,
+			data: q.data,
+			defcols: q.defcols,
+			queriesfn: q.queriesfn,
+			existsfn: q.existsfn,
+			sources: q.sources,
+			aliases: q.aliases,
+			defaultTableid: q.defaultTableid,
+			fromfn: q.fromfn,
+			rownums: q.rownums,
+			grouprownums: q.grouprownums,
+			windowaggrs: q.windowaggrs,
+			selectColumns: q.selectColumns,
+			selectgfns: q.selectgfns,
+			groupStar: q.groupStar,
+			dirtyColumns: q.dirtyColumns,
+			wherefn: q.wherefn,
+			intoObject: q.intoObject,
+			selectfns: q.selectfns,
+			groupSources: q.groupSources,
+			wherefns: q.wherefns,
+			joinsorted: q.joinsorted,
+			groupKeys: q.groupKeys,
+			ixsources: q.ixsources,
+			selectfn: q.selectfn,
+			allgroups: q.allgroups,
+			removeLikeKeys: q.removeLikeKeys,
+			distinct: q.distinct,
+			ingroup: q.ingroup,
+			orderfns: q.orderfns,
+			distinctOn: q.distinctOn,
+			groupfn: q.groupfn,
+			orderfn: q.orderfn,
+			percent: q.percent,
+			orderColumns: q.orderColumns,
+			selectgfn: q.selectgfn,
+			corresponding: q.corresponding,
+			limit: q.limit,
+			havingfns: q.havingfns,
+			pivotfn: q.pivotfn,
+			unionallfn: q.unionallfn,
+			unionfn: q.unionfn,
+			intersectfn: q.intersectfn,
+			exceptfn: q.exceptfn,
+			isCorrelated: q.isCorrelated,
+			offset: q.offset,
+			intofns: q.intofns,
+			intoallfns: q.intoallfns,
+			havingfn: q.havingfn,
+			intofn: q.intofn,
+			intoallfn: q.intoallfn,
+			limitParam: q.limitParam,
+			preserveArrayResult: q.preserveArrayResult,
+			offsetParam: q.offsetParam,
+		};
+	}
+	function copySource(s) {
+		return {
+			alias: s.alias,
+			databaseid: s.databaseid,
+			joinmode: s.joinmode,
+			applymode: s.applymode,
+			tableid: s.tableid,
+			onmiddlefn: s.onmiddlefn,
+			srcwherefns: s.srcwherefns,
+			srcwherefn: s.srcwherefn,
+			columns: s.columns,
+			datafn: s.datafn,
+			onleftfns: s.onleftfns,
+			optimization: s.optimization,
+			subquery: s.subquery,
+			applyselect: s.applyselect,
+			onleftfn: s.onleftfn,
+			onmiddlefns: s.onmiddlefns,
+			onrightfns: s.onrightfns,
+			onrightfn: s.onrightfn,
+			fromidx: s.fromidx,
+		};
+	}
+	function missing(from, copy) {
+		return Object.keys(from).filter(key => !(key in copy));
+	}
+	// The fields of this compiled query and of its sources that the two copies above do not name
+	function unlisted(compiled) {
+		return {
+			query: missing(compiled, copyQuery(compiled)),
+			sources: compiled.sources.map(source => missing(source, copySource(source))),
+		};
+	}
+	function newRun(compiled, state, extra) {
+		var run = copyQuery(compiled);
+		var i, j, keys;
+		for (keys = extra.query, i = 0; i < keys.length; i++) run[keys[i]] = compiled[keys[i]];
 		var sources = compiled.sources;
 		var copy = new Array(sources.length);
-		for (var i = 0; i < sources.length; i++) copy[i] = Object.assign({}, sources[i]);
+		for (i = 0; i < sources.length; i++) {
+			copy[i] = copySource(sources[i]);
+			for (keys = extra.sources[i], j = 0; j < keys.length; j++)
+				copy[i][keys[j]] = sources[i][keys[j]];
+		}
 		run.sources = copy;
 		run.removeKeys = compiled.removeKeys.slice();
 		run.columns = compiled.columns.slice();
