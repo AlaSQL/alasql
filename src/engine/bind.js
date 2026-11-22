@@ -72,7 +72,8 @@ export default function install(alasql, internal) {
 		if (select.joins) {
 			for (const jn of select.joins) add(jn.as || (jn.table && jn.table.tableid), jn.table);
 		}
-		return {sources, outer};
+		// place is set while the arguments of a built-in function are compiled (bind.place)
+		return {sources, outer, place: undefined};
 	}
 
 	function defines(columns, columnid) {
@@ -254,8 +255,8 @@ export default function install(alasql, internal) {
 				return {ref: {error: err}, read: {error: err}};
 			}
 		},
-		// For the test mode: says that the references compiled from now on stand in a place
-		// with rules of its own, and returns the place before, to set it back.
+		// Says that the references compiled from now on stand in a place with rules of its own
+		// (the arguments of a built-in function), and returns the place before, to set it back.
 		place(name) {
 			const sc = compiling[compiling.length - 1];
 			if (!sc) return;
