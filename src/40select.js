@@ -671,16 +671,40 @@ yy.Select = class Select {
 		// multi-level scalar subqueries fail with
 		// "Cannot read properties of undefined (reading '0')" when the
 		// inner select expression evaluates this.queriesfn[queriesidx-1].
-		(function shareQueriesfn(queriesfn) {
+		// An IN subquery nested inside an EXISTS subquery needs the same
+		// treatment (#3097): it is compiled into the statement-level
+		// queriesfn, but the EXISTS subquery is compiled separately
+		// (compileWhereExists) and never receives that list, so its
+		// generated code fails the same way when it evaluates
+		// this.queriesfn[queriesidx].
+		const shareInto = function (q, queriesfn) {
+			if (!q.queriesfn) {
+				q.queriesfn = queriesfn;
+			} else if (q.queriesfn !== queriesfn) {
+				// This query has its own subquery list (e.g. a UNION branch);
+				// share that list down instead, and hand it to its EXISTS
+				// subqueries too.
+				shareQueriesfn(q.queriesfn);
+				queriesfn = q.queriesfn;
+			}
+			if (q.existsfn) {
+				q.existsfn.forEach(function (enq) {
+					shareInto(enq.query, queriesfn);
+				});
+			}
+		};
+		const shareQueriesfn = function (queriesfn) {
 			if (!queriesfn) return;
 			queriesfn.forEach(function (nq) {
-				if (!nq.query.queriesfn) {
-					nq.query.queriesfn = queriesfn;
-				} else if (nq.query.queriesfn !== queriesfn) {
-					shareQueriesfn(nq.query.queriesfn);
-				}
+				shareInto(nq.query, queriesfn);
 			});
-		})(query.queriesfn);
+		};
+		shareQueriesfn(query.queriesfn);
+		if (query.existsfn && query.queriesfn.length > 0) {
+			query.existsfn.forEach(function (enq) {
+				shareInto(enq.query, query.queriesfn);
+			});
+		}
 	}
 };
 
