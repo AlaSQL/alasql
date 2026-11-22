@@ -2,7 +2,7 @@ import {escapeq, returnTrue} from '../utils/helpers.js';
 import {Node} from './node.js';
 import {re_invalidFnNameChars} from '../functions/functions.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	{
 		const assign = Object.assign;
@@ -710,7 +710,33 @@ export default function install(alasql) {
 				return s;
 			}
 
+			// Today's lookup (lookupJS) decides the source while it writes the code. The binding of
+			// the same reference (bind.column, #2723) is not used yet, so it is only worked out
+			// when a test sets Column.onBind, which gets both to compare them (test/bind/). An
+			// error of bind.column goes to onBind as {error} and never into the query.
 			toJS(context, tableid, defcols) {
+				const onBind = Column.onBind;
+				if (!onBind) return this.lookupJS(context, tableid, defcols);
+				const scope = internal.bind.current();
+				if (!scope) return this.lookupJS(context, tableid, defcols);
+				let ref;
+				try {
+					ref = internal.bind.column(this, scope);
+				} catch (err) {
+					ref = {error: err};
+				}
+				let js;
+				try {
+					js = this.lookupJS(context, tableid, defcols);
+				} catch (err) {
+					onBind(this, ref, undefined, err, context, tableid, defcols, scope);
+					throw err;
+				}
+				onBind(this, ref, js, undefined, context, tableid, defcols, scope);
+				return js;
+			}
+
+			lookupJS(context, tableid, defcols) {
 				// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
 				if (this.valueKeyword && context === 'x') {
 					return context;

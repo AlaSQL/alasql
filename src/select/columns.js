@@ -1,6 +1,25 @@
 import {cloneDeep, escapeq, n2u, setOwnJS} from '../utils/helpers.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
+	// What bind.column says a column of the select list refers to, beside the lookup that writes
+	// the code. written is the "'name':code" that the lookup wrote for the row p, when it wrote
+	// one. The binding is not used yet, so it is only worked out when a test sets Column.onBind,
+	// which gets both to compare (test/bind/). An error of bind.column goes to onBind as {error}.
+	function bindBeside(col, written) {
+		var onBind = alasql.yy.Column.onBind;
+		if (!onBind || written === undefined) return;
+		var scope = internal.bind.current();
+		if (!scope) return;
+		var ref;
+		try {
+			ref = internal.bind.column(col, scope);
+		} catch (err) {
+			ref = {error: err};
+		}
+		var js = written.slice(escapeq(col.as || col.columnid).length + 3);
+		onBind(col, ref, js, undefined, 'p', undefined, undefined, scope);
+	}
+
 	var yy = alasql.yy;
 	/*
 //
@@ -219,6 +238,7 @@ export default function install(alasql) {
 					}
 				} else {
 					// If field, otherwise - expression
+					var written = ss.length;
 					var tbid = col.tableid;
 					//				console.log(query.sources);
 					var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
@@ -309,6 +329,8 @@ export default function install(alasql) {
 					} else {
 						ss.push("'" + escapeq(col.as || col.columnid) + "':p['" + tbid + "']");
 					}
+					// The binding of the same reference, beside the lookup above (#2723). Not used yet.
+					bindBeside(col, ss.length > written ? ss[ss.length - 1] : undefined);
 					query.selectColumns[escapeq(col.as || col.columnid)] = true;
 
 					if (query.aliases[tbid] && query.aliases[tbid].type === 'table') {

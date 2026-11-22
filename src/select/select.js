@@ -198,6 +198,16 @@ export default function install(alasql, internal) {
 					this.from = from;
 				}
 			}
+			// The scope of this SELECT for bind.column, while it and its subqueries are compiled
+			internal.bind.enter(this, databaseid);
+			try {
+				return this.compileInScope(databaseid, params, db);
+			} finally {
+				internal.bind.leave();
+			}
+		}
+
+		compileInScope(databaseid, params, db) {
 			// Create variable for query
 			var query = new Query();
 
