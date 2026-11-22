@@ -1699,6 +1699,21 @@ ElseClause
 		{ $$ = undefined; }
 	;
 
+// Marks the start of a subquery SELECT in an IN / NOT IN / ALL-SOME Op:
+// a subquery holds only its own inner subqueries (#3082), so save the
+// enclosing statement's queries and start a fresh list for this SELECT.
+// The matching Op action assigns the collected list to the SELECT and
+// restores the outer list, so each subquery is compiled once and the
+// enclosing statement keeps its global positions (see #2879).
+SubqueryStart
+	: {
+		if(!yy.queriesStack) yy.queriesStack = [];
+		yy.queriesStack.push(yy.queries || []);
+		yy.queries = [];
+		$$ = undefined;
+	  }
+	;
+
 Op
 	: Expression REGEXP Expression
 		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
@@ -1780,22 +1795,16 @@ Op
 	| Expression NEEQEQEQ Expression
 		{ $$ = new yy.Op({left:$1, op:'!===' , right:$3}); }
 
-	| Expression CondOp AllSome LPAR Select RPAR
+	| Expression CondOp AllSome LPAR SubqueryStart Select RPAR
 		{
-			if(!yy.queries) yy.queries = [];
-			// Collect any nested queries that belong to this SELECT
-			var nestedQueries = yy.queries.slice();
-			// Keep the queries in yy.queries: the enclosing statement still
-			// references them by their global position (see #2879), while
-			// this SELECT keeps the prefix copy so its own nested queries
-			// resolve at their global positions
-			// Assign nested queries to the SELECT
-			if(nestedQueries.length > 0) {
-				$5.queries = nestedQueries;
+			// The SELECT's own inner queries (collected while its list was fresh)
+			if(yy.queries.length > 0) {
+				$6.queries = yy.queries;
 			}
-			// Now add this SELECT to parent queries
-			yy.queries.push($5);
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length - 1});
+			// Restore the enclosing statement's list, then add this SELECT to it
+			yy.queries = yy.queriesStack.pop();
+			yy.queries.push($6);
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$6, queriesidx: yy.queries.length - 1});
 		}
 
 	| Expression CondOp AllSome LPAR ExprList RPAR
@@ -1848,40 +1857,28 @@ Op
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
 
-	| Expression IN LPAR Select RPAR
+	| Expression IN LPAR SubqueryStart Select RPAR
 		{
-			if(!yy.queries) yy.queries = [];
-			// Collect any nested queries that belong to this SELECT
-			var nestedQueries = yy.queries.slice();
-			// Keep the queries in yy.queries: the enclosing statement still
-			// references them by their global position (see #2879), while
-			// this SELECT keeps the prefix copy so its own nested queries
-			// resolve at their global positions
-			// Assign nested queries to the SELECT
-			if(nestedQueries.length > 0) {
-				$4.queries = nestedQueries;
+			// The SELECT's own inner queries (collected while its list was fresh)
+			if(yy.queries.length > 0) {
+				$5.queries = yy.queries;
 			}
-			// Now add this SELECT to parent queries
-			yy.queries.push($4);
-			$$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length - 1}));
+			// Restore the enclosing statement's list, then add this SELECT to it
+			yy.queries = yy.queriesStack.pop();
+			yy.queries.push($5);
+			$$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$5, queriesidx: yy.queries.length - 1}));
 		}
 
-	| Expression NOT IN LPAR Select RPAR
+	| Expression NOT IN LPAR SubqueryStart Select RPAR
 		{
-			if(!yy.queries) yy.queries = [];
-			// Collect any nested queries that belong to this SELECT
-			var nestedQueries = yy.queries.slice();
-			// Keep the queries in yy.queries: the enclosing statement still
-			// references them by their global position (see #2879), while
-			// this SELECT keeps the prefix copy so its own nested queries
-			// resolve at their global positions
-			// Assign nested queries to the SELECT
-			if(nestedQueries.length > 0) {
-				$5.queries = nestedQueries;
+			// The SELECT's own inner queries (collected while its list was fresh)
+			if(yy.queries.length > 0) {
+				$6.queries = yy.queries;
 			}
-			// Now add this SELECT to parent queries
-			yy.queries.push($5);
-			$$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length - 1}));
+			// Restore the enclosing statement's list, then add this SELECT to it
+			yy.queries = yy.queriesStack.pop();
+			yy.queries.push($6);
+			$$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$6, queriesidx: yy.queries.length - 1}));
 		}
 
 	| Expression IN LPAR ExprList RPAR
