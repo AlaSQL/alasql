@@ -2,7 +2,7 @@ import {escapeq, returnTrue} from '../utils/helpers.js';
 import {Node} from './node.js';
 import {re_invalidFnNameChars} from '../functions/functions.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	{
 		const assign = Object.assign;
@@ -710,7 +710,27 @@ export default function install(alasql) {
 				return s;
 			}
 
+			// Today's lookup (lookupJS) decides the source while it writes the code. Beside it the
+			// binding of the same reference is worked out by bind.column (#2723). The binding is
+			// not used yet: Column.onBind, when a test sets it, gets both to compare them.
 			toJS(context, tableid, defcols) {
+				const scope = internal.bind.current();
+				if (!scope) return this.lookupJS(context, tableid, defcols);
+				const ref = internal.bind.column(this, scope);
+				const onBind = Column.onBind;
+				if (!onBind) return this.lookupJS(context, tableid, defcols);
+				let js;
+				try {
+					js = this.lookupJS(context, tableid, defcols);
+				} catch (err) {
+					onBind(this, ref, undefined, err, context, tableid, defcols, scope);
+					throw err;
+				}
+				onBind(this, ref, js, undefined, context, tableid, defcols, scope);
+				return js;
+			}
+
+			lookupJS(context, tableid, defcols) {
 				// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
 				if (this.valueKeyword && context === 'x') {
 					return context;
