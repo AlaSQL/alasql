@@ -4,20 +4,16 @@ export default function install(alasql, internal) {
 	// What bind.column says a column of the select list refers to, beside the lookup that writes
 	// the code. written is the "'name':code" that the lookup wrote for the row p, when it wrote
 	// one. The binding is not used yet, so it is only worked out when a test sets Column.onBind,
-	// which gets both to compare (test/bind/). An error of bind.column goes to onBind as {error}.
+	// which gets both to compare (test/bind/), and what the 4.x rule of the select list makes of
+	// the binding (bind.read). An error of bind.column goes to onBind as {error}.
 	function bindBeside(col, written) {
 		var onBind = alasql.yy.Column.onBind;
 		if (!onBind || written === undefined) return;
 		var scope = internal.bind.current();
 		if (!scope) return;
-		var ref;
-		try {
-			ref = internal.bind.column(col, scope);
-		} catch (err) {
-			ref = {error: err};
-		}
+		var b = internal.bind.beside(col, scope, 'select');
 		var js = written.slice(escapeq(col.as || col.columnid).length + 3);
-		onBind(col, ref, js, undefined, 'p', undefined, undefined, scope);
+		onBind(col, b.ref, js, undefined, 'p', undefined, undefined, scope, b.read);
 	}
 
 	var yy = alasql.yy;
@@ -706,14 +702,21 @@ export default function install(alasql, internal) {
 					// it, not only in the first table (#3110). A name that two tables define keeps
 					// reading the first table here, as it did: making that an error is #2928.
 					var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
-					s +=
-						n2u(
-							col.toJS(
-								'(this.groupSources.get(g) || g)',
-								query.defaultTableid,
-								ambiguous ? undefined : query.defcols
-							)
-						) + ';';
+					// test mode: this place has a 4.x rule of its own (bind.read)
+					var testing = yy.Column.onBind;
+					var placeBefore = testing && internal.bind.place('group');
+					try {
+						s +=
+							n2u(
+								col.toJS(
+									'(this.groupSources.get(g) || g)',
+									query.defaultTableid,
+									ambiguous ? undefined : query.defcols
+								)
+							) + ';';
+					} finally {
+						if (testing) internal.bind.place(placeBefore);
+					}
 				} else {
 					s += n2u(col.toJS('g', '')) + ';';
 				}

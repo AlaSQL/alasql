@@ -19,13 +19,13 @@
 	The same answer means the same source, or the same list of sources for a per-row decision.
 	A per-row decision over one source and that source are the same answer.
 
-	A difference is one of the five known cases (knownCase below, listed in README.md), or it
-	is new. run.js fails on a new one, and on an error thrown by bind.column(), which
-	Column.toJS hands over as {error}.
-
-	Environment (set by run.js):
-	  BIND_OUT   path of the recording, JSON lines: one line per kind of outcome with a count
-	             is written by run.js from the lines here, one per reference.
+	4.x does not read the binding as it is in every place. bind.read() applies the 4.x rule of
+	the place (a plain expression, a function argument, the select list, a grouped select
+	list), and Column.toJS hands over that reading too. Today's answer is compared with it:
+	  same                       the binding itself is what today's lookup reads
+	  same by the 4.x rule ...   the binding differs, and the rule gives what today's lookup reads
+	  new difference             neither. run.js fails on it, and on an error thrown by
+	                             bind.column() or a rule, which comes as {error}.
 */
 
 const fs = require('fs');
@@ -94,60 +94,28 @@ const show = x =>
 			? 'per row among ' + x.any.join(', ')
 			: x.kind + (x.how ? ' (' + x.how + ')' : '') + (x.text ? ' ' + x.text : '');
 
-// Which of the known cases a difference is, or undefined for a new one. The cases are the
-// ones the pull request of the check lists, and README.md repeats them. The check sees the
-// reference, the scope and the SQL text, so the alias of 1b and the function call of 2a are
-// read from the text.
-function knownCase(a, b, col, context, tableid, defcols, scope, sql) {
-	if (col.tableid || a.kind !== 'source') return;
-	const first = scope.sources[0];
-	if (!first || String(a.source) !== String(first.alias)) return;
-	const name = escape(col.columnid);
-	const grouped = context.includes('groupSources');
-	const text = String(sql || '');
-	// 1. the only table does not define the name, and today's lookup takes the table anyway
-	if (b.kind === 'none' && scope.sources.length === 1 && first.columns) {
-		const alias = new RegExp(`\\bAS\\s+[\\[\`]?${name}[\\]\`]?(?!\\w)`, 'i').test(text);
-		return alias && /\bHAVING\b/i.test(text) ? '1b' : '1a';
-	}
-	// 2. two tables define the name, and today's lookup takes the first of them
-	if (b.kind === 'ambiguous' && String(b.ambiguous[0]) === String(a.source)) {
-		if (grouped) return '2c';
-		// the select list has a lookup of its own for a column that stands alone (bindBeside)
-		if (context === 'p' && tableid === undefined && defcols === undefined) return '2b';
-		if (new RegExp(`[A-Za-z_]\\w*\\s*\\(\\s*[\\[\`]?${name}[\\]\`]?\\s*\\)`).test(text))
-			return '2a';
-		return;
-	}
-}
-
-const caseText = {
-	'1a': 'a name the only table does not define',
-	'1b': 'an alias of the select list inside an aggregate in HAVING (#2878)',
-	'2a': 'a name two tables define, as the argument of a function',
-	'2b': 'a name two tables define, alone in the select list',
-	'2c': 'a name two tables define, in the select list of a GROUP BY query',
-};
-
-function onBind(col, ref, js, err, context, tableid, defcols, scope) {
+function onBind(col, ref, js, err, context, tableid, defcols, scope, read) {
 	// COUNT(*) and the like: the star is no column reference
 	if (col.columnid === '*') return;
 	const sql = running[running.length - 1];
 	const a = today(js, err, context);
-	const b = ref.error ? {kind: 'error', text: String(ref.error.stack || ref.error)} : binding(ref);
+	const failed = ref.error || (read && read.error);
+	const b = failed ? {kind: 'error', text: String(failed.stack || failed)} : binding(ref);
+	// what 4.x reads: the binding, or what a 4.x rule of bind.js makes of it in this place
+	const r = failed ? b : binding(read);
 	let outcome;
-	if (ref.error) outcome = 'bind.column threw';
+	if (failed) outcome = 'bind.column or a 4.x rule threw';
 	else if (a.kind === 'no source') outcome = 'no source today: ' + a.how;
-	else if (same(a, b)) outcome = 'same';
-	else {
-		const known = knownCase(a, b, col, context, tableid, defcols, scope, sql);
+	else if (same(a, r)) {
+		outcome = read.rule ? `same by the 4.x rule ${read.rule} (place ${read.place})` : 'same';
+	} else {
 		// One kind of difference: what each side says, without the names
 		const kind = x =>
 			x.kind === 'any' ? 'per row' : x.kind + (x.kind === 'source' && x.scope ? ', outer' : '');
 		outcome =
-			(known ? `known case ${known} (${caseText[known]})` : 'new difference') +
-			`: today ${kind(a)}, binding ${kind(b)}` +
-			(a.kind === 'source' && b.kind === 'source' ? ' (another source)' : '') +
+			`new difference: today ${kind(a)}, binding ${kind(b)}` +
+			(read.rule ? `, 4.x rule ${read.rule} gives ${kind(r)}` : ', no 4.x rule applies') +
+			`; place ${read.place || scope.place || 'row'}` +
 			`; ${col.tableid ? 'source.column' : 'bare column'}; ${scope.sources.length} sources` +
 			(scope.outer ? ', in a subquery' : '');
 	}
@@ -155,11 +123,14 @@ function onBind(col, ref, js, err, context, tableid, defcols, scope) {
 	seen.set(outcome, n + 1);
 	// every reference is counted; the first of a kind carries the example, and so does every difference
 	const rec = {o: outcome};
-	if (!n || /^(known|new|bind)/.test(outcome)) {
+	if (!n || /^(new|bind)/.test(outcome)) {
 		rec.sql = sql;
 		rec.column = col.toString();
 		rec.today = show(a);
-		rec.binding = show(b) + (b.scope ? ' (scope ' + b.scope + ')' : '');
+		rec.binding =
+			show(b) +
+			(b.scope ? ' (scope ' + b.scope + ')' : '') +
+			(read && read.rule ? ', 4.x reads ' + show(r) : '');
 		rec.context = context;
 		rec.sources = scope.sources.map(
 			s => s.alias + (s.columns ? '(' + s.columns.map(c => c.columnid) + ')' : '')

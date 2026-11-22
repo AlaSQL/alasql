@@ -7,10 +7,10 @@
 	record.js does the comparing and says how. This file runs the suite with it and counts the
 	outcomes. Every kind of outcome is printed once, with the first reference that gave it.
 
-	Five cases of difference are known (README.md). They are what the next step has to decide
-	before the generated code reads the binding, so the check does not fail on them. The exit
-	code is 1 when bind.column() threw, when a difference is not one of the known cases, when
-	no reference was compared, or when the suite run crashed.
+	Where 4.x reads something else than the binding, a 4.x rule in src/engine/bind.js says
+	what, and the check compares with the rule applied (README.md). The exit code is 1 when
+	bind.column() or a rule threw, when today's lookup and that reading differ, when no
+	reference was compared, or when the suite run crashed.
 
 	The recording is written to test/bind/recordings/ and not committed.
 */
@@ -64,9 +64,9 @@ for (const line of fs.readFileSync(recording, 'utf8').split('\n')) {
 const rank = o =>
 	o.outcome === 'same'
 		? 0
-		: o.outcome.startsWith('no source')
+		: o.outcome.startsWith('same by')
 			? 1
-			: o.outcome.startsWith('known case')
+			: o.outcome.startsWith('no source')
 				? 2
 				: 3;
 const list = Array.from(outcomes.values()).sort((a, b) => rank(a) - rank(b) || b.count - a.count);
@@ -95,9 +95,11 @@ if (!total) {
 }
 if (failed) {
 	console.error(
-		`\nFAIL: ${failed} reference(s) where bind.column threw or the difference is not a known case:`
+		`\nFAIL: ${failed} reference(s) where bind.column or a 4.x rule threw, or where today's lookup reads something else:`
 	);
 	for (const o of failing) console.error(`  ${o.count}  ${o.outcome}  (${o.f}: ${o.column})`);
 	process.exit(1);
 }
-console.error('\nOK: bind.column did not throw, and every difference is one of the known cases.');
+console.error(
+	"\nOK: nothing threw, and today's lookup reads the binding or what a 4.x rule makes of it."
+);

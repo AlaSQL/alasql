@@ -5,7 +5,7 @@ import {Node} from '../expression/node.js';
 
 export let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
 //
@@ -88,12 +88,19 @@ export default function install(alasql) {
 		if (!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
 			if (this.args && this.args.length > 0) {
 				var argcols = stdlibDefcols(defcols, tableid);
-				s += alasql.stdlib[funcid.toUpperCase()].apply(
-					this,
-					this.args.map(function (arg) {
-						return arg.toJS(context, tableid, argcols);
-					})
-				);
+				// test mode: this place has a 4.x rule of its own (bind.read)
+				var testing = yy.Column.onBind;
+				var placeBefore = testing && internal.bind.place('function');
+				try {
+					s += alasql.stdlib[funcid.toUpperCase()].apply(
+						this,
+						this.args.map(function (arg) {
+							return arg.toJS(context, tableid, argcols);
+						})
+					);
+				} finally {
+					if (testing) internal.bind.place(placeBefore);
+				}
 			} else {
 				s += alasql.stdlib[funcid.toUpperCase()]();
 			}

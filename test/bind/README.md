@@ -18,9 +18,9 @@ When `alasql.yy.Column.onBind` is set, `Column.toJS` calls `bind.column()` for t
 
 - `same` means the same source, or the same list of sources where the source is decided per row.
 - `no source today` means the code reads the context itself, a group or the result row, so today's lookup named no source and there is nothing to compare.
-- `known case` is a difference that is one of the five cases below.
-- `new difference` is any other difference.
-- `bind.column threw` is an error in the binding itself.
+- `same by the 4.x rule` means the binding says something else, and the 4.x rule of the place gives what today's lookup reads.
+- `new difference` means neither the binding nor a 4.x rule gives what today's lookup reads.
+- `bind.column or a 4.x rule threw` is an error in the binding itself.
 
 Every outcome but `same` is listed with what each side said and the first reference that gave it.
 
@@ -30,28 +30,28 @@ Every outcome but `same` is listed with what each side said and the first refere
 - A reference outside a SELECT, such as the SET of an UPDATE or a CHECK constraint. There is no scope there yet.
 - `COUNT(*)` and the like. The star is no column reference.
 
-## The known cases
+## The 4.x rules
 
-These are the cases where today's lookup and the rules of `bind.column()` do not agree. The next step of #2723 decides each of them before the generated code reads the binding. `knownCase` in `record.js` holds the rule for each.
+4.x does not read what the binding says in every place. Where it reads something else and queries rely on it, a 4.x rule in `src/engine/bind.js` says what, and `bind.read()` applies the rule of the place the reference stands in. `Column.toJS` hands that reading to `onBind` as well, and the check compares today's lookup with it. Like the binding, the rules only run when `Column.onBind` is set.
 
-| Case | What it is                                                                                    | Today           | Binding    |
-| ---- | --------------------------------------------------------------------------------------------- | --------------- | ---------- |
-| 1a   | A bare name that the only table does not define                                               | that table      | unresolved |
-| 1b   | The same, where the name is an alias of the select list inside an aggregate in HAVING (#2878) | that table      | unresolved |
-| 2a   | A bare name that two tables define, as the argument of a function                             | the first table | ambiguous  |
-| 2b   | The same, alone in the select list                                                            | the first table | ambiguous  |
-| 2c   | The same, in the select list of a query with GROUP BY                                         | the first table | ambiguous  |
+| Rule              | When                                                                                                                | What 4.x reads                                               | Removed by                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| `onlyTable`       | A bare name that no source can have, in a SELECT with one source. Every place                                       | that source, and the value is undefined                      | #3109, and #2878 for an alias of the select list inside an aggregate in HAVING |
+| `firstTable`      | A bare name that two tables define, as the argument of a built-in function or in the select list of a grouped query | the first source of FROM, whether it defines the name or not | #2928                                                                          |
+| `firstWithColumn` | A bare name that two tables define, alone in the select list of a query without grouping                            | the first source that has it                                 | #2928                                                                          |
 
-A sixth case, a bare name in a grouped select list that only a later source has, was a bug and is fixed (#3110).
+In a plain expression an ambiguous name is an error in 4.x too, so there is no rule for it.
 
-The check sees the reference, its scope and the SQL text. It reads the alias of 1b and the function call of 2a from the text.
+`test/test2723-C.js` pins the results of these places with three tables, where the first table of FROM does not define the name.
+
+A bare name in a grouped select list that only a later source has was a bug and is fixed (#3110).
 
 ## When it fails
 
 The exit code is 1 in these cases.
 
-- `bind.column()` threw.
-- A difference is not one of the known cases. Then either the change is wrong, or a new test compiles a reference that today's lookup and the binding answer differently. Such a case has to be decided, and listed here and in `knownCase`, before the check passes again.
+- `bind.column()` or a 4.x rule threw.
+- Today's lookup reads something else than the binding with the 4.x rule of the place applied. Then either the change is wrong, or a new test compiles a reference that 4.x reads in a way no rule describes. Such a case has to be decided, and gets a rule in `bind.js` with the issue that removes it, before the check passes again.
 - No reference was compared, which means `Column.onBind` is not called any more.
 - The suite run crashed.
 
