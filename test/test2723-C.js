@@ -134,4 +134,29 @@ describe(`Test ${testId} - the 4.x rules for an ambiguous and an unknown column`
 		assert.strictEqual(r.read.rule, 'onlyTable');
 		assert.strictEqual(r.read.source, 't0');
 	});
+
+	it('G) Alone in the select list, a bare name of an APPLY source is not found (#3115)', function () {
+		const apply = ' from t0 cross apply (select v from t1 where t1.k = t0.k) z';
+		assert.deepStrictEqual(alasql('select x, v' + apply), [
+			{x: 5, v: undefined},
+			{x: 6, v: undefined},
+		]);
+		// written with the source, or inside an expression, it is found
+		assert.deepStrictEqual(alasql('select x, z.v' + apply), [
+			{x: 5, v: 10},
+			{x: 6, v: 11},
+		]);
+		assert.deepStrictEqual(alasql('select x, v + 0 as w' + apply), [
+			{x: 5, w: 10},
+			{x: 6, w: 11},
+		]);
+		var r = readings('select x, v' + apply).v;
+		assert.deepStrictEqual(r.binding, {scope: 0, source: 'z', column: 'v'});
+		assert.deepStrictEqual(r.read, {
+			unresolved: true,
+			column: 'v',
+			rule: 'notInApply',
+			place: 'select',
+		});
+	});
 });

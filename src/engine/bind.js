@@ -56,7 +56,8 @@ export default function install(alasql, internal) {
 	 */
 	function scope(select, databaseid, outer) {
 		const sources = [];
-		const add = (alias, ref) => {
+		let applies = 0;
+		const add = (alias, ref, apply) => {
 			let columns = null;
 			if (ref && ref.tableid) {
 				const db = table(ref, databaseid).db;
@@ -64,16 +65,21 @@ export default function install(alasql, internal) {
 				// the table's own list, not a copy: a scope is made for every compile
 				if (def && def.columns && def.columns.length) columns = def.columns;
 			}
-			sources.push({alias, columns});
+			if (apply) applies++;
+			sources.push({alias, columns, apply});
 		};
 		if (select.from) {
-			for (const fr of select.from) add(fr.as || fr.tableid, fr instanceof alasql.yy.Table && fr);
+			for (const fr of select.from)
+				add(fr.as || fr.tableid, fr instanceof alasql.yy.Table && fr, false);
 		}
 		if (select.joins) {
-			for (const jn of select.joins) add(jn.as || (jn.table && jn.table.tableid), jn.table);
+			for (const jn of select.joins) {
+				add(jn.as || (jn.table && jn.table.tableid), jn.table, jn instanceof alasql.yy.Apply);
+			}
 		}
 		// place is set while the arguments of a built-in function are compiled (bind.place)
-		return {sources, outer, place: undefined};
+		// applies is the number of APPLY sources, for the 4.x rule notInApply
+		return {sources, outer, place: undefined, applies};
 	}
 
 	function defines(columns, columnid) {
@@ -157,6 +163,8 @@ export default function install(alasql, internal) {
 			if (!(ref.ambiguous && ref.scope === 0)) return;
 			const any = [];
 			for (let i = 0; i < sc.sources.length; i++) {
+				// an APPLY source is not asked in this place: see notInApply
+				if (sc.sources[i].apply) continue;
 				const columns = sc.sources[i].columns;
 				if (columns === null) any.push(sc.sources[i].alias);
 				else if (defines(columns, ref.column)) {
@@ -168,6 +176,24 @@ export default function install(alasql, internal) {
 				? {scope: 0, source: any[0], column: ref.column}
 				: {scope: 0, any, column: ref.column};
 		},
+		// A bare name that an APPLY source has, alone in the select list of a query without
+		// grouping: 4.x does not ask an APPLY source there, so the value is undefined, or the
+		// value of another source that is asked per row. Written as source.column, and in every
+		// other place, the APPLY source is read. Removed by #3115.
+		notInApply(ref, sc, col) {
+			if (!sc.applies || col.tableid || ref.scope !== 0 || ref.unresolved || ref.ambiguous) return;
+			const list = ref.any || [ref.source];
+			const kept = [];
+			for (let i = 0; i < sc.sources.length; i++) {
+				const alias = sc.sources[i].alias;
+				if (!sc.sources[i].apply && list.indexOf(alias) !== -1) kept.push(alias);
+			}
+			if (kept.length === list.length) return;
+			if (!kept.length) return {unresolved: true, column: ref.column};
+			return kept.length === 1
+				? {scope: 0, source: kept[0], column: ref.column}
+				: {scope: 0, any: kept, column: ref.column};
+		},
 	};
 
 	// The rules of each place a column reference can stand in. In 'row', a plain expression, an
@@ -176,7 +202,7 @@ export default function install(alasql, internal) {
 		row: ['onlyTable'],
 		function: ['onlyTable', 'firstTable'],
 		group: ['onlyTable', 'firstTable'],
-		select: ['onlyTable', 'firstWithColumn'],
+		select: ['onlyTable', 'firstWithColumn', 'notInApply'],
 	};
 
 	/**
@@ -184,13 +210,14 @@ export default function install(alasql, internal) {
 	 * @param {object} ref The binding from column()
 	 * @param {object} sc The scope of the SELECT the reference is in
 	 * @param {string} [place] 'row' (the default), 'function', 'group' or 'select'
+	 * @param {object} col The yy.Column, for a rule that looks at how the reference is written
 	 * @returns {object} A binding as from column(), with rule and place when a rule was applied
 	 */
-	function read(ref, sc, place) {
+	function read(ref, sc, place, col) {
 		place = place || 'row';
 		const names = places[place];
 		for (let i = 0; i < names.length; i++) {
-			const res = rules4x[names[i]](ref, sc);
+			const res = rules4x[names[i]](ref, sc, col);
 			if (res) {
 				res.rule = names[i];
 				res.place = place;
@@ -213,7 +240,21 @@ export default function install(alasql, internal) {
 	function write(ref, sc, context, col) {
 		const columnid = ref.column;
 		if (ref.scope !== 0 || ref.ambiguous || columnid === '_') return;
-		if (ref.any) return perRowJS(ref.any, context, columnid);
+		if (ref.rule === 'firstWithColumn') {
+			// The select list of a query without grouping: the sources without column definitions
+			// before the first table that has the name are asked per row, and then that table
+			// is read, with `?.` as its row can be missing in an outer join (#2680, #2873)
+			const list = ref.any || [ref.source];
+			const last = list.length - 1;
+			return perRowJS(
+				list,
+				context,
+				columnid,
+				last,
+				`${context}['${list[last]}']?.['${columnid}']`
+			);
+		}
+		if (ref.any) return perRowJS(ref.any, context, columnid, ref.any.length, 'undefined');
 		const source = ref.source;
 		if (!(ref.rule || col.tableid || sc.sources.length === 1)) {
 			// A bare name that only a source without column definitions can have. Beside other
@@ -221,7 +262,8 @@ export default function install(alasql, internal) {
 			const sources = sc.sources;
 			for (let i = 0; i < sources.length; i++) {
 				if (sources[i].alias === source) {
-					if (sources[i].columns === null) return perRowJS([source], context, columnid);
+					if (sources[i].columns === null)
+						return perRowJS([source], context, columnid, 1, 'undefined');
 					break;
 				}
 			}
@@ -229,10 +271,10 @@ export default function install(alasql, internal) {
 		return `${context}['${source}']['${columnid}']`;
 	}
 
-	// Asked per row: the first of these sources whose row has the key
-	function perRowJS(aliases, context, columnid) {
-		let js = 'undefined';
-		for (let i = aliases.length - 1; i >= 0; i--) {
+	// Asked per row: the first of the first count sources whose row has the key, and else rest
+	function perRowJS(aliases, context, columnid, count, rest) {
+		let js = rest;
+		for (let i = count - 1; i >= 0; i--) {
 			const row = `${context}['${aliases[i]}']`;
 			js = `('${columnid}' in Object(${row}) ? ${row}['${columnid}'] : ${js})`;
 		}
@@ -250,7 +292,7 @@ export default function install(alasql, internal) {
 		beside(col, sc, place) {
 			try {
 				const ref = column(col, sc);
-				return {ref, read: read(ref, sc, place || sc.place)};
+				return {ref, read: read(ref, sc, place || sc.place, col)};
 			} catch (err) {
 				return {ref: {error: err}, read: {error: err}};
 			}
