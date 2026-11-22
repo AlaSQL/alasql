@@ -7,7 +7,7 @@
       automerge: true,
     },
   ],
-  automerge: true,
+  minimumReleaseAge: "14 days",
   automergeStrategy: "squash",
   dependencyDashboard: true,
   schedule: ["every weekend"],
