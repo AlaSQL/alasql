@@ -746,7 +746,7 @@ export default function install(alasql, internal) {
 				let ref, read, written;
 				try {
 					ref = internal.bind.column(this, scope);
-					read = internal.bind.read(ref, scope, 'function');
+					read = internal.bind.read(ref, scope, 'function', this);
 					if (context !== 'g' && !(this.valueKeyword && context === 'x')) {
 						written = internal.bind.write(read, scope, context, this);
 					}

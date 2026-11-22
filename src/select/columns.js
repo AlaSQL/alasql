@@ -1,11 +1,11 @@
 import {cloneDeep, escapeq, n2u, setOwnJS} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
-	// What bind.column says a column of the select list refers to, beside the lookup that writes
-	// the code. written is the "'name':code" that the lookup wrote for the row p, when it wrote
-	// one. The binding is not used yet, so it is only worked out when a test sets Column.onBind,
-	// which gets both to compare (test/bind/), and what the 4.x rule of the select list makes of
-	// the binding (bind.read). An error of bind.column goes to onBind as {error}.
+	// For a column of the select list whose code is not written from the binding: what bind.column
+	// says it refers to, beside the lookup that writes the code. written is the "'name':code"
+	// that the lookup wrote for the row p, when it wrote one. This is only worked out when a test
+	// sets Column.onBind, which gets both to compare (test/bind/), and what the 4.x rule of the
+	// select list makes of the binding (bind.read). An error of bind.column goes to onBind as {error}.
 	function bindBeside(col, written) {
 		var onBind = alasql.yy.Column.onBind;
 		if (!onBind || written === undefined) return;
@@ -18,24 +18,18 @@ export default function install(alasql, internal) {
 
 	var yy = alasql.yy;
 
-	// The read of a column that stands alone in the select list of a grouped query. It is the
-	// first place where the code is written from the binding (#2723): bind.column says what the
-	// name refers to, bind.read applies the 4.x rule of this place (a name two tables define is
-	// read from the first table of FROM, #2928), and bind.write writes the read.
-	// Today's lookup stays for what the binding does not write, and for the case that the
-	// binding throws: it must not be able to break a query. With the default columns the lookup
-	// finds a bare name in the source that has it (#3110), and without them, for a name two
-	// tables define, it reads the first table.
-	function groupColumnJS(col, query) {
-		var context = '(this.groupSources.get(g) || g)';
-		var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
-		var defcols = ambiguous ? undefined : query.defcols;
+	// The read of a column that stands alone in a select list, written from the binding (#2723):
+	// bind.column says what the name refers to, bind.read applies the 4.x rule of the place, and
+	// bind.write writes the read. lookup is a function that writes today's code. It stays for
+	// what the binding does not write, and for the case that the binding throws: it must not be
+	// able to break a query.
+	function columnJS(col, place, context, lookup, tableid, defcols) {
 		var scope = internal.bind.current();
 		var ref, read, written;
 		if (scope) {
 			try {
 				ref = internal.bind.column(col, scope);
-				read = internal.bind.read(ref, scope, 'group');
+				read = internal.bind.read(ref, scope, place, col);
 				written = internal.bind.write(read, scope, context, col);
 			} catch (err) {
 				ref = read = {error: err};
@@ -45,11 +39,32 @@ export default function install(alasql, internal) {
 		// test mode: the lookup runs beside it, and the check compares the two (test/bind/)
 		var onBind = yy.Column.onBind;
 		if (onBind && scope) {
-			var js = col.lookupJS(context, query.defaultTableid, defcols);
-			onBind(col, ref, js, undefined, context, query.defaultTableid, defcols, scope, read, written);
+			onBind(col, ref, lookup(), undefined, context, tableid, defcols, scope, read, written);
 		}
-		return written !== undefined ? written : col.lookupJS(context, query.defaultTableid, defcols);
+		return written !== undefined ? written : lookup();
 	}
+
+	// In the select list of a grouped query. The 4.x rule of this place: a name two tables define
+	// is read from the first table of FROM (#2928). With the default columns the lookup finds a
+	// bare name in the source that has it (#3110), and without them, for a name two tables
+	// define, it reads the first table.
+	function groupColumnJS(col, query) {
+		var context = '(this.groupSources.get(g) || g)';
+		var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
+		var defcols = ambiguous ? undefined : query.defcols;
+		var tableid = query.defaultTableid;
+		return columnJS(
+			col,
+			'group',
+			context,
+			function () {
+				return col.lookupJS(context, tableid, defcols);
+			},
+			tableid,
+			defcols
+		);
+	}
+
 	/*
 //
 // Select compiler part for Alasql.js
@@ -268,6 +283,7 @@ export default function install(alasql, internal) {
 				} else {
 					// If field, otherwise - expression
 					var written = ss.length;
+					var fromBinding = false;
 					var tbid = col.tableid;
 					//				console.log(query.sources);
 					var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
@@ -323,18 +339,35 @@ export default function install(alasql, internal) {
 									query.sources.length > 1 &&
 									(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
 
+								// Today's code for the read: asked from the sources per row (#2680), or
+								// the column of one source
+								var lookup;
 								if (needsRuntimeResolution) {
-									ss.push(
-										"'" +
-											escapeq(col.as || col.columnid) +
-											"':" +
-											yy.Column.fromAnySource(
-												'p',
-												Object.keys(query.aliases),
-												col.columnid,
-												query.defcols['.']
-											)
-									);
+									lookup = function () {
+										return yy.Column.fromAnySource(
+											'p',
+											Object.keys(query.aliases),
+											col.columnid,
+											query.defcols['.']
+										);
+									};
+								} else {
+									var lookupTbid = tbid;
+									lookup = function () {
+										return "p['" + lookupTbid + "']['" + col.columnid + "']";
+									};
+								}
+								// The code is written from the binding, with the 4.x rule of this place:
+								// a name two tables define is read from the first source that has it
+								// (#2928). What it writes is the same code, so nothing changes at run time.
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':" +
+										columnJS(col, 'select', 'p', lookup)
+								);
+								fromBinding = true;
+								if (needsRuntimeResolution) {
 									// Only check it against the default table if no other source can have it
 									var inOtherSource = query.sources.some(
 										src =>
@@ -342,24 +375,15 @@ export default function install(alasql, internal) {
 											(!src.columns?.length || src.columns.some(c => c.columnid === col.columnid))
 									);
 									if (inOtherSource) tbid = undefined;
-								} else {
-									ss.push(
-										"'" +
-											escapeq(col.as || col.columnid) +
-											"':p['" +
-											tbid +
-											"']['" +
-											col.columnid +
-											"']"
-									);
 								}
 							}
 						}
 					} else {
 						ss.push("'" + escapeq(col.as || col.columnid) + "':p['" + tbid + "']");
 					}
-					// The binding of the same reference, beside the lookup above (#2723). Not used yet.
-					bindBeside(col, ss.length > written ? ss[ss.length - 1] : undefined);
+					// Where the code above is not written from the binding (`_`, the multisheet
+					// workaround), the binding is still compared with it in the test mode
+					if (!fromBinding) bindBeside(col, ss.length > written ? ss[ss.length - 1] : undefined);
 					query.selectColumns[escapeq(col.as || col.columnid)] = true;
 
 					if (query.aliases[tbid] && query.aliases[tbid].type === 'table') {
