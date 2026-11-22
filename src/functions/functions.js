@@ -5,6 +5,19 @@ import {Node} from '../expression/node.js';
 
 export let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 
+// A bare column found in two tables has always been read from the first table inside a built-in
+// function, and queries rely on that; only a column of one table resolves through defcols (#2917).
+// These are the default columns that give today's lookup that reading. Inside a SELECT the read
+// is written from the binding, and the lookup with these columns is the fallback (Column.toJS).
+export function stdlibDefcols(defcols, tableid) {
+	if (!defcols) return defcols;
+	var cols = Object.create(defcols);
+	for (var columnid in defcols) {
+		if (defcols[columnid] === '-') cols[columnid] = tableid;
+	}
+	return cols;
+}
+
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
@@ -70,27 +83,19 @@ export default function install(alasql, internal) {
 		return res;
 	};
 
-	// A bare column found in two tables has always been read from the first table inside a built-in
-	// function, and queries rely on that; only a column of one table resolves through defcols (#2917)
-	function stdlibDefcols(defcols, tableid) {
-		if (!defcols) return defcols;
-		var cols = Object.create(defcols);
-		for (var columnid in defcols) {
-			if (defcols[columnid] === '-') cols[columnid] = tableid;
-		}
-		return cols;
-	}
-
 	yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		var s = '';
 		var funcid = this.funcid;
 		// IF this is standard compile functions
 		if (!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
 			if (this.args && this.args.length > 0) {
-				var argcols = stdlibDefcols(defcols, tableid);
-				// test mode: this place has a 4.x rule of its own (bind.read)
-				var testing = yy.Column.onBind;
-				var placeBefore = testing && internal.bind.place('function');
+				// Inside a SELECT a column in the arguments is written from the binding, with the
+				// rules of this place (bind.read, #2723): Column.toJS sees the place on the scope
+				// and gets the default columns as they are. Outside a SELECT there is no scope, and
+				// the lookup gets the default columns of stdlibDefcols as before.
+				var scope = internal.bind.current();
+				var argcols = scope ? defcols : stdlibDefcols(defcols, tableid);
+				var placeBefore = scope && internal.bind.place('function');
 				try {
 					s += alasql.stdlib[funcid.toUpperCase()].apply(
 						this,
@@ -99,7 +104,7 @@ export default function install(alasql, internal) {
 						})
 					);
 				} finally {
-					if (testing) internal.bind.place(placeBefore);
+					if (scope) internal.bind.place(placeBefore);
 				}
 			} else {
 				s += alasql.stdlib[funcid.toUpperCase()]();

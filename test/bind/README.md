@@ -48,7 +48,7 @@ A bare name in a grouped select list that only a later source has was a bug and 
 
 ## Places that write their code from the binding
 
-The select list of a grouped query is the first place where the generated code is written from the binding (`groupColumnJS` in `src/select/columns.js`, with `bind.read` and `bind.write`). It runs on every compile, not only in the test mode. Today's lookup stays there as the fallback for what the binding does not write yet (`_`, a column of an outer SELECT) and for the case that the binding throws, so a mistake in it can not break a query.
+Two places write the generated code from the binding, with `bind.read` and `bind.write`. They are the select list of a grouped query (`groupColumnJS` in `src/select/columns.js`) and the arguments of a built-in function inside a SELECT (`Column.functionArgJS` in `src/expression/expression.js`). There the binding runs on every compile, not only in the test mode. Today's lookup stays as the fallback for what the binding does not write yet (`_`, a group, a column of an outer SELECT) and for the case that the binding throws, so a mistake in it can not break a query.
 
 In the test mode such a place runs the lookup as well and hands both codes to `onBind`. The check fails unless they are the same text, and the outcome says whether the code was written from the binding or fell back.
 
