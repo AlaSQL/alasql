@@ -702,7 +702,18 @@ export default function install(alasql, internal) {
 				//			console.log(col);//,col.toJS('g',''));
 
 				if (col instanceof yy.Column) {
-					s += n2u(col.toJS('(this.groupSources.get(g) || g)', query.defaultTableid)) + ';';
+					// With the default columns the lookup finds a bare name in the source that has
+					// it, not only in the first table (#3110). A name that two tables define keeps
+					// reading the first table here, as it did: making that an error is #2928.
+					var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
+					s +=
+						n2u(
+							col.toJS(
+								'(this.groupSources.get(g) || g)',
+								query.defaultTableid,
+								ambiguous ? undefined : query.defcols
+							)
+						) + ';';
 				} else {
 					s += n2u(col.toJS('g', '')) + ';';
 				}

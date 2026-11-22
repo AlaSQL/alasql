@@ -7,7 +7,7 @@
 	record.js does the comparing and says how. This file runs the suite with it and counts the
 	outcomes. Every kind of outcome is printed once, with the first reference that gave it.
 
-	Six cases of difference are known (README.md). They are what the next step has to decide
+	Five cases of difference are known (README.md). They are what the next step has to decide
 	before the generated code reads the binding, so the check does not fail on them. The exit
 	code is 1 when bind.column() threw, when a difference is not one of the known cases, when
 	no reference was compared, or when the suite run crashed.
