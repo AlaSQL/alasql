@@ -21,6 +21,10 @@
 	    parameter, a function, a table made without columns): the source is decided per row,
 	    the first of those sources whose row has the key (#2680)
 	  - else it is looked up in the SELECT around it
+
+	4.x does not read what these rules say in every place. Where it reads something else and
+	queries rely on it, a 4.x rule says what (bind.read). Each rule names the issue that removes
+	it in 5.0. Like the binding, the rules only run when a test sets Column.onBind.
 */
 
 export default function install(alasql, internal) {
@@ -123,10 +127,102 @@ export default function install(alasql, internal) {
 		return {unresolved: true, column: columnid};
 	}
 
+	// The 4.x rules. Each takes the binding and the scope of the SELECT the reference is in, and
+	// returns the binding that 4.x reads there, or undefined when the rule does not apply.
+	const rules4x = {
+		// A bare name that no source can have, in a SELECT with one source: 4.x reads that
+		// source anyway, and the value is undefined in every row. It keeps `WHERE nosuch IS NULL`
+		// and the like running. Removed by #3109, which makes the name an error. An alias of the
+		// select list inside an aggregate in HAVING is read the same way today (`HAVING SUM(n) > 0`
+		// with `COUNT(*) AS n`), and that reading is removed by #2878.
+		onlyTable(ref, sc) {
+			if (ref.unresolved && sc.sources.length === 1) {
+				return {scope: 0, source: sc.sources[0].alias, column: ref.column};
+			}
+		},
+		// A bare name that two tables define, as the argument of a built-in function or in the
+		// select list of a grouped query: 4.x reads the first source of FROM, whether that source
+		// defines the name or not (#2917, #2930, #3111). Removed by #2928, which makes the name
+		// an error as it is in a plain expression.
+		firstTable(ref, sc) {
+			if (ref.ambiguous && ref.scope === 0) {
+				return {scope: 0, source: sc.sources[0].alias, column: ref.column};
+			}
+		},
+		// A bare name that two tables define, alone in the select list of a query without
+		// grouping: 4.x reads the first source that has it. A source without column definitions
+		// before that one is asked per row (#2873). Removed by #2928.
+		firstWithColumn(ref, sc) {
+			if (!(ref.ambiguous && ref.scope === 0)) return;
+			const any = [];
+			for (let i = 0; i < sc.sources.length; i++) {
+				const columns = sc.sources[i].columns;
+				if (columns === null) any.push(sc.sources[i].alias);
+				else if (defines(columns, ref.column)) {
+					any.push(sc.sources[i].alias);
+					break;
+				}
+			}
+			return any.length === 1
+				? {scope: 0, source: any[0], column: ref.column}
+				: {scope: 0, any, column: ref.column};
+		},
+	};
+
+	// The rules of each place a column reference can stand in. In 'row', a plain expression, an
+	// ambiguous name is an error in 4.x too, so there is no rule for it.
+	const places = {
+		row: ['onlyTable'],
+		function: ['onlyTable', 'firstTable'],
+		group: ['onlyTable', 'firstTable'],
+		select: ['onlyTable', 'firstWithColumn'],
+	};
+
+	/**
+	 * What 4.x reads for a binding: the binding itself, or what a 4.x rule makes of it
+	 * @param {object} ref The binding from column()
+	 * @param {object} sc The scope of the SELECT the reference is in
+	 * @param {string} [place] 'row' (the default), 'function', 'group' or 'select'
+	 * @returns {object} A binding as from column(), with rule and place when a rule was applied
+	 */
+	function read(ref, sc, place) {
+		place = place || 'row';
+		const names = places[place];
+		for (let i = 0; i < names.length; i++) {
+			const res = rules4x[names[i]](ref, sc);
+			if (res) {
+				res.rule = names[i];
+				res.place = place;
+				return res;
+			}
+		}
+		return ref;
+	}
+
 	internal.bind = {
 		table,
 		scope,
 		column,
+		read,
+		// For the test mode (Column.onBind): the binding of a column and what 4.x reads for it,
+		// in the place the reference stands in. An error goes into the result, never into the query.
+		beside(col, sc, place) {
+			try {
+				const ref = column(col, sc);
+				return {ref, read: read(ref, sc, place || sc.place)};
+			} catch (err) {
+				return {ref: {error: err}, read: {error: err}};
+			}
+		},
+		// For the test mode: says that the references compiled from now on stand in a place
+		// with rules of its own, and returns the place before, to set it back.
+		place(name) {
+			const sc = compiling[compiling.length - 1];
+			if (!sc) return;
+			const before = sc.place;
+			sc.place = name;
+			return before;
+		},
 		// Called by Select.compile around its work
 		enter(select, databaseid) {
 			const sc = scope(select, databaseid, compiling[compiling.length - 1]);
