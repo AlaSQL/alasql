@@ -7,9 +7,10 @@
 	record.js does the comparing and says how. This file runs the suite with it and counts the
 	outcomes. Every kind of outcome is printed once, with the first reference that gave it.
 
-	The differences are known and listed in the pull request that added the check. They are
-	what the next step has to decide before the generated code reads the binding, so the
-	check does not fail on them: its exit code is 1 only when the suite run crashed.
+	Six cases of difference are known (README.md). They are what the next step has to decide
+	before the generated code reads the binding, so the check does not fail on them. The exit
+	code is 1 when bind.column() threw, when a difference is not one of the known cases, when
+	no reference was compared, or when the suite run crashed.
 
 	The recording is written to test/bind/recordings/ and not committed.
 */
@@ -60,7 +61,14 @@ for (const line of fs.readFileSync(recording, 'utf8').split('\n')) {
 	if (rec.sql !== undefined || rec.column) Object.assign(o, rec, {o: undefined});
 	outcomes.set(rec.o, o);
 }
-const rank = o => (o.outcome === 'same' ? 0 : o.outcome.startsWith('no source') ? 1 : 2);
+const rank = o =>
+	o.outcome === 'same'
+		? 0
+		: o.outcome.startsWith('no source')
+			? 1
+			: o.outcome.startsWith('known case')
+				? 2
+				: 3;
 const list = Array.from(outcomes.values()).sort((a, b) => rank(a) - rank(b) || b.count - a.count);
 
 if (process.argv.includes('--json')) {
@@ -78,3 +86,18 @@ if (process.argv.includes('--json')) {
 		console.log(`        ${String(o.sql).replace(/\s+/g, ' ').slice(0, 300)}`);
 	}
 }
+
+const failing = list.filter(o => rank(o) === 3);
+const failed = failing.reduce((n, o) => n + o.count, 0);
+if (!total) {
+	console.error('\nFAIL: no column reference was compared. Is Column.onBind still called?');
+	process.exit(1);
+}
+if (failed) {
+	console.error(
+		`\nFAIL: ${failed} reference(s) where bind.column threw or the difference is not a known case:`
+	);
+	for (const o of failing) console.error(`  ${o.count}  ${o.outcome}  (${o.f}: ${o.column})`);
+	process.exit(1);
+}
+console.error('\nOK: bind.column did not throw, and every difference is one of the known cases.');

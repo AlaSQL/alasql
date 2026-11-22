@@ -710,15 +710,21 @@ export default function install(alasql, internal) {
 				return s;
 			}
 
-			// Today's lookup (lookupJS) decides the source while it writes the code. Beside it the
-			// binding of the same reference is worked out by bind.column (#2723). The binding is
-			// not used yet: Column.onBind, when a test sets it, gets both to compare them.
+			// Today's lookup (lookupJS) decides the source while it writes the code. The binding of
+			// the same reference (bind.column, #2723) is not used yet, so it is only worked out
+			// when a test sets Column.onBind, which gets both to compare them (test/bind/). An
+			// error of bind.column goes to onBind as {error} and never into the query.
 			toJS(context, tableid, defcols) {
-				const scope = internal.bind.current();
-				if (!scope) return this.lookupJS(context, tableid, defcols);
-				const ref = internal.bind.column(this, scope);
 				const onBind = Column.onBind;
 				if (!onBind) return this.lookupJS(context, tableid, defcols);
+				const scope = internal.bind.current();
+				if (!scope) return this.lookupJS(context, tableid, defcols);
+				let ref;
+				try {
+					ref = internal.bind.column(this, scope);
+				} catch (err) {
+					ref = {error: err};
+				}
 				let js;
 				try {
 					js = this.lookupJS(context, tableid, defcols);

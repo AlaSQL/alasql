@@ -10,8 +10,9 @@
 	one scope per SELECT: its sources in the order of FROM and JOIN, each with its columns when
 	they are known, and a link to the scope of the SELECT around it. bind.column() says which
 	source and which column a Column refers to in a scope. Column.toJS still finds its source
-	while the code is generated, as before, and asks bind.column() beside it, so that the two
-	can be compared (test/bind/) before the generated code reads the binding.
+	while the code is generated, as before. Only when a test sets Column.onBind does it ask
+	bind.column() beside it, so that the two can be compared (test/bind/) before the generated
+	code reads the binding. Without it a query pays for the scope and for nothing else.
 
 	The rules of bind.column() are the rules of 4.x where 4.x made a choice:
 	  - a name found in the column definitions of exactly one source is that source's column
