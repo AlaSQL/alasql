@@ -131,6 +131,15 @@ describe(`Test ${testId} - db.table in every statement that takes a table`, func
 		assert.deepStrictEqual(Object.keys(alasql.databases['test' + testId].indices), []);
 	});
 
+	it('G) SEARCH reads the table of the named database', function () {
+		alasql(`create table ${other}.s (a int); insert into ${other}.s values (7), (8)`);
+		alasql('create table s (a int); insert into s values (1)');
+		assert.deepStrictEqual(alasql(`search / a from ${other}.s`), [7, 8]);
+		assert.deepStrictEqual(alasql('search / a from s'), [1]);
+		alasql(`drop table s; drop table ${other}.s`);
+		assert.throws(() => alasql('search / a from nodb2705.s'), TypeError);
+	});
+
 	it('F) A table that does not exist, and a database that does not exist', function () {
 		assert.throws(
 			() => alasql(`drop table ${other}.nothere`),
