@@ -9,6 +9,9 @@
 	  bun test/parity/run.js record <label> --dist <dir>      # another build's dist folder
 	  bun test/parity/run.js record ref --ref --if-missing    # only when ref is not recorded yet
 	  bun test/parity/run.js compare <label-a> <label-b>      # compare two recordings
+	  bun test/parity/run.js compare <a> <b> --allow-differences   # report the differences, fail
+	                                                          # only on a diverged file, a file
+	                                                          # without a statement, the API
 
 	A recording is one run of the whole suite plus the dialect cases, with every statement in
 	order (record.js), the API surface (api.js) and the size of every dist file. It is written to
@@ -53,7 +56,8 @@ function sh(cmdName, cmdArgs, options) {
 		env: Object.assign({}, process.env, options.env || {}),
 	});
 	if (r.error) throw r.error;
-	return r.status;
+	// killed by a signal: no exit code
+	return r.status === null ? r.signal : r.status;
 }
 
 function out(cmdName, cmdArgs, cwd) {
@@ -224,6 +228,9 @@ function suite(file) {
 		].concat(testFiles()),
 		{env: {PARITY_OUT: file}}
 	);
+	// bun test ends with 0, or with 1 when a test failed. Anything else is a crash of the run
+	// (a signal, a panic), and the recording stops where it happened.
+	if (status !== 0 && status !== 1) throw new Error(`the suite run crashed (${status})`);
 	console.log(`suite exit code ${status} (a failing test is recorded, not fatal)`);
 	if (
 		sh('bun', ['test/parity/dialect-corpus.js'], {
@@ -238,7 +245,11 @@ function compare(a, b) {
 	const c = require('./compare.js');
 	const A = c.load(path.join(recordings, a));
 	const B = c.load(path.join(recordings, b));
-	const failures = c.report(A, B, a, b, {limit: +(opt('--limit') || 20), file: opt('--file')});
+	const failures = c.report(A, B, a, b, {
+		limit: +(opt('--limit') || 20),
+		file: opt('--file'),
+		allowDifferences: flag('--allow-differences'),
+	});
 	process.exit(failures ? 1 : 0);
 }
 
@@ -246,7 +257,7 @@ if (cmd === 'record') record(args[1]);
 else if (cmd === 'compare') compare(args[1], args[2]);
 else {
 	console.error(
-		'usage: run.js record <label> [--ref [<version>|<commit>] | --dist <dir>] [--no-rebuild] [--once] [--if-missing] | compare <a> <b> [--limit N] [--file f]'
+		'usage: run.js record <label> [--ref [<version>|<commit>] | --dist <dir>] [--no-rebuild] [--once] [--if-missing] | compare <a> <b> [--limit N] [--file f] [--allow-differences]'
 	);
 	process.exit(2);
 }

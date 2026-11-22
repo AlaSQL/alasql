@@ -10,7 +10,7 @@ bun test/dialect/run.js --list                 # also print every expected diffe
 bun test/dialect/run.js --update               # rewrite expected-differences after an intended change
 ```
 
-It needs Bun: SQLite is `bun:sqlite`, so there is no dependency. It is not part of `bun test`.
+It needs Bun: SQLite is `bun:sqlite`, so there is no dependency. It is not part of `bun test`. CI runs it on every push and pull request (the job "Dialect test against SQLite" in `.github/workflows/Build and test.yml`).
 
 ## Files
 
