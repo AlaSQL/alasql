@@ -2249,36 +2249,6 @@ SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING 
   sqlite: [[-1, -1], [2, 2]]
   why: Not reviewed yet.
 
-SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.ug = t.g) ORDER BY g
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.ug = t.g)
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY g
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[2, 2]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[-1, -1], [2, 2]]
-  why: Not reviewed yet.
-
-SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY g
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
 SELECT g, COUNT(*) FROM t GROUP BY g HAVING MAX(n) IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY g
   alasql: []
   sqlite: [[2, 2]]
@@ -2307,16 +2277,6 @@ SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un I
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
   alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 2], [2, 2], [null, 1]]
-  why: Not reviewed yet.
-
-SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) ORDER BY g
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[1, 2], [2, 2]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.ug = t.g)
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[-1, -1], [1, 2], [2, 2]]
   why: Not reviewed yet.
 
 SELECT g, COUNT(*) FROM t GROUP BY g HAVING EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY g
@@ -2369,185 +2329,75 @@ SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, COUNT(*) FROM t GROUP BY g HAVING 
   sqlite: [[-1, -1], [1, 2], [2, 2]]
   why: Not reviewed yet.
 
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug IS NOT NULL) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
-  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug IS NOT NULL)
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
-  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
-
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
-  sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.ug = t.g)
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
-  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE ug = g) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: []
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. The subquery does not find the unqualified outer column g, so EXISTS is false for every row, as the same EXISTS is in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE ug = g)
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: [[-1, -1]]
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. The subquery does not find the unqualified outer column g, so EXISTS is false for every row, as the same EXISTS is in the select list.
 
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
-  alasql: error: undefined is not an object (evaluating 'this.existsfn[0]')
+  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2], [3, 3]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug IS NOT NULL) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[1, 1], [2, 2], [2, 2]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug IS NOT NULL)
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1], [1, 1], [2, 2], [2, 2]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL)) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[2, 2], [2, 2]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg IS NOT NULL))
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1], [2, 2], [2, 2]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL)))
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug = t.g) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.ug = t.g)
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g))
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g))) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg = t.g)))
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE ug = g) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE ug = g)
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g)) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE wg = g))
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
-
-SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g))) ORDER BY t.id, p.v
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: []
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT t.id, p.v FROM t JOIN p ON p.v = t.id AND t.n IN (SELECT u.un FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE zg = g)))
-  alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
-  sqlite: [[-1, -1]]
-  why: Not reviewed yet.
+  why: An EXISTS in JOIN ON compiles since #2795; before that this case stopped at existsfn. It now stops at the IN subquery nested in the EXISTS subquery, as the same EXISTS does in the select list.
 
 SELECT g, COUNT(*), (SELECT MAX(u.un) FROM u WHERE ug = g) FROM t GROUP BY g ORDER BY g
   alasql: [[undefined, 1, undefined], [1, 2, undefined], [2, 2, undefined]]
@@ -2597,16 +2447,6 @@ SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn I
 SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wn IN (SELECT z.zn FROM z WHERE z.zg IS NOT NULL))) FROM t GROUP BY g
   alasql: error: undefined is not an object (evaluating 'this.queriesfn[0]')
   sqlite: [[-1, -1], [1, 1], [2, 1], [null, 1]]
-  why: Not reviewed yet.
-
-SELECT g, EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) FROM t GROUP BY g ORDER BY g
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[null, 0], [1, 1], [2, 1]]
-  why: Not reviewed yet.
-
-SELECT -1 AS c1, -1 AS c2 UNION ALL SELECT g, EXISTS (SELECT 1 FROM u WHERE u.ug = t.g) FROM t GROUP BY g
-  alasql: error: undefined is not an object (evaluating 'p['t']['g']')
-  sqlite: [[-1, -1], [1, 1], [2, 1], [null, 0]]
   why: Not reviewed yet.
 
 SELECT g, EXISTS (SELECT 1 FROM u WHERE u.un IN (SELECT w.wn FROM w WHERE w.wg = t.g)) FROM t GROUP BY g ORDER BY g
