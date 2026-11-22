@@ -340,6 +340,8 @@ export default function install(alasql) {
 		//	console.log(inlist, tocolumnid, forcolumnid);
 
 		return function () {
+			// The query of the run this is called on, not the compiled query (#2596)
+			var query = this;
 			var data = [];
 
 			var xcols = query.columns

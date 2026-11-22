@@ -272,12 +272,15 @@ export default function install(alasql, internal) {
 		}
 	};
 
-	/**
-	 * Clears any unneeded properties from a given AST statement closure used for caching
-	 * @param {Object} statement the statement to cleanup
-	 */
+	// A compiled SELECT keeps no state of a run: each run has its own copy of the query (#2596). So two runs
+	// of it can go on at the same time. The other statements are not checked for that yet, and
+	// an overlapping run of one of them still gets its own compiled copy (#1953, #2747).
+	function sharesRuns(statement) {
+		return statement.query instanceof alasql.Query;
+	}
+
 	// Run a compiled statement and mark it as running until it has finished, also when it
-	// finishes later through the callback. The cached result data is cleaned up then.
+	// finishes later through the callback.
 	function runStatement(statement, params, cb, scope) {
 		statement.running = (statement.running || 0) + 1;
 		var finished = false;
@@ -285,7 +288,6 @@ export default function install(alasql, internal) {
 			if (!finished) {
 				finished = true;
 				statement.running--;
-				cleanupCache(statement);
 			}
 		};
 		var done = cb
@@ -303,19 +305,6 @@ export default function install(alasql, internal) {
 			if (!cb) {
 				finish();
 			}
-		}
-	}
-
-	function cleanupCache(statement) {
-		if (!statement) {
-			return;
-		}
-		if (!alasql.options.cache) {
-			return;
-		}
-		// cleanup the table data to prevent storing this information in the SQL cache
-		if (statement && statement.query && statement.query.data) {
-			statement.query.data = [];
 		}
 	}
 
@@ -341,10 +330,10 @@ export default function install(alasql, internal) {
 				db.dbversion === statement.dbversion &&
 				statement.schemaVersion === alasql.schemaVersion
 			) {
-				// A compiled statement keeps the state of one run. While a run of it is still
-				// going (a nested call or an unfinished asynchronous run), this call compiles
-				// its own copy instead of sharing it (#1953)
-				if (!statement.running) {
+				// While a run of the statement is still going (a nested call or an unfinished
+				// asynchronous run), this call compiles its own copy instead of sharing it
+				// (#1953), unless the statement keeps no state of a run
+				if (!statement.running || sharesRuns(statement)) {
 					return runStatement(statement, params, cb);
 				}
 				var inUse = true;
@@ -522,8 +511,9 @@ export default function install(alasql, internal) {
 				Object.assign(statement, compiled);
 			}
 			// While a run of this statement is still going (a nested call or an unfinished
-			// asynchronous run), this call gets its own copy, as in alasql.dexec (#1953, #2596)
-			if (compiled.running) {
+			// asynchronous run), this call gets its own copy, as in alasql.dexec (#1953, #2596),
+			// unless the statement keeps no state of a run
+			if (compiled.running && !sharesRuns(compiled)) {
 				return runStatement(alasql.parse(sql).statements[0].compile(databaseid), params, cb);
 			}
 			return runStatement(compiled, params, cb);

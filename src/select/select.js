@@ -211,6 +211,9 @@ export default function install(alasql, internal) {
 			query.modifier = this.modifier;
 
 			query.database = db;
+			// The rows of a run are on the copy of that run (#2596). The compiled query shows an
+			// empty list, as it did between two runs before, and the list cannot take a row.
+			query.data = Object.freeze([]);
 			// 0. Precompile whereexists
 			this.compileWhereExists(query);
 
@@ -448,36 +451,40 @@ export default function install(alasql, internal) {
 				}
 			}
 			// Now, compile all togeather into one function with query object in scope
-			var statement = function (params, cb, oldscope) {
-				query.params = params;
-				if (typeof query.limitParam !== 'undefined') {
-					query.limit = params ? params[query.limitParam] : undefined;
+			// The compiled query is shared by every run of the statement, so a run never writes to it.
+			// Each run gets its own copy of it (#2596). state holds what
+			// the statement around this one sets for the run (modifier, queriesfn).
+			var statement = function (params, cb, oldscope, state) {
+				var run = newRun(query, state);
+				run.params = params;
+				if (typeof run.limitParam !== 'undefined') {
+					run.limit = params ? params[run.limitParam] : undefined;
 				}
-				if (typeof query.offsetParam !== 'undefined') {
-					query.offset = params ? params[query.offsetParam] : undefined;
+				if (typeof run.offsetParam !== 'undefined') {
+					run.offset = params ? params[run.offsetParam] : undefined;
 				}
 				// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
 				// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
 				// the (data, err) standard is maintained here.
-				var res1 = queryfn(query, oldscope, function (res, err) {
+				var res1 = queryfn(run, oldscope, function (res, err) {
 					if (err) {
 						if (cb) {
 							return cb(null, err);
 						}
 						throw err;
 					}
-					if (query.rownums.length > 0) {
+					if (run.rownums.length > 0) {
 						for (var i = 0, ilen = res.length; i < ilen; i++) {
-							for (var j = 0, jlen = query.rownums.length; j < jlen; j++) {
-								res[i][query.rownums[j]] = i + 1;
+							for (var j = 0, jlen = run.rownums.length; j < jlen; j++) {
+								res[i][run.rownums[j]] = i + 1;
 							}
 						}
 					}
 
 					// Handle GROUP_ROW_NUMBER() and ROW_NUMBER() OVER (PARTITION BY ...) - restart numbering when grouping column(s) change
-					if (query.grouprownums && query.grouprownums.length > 0) {
-						for (var j = 0, jlen = query.grouprownums.length; j < jlen; j++) {
-							var config = query.grouprownums[j];
+					if (run.grouprownums && run.grouprownums.length > 0) {
+						for (var j = 0, jlen = run.grouprownums.length; j < jlen; j++) {
+							var config = run.grouprownums[j];
 							var partitionColumns;
 
 							// Determine which columns to partition by
@@ -515,9 +522,9 @@ export default function install(alasql, internal) {
 					}
 
 					// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
-					if (query.windowaggrs && query.windowaggrs.length > 0) {
-						for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
-							var config = query.windowaggrs[j];
+					if (run.windowaggrs && run.windowaggrs.length > 0) {
+						for (var j = 0, jlen = run.windowaggrs.length; j < jlen; j++) {
+							var config = run.windowaggrs[j];
 							var partitions = {};
 
 							// Group rows by partition
@@ -584,7 +591,7 @@ export default function install(alasql, internal) {
 						}
 					}
 
-					var res2 = modify(query, res);
+					var res2 = modify(run, res);
 
 					if (cb) {
 						cb(res2);
@@ -734,6 +741,26 @@ export default function install(alasql, internal) {
  @param {object} query Query object
  @param res {object|number|string|boolean} res Data to be converted
  */
+	// The state of one run of a compiled query: a copy of the compiled query and one of each
+	// source, one level deep, so the compiled functions are shared and a write lands on the copy.
+	// The lists a run adds to are copied too. A copy and not Object.create(compiled): an object
+	// per run with the compiled query as its prototype has a shape of its own for every compiled
+	// statement, and Node ran a statement that is compiled on every run (a CTE) three times slower.
+	function newRun(compiled, state) {
+		var run = new Query(compiled);
+		var sources = compiled.sources;
+		var copy = new Array(sources.length);
+		for (var i = 0; i < sources.length; i++) copy[i] = Object.assign({}, sources[i]);
+		run.sources = copy;
+		run.removeKeys = compiled.removeKeys.slice();
+		run.columns = compiled.columns.slice();
+		run.explaination = compiled.explaination.slice();
+		// The outer row of each group, for a subquery in HAVING or in the select list
+		if (compiled.groupSources) run.groupSources = new WeakMap();
+		if (state) Object.assign(run, state);
+		return run;
+	}
+
 	function modify(query, res) {
 		// jshint ignore:line
 
