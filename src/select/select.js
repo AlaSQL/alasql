@@ -1,3 +1,4 @@
+import {setOwnJS} from '../utils/helpers.js';
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	var Query = alasql.Query;
@@ -369,7 +370,7 @@ export default function install(alasql, internal) {
 						var converted = {};
 						for (var key in r) {
 							var colDef = table.xcolumns && table.xcolumns[key];
-							converted[key] = alasql.utils.typeConverter(r[key], colDef ? colDef.dbtypeid : null);
+							${setOwnJS('converted', 'key', 'alasql.utils.typeConverter(r[key], colDef ? colDef.dbtypeid : null)')}
 						}
 						table.data.push(converted);
 					`;

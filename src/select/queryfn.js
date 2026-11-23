@@ -119,7 +119,7 @@ export default function install(alasql, internal) {
 
 		// Prepare variables
 		query.data = [];
-		query.xgroups = {};
+		query.xgroups = Object.create(null);
 		query.groups = [];
 
 		// Level of Joins

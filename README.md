@@ -120,10 +120,10 @@ import alasql from 'alasql';
 // or: const alasql = require('alasql');
 ```
 
-In the browser, include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql@4.23.2/dist/alasql.min.js):
+In the browser, include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql@4.23.3/dist/alasql.min.js):
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alasql@4.23.2/dist/alasql.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alasql@4.23.3/dist/alasql.min.js"></script>
 ```
 
 ## Getting started

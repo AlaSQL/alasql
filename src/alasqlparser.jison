@@ -20,6 +20,7 @@
 \[\?\]									return 'BRAQUESTION'
 '@['									return 'ATLBRA'
 'ARRAY['								return 'ARRAYLBRA'
+(N?['"]__proto__['"]|\[__proto__\]|\`__proto__\`|__proto__\b)	throw new Error('__proto__ is not allowed');
 \[([^\]'])*?\]							return 'BRALITERAL'
 \`([^\`'])*?\`	   						return 'BRALITERAL'
 
