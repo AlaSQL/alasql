@@ -216,7 +216,8 @@ export default function install(alasql, internal) {
 				for (const fr of this.from) {
 					if (fr instanceof yy.Table) {
 						// a database that does not exist is a TypeError on the next line, as it was
-						const db = internal.bind.table(fr, databaseid).db;
+						// (var, so that the bundler keeps the name that the engine puts in the error)
+						var db = internal.bind.table(fr, databaseid).db;
 						if (db.tables[fr.tableid] === undefined) {
 							throw new Error('Table does not exist: ' + fr.tableid);
 						}
