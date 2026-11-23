@@ -1,4 +1,4 @@
-import {returnTrue, arrayIntersect} from '../utils/helpers.js';
+import {escapeq, returnTrue, arrayIntersect} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -127,7 +127,7 @@ export default function install(alasql, internal) {
 					srcwherefn: returnTrue,
 				};
 				const jnparam = jn.param.param;
-				ps = "let res=alasql.prepareFromData(params['" + jnparam + "']";
+				ps = "let res=alasql.prepareFromData(params['" + escapeq(jnparam) + "']";
 				if (jn.array) ps += ',true';
 				ps += '); if(cb) res=cb(res, idx, query); return res';
 

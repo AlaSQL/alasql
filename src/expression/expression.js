@@ -347,7 +347,7 @@ export default function install(alasql) {
 					}
 				} else if (this.op === '!') {
 					if (typeof this.right === 'string') {
-						s = `alasql.databases[alasql.useid].objects[${leftJS()}]["${this.right}"]`;
+						s = `alasql.databases[alasql.useid].objects[${leftJS()}]["${escapeq(this.right)}"]`;
 					}
 					// TODO - add other cases
 				} else if (this.op === 'IS') {
@@ -670,7 +670,7 @@ export default function install(alasql) {
 
 			toJS() {
 				if (typeof this.param === 'string') {
-					return "params['" + this.param + "']";
+					return "params['" + escapeq(this.param) + "']";
 				}
 
 				return 'params[' + this.param + ']';

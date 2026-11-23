@@ -1,4 +1,4 @@
-import {returnTrue} from '../utils/helpers.js';
+import {escapeq, returnTrue} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -139,7 +139,7 @@ export default function install(alasql, internal) {
 					return res;
 				};
 			} else if (tq instanceof yy.ParamValue) {
-				let ps = `var res = alasql.prepareFromData(params['${tq.param}']`;
+				let ps = `var res = alasql.prepareFromData(params['${escapeq(tq.param)}']`;
 				if (tq.array) ps += ',true';
 				ps += ');if(cb)res=cb(res,idx,query);return res';
 				source.datafn = new Function('query,params,cb,idx,alasql', ps);
