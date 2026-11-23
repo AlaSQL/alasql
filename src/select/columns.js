@@ -45,23 +45,19 @@ export default function install(alasql, internal) {
 	}
 
 	// In the select list of a grouped query. The 4.x rule of this place: a name two tables define
-	// is read from the first table of FROM (#2928). With the default columns the lookup finds a
-	// bare name in the source that has it (#3110), and without them, for a name two tables
-	// define, it reads the first table.
+	// is read from the first table of FROM (#2928), and the lookup is told to do the same.
 	function groupColumnJS(col, query) {
 		var context = '(this.groupSources.get(g) || g)';
-		var ambiguous = !col.tableid && query.defcols && query.defcols[col.columnid] === '-';
-		var defcols = ambiguous ? undefined : query.defcols;
 		var tableid = query.defaultTableid;
 		return columnJS(
 			col,
 			'group',
 			context,
 			function () {
-				return col.lookupJS(context, tableid, defcols);
+				return col.lookupJS(context, tableid, query.columnScope, true);
 			},
 			tableid,
-			defcols
+			query.columnScope
 		);
 	}
 
@@ -287,10 +283,15 @@ export default function install(alasql, internal) {
 					var tbid = col.tableid;
 					//				console.log(query.sources);
 					var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
-					if (!tbid) tbid = query.defcols[col.columnid];
+					// the source whose column definitions have the name, for the type of the result
+					// column and for the error of a column that the table does not have
+					var ownerTbid = col.tableid
+						? undefined
+						: internal.bind.owner(query.columnScope, col.columnid);
+					if (!tbid) tbid = ownerTbid;
 					if (!tbid) tbid = query.defaultTableid;
 					if (col.columnid !== '_') {
-						if (false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
+						if (false) {
 							ss.push(
 								"'" +
 									escapeq(col.as || col.columnid) +
@@ -335,9 +336,7 @@ export default function install(alasql, internal) {
 							} else {
 								// For JOINs with inline data where column table is unknown, search all tables
 								var needsRuntimeResolution =
-									!col.tableid &&
-									query.sources.length > 1 &&
-									(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
+									!col.tableid && query.sources.length > 1 && (!ownerTbid || ownerTbid === '-');
 
 								// Today's code for the read: asked from the sources per row (#2680), or
 								// the column of one source
@@ -361,7 +360,7 @@ export default function install(alasql, internal) {
 											'p',
 											askAliases,
 											col.columnid,
-											query.defcols['.']
+											query.columnScope
 										);
 									};
 								} else {
@@ -481,7 +480,7 @@ export default function install(alasql, internal) {
 							"'" +
 								escapeq(col.as) +
 								"':" +
-								n2u(col.expression.toJS('p', query.defaultTableid, query.defcols))
+								n2u(col.expression.toJS('p', query.defaultTableid, query.columnScope))
 						);
 					} else if (col.aggregatorid === 'COUNT') {
 						ss.push("'" + escapeq(col.as) + "':1");
@@ -501,7 +500,7 @@ export default function install(alasql, internal) {
 				if (arrowPath && arrowPath.length > 1) {
 					// For arrow expressions in INTO OBJECT(), generate nested object assignment
 					// This will be added to sp (post-processing) instead of ss (inline object)
-					var valueJs = n2u(col.toJS('p', query.defaultTableid, query.defcols));
+					var valueJs = n2u(col.toJS('p', query.defaultTableid, query.columnScope));
 					// Generate code to create nested structure
 					// e.g., for path ['details', 'stock']: r['details'] = r['details'] || {}; r['details']['stock'] = value;
 					for (var i = 0; i < arrowPath.length - 1; i++) {
@@ -536,7 +535,7 @@ export default function install(alasql, internal) {
 						"'" +
 							escapeq(col.as || col.columnid || col.toString()) +
 							"':" +
-							n2u(col.toJS('p', query.defaultTableid, query.defcols))
+							n2u(col.toJS('p', query.defaultTableid, query.columnScope))
 					);
 					//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
 					//if(col instanceof yy.Expression) {
@@ -581,7 +580,7 @@ export default function install(alasql, internal) {
 				} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
 					s += "r['" + key + "']=r['" + params[v.param] + "'];";
 				} else {
-					s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.defcols) + ';';
+					s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.columnScope) + ';';
 				}
 				query.removeKeys.push(key);
 			});
@@ -591,7 +590,7 @@ export default function install(alasql, internal) {
 			var exprs = this.distinctOn.map(function (e) {
 				if (e instanceof yy.Column && query.xcolumns[e.columnid]) return "r['" + e.columnid + "']";
 				if (e instanceof yy.NumValue) return 'r[Object.keys(r)[' + (e.value - 1) + ']]';
-				return e.toJS('p', query.defaultTableid, query.defcols);
+				return e.toJS('p', query.defaultTableid, query.columnScope);
 			});
 			s += "r['$$distinctOn']=JSON.stringify([" + exprs.join(',') + ']);';
 			query.removeKeys.push('$$distinctOn');

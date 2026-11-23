@@ -49,7 +49,7 @@ export default function install(alasql, internal) {
 			// If SELECT contains group aggregators without source tables
 			var tableid = '';
 		}
-		var defcols = query.defcols;
+		var defcols = query.columnScope;
 		query.groupSources = new WeakMap();
 		// The grouped expressions with their key in the group object: {key, node}
 		query.groupKeys = [];
