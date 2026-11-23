@@ -1,7 +1,7 @@
-//! AlaSQL v4.6.7 build: develop-f6e298b2 | © 2014-2024 Andrey Gershun & Mathias Wulff | License: MIT
+//! AlaSQL v4.6.8 build: develop-f6e298b2 | © 2014-2024 Andrey Gershun & Mathias Wulff | License: MIT
 /*
 @module alasql
-@version 4.6.7
+@version 4.6.8
 
 AlaSQL - JavaScript SQL database
 © 2014-2024	Andrey Gershun & Mathias Wulff
@@ -141,7 +141,7 @@ SOFTWARE.
 		Current version of alasql
 		  @constant {string}
 	*/
-	alasql.version = '4.6.7';
+	alasql.version = '4.6.8';
 	alasql.build = 'develop-f6e298b2';
 
 	/**
@@ -2505,7 +2505,7 @@ next:function () {
 
 // return next match that has a token
 lex:function lex () {
-        var r = this.next();
+        var r = this.next();if(r&&/^(N?['"]__proto__['"]|\[__proto__\]|`__proto__`|__proto__)$/i.test(this.yytext))throw new Error("__proto__ is not allowed");
         if (r) {
             return r;
         } else {
@@ -6562,7 +6562,7 @@ function queryfn3(query) {
 
 	// Prepare variables
 	query.data = [];
-	query.xgroups = {};
+	query.xgroups=Object.create(null);
 	query.groups = [];
 
 	// Level of Joins
@@ -14827,22 +14827,22 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 		if (this.props && this.props.length > 0) {
 			let fs;
 			if (this.method === '@') {
-				fs = `alasql.vars['${this.variable}']`;
+				fs = `alasql.vars[k('${this.variable}')]`;
 			} else {
-				fs = `params['${this.variable}']`;
+				fs = `params[k('${this.variable}')]`;
 			}
 			this.props.forEach(prop => {
 				if (typeof prop === 'string') {
-					fs += `['${prop}']`;
+					fs += `[k('${prop}')]`;
 				} else if (typeof prop === 'number') {
 					fs += `[${prop}]`;
 				} else {
 					// Assuming prop.toJS() is a method that converts prop to a JavaScript expression.
-					fs += `[${prop.toJS()}]`;
+					fs += `[k(${prop.toJS()})]`;
 				}
 			});
 
-			new Function('value, params, alasql', `${fs} = value`)(res, params, alasql);
+			new Function('value, params, alasql', `var k=function(x){if(x==="__proto__"||x==="constructor"||x==="prototype")throw new Error(x+" is not allowed");return x};${fs} = value`)(res, params, alasql);
 		} else {
 			if (this.method === '@') {
 				alasql.vars[this.variable] = res;
