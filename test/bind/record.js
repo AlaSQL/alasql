@@ -77,6 +77,9 @@ function today(js, err, context) {
 }
 
 function binding(ref) {
+	// A name written as source.column whose source the SELECT does not have: the lookup writes
+	// a read of that source, which fails when the query runs, and the binding names it too
+	if (ref.unresolved && ref.qualified !== undefined) return {kind: 'source', source: ref.qualified};
 	if (ref.unresolved) return {kind: 'none'};
 	if (ref.ambiguous) return {kind: 'ambiguous', ambiguous: ref.ambiguous, scope: ref.scope};
 	if (ref.any) return {kind: 'any', any: ref.any, scope: ref.scope};

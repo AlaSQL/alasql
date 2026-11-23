@@ -103,6 +103,7 @@ describe(`Test ${testId} - bind.column beside the lookup of Column.toJS`, functi
 			{
 				unresolved: true,
 				column: 'a',
+				qualified: 'nosource',
 			}
 		);
 	});
