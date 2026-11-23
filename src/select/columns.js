@@ -29,7 +29,7 @@ export default function install(alasql, internal) {
 		if (scope) {
 			try {
 				ref = internal.bind.column(col, scope);
-				read = internal.bind.read(ref, scope, place);
+				read = internal.bind.read(ref, scope, place, col);
 				written = internal.bind.write(read, scope, context, col);
 			} catch (err) {
 				ref = read = {error: err};

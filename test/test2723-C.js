@@ -211,4 +211,22 @@ describe(`Test ${testId} - the 4.x rules for an ambiguous and an unknown column`
 		assert.deepStrictEqual(r.binding, {unresolved: true, column: 'k', qualified: 'zz'});
 		assert.deepStrictEqual(r.read, r.binding);
 	});
+
+	it('K) A bare name of the outer SELECT is not found in a correlated subquery (#2644)', function () {
+		const outer = 'select t1.k from t1 where exists (select 1 from t0 where t0.k = t1.k and ';
+		// v is a column of t1, the outer table. It is read from t0 and is undefined there
+		assert.deepStrictEqual(alasql(outer + 'v > 0)'), []);
+		assert.deepStrictEqual(alasql(outer + 'abs(v) > 0)'), []);
+		// written with its source it is found
+		assert.deepStrictEqual(alasql(outer + 't1.v > 0)'), [{k: 1}, {k: 2}]);
+		var r = readings(outer + 'v > 0)').v;
+		assert.deepStrictEqual(r.binding, {scope: 1, source: 't1', column: 'v'});
+		assert.deepStrictEqual(r.read, {
+			scope: 0,
+			source: 't0',
+			column: 'v',
+			rule: 'notOuter',
+			place: 'row',
+		});
+	});
 });
