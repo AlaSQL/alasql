@@ -95,7 +95,8 @@ export default function install(alasql, internal) {
 	 *   {scope, source, column}        the column of one source; scope is 0 for the SELECT itself, 1 for the one around it, ...
 	 *   {scope, any: [source], column} decided per row: the first of these sources whose row has the key
 	 *   {scope, ambiguous: [source], column} found in the column definitions of more than one source
-	 *   {unresolved: true, column}     no source of that name, or no source that can have the column
+	 *   {unresolved: true, column}     no source that can have the column
+	 *   {unresolved: true, column, qualified: source}  written as source.column, and no source of that name
 	 */
 	function column(col, inner) {
 		const columnid = col.columnid;
@@ -131,7 +132,10 @@ export default function install(alasql, internal) {
 			if (nUnknown > 1) return {scope: depth, any: unknowns, column: columnid};
 			if (nUnknown) return {scope: depth, source: unknown, column: columnid};
 		}
-		return {unresolved: true, column: columnid};
+		// qualified is the source of a name written as source.column: no rule gives it another one
+		return col.tableid
+			? {unresolved: true, column: columnid, qualified: col.tableid}
+			: {unresolved: true, column: columnid};
 	}
 
 	// The 4.x rules. Each takes the binding and the scope of the SELECT the reference is in, and
@@ -142,8 +146,10 @@ export default function install(alasql, internal) {
 		// and the like running. Removed by #3109, which makes the name an error. An alias of the
 		// select list inside an aggregate in HAVING is read the same way today (`HAVING SUM(n) > 0`
 		// with `COUNT(*) AS n`), and that reading is removed by #2878.
+		// A name written as source.column with a source the SELECT does not have is not such a
+		// name: 4.x fails on it when the query runs, and the rule leaves it alone (#3119).
 		onlyTable(ref, sc) {
-			if (ref.unresolved && sc.sources.length === 1) {
+			if (ref.unresolved && !ref.qualified && sc.sources.length === 1) {
 				return {scope: 0, source: sc.sources[0].alias, column: ref.column};
 			}
 		},
