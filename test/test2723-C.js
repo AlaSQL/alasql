@@ -135,13 +135,14 @@ describe(`Test ${testId} - the 4.x rules for an ambiguous and an unknown column`
 		assert.strictEqual(r.read.source, 't0');
 	});
 
-	it('G) Alone in the select list, a bare name of an APPLY source is not found (#3115)', function () {
+	it('G) Alone in the select list, a bare name of an APPLY source is found (#3115)', function () {
 		const apply = ' from t0 cross apply (select v from t1 where t1.k = t0.k) z';
+		// v was undefined in every row
 		assert.deepStrictEqual(alasql('select x, v' + apply), [
-			{x: 5, v: undefined},
-			{x: 6, v: undefined},
+			{x: 5, v: 10},
+			{x: 6, v: 11},
 		]);
-		// written with the source, or inside an expression, it is found
+		// written with the source, or inside an expression, it was found before
 		assert.deepStrictEqual(alasql('select x, z.v' + apply), [
 			{x: 5, v: 10},
 			{x: 6, v: 11},
@@ -150,14 +151,48 @@ describe(`Test ${testId} - the 4.x rules for an ambiguous and an unknown column`
 			{x: 5, w: 10},
 			{x: 6, w: 11},
 		]);
+		// no 4.x rule: what is read is the binding
 		var r = readings('select x, v' + apply).v;
 		assert.deepStrictEqual(r.binding, {scope: 0, source: 'z', column: 'v'});
-		assert.deepStrictEqual(r.read, {
-			unresolved: true,
-			column: 'v',
-			rule: 'notInApply',
-			place: 'select',
-		});
+		assert.deepStrictEqual(r.read, {scope: 0, source: 'z', column: 'v'});
+	});
+
+	it('H) The same with OUTER APPLY, where a row can be without a match', function () {
+		const apply = ' from t0 outer apply (select v from t1 where t1.k = t0.k and t1.v > 10) z';
+		assert.deepStrictEqual(alasql('select x, v' + apply), [
+			{x: 5, v: undefined},
+			{x: 6, v: 11},
+		]);
+		assert.deepStrictEqual(alasql('select x, v' + apply), alasql('select x, z.v' + apply));
+	});
+
+	it('I) With a second APPLY source, each bare name comes from the source that has it', function () {
+		const first = ' cross apply (select v from t1 where t1.k = t0.k) z';
+		assert.deepStrictEqual(
+			alasql(
+				'select x, v, w from t0' +
+					first +
+					' cross apply (select v as w from t2 where t2.k = t0.k) y'
+			),
+			[
+				{x: 5, v: 10, w: 20},
+				{x: 6, v: 11, w: 21},
+			]
+		);
+		// both have v: the first of them whose row has it, as for other sources without
+		// column definitions (#2680)
+		const both =
+			'select x, v from t0' + first + ' cross apply (select v from t2 where t2.k = t0.k) y';
+		assert.deepStrictEqual(alasql(both), [
+			{x: 5, v: 10},
+			{x: 6, v: 11},
+		]);
+		assert.deepStrictEqual(readings(both).v.binding, {scope: 0, any: ['z', 'y'], column: 'v'});
+		// a table that defines the name is read before an APPLY source is asked, as before
+		assert.deepStrictEqual(alasql('select x, v from t0' + first + ' join t2 on t2.k = t0.k'), [
+			{x: 5, v: 20},
+			{x: 6, v: 21},
+		]);
 	});
 
 	it('J) A name with a source that the SELECT does not have fails when the query runs (#3119)', function () {
