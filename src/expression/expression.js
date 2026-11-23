@@ -1,6 +1,6 @@
 import {escapeq, returnTrue} from '../utils/helpers.js';
 import {Node} from './node.js';
-import {re_invalidFnNameChars, stdlibDefcols} from '../functions/functions.js';
+import {re_invalidFnNameChars} from '../functions/functions.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -683,11 +683,12 @@ export default function install(alasql, internal) {
 			// Value of an unqualified column from the first source that has it, even when it is null (#2873).
 			// A table with column definitions is decided here, as its rows leave out columns that were
 			// not inserted; any other source is decided per row by whether the row has the key.
-			static fromAnySource(context, aliases, columnid, sources) {
+			// sc is the scope of the SELECT (bind.scope), which knows the column definitions
+			static fromAnySource(context, aliases, columnid, sc) {
 				return aliases.reduceRight((rest, alias) => {
-					const columns = sources?.[alias];
-					if (columns instanceof Set) {
-						return columns.has(columnid) ? `${context}['${alias}']?.['${columnid}']` : rest;
+					const has = internal.bind.has(sc, alias, columnid);
+					if (has !== undefined) {
+						return has ? `${context}['${alias}']?.['${columnid}']` : rest;
 					}
 					return `('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`;
 				}, 'undefined');
@@ -755,13 +756,12 @@ export default function install(alasql, internal) {
 				// test mode: the lookup runs beside it, and the check compares the two (test/bind/)
 				const onBind = Column.onBind;
 				if (!onBind && written !== undefined) return written;
-				// In the arguments of a built-in function the lookup gets the default columns
-				// that give it the reading of that place
-				const lookupCols = inFunction ? stdlibDefcols(defcols, tableid) : defcols;
-				if (!onBind) return this.lookupJS(context, tableid, lookupCols);
+				// In the arguments of a built-in function the lookup reads a name two tables define
+				// from the first table too (#2917)
+				if (!onBind) return this.lookupJS(context, tableid, defcols, inFunction);
 				let js;
 				try {
-					js = this.lookupJS(context, tableid, lookupCols);
+					js = this.lookupJS(context, tableid, defcols, inFunction);
 				} catch (err) {
 					onBind(this, ref, undefined, err, context, tableid, defcols, scope, read, written);
 					throw err;
@@ -770,7 +770,9 @@ export default function install(alasql, internal) {
 				return written !== undefined ? written : js;
 			}
 
-			lookupJS(context, tableid, defcols) {
+			// defcols is the scope of the SELECT (bind.scope) when the caller has one. The name is
+			// from the time it was a dictionary of default columns, and every toJS passes it on.
+			lookupJS(context, tableid, defcols, firstTableIfAmbiguous) {
 				// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
 				if (this.valueKeyword && context === 'x') {
 					return context;
@@ -800,23 +802,27 @@ export default function install(alasql, internal) {
 				}
 
 				if (defcols) {
-					const tbid = defcols[this.columnid];
+					let tbid = internal.bind.owner(defcols, this.columnid);
 					if (tbid === '-') {
-						throw new Error(
-							`Cannot resolve column "${this.columnid}" because it exists in two source tables`
-						);
-					} else if (tbid) {
+						if (!firstTableIfAmbiguous) {
+							throw new Error(
+								`Cannot resolve column "${this.columnid}" because it exists in two source tables`
+							);
+						}
+						tbid = tableid;
+					}
+					if (tbid) {
 						return this.columnid !== '_'
 							? `${context}['${tbid}']['${this.columnid}']`
 							: `${context}['${tbid}']`;
-					} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
+					} else if (this.columnid !== '_' && internal.bind.aliases(defcols).length > 1) {
 						// Not a column of any table here, so it comes from a subquery, parameter
 						// or table without column definitions (#832)
 						return Column.fromAnySource(
 							context,
-							Object.keys(defcols['.']),
+							internal.bind.aliases(defcols),
 							this.columnid,
-							defcols['.']
+							defcols
 						);
 					} else {
 						return this.columnid !== '_'

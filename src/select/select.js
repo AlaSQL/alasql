@@ -207,6 +207,50 @@ export default function install(alasql, internal) {
 			}
 		}
 
+		// The errors of a FROM or JOIN that names a table or a database that does not exist, or
+		// that is of a kind the compiler does not know. They are thrown here, after the
+		// subqueries of WHERE are compiled and before FROM is, as they were when this walk also
+		// built the dictionary of default columns.
+		checkSources(databaseid) {
+			if (this.from) {
+				for (const fr of this.from) {
+					if (fr instanceof yy.Table) {
+						if (internal.bind.table(fr, databaseid).db.tables[fr.tableid] === undefined) {
+							throw new Error('Table does not exist: ' + fr.tableid);
+						}
+					} else if (!(
+						fr instanceof yy.Select ||
+						fr instanceof yy.Search ||
+						fr instanceof yy.ParamValue ||
+						fr instanceof yy.VarValue ||
+						fr instanceof yy.FuncValue ||
+						fr instanceof yy.FromData ||
+						fr instanceof yy.Json ||
+						fr.inserted
+					)) {
+						throw new Error('Unknown type of FROM clause');
+					}
+				}
+			}
+			if (this.joins) {
+				for (const jn of this.joins) {
+					// a source without a name and without a table fails here, as it did
+					void (jn.as || jn.table.tableid);
+					if (jn.table) {
+						const ref = internal.bind.table(jn.table, databaseid);
+						if (ref.db === undefined) {
+							throw new Error('Database does not exist: ' + ref.databaseid);
+						}
+						if (ref.db.tables[jn.table.tableid] === undefined) {
+							throw new Error('Table does not exist: ' + jn.table.tableid);
+						}
+					} else if (!(jn.select || jn.param || jn.func)) {
+						throw new Error('Unknown type of FROM clause');
+					}
+				}
+			}
+		}
+
 		compileInScope(databaseid, params, db) {
 			// Create variable for query
 			var query = new Query();
@@ -230,7 +274,11 @@ export default function install(alasql, internal) {
 			// 0. Precompile queries for IN, NOT IN, ANY and ALL operators
 			this.compileQueries(query);
 
-			query.defcols = this.compileDefCols(query, databaseid);
+			this.checkSources(databaseid);
+
+			// What the sources of this SELECT are and which columns they define: the scope that
+			// compile() entered. It is passed to every toJS as its third argument.
+			query.columnScope = internal.bind.current();
 
 			// 1. Compile FROM clause
 			query.fromfn = this.compileFrom(query);
@@ -777,7 +825,7 @@ export default function install(alasql, internal) {
 			modifier: q.modifier,
 			database: q.database,
 			data: q.data,
-			defcols: q.defcols,
+			columnScope: q.columnScope,
 			queriesfn: q.queriesfn,
 			existsfn: q.existsfn,
 			sources: q.sources,

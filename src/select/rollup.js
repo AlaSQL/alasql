@@ -39,9 +39,9 @@ export default function install(alasql, internal) {
 				if (a[i] instanceof yy.Column) {
 					a[i].nick = escapeq(a[i].columnid);
 					query.groupColumns[escapeq(a[i].columnid)] = a[i].nick;
-					aaa = `${a[i].nick}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
+					aaa = `${a[i].nick}\t${a[i].toJS('p', query.sources[0].alias, query.columnScope)}`;
 				} else {
-					aaa = `${expressionKey(a[i], query)}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
+					aaa = `${expressionKey(a[i], query)}\t${a[i].toJS('p', query.sources[0].alias, query.columnScope)}`;
 				}
 
 				if (mask & (1 << i)) ss.push(aaa);
@@ -105,12 +105,12 @@ export default function install(alasql, internal) {
 					gv[t].nick = gv[t].nick ? escapeq(gv[t].nick) : escapeq(gv[t].columnid);
 					query.groupColumns[gv[t].nick] = gv[t].nick;
 					res = res.map(r =>
-						r.concat(`${gv[t].nick}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`)
+						r.concat(`${gv[t].nick}\t${gv[t].toJS('p', query.sources[0].alias, query.columnScope)}`)
 					);
 				} else if (gv[t] instanceof yy.FuncValue) {
 					const key = expressionKey(gv[t], query);
 					res = res.map(r =>
-						r.concat(`${key}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`)
+						r.concat(`${key}\t${gv[t].toJS('p', query.sources[0].alias, query.columnScope)}`)
 					);
 				} else if (gv[t] instanceof yy.GroupExpression) {
 					if (gv[t].type == 'ROLLUP') res = cartes(res, rollup(gv[t].group, query));
@@ -123,7 +123,7 @@ export default function install(alasql, internal) {
 				} else {
 					const key = expressionKey(gv[t], query);
 					res = res.map(r =>
-						r.concat(`${key}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`)
+						r.concat(`${key}\t${gv[t].toJS('p', query.sources[0].alias, query.columnScope)}`)
 					);
 				}
 			}
@@ -133,10 +133,12 @@ export default function install(alasql, internal) {
 		if (gv instanceof yy.Column) {
 			gv.nick = escapeq(gv.columnid);
 			query.groupColumns[gv.nick] = gv.nick;
-			return [`${gv.nick}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
+			return [`${gv.nick}\t${gv.toJS('p', query.sources[0].alias, query.columnScope)}`];
 		}
 
-		return [`${expressionKey(gv, query)}\t${gv.toJS('p', query.sources[0].alias, query.defcols)}`];
+		return [
+			`${expressionKey(gv, query)}\t${gv.toJS('p', query.sources[0].alias, query.columnScope)}`,
+		];
 	}
 
 	internal.decartes = decartes;

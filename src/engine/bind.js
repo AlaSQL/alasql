@@ -73,7 +73,54 @@ export default function install(alasql, internal) {
 			for (const jn of select.joins) add(jn.as || (jn.table && jn.table.tableid), jn.table);
 		}
 		// place is set while the arguments of a built-in function are compiled (bind.place)
-		return {sources, outer, place: undefined};
+		return {sources, outer, place: undefined, aliases: undefined};
+	}
+
+	/**
+	 * The source of this SELECT whose column definitions have a name
+	 * @param {object} sc The scope of the SELECT
+	 * @param {string} columnid The name
+	 * @returns {string|undefined} The alias of the source, '-' when more than one source defines
+	 *   the name, undefined when none does. Sources without column definitions are not asked.
+	 */
+	function owner(sc, columnid) {
+		const sources = sc.sources;
+		let found;
+		let n = 0;
+		for (let i = 0; i < sources.length; i++) {
+			const columns = sources[i].columns;
+			if (columns !== null && defines(columns, columnid)) {
+				if (n++) return '-';
+				found = sources[i].alias;
+			}
+		}
+		return n ? found : undefined;
+	}
+
+	/**
+	 * Whether a source of this SELECT defines a name
+	 * @returns {boolean|undefined} undefined when the source has no column definitions, or is no source here
+	 */
+	function has(sc, alias, columnid) {
+		const sources = sc.sources;
+		for (let i = 0; i < sources.length; i++) {
+			if (String(sources[i].alias) === String(alias)) {
+				return sources[i].columns === null ? undefined : defines(sources[i].columns, columnid);
+			}
+		}
+	}
+
+	// The names of the sources of this SELECT, each once, in the order of FROM and JOIN
+	function aliases(sc) {
+		if (!sc.aliases) {
+			const list = [];
+			for (let i = 0; i < sc.sources.length; i++) {
+				const alias = String(sc.sources[i].alias);
+				if (list.indexOf(alias) === -1) list.push(alias);
+			}
+			sc.aliases = list;
+		}
+		return sc.aliases;
 	}
 
 	function defines(columns, columnid) {
@@ -278,6 +325,9 @@ export default function install(alasql, internal) {
 		column,
 		read,
 		write,
+		owner,
+		has,
+		aliases,
 		// For the test mode (Column.onBind): the binding of a column and what 4.x reads for it,
 		// in the place the reference stands in. An error goes into the result, never into the query.
 		beside(col, sc, place) {
