@@ -125,7 +125,7 @@ yy.Select.prototype.compileJoins = function (query) {
 				srcwherefn: returnTrue,
 			};
 			const jnparam = jn.param.param;
-			ps = "let res=alasql.prepareFromData(params['" + jnparam + "']";
+			ps = "let res=alasql.prepareFromData(params['" + escapeq(jnparam) + "']";
 			if (jn.array) ps += ',true';
 			ps += '); if(cb) res=cb(res, idx, query); return res';
 
