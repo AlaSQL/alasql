@@ -644,7 +644,7 @@ Lockfile:
     dependencies:
       balanced-match "^1.0.0"
   
-  braces@^2.3.1, braces@^2.3.2:
+  braces@^2.3.2, braces@^2.3.2:
     version "2.3.2"
     resolved "https://registry.yarnpkg.com/braces/-/braces-2.3.2.tgz#5979fd3f14cd531565e5fa2df1abfff1dfaee729"
     integrity sha512-aNdbnj9P8PjdXU4ybaWLK2IF3jc/EoDYbC7AazW6to3TRsfXxscC9UXOB5iDiEQrkyIbWp2SLQda4+QAa7nc3w==
@@ -3141,7 +3141,7 @@ Lockfile:
     dependencies:
       arr-diff "^4.0.0"
       array-unique "^0.3.2"
-      braces "^2.3.1"
+      braces "^2.3.2"
       define-property "^2.0.2"
       extend-shallow "^3.0.2"
       extglob "^2.0.4"
@@ -3159,7 +3159,7 @@ Lockfile:
     integrity sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==
     dependencies:
       braces "^3.0.2"
-      picomatch "^2.3.1"
+      picomatch "^2.3.2"
   
   mime-db@1.52.0:
     version "1.52.0"
@@ -3649,9 +3649,9 @@ Lockfile:
       pify "^2.0.0"
       pinkie-promise "^2.0.0"
   
-  picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.3.1:
-    version "2.3.1"
-    resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.1.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
+  picomatch@^2.0.4, picomatch@^2.2.1, picomatch@^2.3.2:
+    version "2.3.2"
+    resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.3.2.tgz#3ba3833733646d9d3e4995946c1365a67fb07a42"
     integrity sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==
   
   pidtree@^0.6.0:
@@ -4647,8 +4647,8 @@ Lockfile:
       set-value "^2.0.1"
   
   unique-stream@^2.0.2:
-    version "2.3.1"
-    resolved "https://registry.yarnpkg.com/unique-stream/-/unique-stream-2.3.1.tgz#c65d110e9a4adf9a6c5948b28053d9a8d04cbeac"
+    version "2.3.2"
+    resolved "https://registry.yarnpkg.com/unique-stream/-/unique-stream-2.3.2.tgz#c65d110e9a4adf9a6c5948b28053d9a8d04cbeac"
     integrity sha512-2nY4TnBE70yoxHkDli7DMazpWiP7xMdCYqU2nBRO0UB+ZpEkGsSija7MvmvnZFUeC+mrgiUfcHSr3LmRFIg4+A==
     dependencies:
       json-stable-stringify-without-jsonify "^1.0.1"
