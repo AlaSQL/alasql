@@ -2,7 +2,7 @@
 
 //
 // Command line interface for Alasql
-// Version: 2.1.9
+// Version: 2.1.10
 // Date: 28.07.2015
 // (c) 2014-2022, Andrey Gershun & Mathias Wulff
 //
