@@ -1,7 +1,7 @@
-//! AlaSQL v1.7.6 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v1.7.7 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 1.7.6
+@version 1.7.7
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '1.7.6';
+alasql.version = '1.7.7';
 
 /**
 	Debug flag
@@ -2492,7 +2492,7 @@ next:function () {
 
 // return next match that has a token
 lex:function lex () {
-        var r = this.next();
+        var r = this.next();if(r&&/^(N?['"]__proto__['"]|\[__proto__\]|`__proto__`|__proto__)$/i.test(this.yytext))throw new Error("__proto__ is not allowed");
         if (r) {
             return r;
         } else {
@@ -6950,7 +6950,7 @@ function queryfn3(query) {
 
 	// Prepare variables
 	query.data = [];
-	query.xgroups = {};
+	query.xgroups=Object.create(null);
 	query.groups = [];
 
 	// Level of Joins
@@ -15659,19 +15659,19 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 		}
 		if (this.props && this.props.length > 0) {
 			if (this.method == '@') {
-				var fs = "alasql.vars['" + this.variable + "']";
+				var fs = "alasql.vars[k('"+this.variable+"')]";
 			} else {
-				var fs = "params['" + this.variable + "']";
+				var fs = "params[k('"+this.variable+"')]";
 			}
 			fs += this.props
 				.map(function (prop) {
 					if (typeof prop == 'string') {
-						return "['" + prop + "']";
+						return "[k('"+prop+"')]";
 					} else if (typeof prop == 'number') {
 						return '[' + prop + ']';
 					} else {
 
-						return '[' + prop.toJS() + ']';
+						return "[k("+prop.toJS()+")]";
 						//				} else {
 
 						//					throw new Error('Wrong SET property');
@@ -15679,7 +15679,7 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 				})
 				.join();
 
-			new Function('value,params,alasql', 'var y;' + fs + '=value')(res, params, alasql);
+			new Function('value,params,alasql', 'var y;var k=function(x){if(x==="__proto__"||x==="constructor"||x==="prototype")throw new Error(x+" is not allowed");return x};'+fs+'=value')(res, params, alasql);
 		} else {
 			if (this.method == '@') {
 				alasql.vars[this.variable] = res;
