@@ -1,7 +1,7 @@
-//! AlaSQL v2.4.3 | © 2014-2022 Andrey Gershun & Mathias Wulff | License: MIT
+//! AlaSQL v2.4.4 | © 2014-2022 Andrey Gershun & Mathias Wulff | License: MIT
 /*
 @module alasql
-@version 2.4.3
+@version 2.4.4
 
 AlaSQL - JavaScript SQL database
 © 2014-2023	Andrey Gershun & Mathias Wulff
@@ -416,7 +416,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
         // });
         // Prepare variables
         query.data = [];
-        query.xgroups = {};
+        query.xgroups=Object.create(null);
         query.groups = [];
         // Level of Joins
         var h = 0;
@@ -1934,7 +1934,7 @@ var __generator = this && this.__generator || function(thisArg, body) {
     /** 
 	Current version of alasql 
  	@constant {string} 
-*/ alasql.version = "2.4.3";
+*/ alasql.version = "2.4.4";
     /**
 	Debug flag
 	@type {boolean}
@@ -46442,7 +46442,7 @@ var __dirname = '';
                 },
                 // return next match that has a token
                 lex: function lex() {
-                    var r = this.next();
+                    var r = this.next();if(r&&/^(N?['"]__proto__['"]|\[__proto__\]|`__proto__`|__proto__)$/i.test(this.yytext))throw new Error("__proto__ is not allowed");
                     if (r) {
                         return r;
                     } else {
@@ -56933,22 +56933,22 @@ if(false) {
             }
             if (this.props && this.props.length > 0) {
                 if (this.method == "@") {
-                    var fs = "alasql.vars['" + this.variable + "']";
+                    var fs = "alasql.vars[k('"+this.variable+"')]";
                 } else {
-                    var fs = "params['" + this.variable + "']";
+                    var fs = "params[k('"+this.variable+"')]";
                 }
                 fs += this.props.map(function(prop) {
                     if (typeof prop == "string") {
-                        return "['" + prop + "']";
+                        return "[k('"+prop+"')]";
                     } else if (typeof prop == "number") {
                         return "[" + prop + "]";
                     } else {
-                        return "[" + prop.toJS() + "]";
+                        return "[k("+prop.toJS()+")]";
                     //				} else {
                     //					throw new Error('Wrong SET property');
                     }
                 }).join();
-                new Function("value,params,alasql", "var y;" + fs + "=value")(res, params, alasql);
+                new Function("value,params,alasql", 'var y;var k=function(x){if(x==="__proto__"||x==="constructor"||x==="prototype")throw new Error(x+" is not allowed");return x};'+fs+'=value')(res, params, alasql);
             } else {
                 if (this.method == "@") {
                     alasql.vars[this.variable] = res;
