@@ -194,4 +194,21 @@ describe(`Test ${testId} - the 4.x rules for an ambiguous and an unknown column`
 			{x: 6, v: 21},
 		]);
 	});
+
+	it('J) A name with a source that the SELECT does not have fails when the query runs (#3119)', function () {
+		// No 4.x rule gives it the only table. It was read from that table in the select list,
+		// in a grouped select list and in function arguments for a short time on main.
+		// the text of the error is the JavaScript engine's own, so only its kind is checked
+		const text = TypeError;
+		assert.throws(() => alasql('select zz.k from t0'), text);
+		assert.throws(() => alasql('select zz.nosuch from t0'), text);
+		assert.throws(() => alasql('select abs(zz.x) as r from t0'), text);
+		assert.throws(() => alasql('select zz.x, count(*) as n from t0 group by k'), text);
+		assert.throws(() => alasql('select k from t0 where zz.x is null'), text);
+		assert.throws(() => alasql('select zz.x + 1 as r from t0'), text);
+		assert.throws(() => alasql('select zz.v' + three), text);
+		var r = readings('select zz.k from t0')['zz.k'];
+		assert.deepStrictEqual(r.binding, {unresolved: true, column: 'k', qualified: 'zz'});
+		assert.deepStrictEqual(r.read, r.binding);
+	});
 });
