@@ -25,7 +25,7 @@
 
 	4.x does not read what these rules say in every place. Where it reads something else and
 	queries rely on it, a 4.x rule says what (bind.read). Each rule names the issue that removes
-	it in 5.0. Like the binding, the rules only run when a test sets Column.onBind.
+	it in 5.0.
 */
 
 export default function install(alasql, internal) {
