@@ -135,6 +135,17 @@ export default function install(alasql, internal) {
 	// The 4.x rules. Each takes the binding and the scope of the SELECT the reference is in, and
 	// returns the binding that 4.x reads there, or undefined when the rule does not apply.
 	const rules4x = {
+		// A bare name that only a SELECT around this one has, in a correlated subquery: 4.x does
+		// not look outward for a bare name. It reads the only source of the inner SELECT, where
+		// the value is undefined, or nothing when the inner SELECT has several sources. Written
+		// as source.column the outer column is read. Removed by #2644.
+		notOuter(ref, sc, col) {
+			if (ref.scope > 0 && !col.tableid) {
+				return sc.sources.length === 1
+					? {scope: 0, source: sc.sources[0].alias, column: ref.column}
+					: {unresolved: true, column: ref.column};
+			}
+		},
 		// A bare name that no source can have, in a SELECT with one source: 4.x reads that
 		// source anyway, and the value is undefined in every row. It keeps `WHERE nosuch IS NULL`
 		// and the like running. Removed by #3109, which makes the name an error. An alias of the
@@ -179,10 +190,10 @@ export default function install(alasql, internal) {
 	// The rules of each place a column reference can stand in. In 'row', a plain expression, an
 	// ambiguous name is an error in 4.x too, so there is no rule for it.
 	const places = {
-		row: ['onlyTable'],
-		function: ['onlyTable', 'firstTable'],
-		group: ['onlyTable', 'firstTable'],
-		select: ['onlyTable', 'firstWithColumn'],
+		row: ['notOuter', 'onlyTable'],
+		function: ['notOuter', 'onlyTable', 'firstTable'],
+		group: ['notOuter', 'onlyTable', 'firstTable'],
+		select: ['notOuter', 'onlyTable', 'firstWithColumn'],
 	};
 
 	/**
@@ -190,13 +201,14 @@ export default function install(alasql, internal) {
 	 * @param {object} ref The binding from column()
 	 * @param {object} sc The scope of the SELECT the reference is in
 	 * @param {string} [place] 'row' (the default), 'function', 'group' or 'select'
+	 * @param {object} col The yy.Column, for a rule that looks at how the name is written
 	 * @returns {object} A binding as from column(), with rule and place when a rule was applied
 	 */
-	function read(ref, sc, place) {
+	function read(ref, sc, place, col) {
 		place = place || 'row';
 		const names = places[place];
 		for (let i = 0; i < names.length; i++) {
-			const res = rules4x[names[i]](ref, sc);
+			const res = rules4x[names[i]](ref, sc, col);
 			if (res) {
 				res.rule = names[i];
 				res.place = place;
@@ -271,7 +283,7 @@ export default function install(alasql, internal) {
 		beside(col, sc, place) {
 			try {
 				const ref = column(col, sc);
-				return {ref, read: read(ref, sc, place || sc.place)};
+				return {ref, read: read(ref, sc, place || sc.place, col)};
 			} catch (err) {
 				return {ref: {error: err}, read: {error: err}};
 			}

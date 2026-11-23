@@ -34,15 +34,16 @@ Every outcome but `same` is listed with what each side said and the first refere
 
 4.x does not read what the binding says in every place. Where it reads something else and queries rely on it, a 4.x rule in `src/engine/bind.js` says what, and `bind.read()` applies the rule of the place the reference stands in. `Column.toJS` hands that reading to `onBind` as well, and the check compares today's lookup with it. Like the binding, the rules only run when `Column.onBind` is set.
 
-| Rule              | When                                                                                                                | What 4.x reads                                               | Removed by                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| `onlyTable`       | A bare name that no source can have, in a SELECT with one source. Every place                                       | that source, and the value is undefined                      | #3109, and #2878 for an alias of the select list inside an aggregate in HAVING |
-| `firstTable`      | A bare name that two tables define, as the argument of a built-in function or in the select list of a grouped query | the first source of FROM, whether it defines the name or not | #2928                                                                          |
-| `firstWithColumn` | A bare name that two tables define, alone in the select list of a query without grouping                            | the first source that has it                                 | #2928                                                                          |
+| Rule              | When                                                                                                                | What 4.x reads                                                                | Removed by                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `notOuter`        | A bare name that only a SELECT around this one has, in a correlated subquery. Every place                           | the only source of the inner SELECT, where the value is undefined, or nothing | #2644                                                                          |
+| `onlyTable`       | A bare name that no source can have, in a SELECT with one source. Every place                                       | that source, and the value is undefined                                       | #3109, and #2878 for an alias of the select list inside an aggregate in HAVING |
+| `firstTable`      | A bare name that two tables define, as the argument of a built-in function or in the select list of a grouped query | the first source of FROM, whether it defines the name or not                  | #2928                                                                          |
+| `firstWithColumn` | A bare name that two tables define, alone in the select list of a query without grouping                            | the first source that has it                                                  | #2928                                                                          |
 
 In a plain expression an ambiguous name is an error in 4.x too, so there is no rule for it.
 
-`test/test2723-C.js` pins the results of these places with three tables, where the first table of FROM does not define the name.
+`test/test-binding-matrix.js` runs every kind of column name in every place over several shapes of FROM, so that the check and the parity check see names and places that no other test has. `test/test2723-C.js` pins the results of these places with three tables, where the first table of FROM does not define the name.
 
 A bare name in a grouped select list that only a later source has was a bug and is fixed (#3110).
 
