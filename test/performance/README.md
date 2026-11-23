@@ -43,6 +43,20 @@ Notes:
 - The script is not part of `bun test`; the test glob only matches `test/test[0-9]*` and `test/test-*`.
 - `--group=<name>` runs one group, `--case=<text>` the cases whose name contains the text, and `--list` prints every case with its group.
 
+## Compile time
+
+`bench.js` measures how long queries run. `compile-time.js` measures how long `Select.compile` takes for a parsed statement, which is what a query pays once before it is cached.
+
+```sh
+yarn build-only
+bun test/performance/compile-time.js path/to/base/dist/alasql.fs.js      # the base against ./dist
+bun test/performance/compile-time.js a.fs.js b.fs.js c.fs.js --warmup=2000 --runs=24
+```
+
+It prints the best and the median of the processes, in microseconds per compile, for six queries on Node and Bun, with the change of each build against the first. The builds take turns, one process each. The top of the script describes the queries and the options.
+
+A line moves by a few percent between two runs of the same build on a machine that does other work. Run it on a quiet machine, and read a difference under about 3 percent as none. The numbers in the pull requests of #2723 are from this loop.
+
 ## Groups
 
 A case runs faster when it is alone in a process than after other cases: the JIT has seen fewer kinds of query. Measured on develop, LIKE and the cached tiny query take a quarter of the time on Bun when they run alone, and ORDER BY with LIMIT, scalar functions and LIKE about half on Node. So numbers only compare when they were measured with the same cases in the same process.
