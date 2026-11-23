@@ -6,13 +6,14 @@
 	`this.table.databaseid || databaseid`. A statement that forgot the first half worked on the
 	current database (#2185, #2201, #2704). Now a statement asks bind.table().
 
-	The second part is columns, and so far it is only worked out, not used. bind.scope() makes
-	one scope per SELECT: its sources in the order of FROM and JOIN, each with its columns when
-	they are known, and a link to the scope of the SELECT around it. bind.column() says which
-	source and which column a Column refers to in a scope. Column.toJS still finds its source
-	while the code is generated, as before. Only when a test sets Column.onBind does it ask
-	bind.column() beside it, so that the two can be compared (test/bind/) before the generated
-	code reads the binding. Without it a query pays for the scope and for nothing else.
+	The second part is columns. bind.scope() makes one scope per SELECT: its sources in the
+	order of FROM and JOIN, each with its columns when they are known, and a link to the scope
+	of the SELECT around it. bind.column() says which source and which column a Column refers
+	to in a scope, bind.read() applies the 4.x rule of the place, and bind.write() writes the
+	code of the read. The scope is also what the rest of the compiler asks about the columns
+	of the sources (owner, has, aliases). It replaced a dictionary of default columns that
+	every SELECT built, and it is passed to every toJS as the third argument, still named
+	defcols there.
 
 	The rules of bind.column() are the rules of 4.x where 4.x made a choice:
 	  - a name found in the column definitions of exactly one source is that source's column
@@ -73,7 +74,15 @@ export default function install(alasql, internal) {
 			for (const jn of select.joins) add(jn.as || (jn.table && jn.table.tableid), jn.table);
 		}
 		// place is set while the arguments of a built-in function are compiled (bind.place)
-		return {sources, outer, place: undefined, aliases: undefined};
+		// names and unknown are made at the first bare name (index)
+		return {
+			sources,
+			outer,
+			place: undefined,
+			aliases: undefined,
+			names: undefined,
+			unknown: undefined,
+		};
 	}
 
 	/**
@@ -84,17 +93,36 @@ export default function install(alasql, internal) {
 	 *   the name, undefined when none does. Sources without column definitions are not asked.
 	 */
 	function owner(sc, columnid) {
+		const who = (sc.names || index(sc)).get(columnid);
+		return who === undefined ? undefined : typeof who === 'string' ? who : '-';
+	}
+
+	// The names that the column definitions of this SELECT's sources have, each with the source
+	// that defines it, or with the list of sources when more than one does. It is made once per
+	// SELECT, at the first bare name, so that a name costs one lookup and not a walk over every
+	// column of every source. sc.unknown is the list of the sources without column definitions.
+	function index(sc) {
+		const names = new Map();
+		const unknown = [];
 		const sources = sc.sources;
-		let found;
-		let n = 0;
 		for (let i = 0; i < sources.length; i++) {
 			const columns = sources[i].columns;
-			if (columns !== null && defines(columns, columnid)) {
-				if (n++) return '-';
-				found = sources[i].alias;
+			const alias = sources[i].alias;
+			if (columns === null) {
+				unknown.push(alias);
+				continue;
+			}
+			for (let j = 0; j < columns.length; j++) {
+				const columnid = columns[j].columnid;
+				const who = names.get(columnid);
+				if (who === undefined) names.set(columnid, alias);
+				else if (typeof who === 'string') names.set(columnid, [who, alias]);
+				else who.push(alias);
 			}
 		}
-		return n ? found : undefined;
+		sc.unknown = unknown;
+		sc.names = names;
+		return names;
 	}
 
 	/**
@@ -151,27 +179,17 @@ export default function install(alasql, internal) {
 				}
 				continue;
 			}
-			// The first source of each kind, and a list only when there is a second one. A source
-			// can be without a name (a FROM that is no table and has no alias), so the count says
-			// whether there is one.
-			let found, founds, unknown, unknowns;
-			let nFound = 0;
-			let nUnknown = 0;
-			for (let i = 0; i < sources.length; i++) {
-				const columns = sources[i].columns;
-				const alias = sources[i].alias;
-				if (columns === null) {
-					if (nUnknown++ === 0) unknown = alias;
-					else (unknowns || (unknowns = [unknown])).push(alias);
-				} else if (defines(columns, columnid)) {
-					if (nFound++ === 0) found = alias;
-					else (founds || (founds = [found])).push(alias);
-				}
+			const who = (sc.names || index(sc)).get(columnid);
+			if (who !== undefined) {
+				return typeof who === 'string'
+					? {scope: depth, source: who, column: columnid}
+					: {scope: depth, ambiguous: who, column: columnid};
 			}
-			if (nFound > 1) return {scope: depth, ambiguous: founds, column: columnid};
-			if (nFound) return {scope: depth, source: found, column: columnid};
-			if (nUnknown > 1) return {scope: depth, any: unknowns, column: columnid};
-			if (nUnknown) return {scope: depth, source: unknown, column: columnid};
+			// A source can be without a name (a FROM that is no table and has no alias), so the
+			// length of the list says whether there is one
+			const unknown = sc.unknown;
+			if (unknown.length > 1) return {scope: depth, any: unknown, column: columnid};
+			if (unknown.length) return {scope: depth, source: unknown[0], column: columnid};
 		}
 		// qualified is the source of a name written as source.column: no rule gives it another one
 		return col.tableid
@@ -252,6 +270,9 @@ export default function install(alasql, internal) {
 	 * @returns {object} A binding as from column(), with rule and place when a rule was applied
 	 */
 	function read(ref, sc, place, col) {
+		// A name that this SELECT resolves to one source, or to sources asked per row, is read
+		// as the binding says. Every rule is about a name that is unresolved, ambiguous or outer.
+		if (ref.scope === 0 && ref.ambiguous === undefined) return ref;
 		place = place || 'row';
 		const names = places[place];
 		for (let i = 0; i < names.length; i++) {

@@ -39,7 +39,7 @@ export default function install(alasql, internal) {
 	// that table before the join (#2916). The join order is chosen here when FROM is out of
 	// chain order (#2910): the first table is one with such a filter, and every next table is
 	// one linked to the tables already placed, so no table is scanned in full for every row so
-	// far. Bare column names resolve to their table through defcols, as they do in the
+	// far. Bare column names resolve to their table through the scope of the SELECT, as they do in the
 	// generated code.
 	yy.Select.prototype.compileWhereJoins = function (query) {
 		if (!this.where) return;
@@ -248,7 +248,7 @@ export default function install(alasql, internal) {
 	// The aliases of the sources an expression reads, in the order met, or null when that cannot
 	// be told: a subquery, a search, an aggregate, raw JavaScript, a node this does not know, or
 	// a bare column that no single source answers for (ambiguous, or not among the declared
-	// columns). A bare column resolves through defcols, as Column.toJS resolves it, inside a
+	// columns). A bare column resolves through the scope of the SELECT (bind.owner), as Column.toJS resolves it, inside a
 	// function, CASE or list as well (#2917).
 	function sourcesRead(node, defcols) {
 		var aliases = [];

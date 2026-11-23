@@ -45,26 +45,19 @@ export default function install(alasql, internal) {
 	}
 
 	// In the select list of a grouped query. The 4.x rule of this place: a name two tables define
-	// is read from the first table of FROM (#2928). With the default columns the lookup finds a
-	// bare name in the source that has it (#3110), and without them, for a name two tables
-	// define, it reads the first table.
+	// is read from the first table of FROM (#2928), and the lookup is told to do the same.
 	function groupColumnJS(col, query) {
 		var context = '(this.groupSources.get(g) || g)';
-		var ambiguous =
-			!col.tableid &&
-			query.columnScope &&
-			internal.bind.owner(query.columnScope, col.columnid) === '-';
-		var defcols = ambiguous ? undefined : query.columnScope;
 		var tableid = query.defaultTableid;
 		return columnJS(
 			col,
 			'group',
 			context,
 			function () {
-				return col.lookupJS(context, tableid, defcols);
+				return col.lookupJS(context, tableid, query.columnScope, true);
 			},
 			tableid,
-			defcols
+			query.columnScope
 		);
 	}
 

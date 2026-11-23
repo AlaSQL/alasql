@@ -62,7 +62,7 @@ export default function install(alasql, internal) {
 			Convert AST to JavaScript expression
 			@param {string} context Context string, e.g. 'p','g', or 'x'
 			@param {string} tableid Default table name
-			@param {object} defcols Default columns dictionary
+			@param {object} defcols The scope of the SELECT (bind.scope), when the caller has one
 			@return {string} JavaScript expression
 		*/
 			toJS(context, tableid, defcols) {
@@ -77,7 +77,7 @@ export default function install(alasql, internal) {
 			Compile AST to JavaScript expression
 			@param {string} context Context string, e.g. 'p','g', or 'x'
 			@param {string} tableid Default table name
-			@param {object} defcols Default columns dictionary
+			@param {object} defcols The scope of the SELECT (bind.scope), when the caller has one
 			@return {string} JavaScript expression
 		*/
 			compile(context, tableid, defcols) {
@@ -711,13 +711,13 @@ export default function install(alasql, internal) {
 				return s;
 			}
 
-			// The code that reads the column. Inside a SELECT, where the caller has the default
-			// columns, it is written from the binding (#2723): bind.column says what the name
+			// The code that reads the column. Inside a SELECT, where the caller passes the scope of
+			// the SELECT as defcols, it is written from the binding (#2723): bind.column says what the name
 			// refers to, bind.read applies the 4.x rules of the place, and bind.write writes the
 			// read. The place is 'function' in the arguments of a built-in function, where a name
 			// two tables define is read from the first table of FROM (#2928), and else 'row', where
 			// such a name is an error.
-			// Today's lookup (lookupJS) stays for a caller without default columns, for what the
+			// Today's lookup (lookupJS) stays for a caller without the scope, for what the
 			// binding does not write (a group, `_`, a column of an outer SELECT, a name that is
 			// unresolved or ambiguous after the rules, which is the lookup's error), and for the
 			// case that the binding throws: it must not be able to break a query.
