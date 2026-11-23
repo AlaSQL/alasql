@@ -39,6 +39,8 @@ describe('Test binding matrix - every kind of column name in every place', funct
 		'a table and an APPLY source': {
 			from: 'FROM t0 CROSS APPLY (SELECT v FROM t1 WHERE t1.k = t0.k) ap',
 		},
+		'a table with columns named like built-in properties (#3125)': {from: 'FROM pr'},
+		'a table and a table with such columns': {from: 'FROM t0 JOIN pr ON t0.k = pr.k'},
 		'three tables, two of them with the same column': {
 			from: 'FROM t0 JOIN t1 ON t0.k = t1.k JOIN t2 ON t0.k = t2.k',
 		},
@@ -64,6 +66,10 @@ describe('Test binding matrix - every kind of column name in every place', funct
 		'ap.v',
 		'_',
 		't0._',
+		// also a property of every JavaScript object (#3125): a column of pr, and of no table
+		'constructor',
+		'toString',
+		'valueOf',
 	];
 
 	// The places. @FROM stands for the FROM of the shape.
@@ -102,6 +108,8 @@ describe('Test binding matrix - every kind of column name in every place', funct
 		alasql('CREATE TABLE t1 (k INT, v INT, s STRING)');
 		alasql('CREATE TABLE t2 (k INT, v INT, w STRING)');
 		alasql('CREATE TABLE nc');
+		alasql('CREATE TABLE pr (k INT, constructor INT, toString STRING)');
+		alasql('INSERT INTO pr VALUES (1, 2, "a"), (2, 3, "b")');
 		alasql('INSERT INTO t0 VALUES (1, 5, "a"), (2, -6, "b")');
 		alasql('INSERT INTO t1 VALUES (1, -10, "c"), (2, 11, "d")');
 		alasql('INSERT INTO t2 VALUES (1, 20, "e"), (2, -21, "f")');
