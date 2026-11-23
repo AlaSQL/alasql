@@ -51,22 +51,24 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 		if (this.props && this.props.length > 0) {
 			let fs;
 			if (this.method === '@') {
-				fs = `alasql.vars['${this.variable}']`;
+				fs = `alasql.vars[k('${this.variable}')]`;
 			} else {
-				fs = `params['${this.variable}']`;
+				fs = `params[k('${this.variable}')]`;
 			}
 			this.props.forEach(prop => {
 				if (typeof prop === 'string') {
-					fs += `['${prop}']`;
+					fs += `[k('${prop}')]`;
 				} else if (typeof prop === 'number') {
 					fs += `[${prop}]`;
 				} else {
 					// Assuming prop.toJS() is a method that converts prop to a JavaScript expression.
-					fs += `[${prop.toJS()}]`;
+					fs += `[k(${prop.toJS()})]`;
 				}
 			});
 
-			new Function('value, params, alasql', `${fs} = value`)(res, params, alasql);
+			// A key of the path must not reach a prototype
+			var k = `var k=function(x){if(x==='__proto__'||x==='constructor'||x==='prototype')throw new Error(x+' is not allowed');return x};`;
+			new Function('value, params, alasql', `${k}${fs} = value`)(res, params, alasql);
 		} else {
 			if (this.method === '@') {
 				alasql.vars[this.variable] = res;

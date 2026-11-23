@@ -90,7 +90,7 @@ function queryfn3(query) {
 
 	// Prepare variables
 	query.data = [];
-	query.xgroups = {};
+	query.xgroups = Object.create(null);
 	query.groups = [];
 
 	// Level of Joins
