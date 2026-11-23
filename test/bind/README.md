@@ -48,7 +48,7 @@ A bare name in a grouped select list that only a later source has was a bug and 
 
 ## Places that write their code from the binding
 
-Three places write the generated code from the binding, with `bind.read` and `bind.write`. They are a column alone in the select list of a query without grouping (`compileSelect1` in `src/select/columns.js`), the select list of a grouped query (`groupColumnJS` in the same file) and the arguments of a built-in function inside a SELECT (`Column.functionArgJS` in `src/expression/expression.js`). There the binding runs on every compile, not only in the test mode. Today's lookup stays as the fallback for what the binding does not write yet (`_`, a group, a column of an outer SELECT) and for the case that the binding throws, so a mistake in it can not break a query.
+Every column that is compiled inside a SELECT by a caller with the default columns gets its generated code from the binding, with `bind.read` and `bind.write`. That is `Column.toJS` in `src/expression/expression.js` (`boundJS`), for WHERE, ON, expressions, group keys, aggregate arguments and the arguments of a built-in function, and `columnJS` in `src/select/columns.js` for a column alone in a select list, grouped or not. There the binding runs on every compile, not only in the test mode. Today's lookup stays as the fallback for what the binding does not write yet (`_`, a group, a column of an outer SELECT, a name that is unresolved or ambiguous after the rules) and for the case that the binding throws, so a mistake in it can not break a query.
 
 In the test mode such a place runs the lookup as well and hands both codes to `onBind`. The check fails unless they are the same text, and the outcome says whether the code was written from the binding or fell back.
 

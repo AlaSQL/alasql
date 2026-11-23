@@ -710,19 +710,23 @@ export default function install(alasql, internal) {
 				return s;
 			}
 
-			// Today's lookup (lookupJS) decides the source while it writes the code. The binding of
-			// the same reference (bind.column, #2723) is not used yet, so it is only worked out
-			// when a test sets Column.onBind, which gets both to compare them (test/bind/), and
-			// what the 4.x rules make of the binding in this place (bind.read). An error of
-			// bind.column goes to onBind as {error} and never into the query.
+			// The code that reads the column. Inside a SELECT, where the caller has the default
+			// columns, it is written from the binding (#2723): bind.column says what the name
+			// refers to, bind.read applies the 4.x rules of the place, and bind.write writes the
+			// read. The place is 'function' in the arguments of a built-in function, where a name
+			// two tables define is read from the first table of FROM (#2928), and else 'row', where
+			// such a name is an error.
+			// Today's lookup (lookupJS) stays for a caller without default columns, for what the
+			// binding does not write (a group, `_`, a column of an outer SELECT, a name that is
+			// unresolved or ambiguous after the rules, which is the lookup's error), and for the
+			// case that the binding throws: it must not be able to break a query.
 			toJS(context, tableid, defcols) {
 				const scope = internal.bind.current();
-				if (scope && scope.place === 'function' && defcols) {
-					return this.functionArgJS(context, tableid, defcols, scope);
-				}
+				if (scope && defcols) return this.boundJS(context, tableid, defcols, scope);
 				const onBind = Column.onBind;
 				if (!onBind) return this.lookupJS(context, tableid, defcols);
 				if (!scope) return this.lookupJS(context, tableid, defcols);
+				// test mode: no code is written from the binding here, and it is still compared
 				const b = internal.bind.beside(this, scope);
 				let js;
 				try {
@@ -735,18 +739,12 @@ export default function install(alasql, internal) {
 				return js;
 			}
 
-			// A column in the arguments of a built-in function, inside a SELECT. The code is written
-			// from the binding (#2723): bind.column says what the name refers to, bind.read applies
-			// the 4.x rules of this place (a name two tables define is read from the first table
-			// of FROM, #2928), and bind.write writes the read.
-			// Today's lookup stays for what the binding does not write (a group, `_`, a column of
-			// an outer SELECT), and for the case that the binding throws: it must not be able to
-			// break a query. The lookup gets the default columns that give it the same reading.
-			functionArgJS(context, tableid, defcols, scope) {
+			boundJS(context, tableid, defcols, scope) {
+				const inFunction = scope.place === 'function';
 				let ref, read, written;
 				try {
 					ref = internal.bind.column(this, scope);
-					read = internal.bind.read(ref, scope, 'function');
+					read = internal.bind.read(ref, scope, inFunction ? 'function' : 'row');
 					if (context !== 'g' && !(this.valueKeyword && context === 'x')) {
 						written = internal.bind.write(read, scope, context, this);
 					}
@@ -756,13 +754,20 @@ export default function install(alasql, internal) {
 				}
 				// test mode: the lookup runs beside it, and the check compares the two (test/bind/)
 				const onBind = Column.onBind;
-				if (onBind) {
-					const js = this.lookupJS(context, tableid, stdlibDefcols(defcols, tableid));
-					onBind(this, ref, js, undefined, context, tableid, defcols, scope, read, written);
+				if (!onBind && written !== undefined) return written;
+				// In the arguments of a built-in function the lookup gets the default columns
+				// that give it the reading of that place
+				const lookupCols = inFunction ? stdlibDefcols(defcols, tableid) : defcols;
+				if (!onBind) return this.lookupJS(context, tableid, lookupCols);
+				let js;
+				try {
+					js = this.lookupJS(context, tableid, lookupCols);
+				} catch (err) {
+					onBind(this, ref, undefined, err, context, tableid, defcols, scope, read, written);
+					throw err;
 				}
-				return written !== undefined
-					? written
-					: this.lookupJS(context, tableid, stdlibDefcols(defcols, tableid));
+				onBind(this, ref, js, undefined, context, tableid, defcols, scope, read, written);
+				return written !== undefined ? written : js;
 			}
 
 			lookupJS(context, tableid, defcols) {
