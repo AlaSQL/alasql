@@ -1,7 +1,7 @@
-//! AlaSQL v3.1.2 build: v3-hotfix-dfc34cf0 | © 2014-2023 Andrey Gershun & Mathias Wulff | License: MIT
+//! AlaSQL v3.1.3 build: v3-hotfix-dfc34cf0 | © 2014-2023 Andrey Gershun & Mathias Wulff | License: MIT
 /*
 @module alasql
-@version 3.1.2
+@version 3.1.3
 
 AlaSQL - JavaScript SQL database
 © 2014-2023	Andrey Gershun & Mathias Wulff
