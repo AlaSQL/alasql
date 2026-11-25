@@ -255,7 +255,11 @@ export default function install(alasql, internal) {
 				if (col.columnid === '*') {
 					if (col.func) {
 						sp +=
-							"r=params['" + col.param + "'](p['" + query.sources[0].alias + "'],p,params,alasql);";
+							"r=params['" +
+							escapeq(col.param) +
+							"'](p['" +
+							query.sources[0].alias +
+							"'],p,params,alasql);";
 					} else if (col.tableid) {
 						//Copy all
 						var ret = compileSelectStar(query, [col.tableid], false);
@@ -314,7 +318,7 @@ export default function install(alasql, internal) {
 							if (isMultisheetParam) {
 								sp =
 									'var r={};var w=p["' +
-									tbid +
+									escapeq(tbid) +
 									'"];' +
 									'var cols=[' +
 									self.columns
@@ -325,7 +329,7 @@ export default function install(alasql, internal) {
 									'];var colas=[' +
 									self.columns
 										.map(function (col) {
-											return "'" + (col.as || col.columnid) + "'";
+											return "'" + escapeq(col.as || col.columnid) + "'";
 										})
 										.join(',') +
 									'];' +
@@ -576,9 +580,9 @@ export default function install(alasql, internal) {
 					// Use Object.keys to get column names and access by index
 					s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 				} else if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
-					s += "r['" + key + "']=r['" + v.columnid + "'];";
+					s += "r['" + key + "']=r['" + escapeq(v.columnid) + "'];";
 				} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
-					s += "r['" + key + "']=r['" + params[v.param] + "'];";
+					s += "r['" + key + "']=r['" + escapeq(params[v.param]) + "'];";
 				} else {
 					s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.columnScope) + ';';
 				}
@@ -759,7 +763,8 @@ export default function install(alasql, internal) {
 			}
 */
 				//			if(col.as) {
-				s += "r['" + colas + "']=";
+				// an alias is escaped here, a nick and the name of a column already are
+				s += "r['" + (col.as !== undefined ? escapeq(colas) : colas) + "']=";
 				//			// } else {
 				//			// 	s += 'r[\''+escapeq()+'\']=';
 				//			// };
@@ -887,7 +892,7 @@ export default function install(alasql, internal) {
 			if (isInGroup) {
 				// For columns in GROUP BY, use the GROUP BY column's nick if available
 				var groupNick = (groupCol && groupCol.nick) || (groupKey && groupKey.key) || col.nick;
-				s += "r['" + (col.as || col.nick) + "']=g['" + groupNick + "'];";
+				s += "r['" + (col.as ? escapeq(col.as) : col.nick) + "']=g['" + groupNick + "'];";
 			}
 		});
 
@@ -903,9 +908,9 @@ export default function install(alasql, internal) {
 					// Use Object.keys to get column names and access by index
 					s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 				} else if (v instanceof yy.Column && groupProjectedColumnMap[groupKey]) {
-					s += "r['" + key + "']=r['" + groupProjectedColumnMap[groupKey] + "'];";
+					s += "r['" + key + "']=r['" + escapeq(groupProjectedColumnMap[groupKey]) + "'];";
 				} else if (v instanceof yy.Column && projectedSelectColumnMap[v.columnid]) {
-					s += "r['" + key + "']=r['" + v.columnid + "'];";
+					s += "r['" + key + "']=r['" + escapeq(v.columnid) + "'];";
 				} else if (v instanceof yy.Column && groupColMap[groupKey]) {
 					s += "r['" + key + "']=g['" + groupColMap[groupKey].nick + "'];";
 				} else {

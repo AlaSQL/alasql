@@ -47,9 +47,23 @@ export default function install(alasql, internal) {
 		}
 	});
 
+	// A string value or key of a JSON value goes between double quotes in the generated code. A
+	// backslash pair keeps its meaning; a lone backslash at the end, a double quote and a line break
+	// are escaped, so the string cannot end early.
+	function escapeJSONString(s) {
+		return s.replace(/\\[\s\S]|\\$|"|\n|\r|\u2028|\u2029/g, function (c) {
+			if (c.length === 2) return c;
+			if (c === '\\') return '\\\\';
+			if (c === '"') return '\\"';
+			if (c === '\n') return '\\n';
+			if (c === '\r') return '\\r';
+			return c === '\u2028' ? '\\u2028' : '\\u2029';
+		});
+	}
+
 	function JSONtoJS(obj, context, tableid, defcols) {
 		var s = '';
-		if (typeof obj == 'string') s = '"' + obj + '"';
+		if (typeof obj == 'string') s = '"' + escapeJSONString(obj) + '"';
 		else if (typeof obj == 'number') s = '(' + obj + ')';
 		else if (typeof obj == 'boolean') s = obj;
 		else if (typeof obj === 'bigint') s = obj.toString() + 'n';
@@ -59,7 +73,7 @@ export default function install(alasql, internal) {
 			} else if (!obj.toJS || obj instanceof yy.Json) {
 				let ss = [];
 				for (const k in obj) {
-					let keyStr = typeof k === 'string' ? `"${k}"` : k.toString();
+					let keyStr = typeof k === 'string' ? `"${escapeJSONString(k)}"` : k.toString();
 					let valueStr = JSONtoJS(obj[k], context, tableid, defcols);
 					ss.push(`${keyStr}:${valueStr}`);
 				}
