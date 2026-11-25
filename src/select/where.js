@@ -1,11 +1,11 @@
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	yy.Select.prototype.compileWhere = function (query) {
 		if (this.where) {
 			if (typeof this.where == 'function') {
 				return this.where;
 			} else {
-				var s = this.where.toJS('p', query.defaultTableid, query.defcols);
+				var s = this.where.toJS('p', query.defaultTableid, query.columnScope);
 				query.wherefns = s;
 				//		console.log(s);
 				return new Function('p,params,alasql', 'var y;return ' + s);
@@ -39,7 +39,7 @@ export default function install(alasql) {
 	// that table before the join (#2916). The join order is chosen here when FROM is out of
 	// chain order (#2910): the first table is one with such a filter, and every next table is
 	// one linked to the tables already placed, so no table is scanned in full for every row so
-	// far. Bare column names resolve to their table through defcols, as they do in the
+	// far. Bare column names resolve to their table through the scope of the SELECT, as they do in the
 	// generated code.
 	yy.Select.prototype.compileWhereJoins = function (query) {
 		if (!this.where) return;
@@ -70,26 +70,26 @@ export default function install(alasql) {
 			if (!(cond instanceof yy.Op) || cond.op !== '=' || cond.allsome) {
 				// Not an equality: a filter on one source when it reads that source alone, else
 				// left to the WHERE clause (a subquery, a column no single source answers for)
-				var read = sourcesRead(cond, query.defcols);
+				var read = sourcesRead(cond, query.columnScope);
 				if (read && read.length === 1 && aliasToIdx[read[0]] !== undefined) {
 					var idx = aliasToIdx[read[0]];
 					addSourceWhereCondition(
 						query.sources[idx],
-						'(' + cond.toJS('p', query.defaultTableid, query.defcols) + ')'
+						'(' + cond.toJS('p', query.defaultTableid, query.columnScope) + ')'
 					);
 					pinned[idx] = pinned[idx] || 1;
 				}
 				return;
 			}
 
-			var leftAliases = sourcesRead(cond.left, query.defcols);
-			var rightAliases = sourcesRead(cond.right, query.defcols);
+			var leftAliases = sourcesRead(cond.left, query.columnScope);
+			var rightAliases = sourcesRead(cond.right, query.columnScope);
 			// A side that cannot be told (a subquery, a column no single source answers for) is
 			// left to the WHERE clause
 			if (!leftAliases || !rightAliases) return;
 
-			var ls = cond.left.toJS('p', query.defaultTableid, query.defcols);
-			var rs = cond.right.toJS('p', query.defaultTableid, query.defcols);
+			var ls = cond.left.toJS('p', query.defaultTableid, query.columnScope);
+			var rs = cond.right.toJS('p', query.defaultTableid, query.columnScope);
 
 			if (leftAliases.length === 1 && rightAliases.length === 1) {
 				var leftIdx = aliasToIdx[leftAliases[0]];
@@ -100,7 +100,7 @@ export default function install(alasql) {
 					// condition on one table
 					addSourceWhereCondition(
 						query.sources[leftIdx],
-						'(' + cond.toJS('p', query.defaultTableid, query.defcols) + ')'
+						'(' + cond.toJS('p', query.defaultTableid, query.columnScope) + ')'
 					);
 					pinned[leftIdx] = pinned[leftIdx] || 1;
 					return;
@@ -248,7 +248,7 @@ export default function install(alasql) {
 	// The aliases of the sources an expression reads, in the order met, or null when that cannot
 	// be told: a subquery, a search, an aggregate, raw JavaScript, a node this does not know, or
 	// a bare column that no single source answers for (ambiguous, or not among the declared
-	// columns). A bare column resolves through defcols, as Column.toJS resolves it, inside a
+	// columns). A bare column resolves through the scope of the SELECT (bind.owner), as Column.toJS resolves it, inside a
 	// function, CASE or list as well (#2917).
 	function sourcesRead(node, defcols) {
 		var aliases = [];
@@ -262,7 +262,7 @@ export default function install(alasql) {
 					walk(item);
 				});
 			} else if (n instanceof yy.Column) {
-				var alias = n.tableid || (defcols && defcols[n.columnid]);
+				var alias = n.tableid || (defcols && internal.bind.owner(defcols, n.columnid));
 				if (typeof alias !== 'string' || alias === '-' || alias === '.') {
 					known = false;
 				} else if (aliases.indexOf(alias) === -1) {
@@ -323,7 +323,7 @@ export default function install(alasql) {
 		if (ast.op != '=' && ast.op != 'AND') return;
 		if (ast.allsome) return;
 
-		var s = ast.toJS('p', query.defaultTableid, query.defcols);
+		var s = ast.toJS('p', query.defaultTableid, query.columnScope);
 		var fsrc = [];
 		query.sources.forEach(function (source, idx) {
 			// Optimization allowed only for tables only
@@ -348,16 +348,16 @@ export default function install(alasql) {
 
 			if (ast instanceof yy.Op && ast.op == '=' && !ast.allsome) {
 				if (ast.left instanceof yy.Column) {
-					var ls = ast.left.toJS('p', query.defaultTableid, query.defcols);
-					var rs = ast.right.toJS('p', query.defaultTableid, query.defcols);
+					var ls = ast.left.toJS('p', query.defaultTableid, query.columnScope);
+					var rs = ast.right.toJS('p', query.defaultTableid, query.columnScope);
 					if (rs.indexOf("p['" + fsrc[0].alias + "']") == -1) {
 						fsrc[0].wxleftfns = ls;
 						fsrc[0].wxrightfns = rs;
 					}
 				}
 				if (ast.right instanceof yy.Column) {
-					var ls = ast.left.toJS('p', query.defaultTableid, query.defcols);
-					var rs = ast.right.toJS('p', query.defaultTableid, query.defcols);
+					var ls = ast.left.toJS('p', query.defaultTableid, query.columnScope);
+					var rs = ast.right.toJS('p', query.defaultTableid, query.columnScope);
 					if (ls.indexOf("p['" + fsrc[0].alias + "']") == -1) {
 						fsrc[0].wxleftfns = rs;
 						fsrc[0].wxrightfns = ls;

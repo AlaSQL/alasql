@@ -1,7 +1,66 @@
 import {cloneDeep, escapeq, n2u, setOwnJS} from '../utils/helpers.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
+	// For a column of the select list whose code is not written from the binding: what bind.column
+	// says it refers to, beside the lookup that writes the code. written is the "'name':code"
+	// that the lookup wrote for the row p, when it wrote one. This is only worked out when a test
+	// sets Column.onBind, which gets both to compare (test/bind/), and what the 4.x rule of the
+	// select list makes of the binding (bind.read). An error of bind.column goes to onBind as {error}.
+	function bindBeside(col, written) {
+		var onBind = alasql.yy.Column.onBind;
+		if (!onBind || written === undefined) return;
+		var scope = internal.bind.current();
+		if (!scope) return;
+		var b = internal.bind.beside(col, scope, 'select');
+		var js = written.slice(escapeq(col.as || col.columnid).length + 3);
+		onBind(col, b.ref, js, undefined, 'p', undefined, undefined, scope, b.read);
+	}
+
 	var yy = alasql.yy;
+
+	// The read of a column that stands alone in a select list, written from the binding (#2723):
+	// bind.column says what the name refers to, bind.read applies the 4.x rule of the place, and
+	// bind.write writes the read. lookup is a function that writes today's code. It stays for
+	// what the binding does not write, and for the case that the binding throws: it must not be
+	// able to break a query.
+	function columnJS(col, place, context, lookup, tableid, defcols) {
+		var scope = internal.bind.current();
+		var ref, read, written;
+		if (scope) {
+			try {
+				ref = internal.bind.column(col, scope);
+				read = internal.bind.read(ref, scope, place, col);
+				written = internal.bind.write(read, scope, context, col);
+			} catch (err) {
+				ref = read = {error: err};
+				written = undefined;
+			}
+		}
+		// test mode: the lookup runs beside it, and the check compares the two (test/bind/)
+		var onBind = yy.Column.onBind;
+		if (onBind && scope) {
+			onBind(col, ref, lookup(), undefined, context, tableid, defcols, scope, read, written);
+		}
+		return written !== undefined ? written : lookup();
+	}
+
+	// In the select list of a grouped query. The 4.x rule of this place: a name two tables define
+	// is read from the first table of FROM (#2928), and the lookup is told to do the same.
+	function groupColumnJS(col, query) {
+		var context = '(this.groupSources.get(g) || g)';
+		var tableid = query.defaultTableid;
+		return columnJS(
+			col,
+			'group',
+			context,
+			function () {
+				return col.lookupJS(context, tableid, query.columnScope, true);
+			},
+			tableid,
+			query.columnScope
+		);
+	}
+
 	/*
 //
 // Select compiler part for Alasql.js
@@ -196,7 +255,11 @@ export default function install(alasql) {
 				if (col.columnid === '*') {
 					if (col.func) {
 						sp +=
-							"r=params['" + col.param + "'](p['" + query.sources[0].alias + "'],p,params,alasql);";
+							"r=params['" +
+							escapeq(col.param) +
+							"'](p['" +
+							query.sources[0].alias +
+							"'],p,params,alasql);";
 					} else if (col.tableid) {
 						//Copy all
 						var ret = compileSelectStar(query, [col.tableid], false);
@@ -219,13 +282,20 @@ export default function install(alasql) {
 					}
 				} else {
 					// If field, otherwise - expression
+					var written = ss.length;
+					var fromBinding = false;
 					var tbid = col.tableid;
 					//				console.log(query.sources);
 					var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
-					if (!tbid) tbid = query.defcols[col.columnid];
+					// the source whose column definitions have the name, for the type of the result
+					// column and for the error of a column that the table does not have
+					var ownerTbid = col.tableid
+						? undefined
+						: internal.bind.owner(query.columnScope, col.columnid);
+					if (!tbid) tbid = ownerTbid;
 					if (!tbid) tbid = query.defaultTableid;
 					if (col.columnid !== '_') {
-						if (false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
+						if (false) {
 							ss.push(
 								"'" +
 									escapeq(col.as || col.columnid) +
@@ -248,7 +318,7 @@ export default function install(alasql) {
 							if (isMultisheetParam) {
 								sp =
 									'var r={};var w=p["' +
-									tbid +
+									escapeq(tbid) +
 									'"];' +
 									'var cols=[' +
 									self.columns
@@ -259,7 +329,7 @@ export default function install(alasql) {
 									'];var colas=[' +
 									self.columns
 										.map(function (col) {
-											return "'" + (col.as || col.columnid) + "'";
+											return "'" + escapeq(col.as || col.columnid) + "'";
 										})
 										.join(',') +
 									'];' +
@@ -270,22 +340,50 @@ export default function install(alasql) {
 							} else {
 								// For JOINs with inline data where column table is unknown, search all tables
 								var needsRuntimeResolution =
-									!col.tableid &&
-									query.sources.length > 1 &&
-									(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
+									!col.tableid && query.sources.length > 1 && (!ownerTbid || ownerTbid === '-');
 
+								// Today's code for the read: asked from the sources per row (#2680), or
+								// the column of one source
+								var lookup;
 								if (needsRuntimeResolution) {
-									ss.push(
-										"'" +
-											escapeq(col.as || col.columnid) +
-											"':" +
-											yy.Column.fromAnySource(
-												'p',
-												Object.keys(query.aliases),
-												col.columnid,
-												query.defcols['.']
-											)
-									);
+									// An APPLY source has no entry in query.aliases and was not asked, so
+									// its bare column came out undefined (#3115). With one in the query
+									// every source is asked, in the order of FROM and JOIN.
+									var askAliases = Object.keys(query.aliases);
+									if (
+										query.sources.some(function (src) {
+											return src.applyselect;
+										})
+									) {
+										askAliases = query.sources.map(function (src) {
+											return src.alias;
+										});
+									}
+									lookup = function () {
+										return yy.Column.fromAnySource(
+											'p',
+											askAliases,
+											col.columnid,
+											query.columnScope
+										);
+									};
+								} else {
+									var lookupTbid = tbid;
+									lookup = function () {
+										return "p['" + lookupTbid + "']['" + col.columnid + "']";
+									};
+								}
+								// The code is written from the binding, with the 4.x rule of this place:
+								// a name two tables define is read from the first source that has it
+								// (#2928). What it writes is the same code, so nothing changes at run time.
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':" +
+										columnJS(col, 'select', 'p', lookup)
+								);
+								fromBinding = true;
+								if (needsRuntimeResolution) {
 									// Only check it against the default table if no other source can have it
 									var inOtherSource = query.sources.some(
 										src =>
@@ -293,22 +391,15 @@ export default function install(alasql) {
 											(!src.columns?.length || src.columns.some(c => c.columnid === col.columnid))
 									);
 									if (inOtherSource) tbid = undefined;
-								} else {
-									ss.push(
-										"'" +
-											escapeq(col.as || col.columnid) +
-											"':p['" +
-											tbid +
-											"']['" +
-											col.columnid +
-											"']"
-									);
 								}
 							}
 						}
 					} else {
 						ss.push("'" + escapeq(col.as || col.columnid) + "':p['" + tbid + "']");
 					}
+					// Where the code above is not written from the binding (`_`, the multisheet
+					// workaround), the binding is still compared with it in the test mode
+					if (!fromBinding) bindBeside(col, ss.length > written ? ss[ss.length - 1] : undefined);
 					query.selectColumns[escapeq(col.as || col.columnid)] = true;
 
 					if (query.aliases[tbid] && query.aliases[tbid].type === 'table') {
@@ -393,7 +484,7 @@ export default function install(alasql) {
 							"'" +
 								escapeq(col.as) +
 								"':" +
-								n2u(col.expression.toJS('p', query.defaultTableid, query.defcols))
+								n2u(col.expression.toJS('p', query.defaultTableid, query.columnScope))
 						);
 					} else if (col.aggregatorid === 'COUNT') {
 						ss.push("'" + escapeq(col.as) + "':1");
@@ -413,7 +504,7 @@ export default function install(alasql) {
 				if (arrowPath && arrowPath.length > 1) {
 					// For arrow expressions in INTO OBJECT(), generate nested object assignment
 					// This will be added to sp (post-processing) instead of ss (inline object)
-					var valueJs = n2u(col.toJS('p', query.defaultTableid, query.defcols));
+					var valueJs = n2u(col.toJS('p', query.defaultTableid, query.columnScope));
 					// Generate code to create nested structure
 					// e.g., for path ['details', 'stock']: r['details'] = r['details'] || {}; r['details']['stock'] = value;
 					for (var i = 0; i < arrowPath.length - 1; i++) {
@@ -448,7 +539,7 @@ export default function install(alasql) {
 						"'" +
 							escapeq(col.as || col.columnid || col.toString()) +
 							"':" +
-							n2u(col.toJS('p', query.defaultTableid, query.defcols))
+							n2u(col.toJS('p', query.defaultTableid, query.columnScope))
 					);
 					//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
 					//if(col instanceof yy.Expression) {
@@ -489,11 +580,11 @@ export default function install(alasql) {
 					// Use Object.keys to get column names and access by index
 					s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 				} else if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
-					s += "r['" + key + "']=r['" + v.columnid + "'];";
+					s += "r['" + key + "']=r['" + escapeq(v.columnid) + "'];";
 				} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
-					s += "r['" + key + "']=r['" + params[v.param] + "'];";
+					s += "r['" + key + "']=r['" + escapeq(params[v.param]) + "'];";
 				} else {
-					s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.defcols) + ';';
+					s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.columnScope) + ';';
 				}
 				query.removeKeys.push(key);
 			});
@@ -503,7 +594,7 @@ export default function install(alasql) {
 			var exprs = this.distinctOn.map(function (e) {
 				if (e instanceof yy.Column && query.xcolumns[e.columnid]) return "r['" + e.columnid + "']";
 				if (e instanceof yy.NumValue) return 'r[Object.keys(r)[' + (e.value - 1) + ']]';
-				return e.toJS('p', query.defaultTableid, query.defcols);
+				return e.toJS('p', query.defaultTableid, query.columnScope);
 			});
 			s += "r['$$distinctOn']=JSON.stringify([" + exprs.join(',') + ']);';
 			query.removeKeys.push('$$distinctOn');
@@ -672,7 +763,8 @@ export default function install(alasql) {
 			}
 */
 				//			if(col.as) {
-				s += "r['" + colas + "']=";
+				// an alias is escaped here, a nick and the name of a column already are
+				s += "r['" + (col.as !== undefined ? escapeq(colas) : colas) + "']=";
 				//			// } else {
 				//			// 	s += 'r[\''+escapeq()+'\']=';
 				//			// };
@@ -680,7 +772,7 @@ export default function install(alasql) {
 				//			console.log(col);//,col.toJS('g',''));
 
 				if (col instanceof yy.Column) {
-					s += n2u(col.toJS('(this.groupSources.get(g) || g)', query.defaultTableid)) + ';';
+					s += n2u(groupColumnJS(col, query)) + ';';
 				} else {
 					s += n2u(col.toJS('g', '')) + ';';
 				}
@@ -800,7 +892,7 @@ export default function install(alasql) {
 			if (isInGroup) {
 				// For columns in GROUP BY, use the GROUP BY column's nick if available
 				var groupNick = (groupCol && groupCol.nick) || (groupKey && groupKey.key) || col.nick;
-				s += "r['" + (col.as || col.nick) + "']=g['" + groupNick + "'];";
+				s += "r['" + (col.as ? escapeq(col.as) : col.nick) + "']=g['" + groupNick + "'];";
 			}
 		});
 
@@ -816,9 +908,9 @@ export default function install(alasql) {
 					// Use Object.keys to get column names and access by index
 					s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 				} else if (v instanceof yy.Column && groupProjectedColumnMap[groupKey]) {
-					s += "r['" + key + "']=r['" + groupProjectedColumnMap[groupKey] + "'];";
+					s += "r['" + key + "']=r['" + escapeq(groupProjectedColumnMap[groupKey]) + "'];";
 				} else if (v instanceof yy.Column && projectedSelectColumnMap[v.columnid]) {
-					s += "r['" + key + "']=r['" + v.columnid + "'];";
+					s += "r['" + key + "']=r['" + escapeq(v.columnid) + "'];";
 				} else if (v instanceof yy.Column && groupColMap[groupKey]) {
 					s += "r['" + key + "']=g['" + groupColMap[groupKey].nick + "'];";
 				} else {

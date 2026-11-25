@@ -1,4 +1,4 @@
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/* global yy */
 
@@ -13,7 +13,7 @@ export default function install(alasql) {
 				!node.tableid &&
 				nick !== undefined &&
 				nick !== node.columnid &&
-				!(query.defcols && query.defcols[node.columnid])
+				!(query.columnScope && internal.bind.owner(query.columnScope, node.columnid))
 			) {
 				node.nick = nick;
 			}

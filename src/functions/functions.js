@@ -5,7 +5,7 @@ import {Node} from '../expression/node.js';
 
 export let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	/*
 //
@@ -70,30 +70,29 @@ export default function install(alasql) {
 		return res;
 	};
 
-	// A bare column found in two tables has always been read from the first table inside a built-in
-	// function, and queries rely on that; only a column of one table resolves through defcols (#2917)
-	function stdlibDefcols(defcols, tableid) {
-		if (!defcols) return defcols;
-		var cols = Object.create(defcols);
-		for (var columnid in defcols) {
-			if (defcols[columnid] === '-') cols[columnid] = tableid;
-		}
-		return cols;
-	}
-
 	yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		var s = '';
 		var funcid = this.funcid;
 		// IF this is standard compile functions
 		if (!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
 			if (this.args && this.args.length > 0) {
-				var argcols = stdlibDefcols(defcols, tableid);
-				s += alasql.stdlib[funcid.toUpperCase()].apply(
-					this,
-					this.args.map(function (arg) {
-						return arg.toJS(context, tableid, argcols);
-					})
-				);
+				// Inside a SELECT a column in the arguments is written from the binding, with the
+				// rules of this place (bind.read, #2723): Column.toJS sees the place on the scope.
+				// A bare column that two tables define has always been read from the first table
+				// inside a built-in function, and queries rely on that (#2917).
+				var scope = internal.bind.current();
+				var argcols = defcols;
+				var placeBefore = scope && internal.bind.place('function');
+				try {
+					s += alasql.stdlib[funcid.toUpperCase()].apply(
+						this,
+						this.args.map(function (arg) {
+							return arg.toJS(context, tableid, argcols);
+						})
+					);
+				} finally {
+					if (scope) internal.bind.place(placeBefore);
+				}
 			} else {
 				s += alasql.stdlib[funcid.toUpperCase()]();
 			}

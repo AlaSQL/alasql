@@ -1,7 +1,8 @@
 /*
 	Run-state check (#2596): which code writes to a compiled query while a statement runs?
 
-	  bun test/runstate/run.js             # run the suite on ./dist and print the list
+	  bun test/runstate/run.js             # run the suite on ./dist and print the list;
+	                                       # exit code 1 when a run wrote to a compiled query
 	  bun test/runstate/run.js --json      # the list as JSON
 	  bun test/runstate/run.js --compile   # also the writes a compile makes to a finished query
 
@@ -167,6 +168,9 @@ function report() {
 const run = record();
 const all = report();
 const runs = all.filter(x => x.phase === 'run');
+// Since #2596 a run has its own object, so the list is expected to be empty: a write to the
+// shared object fails the check
+process.exitCode = runs.length ? 1 : 0;
 if (flag('--json')) {
 	console.log(JSON.stringify(flag('--compile') ? all : runs, null, 1));
 } else {

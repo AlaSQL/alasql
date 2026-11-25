@@ -1,4 +1,4 @@
-import {returnTrue} from '../utils/helpers.js';
+import {escapeq, returnTrue} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -17,15 +17,21 @@ export default function install(alasql, internal) {
 		return (query, params, cb, idx, alasql) => {
 			// Subqueries parsed inside this subselect (e.g. a scalar subquery in its
 			// column list) are hoisted to the statement-level queries list, so share
-			// the compiled list with the subselect
-			if (!source.subquery.query.queriesfn && query.queriesfn) {
-				source.subquery.query.queriesfn = query.queriesfn;
-			}
+			// the compiled list with the run of the subselect
+			const state =
+				!source.subquery.query.queriesfn && query.queriesfn
+					? {queriesfn: query.queriesfn}
+					: undefined;
 			let res;
-			source.subquery(query.params, data => {
-				res = data.data;
-				if (cb) res = cb(res, idx, query);
-			});
+			source.subquery(
+				query.params,
+				data => {
+					res = data.data;
+					if (cb) res = cb(res, idx, query);
+				},
+				undefined,
+				state
+			);
 			return res;
 		};
 	}
@@ -140,7 +146,7 @@ export default function install(alasql, internal) {
 					return res;
 				};
 			} else if (tq instanceof yy.ParamValue) {
-				let ps = `var res = alasql.prepareFromData(params['${tq.param}']`;
+				let ps = `var res = alasql.prepareFromData(params['${escapeq(tq.param)}']`;
 				if (tq.array) ps += ',true';
 				ps += ');if(cb)res=cb(res,idx,query);return res';
 				source.datafn = new Function('query,params,cb,idx,alasql', ps);

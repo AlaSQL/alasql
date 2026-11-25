@@ -1,4 +1,4 @@
-import {returnTrue, arrayIntersect} from '../utils/helpers.js';
+import {escapeq, returnTrue, arrayIntersect} from '../utils/helpers.js';
 
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
@@ -127,7 +127,7 @@ export default function install(alasql, internal) {
 					srcwherefn: returnTrue,
 				};
 				const jnparam = jn.param.param;
-				ps = "let res=alasql.prepareFromData(params['" + jnparam + "']";
+				ps = "let res=alasql.prepareFromData(params['" + escapeq(jnparam) + "']";
 				if (jn.array) ps += ',true';
 				ps += '); if(cb) res=cb(res, idx, query); return res';
 
@@ -229,8 +229,8 @@ export default function install(alasql, internal) {
 					let middles = '';
 					let middlef = false;
 					// Test right and left sides
-					const ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
-					const rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
+					const ls = jn.on.left.toJS('p', query.defaultTableid, query.columnScope);
+					const rs = jn.on.right.toJS('p', query.defaultTableid, query.columnScope);
 
 					if (ls.indexOf("p['" + alias + "']") > -1 && !(rs.indexOf("p['" + alias + "']") > -1)) {
 						if ((ls.match(/p\['.*?'\]/g) || []).every(s => s === "p['" + alias + "']")) {
@@ -277,7 +277,7 @@ export default function install(alasql, internal) {
 					if (middlef) {
 						rights = '';
 						lefts = '';
-						middles = jn.on.toJS('p', query.defaultTableid, query.defcols);
+						middles = jn.on.toJS('p', query.defaultTableid, query.columnScope);
 						source.optimization = 'no';
 					}
 
@@ -290,10 +290,10 @@ export default function install(alasql, internal) {
 					source.onmiddlefn = new Function('p,params,alasql', 'let y;return ' + source.onmiddlefns);
 				} else {
 					source.optimization = 'no';
-					source.onmiddlefns = jn.on.toJS('p', query.defaultTableid, query.defcols);
+					source.onmiddlefns = jn.on.toJS('p', query.defaultTableid, query.columnScope);
 					source.onmiddlefn = new Function(
 						'p,params,alasql',
-						'let y;return ' + jn.on.toJS('p', query.defaultTableid, query.defcols)
+						'let y;return ' + jn.on.toJS('p', query.defaultTableid, query.columnScope)
 					);
 				}
 			}

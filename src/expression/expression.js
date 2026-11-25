@@ -2,7 +2,7 @@ import {escapeq, returnTrue} from '../utils/helpers.js';
 import {Node} from './node.js';
 import {re_invalidFnNameChars} from '../functions/functions.js';
 
-export default function install(alasql) {
+export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	{
 		const assign = Object.assign;
@@ -62,7 +62,7 @@ export default function install(alasql) {
 			Convert AST to JavaScript expression
 			@param {string} context Context string, e.g. 'p','g', or 'x'
 			@param {string} tableid Default table name
-			@param {object} defcols Default columns dictionary
+			@param {object} defcols The scope of the SELECT (bind.scope), when the caller has one
 			@return {string} JavaScript expression
 		*/
 			toJS(context, tableid, defcols) {
@@ -77,7 +77,7 @@ export default function install(alasql) {
 			Compile AST to JavaScript expression
 			@param {string} context Context string, e.g. 'p','g', or 'x'
 			@param {string} tableid Default table name
-			@param {object} defcols Default columns dictionary
+			@param {object} defcols The scope of the SELECT (bind.scope), when the caller has one
 			@return {string} JavaScript expression
 		*/
 			compile(context, tableid, defcols) {
@@ -298,7 +298,7 @@ export default function install(alasql) {
 					}
 				} else if (this.op === '!') {
 					if (typeof this.right === 'string') {
-						s = `alasql.databases[alasql.useid].objects[${leftJS()}]["${this.right}"]`;
+						s = `alasql.databases[alasql.useid].objects[${leftJS()}]["${escapeq(this.right)}"]`;
 					}
 					// TODO - add other cases
 				} else if (this.op === 'IS') {
@@ -594,7 +594,7 @@ export default function install(alasql) {
 
 			toJS() {
 				if (typeof this.param === 'string') {
-					return "params['" + this.param + "']";
+					return "params['" + escapeq(this.param) + "']";
 				}
 
 				return 'params[' + this.param + ']';
@@ -683,11 +683,12 @@ export default function install(alasql) {
 			// Value of an unqualified column from the first source that has it, even when it is null (#2873).
 			// A table with column definitions is decided here, as its rows leave out columns that were
 			// not inserted; any other source is decided per row by whether the row has the key.
-			static fromAnySource(context, aliases, columnid, sources) {
+			// sc is the scope of the SELECT (bind.scope), which knows the column definitions
+			static fromAnySource(context, aliases, columnid, sc) {
 				return aliases.reduceRight((rest, alias) => {
-					const columns = sources?.[alias];
-					if (columns instanceof Set) {
-						return columns.has(columnid) ? `${context}['${alias}']?.['${columnid}']` : rest;
+					const has = internal.bind.has(sc, alias, columnid);
+					if (has !== undefined) {
+						return has ? `${context}['${alias}']?.['${columnid}']` : rest;
 					}
 					return `('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`;
 				}, 'undefined');
@@ -710,7 +711,68 @@ export default function install(alasql) {
 				return s;
 			}
 
+			// The code that reads the column. Inside a SELECT, where the caller passes the scope of
+			// the SELECT as defcols, it is written from the binding (#2723): bind.column says what the name
+			// refers to, bind.read applies the 4.x rules of the place, and bind.write writes the
+			// read. The place is 'function' in the arguments of a built-in function, where a name
+			// two tables define is read from the first table of FROM (#2928), and else 'row', where
+			// such a name is an error.
+			// Today's lookup (lookupJS) stays for a caller without the scope, for what the
+			// binding does not write (a group, `_`, a column of an outer SELECT, a name that is
+			// unresolved or ambiguous after the rules, which is the lookup's error), and for the
+			// case that the binding throws: it must not be able to break a query.
 			toJS(context, tableid, defcols) {
+				const scope = internal.bind.current();
+				if (scope && defcols) return this.boundJS(context, tableid, defcols, scope);
+				const onBind = Column.onBind;
+				if (!onBind) return this.lookupJS(context, tableid, defcols);
+				if (!scope) return this.lookupJS(context, tableid, defcols);
+				// test mode: no code is written from the binding here, and it is still compared
+				const b = internal.bind.beside(this, scope);
+				let js;
+				try {
+					js = this.lookupJS(context, tableid, defcols);
+				} catch (err) {
+					onBind(this, b.ref, undefined, err, context, tableid, defcols, scope, b.read);
+					throw err;
+				}
+				onBind(this, b.ref, js, undefined, context, tableid, defcols, scope, b.read);
+				return js;
+			}
+
+			boundJS(context, tableid, defcols, scope) {
+				const inFunction = scope.place === 'function';
+				let ref, read, written;
+				try {
+					ref = internal.bind.column(this, scope);
+					read = internal.bind.read(ref, scope, inFunction ? 'function' : 'row', this);
+					if (context !== 'g' && !(this.valueKeyword && context === 'x')) {
+						written = internal.bind.write(read, scope, context, this);
+					}
+				} catch (err) {
+					ref = read = {error: err};
+					written = undefined;
+				}
+				// test mode: the lookup runs beside it, and the check compares the two (test/bind/)
+				const onBind = Column.onBind;
+				if (!onBind && written !== undefined) return written;
+				// In the arguments of a built-in function the lookup reads a name two tables define
+				// from the first table too (#2917)
+				if (!onBind) return this.lookupJS(context, tableid, defcols, inFunction);
+				let js;
+				try {
+					js = this.lookupJS(context, tableid, defcols, inFunction);
+				} catch (err) {
+					onBind(this, ref, undefined, err, context, tableid, defcols, scope, read, written);
+					throw err;
+				}
+				onBind(this, ref, js, undefined, context, tableid, defcols, scope, read, written);
+				return written !== undefined ? written : js;
+			}
+
+			// defcols is the scope of the SELECT (bind.scope) when the caller has one. The name is
+			// from the time it was a dictionary of default columns, and every toJS passes it on.
+			lookupJS(context, tableid, defcols, firstTableIfAmbiguous) {
 				// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
 				if (this.valueKeyword && context === 'x') {
 					return context;
@@ -740,23 +802,27 @@ export default function install(alasql) {
 				}
 
 				if (defcols) {
-					const tbid = defcols[this.columnid];
+					let tbid = internal.bind.owner(defcols, this.columnid);
 					if (tbid === '-') {
-						throw new Error(
-							`Cannot resolve column "${this.columnid}" because it exists in two source tables`
-						);
-					} else if (tbid) {
+						if (!firstTableIfAmbiguous) {
+							throw new Error(
+								`Cannot resolve column "${this.columnid}" because it exists in two source tables`
+							);
+						}
+						tbid = tableid;
+					}
+					if (tbid) {
 						return this.columnid !== '_'
 							? `${context}['${tbid}']['${this.columnid}']`
 							: `${context}['${tbid}']`;
-					} else if (this.columnid !== '_' && Object.keys(defcols['.']).length > 1) {
+					} else if (this.columnid !== '_' && internal.bind.aliases(defcols).length > 1) {
 						// Not a column of any table here, so it comes from a subquery, parameter
 						// or table without column definitions (#832)
 						return Column.fromAnySource(
 							context,
-							Object.keys(defcols['.']),
+							internal.bind.aliases(defcols),
 							this.columnid,
-							defcols['.']
+							defcols
 						);
 					} else {
 						return this.columnid !== '_'
