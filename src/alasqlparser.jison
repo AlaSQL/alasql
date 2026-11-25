@@ -252,7 +252,6 @@ SETS                                        	return 'SET'
 'TEMPORARY'										return 'TEMP'
 'TEXTSTRING'									return 'TEXTSTRING'
 'THEN'											return 'THEN'
-'TIMEOUT'										return 'TIMEOUT'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRANSACTION'
@@ -369,8 +368,6 @@ Literal
 	| OPEN
 		{ $$ = $1.toLowerCase(); }
 	| CLOSE
-		{ $$ = $1.toLowerCase(); }
-	| TIMEOUT
 		{ $$ = $1.toLowerCase(); }
 	| SEPARATOR
 		{ $$ = $1.toLowerCase(); }
@@ -3614,7 +3611,6 @@ NonReserved
 	|TEMP
 	|TEMPORARY
 	|TIES
-	|TIMEOUT
 	|TOKEN
 	|TOP_LEVEL_COUNT
 	|TRANSACTION
@@ -3904,7 +3900,6 @@ var nonReserved = ["A"
 	,"TEMP"
 	,"TEMPORARY"
 	,"TIES"
-	,"TIMEOUT"
 	,"TOKEN"
 	,"TOP_LEVEL_COUNT"
 	,"TRANSACTION"
