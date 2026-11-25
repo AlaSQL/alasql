@@ -1,7 +1,7 @@
-//! AlaSQL v4.7.2 build: develop-272b12b3 | © 2014-2024 Andrey Gershun & Mathias Wulff | License: MIT
+//! AlaSQL v4.7.3 build: develop-272b12b3 | © 2014-2024 Andrey Gershun & Mathias Wulff | License: MIT
 /*
 @module alasql
-@version 4.7.2
+@version 4.7.3
 
 AlaSQL - JavaScript SQL database
 © 2014-2024	Andrey Gershun & Mathias Wulff
