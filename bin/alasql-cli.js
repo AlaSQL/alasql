@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 //
 // Command line interface for Alasql
-// Version: 0.7.3
+// Version: 0.7.4
 // Date: 28.07.2015
 // (c) 2014-2015, Andrey Gershun & M. Rangel Wulff
 //
