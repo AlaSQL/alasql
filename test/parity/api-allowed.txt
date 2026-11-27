@@ -94,3 +94,10 @@ alasql.yy.View.fields # declared parts, as above
 
 # The per-row read of a bare name is written only by internal.bind.anyJS (#2680)
 alasql.yy.Column.fromAnySource # removed, internal helper of the compiler
+
+# The parser keeps a list of subqueries per SELECT with these helpers (#2666)
+alasql.yy.openQueries # helper of the parser
+alasql.yy.closeQueries # helper of the parser
+alasql.yy.addQuery # helper of the parser
+alasql.yy.moveQueries # helper of the parser
+alasql.yy.takeQueries # helper of the parser

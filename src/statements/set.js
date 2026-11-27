@@ -26,13 +26,6 @@ export default function install(alasql) {
 			else if (val === 'OFF') val = false;
 			alasql.options[this.variable] = val;
 		} else if (this.expression) {
-			if (this.exists) {
-				this.existsfn = this.exists.map(ex => {
-					let nq = ex.compile(databaseid);
-					if (nq.query && !nq.query.modifier) nq.query.modifier = 'RECORDSET';
-					return nq;
-				});
-			}
 			if (this.queries) {
 				this.queriesfn = this.queries.map(q => {
 					let nq = q.compile(databaseid);

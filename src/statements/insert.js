@@ -70,14 +70,7 @@ export default function install(alasql, internal) {
 		//	console.log('Expression',this);
 		//	if(this.expression.reduced) return 'true';
 		//	return this.expression.toJS(context, tableid, defcols);
-		//  console.log('Select.toJS', 81, this.queriesidx);
-		//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
-
-		var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
-		//	s = '(console.log(this.queriesfn[0]),'+s+')';
-		//	console.log(this,s);
-
-		return s;
+		return 'this.queriesfn[' + this.queriesidx + '](this.params,null,' + context + ')';
 	};
 
 	yy.Insert.prototype.compile = function (databaseid) {
@@ -118,13 +111,6 @@ export default function install(alasql, internal) {
 
 		// INSERT INTO table VALUES
 		if (this.values) {
-			if (this.exists) {
-				this.existsfn = this.exists.map(function (ex) {
-					var nq = ex.compile(databaseid);
-					nq.query.modifier = 'RECORDSET';
-					return nq;
-				});
-			}
 			if (this.queries) {
 				this.queriesfn = this.queries.map(function (q) {
 					var nq = q.compile(databaseid);
@@ -353,9 +339,6 @@ export default function install(alasql, internal) {
 			// INSERT INTO table SELECT
 		} else if (this.select) {
 			this.select.modifier = 'RECORDSET';
-			if (this.queries) {
-				this.select.queries = this.queries;
-			}
 			var selectfn = this.select.compile(databaseid);
 			if (db.engineid && alasql.engines[db.engineid].intoTable) {
 				var statement = function (params, cb) {

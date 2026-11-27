@@ -23,7 +23,7 @@ export default function install(alasql) {
 		toJS(context, tableid, defcols) {
 			// Updated to return a boolean value correctly
 			const outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
-			return `!!this.existsfn[${this.existsidx}](params, null, ${outerContext}).data.length`;
+			return `!!this.queriesfn[${this.value.queriesidx}](params, null, ${outerContext}).data.length`;
 		}
 	};
 
@@ -35,22 +35,10 @@ export default function install(alasql) {
 	alasql.precompile = function (statement, databaseid, params) {
 		if (!statement) return;
 		statement.params = params;
-		// For CREATE VIEW statements, move queries to the select object
-		// so they can be compiled later when the view is first used
-		if (statement.view && statement.select && statement.queries) {
-			statement.select.queries = statement.queries;
-			return;
-		}
+		// The subqueries outside any SELECT, as in IF, WHILE and PRINT. A SELECT compiles its own.
 		if (statement.queries) {
 			statement.queriesfn = statement.queries.map(function (q) {
 				var nq = q.compile(databaseid || statement.database.databaseid);
-				nq.query.modifier = 'RECORDSET';
-				return nq;
-			});
-		}
-		if (statement.exists) {
-			statement.existsfn = statement.exists.map(function (ex) {
-				var nq = ex.compile(databaseid || statement.database.databaseid);
 				nq.query.modifier = 'RECORDSET';
 				return nq;
 			});
