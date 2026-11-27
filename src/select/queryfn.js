@@ -9,7 +9,6 @@ import {
 export default function install(alasql, internal) {
 	var yy = alasql.yy;
 	var doJoin = internal.doJoin;
-	var flatArray = alasql.utils.flatArray;
 	// Main query procedure
 	// A row of the second SELECT of EXCEPT or INTERSECT, on the column names of the first SELECT
 	// by position. When the first SELECT does not know its columns, as SELECT * FROM ? does not,
@@ -36,7 +35,6 @@ export default function install(alasql, internal) {
 
 	function queryfn(query, oldscope, cb, A, B) {
 		query.sourceslen = query.sources.length;
-		let slen = query.sourceslen;
 		// Generated code reads this.query both when this is the query and when it is a source
 		query.query = query;
 		query.A = A;
@@ -46,18 +44,6 @@ export default function install(alasql, internal) {
 
 		// Clear subquery cache from previous execution (used by IN/NOT IN optimization)
 		query.subqueryCache = {};
-
-		// Run all subqueries before main statement
-		if (query.queriesfn) {
-			query.sourceslen += query.queriesfn.length;
-			slen += query.queriesfn.length;
-
-			query.queriesdata = [];
-
-			query.queriesfn.forEach(function (q, idx) {
-				queryfn2([], -idx - 1, query);
-			});
-		}
 
 		query.scope = oldscope ? cloneDeep(oldscope) : {};
 
@@ -74,16 +60,9 @@ export default function install(alasql, internal) {
 				}
 				result = rs;
 			}
-			//
-			// Ugly hack to use in query.wherefn and source.srcwherefns functions
-			// constructions like this.queriesdata['test'].
-			// We can elimite it with source.srcwherefn.bind(this)()
-			// but it may be slow.
-			//
-			source.queriesdata = query.queriesdata;
 		});
 
-		if (query.sources.length == 0 || 0 === slen) {
+		if (query.sources.length == 0) {
 			try {
 				result = queryfn3(query);
 			} catch (e) {
@@ -91,23 +70,18 @@ export default function install(alasql, internal) {
 				else throw e;
 			}
 		}
-		//	console.log(82,aaa,slen,query.sourceslen, query.sources.length);
 		return result;
 	}
 	function queryfn2(data, idx, query) {
-		if (idx >= 0) {
-			let source = query.sources[idx];
-			source.data = data;
-			if (typeof source.data === 'function') {
-				source.getfn = source.data;
-				source.dontcache = source.getfn.dontcache;
-				if (['OUTER', 'RIGHT', 'ANTI'].includes(source.joinmode)) {
-					source.dontcache = false;
-				}
-				source.data = {};
+		let source = query.sources[idx];
+		source.data = data;
+		if (typeof source.data === 'function') {
+			source.getfn = source.data;
+			source.dontcache = source.getfn.dontcache;
+			if (['OUTER', 'RIGHT', 'ANTI'].includes(source.joinmode)) {
+				source.dontcache = false;
 			}
-		} else {
-			query.queriesdata[-idx - 1] = flatArray(data);
+			source.data = {};
 		}
 
 		query.sourceslen--;
