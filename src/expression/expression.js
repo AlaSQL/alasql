@@ -333,10 +333,10 @@ export default function install(alasql, internal) {
 					if (this.right instanceof yy.Select) {
 						// Check if this is a correlated subquery (references outer tables)
 						// If correlated, we cannot cache the results as they depend on the current row
-						const cacheKey = `in${this.queriesidx}`;
-						const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-						const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-						const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
+						const cacheKey = `in${this.right.queriesidx}`;
+						const checkCorrelated = `(this.queriesfn[${this.right.queriesidx}].query && this.queriesfn[${this.right.queriesidx}].query.isCorrelated)`;
+						const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.right.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+						const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.right.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
 						s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 					} else if (Array.isArray(this.right)) {
 						// Empty array: nothing is IN an empty set, always false
@@ -368,10 +368,10 @@ export default function install(alasql, internal) {
 					if (this.right instanceof yy.Select) {
 						// Check if this is a correlated subquery (references outer tables)
 						// If correlated, we cannot cache the results as they depend on the current row
-						const cacheKey = `notIn${this.queriesidx}`;
-						const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-						const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-						const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
+						const cacheKey = `notIn${this.right.queriesidx}`;
+						const checkCorrelated = `(this.queriesfn[${this.right.queriesidx}].query && this.queriesfn[${this.right.queriesidx}].query.isCorrelated)`;
+						const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.right.queriesidx}](params, null, ${subContext})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+						const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.right.queriesidx}](params, null, ${subContext})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
 						s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 					} else if (Array.isArray(this.right)) {
 						// Empty array: everything is NOT IN an empty set, always true
@@ -403,7 +403,7 @@ export default function install(alasql, internal) {
 				if (this.allsome === 'ALL') {
 					var s;
 					if (this.right instanceof yy.Select) {
-						s = `alasql.utils.flatArray(this.query.queriesfn[${this.queriesidx}](params,null,${subContext}))`;
+						s = `alasql.utils.flatArray(this.query.queriesfn[${this.right.queriesidx}](params,null,${subContext}))`;
 
 						s += '.every(function(b){return (';
 						s += leftJS() + ')' + op + 'b})';
@@ -423,7 +423,7 @@ export default function install(alasql, internal) {
 				if (this.allsome === 'SOME' || this.allsome === 'ANY') {
 					var s;
 					if (this.right instanceof yy.Select) {
-						s = `alasql.utils.flatArray(this.query.queriesfn[${this.queriesidx}](params,null,${subContext}))`;
+						s = `alasql.utils.flatArray(this.query.queriesfn[${this.right.queriesidx}](params,null,${subContext}))`;
 						s += '.some(function(b){return (';
 						s += leftJS() + ')' + op + 'b})';
 					} else if (Array.isArray(this.right)) {

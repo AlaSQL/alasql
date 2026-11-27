@@ -32,7 +32,7 @@ export default function install(alasql, internal) {
 		}
 
 		toJS(context) {
-			const s = `this.queriesfn[${this.queriesidx - 1}](this.params,null,${context})`;
+			const s = `this.queriesfn[${this.queriesidx}](this.params,null,${context})`;
 			return s;
 		}
 

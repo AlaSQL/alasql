@@ -269,7 +269,7 @@ export default function install(alasql, internal) {
 					aliases.push(alias);
 				}
 			} else if (n instanceof yy.Op) {
-				if (n.allsome || n.queriesidx !== undefined) known = false;
+				if (n.allsome || n.right instanceof yy.Select) known = false;
 				else {
 					walk(n.left);
 					walk(n.right);

@@ -15,23 +15,11 @@ export default function install(alasql, internal) {
 	// Rows of a subquery in FROM or JOIN, also when the subquery reads a file
 	function subqueryDatafn(source) {
 		return (query, params, cb, idx, alasql) => {
-			// Subqueries parsed inside this subselect (e.g. a scalar subquery in its
-			// column list) are hoisted to the statement-level queries list, so share
-			// the compiled list with the run of the subselect
-			const state =
-				!source.subquery.query.queriesfn && query.queriesfn
-					? {queriesfn: query.queriesfn}
-					: undefined;
 			let res;
-			source.subquery(
-				query.params,
-				data => {
-					res = data.data;
-					if (cb) res = cb(res, idx, query);
-				},
-				undefined,
-				state
-			);
+			source.subquery(query.params, data => {
+				res = data.data;
+				if (cb) res = cb(res, idx, query);
+			});
 			return res;
 		};
 	}

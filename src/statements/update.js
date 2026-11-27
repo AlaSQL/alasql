@@ -54,13 +54,6 @@ export default function install(alasql, internal) {
 		var tableid = this.table.tableid;
 
 		if (this.where) {
-			if (this.exists) {
-				this.existsfn = this.exists.map(function (ex) {
-					var nq = ex.compile(databaseid);
-					nq.query.modifier = 'RECORDSET';
-					return nq;
-				});
-			}
 			if (this.queries) {
 				this.queriesfn = this.queries.map(function (q) {
 					var nq = q.compile(databaseid);

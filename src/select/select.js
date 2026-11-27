@@ -162,15 +162,7 @@ export default function install(alasql, internal) {
 	 */
 		toJS(context) {
 			let outerContext = context === 'g' ? '(this.groupSources.get(g) || g)' : context;
-			let s =
-				'alasql.utils.flatArray(this.queriesfn[' +
-				(this.queriesidx - 1) +
-				'](this.params,null,' +
-				outerContext +
-				'))[0]';
-
-			//	let s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
-			return s;
+			return `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](this.params,null,${outerContext}))[0]`;
 		}
 
 		isFromDual(databaseid) {
@@ -272,10 +264,7 @@ export default function install(alasql, internal) {
 			// The rows of a run are on the copy of that run (#2596). The compiled query shows an
 			// empty list, as it did between two runs before, and the list cannot take a row.
 			query.data = Object.freeze([]);
-			// 0. Precompile whereexists
-			this.compileWhereExists(query);
-
-			// 0. Precompile queries for IN, NOT IN, ANY and ALL operators
+			// 0. Compile the subqueries written in this SELECT (scalar, IN, NOT IN, ALL, SOME, EXISTS)
 			this.compileQueries(query);
 
 			this.checkSources(databaseid);
@@ -515,7 +504,7 @@ export default function install(alasql, internal) {
 			// Now, compile all togeather into one function with query object in scope
 			// The compiled query is shared by every run of the statement, so a run never writes to it.
 			// Each run gets its own copy of it (#2596). state holds what
-			// the statement around this one sets for the run (modifier, queriesfn).
+			// the statement around this one sets for the run (modifier).
 			var extra;
 			var statement = function (params, cb, oldscope, state) {
 				var run = newRun(query, state, extra || (extra = unlisted(query)));
@@ -673,15 +662,6 @@ export default function install(alasql, internal) {
 			//	throw new Error('Insert statement is should be compiled')
 		}
 
-		compileWhereExists(query) {
-			if (!this.exists) return;
-			query.existsfn = this.exists.map(function (ex) {
-				var nq = ex.compile(query.database.databaseid);
-				nq.query.modifier = 'RECORDSET';
-				return nq;
-			});
-		}
-
 		compileQueries(query) {
 			if (!this.queries) return;
 
@@ -730,43 +710,16 @@ export default function install(alasql, internal) {
 				return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
 			};
 
-			// Compile each subquery. Nested scalar subqueries such as
-			// SELECT (SELECT (SELECT 1 AS c) AS b) AS a share one statement-level
-			// queries list (see #1025), so every compiled subquery must be able to
-			// resolve queriesidx against the same queriesfn array at runtime.
+			// Compile each subquery once. A subquery compiles the subqueries written in it, as
+			// each SELECT has its own list from parsing on (#2666).
 			query.queriesfn = this.queries.map(function (q) {
 				var nq = q.compile(query.database.databaseid);
 				nq.query.modifier = 'RECORDSET';
 
 				// Mark as correlated if it references external tables
 				nq.query.isCorrelated = isCorrelated(q, query);
-
-				// If the nested query has its own queries, ensure they're compiled too
-				// (e.g. IN/ALL/ANY subqueries that captured a nested queries list)
-				if (q.queries && q.queries.length > 0 && !nq.query.queriesfn) {
-					nq.query.queriesfn = q.queries.map(function (qq) {
-						var nnq = qq.compile(query.database.databaseid);
-						nnq.query.modifier = 'RECORDSET';
-						return nnq;
-					});
-				}
 				return nq;
 			});
-
-			// Share compiled subquery functions down the tree. Without this,
-			// multi-level scalar subqueries fail with
-			// "Cannot read properties of undefined (reading '0')" when the
-			// inner select expression evaluates this.queriesfn[queriesidx-1].
-			(function shareQueriesfn(queriesfn) {
-				if (!queriesfn) return;
-				queriesfn.forEach(function (nq) {
-					if (!nq.query.queriesfn) {
-						nq.query.queriesfn = queriesfn;
-					} else if (nq.query.queriesfn !== queriesfn) {
-						shareQueriesfn(nq.query.queriesfn);
-					}
-				});
-			})(query.queriesfn);
 		}
 	};
 
@@ -831,7 +784,6 @@ export default function install(alasql, internal) {
 			data: q.data,
 			columnScope: q.columnScope,
 			queriesfn: q.queriesfn,
-			existsfn: q.existsfn,
 			sources: q.sources,
 			aliases: q.aliases,
 			defaultTableid: q.defaultTableid,

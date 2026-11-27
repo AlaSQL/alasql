@@ -408,12 +408,13 @@ AStatement
 	: Statement
 		{
 			$$ = $1;
-
-			// TODO combine exists and queries
-		    if(yy.exists) $$.exists = yy.exists;
-		    delete yy.exists;
-		    if(yy.queries) $$.queries = yy.queries;
-			delete yy.queries;
+			// A SELECT has its own list of subqueries. The list left over holds the subqueries
+			// outside any SELECT, which belong to the statement. A SELECT leaves that list alone,
+			// as inside IF and WHILE it can hold the subqueries of the condition (#2666)
+			if(!($1 instanceof yy.Select)) {
+				if($$ && yy.queries && yy.queries.length) $$.queries = yy.queries;
+				delete yy.queries;
+			}
 		}
 	;
 
@@ -542,24 +543,20 @@ Select
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
 		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
 		    $$ = $1;
-		    if(yy.exists) $$.exists = yy.exists.slice();
-/*		    if(yy.queries) $$.queries = yy.queries;
-			delete yy.queries;
-*/		}
+		    yy.closeQueries($$);
+		}
 	| LPAR Select RPAR UnionClause OrderClause LimitClause
 		{
 			$$ = $2;
 			yy.extend($$,$4);
 			yy.extend($$,$5); yy.extend($$,$6);
-		    if(yy.exists) $$.exists = yy.exists.slice();
-/*		    if(yy.queries) $$.queries = yy.queries;
-			delete yy.queries;
-*/		}
+			yy.moveQueries($$);
+		}
 	| ParenthesizedSelect UnionClause OrderClause LimitClause
 		{
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    $$ = $1;
-		    if(yy.exists) $$.exists = yy.exists.slice();
+		    yy.moveQueries($$);
 		}
 	| SEARCH SearchSelector* IntoClause SearchFrom?
 	/* SearchLimit? SearchStrategy? SearchTimeout? */
@@ -580,7 +577,7 @@ SelectWithoutOrderOrLimit
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);yy.extend($$,$8);
 		    $$ = $1;
-		    if(yy.exists) $$.exists = yy.exists.slice();
+		    yy.closeQueries($$);
 		}
 	;
 
@@ -834,23 +831,24 @@ SelectClause
 		{ $$ = new yy.Select({columns:[new yy.Column({columnid:'_', modifier:'COLUMN'})]});}
 */	;
 
+// A SELECT starts here, so its list of subqueries starts here too (#2666)
 SelectModifier
 	: SELECT
-		{ if($1=='SELECT') $$ = undefined; else $$ = {modifier: $1};  }
+		{ yy.openQueries(); if($1=='SELECT') $$ = undefined; else $$ = {modifier: $1};  }
 	| SELECT VALUE
-		{ $$ = {modifier:'VALUE'}}
+		{ yy.openQueries(); $$ = {modifier:'VALUE'}}
 	| SELECT ROW
-		{ $$ = {modifier:'ROW'}}
+		{ yy.openQueries(); $$ = {modifier:'ROW'}}
 	| SELECT COLUMN
-		{ $$ = {modifier:'COLUMN'}}
+		{ yy.openQueries(); $$ = {modifier:'COLUMN'}}
 	| SELECT MATRIX
-		{ $$ = {modifier:'MATRIX'}}
+		{ yy.openQueries(); $$ = {modifier:'MATRIX'}}
 	| SELECT TEXTSTRING
-		{ $$ = {modifier:'TEXTSTRING'}}
+		{ yy.openQueries(); $$ = {modifier:'TEXTSTRING'}}
 	| SELECT INDEX
-		{ $$ = {modifier:'INDEX'}}
+		{ yy.openQueries(); $$ = {modifier:'INDEX'}}
 	| SELECT RECORDSET
-		{ $$ = {modifier:'RECORDSET'}}
+		{ yy.openQueries(); $$ = {modifier:'RECORDSET'}}
 	;
 
 TopClause
@@ -933,13 +931,7 @@ ApplyClause
 		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$6}); }
 	| CROSS APPLY LPAR Select RPAR AS Literal
 		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7}); }
-/*		{
-			if(!yy.exists) yy.exists = [];
-			$$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7,existsidx:yy.exists.length});
-			yy.exists.push($3);
-
-		 }
-*/	| OUTER APPLY LPAR Select RPAR Literal
+	| OUTER APPLY LPAR Select RPAR Literal
 		{ $$ = new yy.Apply({select: $4, applymode:'OUTER', as:$6}); }
 	| OUTER APPLY LPAR Select RPAR AS Literal
 		{ $$ = new yy.Apply({select: $4, applymode:'OUTER', as:$7}); }
@@ -1154,87 +1146,28 @@ UnionClause
 
 UnionOp
 	: UNION
-		{ 
-			// Save and reset queries for nested SELECT using stack pattern
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'union'}; 
-		}
+		{ $$ = {op: 'union'}; }
 	| UNION ALL
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'unionall'}; 
-		}
+		{ $$ = {op: 'unionall'}; }
 	| EXCEPT
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'except'}; 
-		}
+		{ $$ = {op: 'except'}; }
 	| INTERSECT
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'intersect'}; 
-		}
+		{ $$ = {op: 'intersect'}; }
 	| UNION CORRESPONDING
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'union', corresponding: true}; 
-		}
+		{ $$ = {op: 'union', corresponding: true}; }
 	| UNION ALL CORRESPONDING
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'unionall', corresponding: true}; 
-		}
+		{ $$ = {op: 'unionall', corresponding: true}; }
 	| EXCEPT CORRESPONDING
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'except', corresponding: true}; 
-		}
+		{ $$ = {op: 'except', corresponding: true}; }
 	| INTERSECT CORRESPONDING
-		{ 
-			if(!yy.queriesStack) yy.queriesStack = [];
-			yy.queriesStack.push(yy.queries || []);
-			yy.queries = [];
-			$$ = {op: 'intersect', corresponding: true}; 
-		}
+		{ $$ = {op: 'intersect', corresponding: true}; }
 	;
 
 UnionableSelect
 	: SelectWithoutOrderOrLimit
-		{
-			// Restore parent queries from stack and assign current queries to nested SELECT
-			if(yy.queriesStack && yy.queriesStack.length > 0) {
-				if(yy.queries && yy.queries.length > 0) {
-					$1.queries = yy.queries;
-				}
-				yy.queries = yy.queriesStack.pop();
-			}
-			$$ = $1;
-		}
+		{ $$ = $1; }
 	| ParenthesizedSelect
-		{
-			// Restore parent queries from stack and assign current queries to nested SELECT
-			if(yy.queriesStack && yy.queriesStack.length > 0) {
-				if(yy.queries && yy.queries.length > 0) {
-					$1.queries = yy.queries;
-				}
-				yy.queries = yy.queriesStack.pop();
-			}
-			$$ = $1;
-		}
+		{ $$ = $1; }
 	;
 
 OrderClause
@@ -1394,26 +1327,11 @@ Expression
 /*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }
 */	| LPAR Select RPAR
-		{
-			if(!yy.queries) yy.queries = [];
-			yy.queries.push($2);
-			$2.queriesidx = yy.queries.length;
-			$$ = $2;
-		}
+		{ $$ = yy.addQuery($2); }
 	| LPAR Insert RPAR
-		{
-			if(!yy.queries) yy.queries = [];
-			yy.queries.push($2);
-			$2.queriesidx = yy.queries.length;
-			$$ = $2;
-		}
+		{ $$ = yy.addQuery($2); }
 	| LPAR (CreateVertex|CreateEdge) RPAR
-		{
-			if(!yy.queries) yy.queries = [];
-			yy.queries.push($2);
-			$2.queriesidx = yy.queries.length;
-			$$ = $2;
-		}
+		{ $$ = yy.addQuery($2); }
 
 	| JavaScript
 		{$$ = $1}
@@ -1642,11 +1560,7 @@ VarValue
 
 ExistsValue
 	: EXISTS LPAR Select RPAR
-		{
-			if(!yy.exists) yy.exists = [];
-			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length});
-			yy.exists.push($3);
-		}
+		{ $$ = new yy.ExistsValue({value: yy.addQuery($3)}); }
 	;
 
 ArrayValue
@@ -1698,21 +1612,6 @@ ElseClause
 		{ $$ = $2; }
 	|
 		{ $$ = undefined; }
-	;
-
-// Marks the start of a subquery SELECT in an IN / NOT IN / ALL-SOME Op:
-// a subquery holds only its own inner subqueries (#3082), so save the
-// enclosing statement's queries and start a fresh list for this SELECT.
-// The matching Op action assigns the collected list to the SELECT and
-// restores the outer list, so each subquery is compiled once and the
-// enclosing statement keeps its global positions (see #2879).
-SubqueryStart
-	: {
-		if(!yy.queriesStack) yy.queriesStack = [];
-		yy.queriesStack.push(yy.queries || []);
-		yy.queries = [];
-		$$ = undefined;
-	  }
 	;
 
 Op
@@ -1796,17 +1695,8 @@ Op
 	| Expression NEEQEQEQ Expression
 		{ $$ = new yy.Op({left:$1, op:'!===' , right:$3}); }
 
-	| Expression CondOp AllSome LPAR SubqueryStart Select RPAR
-		{
-			// The SELECT's own inner queries (collected while its list was fresh)
-			if(yy.queries.length > 0) {
-				$6.queries = yy.queries;
-			}
-			// Restore the enclosing statement's list, then add this SELECT to it
-			yy.queries = yy.queriesStack.pop();
-			yy.queries.push($6);
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$6, queriesidx: yy.queries.length - 1});
-		}
+	| Expression CondOp AllSome LPAR Select RPAR
+		{ $$ = new yy.Op({left:$1, op:$2 , allsome:$3, right: yy.addQuery($5)}); }
 
 	| Expression CondOp AllSome LPAR ExprList RPAR
 		{
@@ -1858,29 +1748,11 @@ Op
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
 
-	| Expression IN LPAR SubqueryStart Select RPAR
-		{
-			// The SELECT's own inner queries (collected while its list was fresh)
-			if(yy.queries.length > 0) {
-				$5.queries = yy.queries;
-			}
-			// Restore the enclosing statement's list, then add this SELECT to it
-			yy.queries = yy.queriesStack.pop();
-			yy.queries.push($5);
-			$$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$5, queriesidx: yy.queries.length - 1}));
-		}
+	| Expression IN LPAR Select RPAR
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right: yy.addQuery($4)})); }
 
-	| Expression NOT IN LPAR SubqueryStart Select RPAR
-		{
-			// The SELECT's own inner queries (collected while its list was fresh)
-			if(yy.queries.length > 0) {
-				$6.queries = yy.queries;
-			}
-			// Restore the enclosing statement's list, then add this SELECT to it
-			yy.queries = yy.queriesStack.pop();
-			yy.queries.push($6);
-			$$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right:$6, queriesidx: yy.queries.length - 1}));
-		}
+	| Expression NOT IN LPAR Select RPAR
+		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'NOT IN', right: yy.addQuery($5)})); }
 
 	| Expression IN LPAR ExprList RPAR
 		{ $$ = yy.notOutside(new yy.Op({left: $1, op:'IN', right:$4})); }
@@ -2888,28 +2760,24 @@ Restore
 	;
 */
 
+// IF and WHILE keep the list that the subqueries of their condition go onto. The statement
+// in them can take that list over, or be a BEGIN ... END whose statements share it (#2666)
 If
-	:
-/*	IF Expression AStatement
-		{ $$ = new yy.If({expression:$2,thenstat:$3});
-			if($3.exists) $$.exists = $3.exists;
-			if($3.queries) $$.queries = $3.queries;
-		}
-	|
-
-*/
-	IF Expression AStatement ElseStatement
+	: IfStart Expression AStatement ElseStatement
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4});
-			if($3.exists) $$.exists = $3.exists;
-			if($3.queries) $$.queries = $3.queries;
+			yy.keepQueries($$, $1);
 		}
 
-	| IF Expression AStatement
+	| IfStart Expression AStatement
 		{
 			$$ = new yy.If({expression:$2,thenstat:$3});
-			if($3.exists) $$.exists = $3.exists;
-			if($3.queries) $$.queries = $3.queries;
+			yy.keepQueries($$, $1);
 		}
+	;
+
+IfStart
+	: IF
+		{ $$ = yy.markQueries(); }
 	;
 
 ElseStatement
@@ -2918,11 +2786,15 @@ ElseStatement
 	;
 
 While
-	: WHILE Expression AStatement
+	: WhileStart Expression AStatement
 		{ $$ = new yy.While({expression:$2,loopstat:$3});
-			if($3.exists) $$.exists = $3.exists;
-			if($3.queries) $$.queries = $3.queries;
+			yy.keepQueries($$, $1);
 		}
+	;
+
+WhileStart
+	: WHILE
+		{ $$ = yy.markQueries(); }
 	;
 
 Continue
@@ -3325,8 +3197,7 @@ CreateTrigger
 		{
 			$$ = new yy.CreateTrigger({trigger:$4, when:$5, action:$6, table:$8, statement:$10});
 			yy.extend($$, $3);
-			if($10.exists) $$.exists = $10.exists;
-			if($10.queries) $$.queries = $10.queries;
+			yy.takeQueries($$, [$10]);
 		}
 	| CREATE TRIGGER IfNotExists Literal BeforeAfter InsertDeleteUpdate ON Table Literal
 		{
@@ -3337,8 +3208,7 @@ CreateTrigger
 		{
 			$$ = new yy.CreateTrigger({trigger:$4, when:$6, action:$7, table:$5, statement:$10});
 			yy.extend($$, $3);
-			if($10.exists) $$.exists = $10.exists;
-			if($10.queries) $$.queries = $10.queries;
+			yy.takeQueries($$, [$10]);
 		}
 	;
 

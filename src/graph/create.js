@@ -34,7 +34,7 @@ export default function install(alasql) {
 
 	yy.CreateVertex.prototype.toJS = function (context) {
 		//		console.log('yy.CreateVertex.toJS');
-		var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
+		var s = 'this.queriesfn[' + this.queriesidx + '](this.params,null,' + context + ')';
 		// var s = '';
 		return s;
 	};
@@ -109,7 +109,7 @@ export default function install(alasql) {
 	};
 
 	yy.CreateEdge.prototype.toJS = function (context) {
-		var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
+		var s = 'this.queriesfn[' + this.queriesidx + '](this.params,null,' + context + ')';
 		return s;
 	};
 

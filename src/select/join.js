@@ -272,7 +272,7 @@ export default function install(alasql, internal) {
 
 					// A subquery is not a fixed key: its result can change without the joined table
 					// changing, so an index on it would go stale, and a correlated one needs the row
-					if (/this\.(queriesfn|existsfn)/.test(ls + rs)) middlef = true;
+					if (/this\.queriesfn/.test(ls + rs)) middlef = true;
 
 					if (middlef) {
 						rights = '';
