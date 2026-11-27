@@ -53,6 +53,12 @@ export default function install(alasql) {
 		};
 	})();
 
+	// A statement in WHILE or BEGIN ... END that is not compiled (IF, WHILE, BEGIN ... END, SET)
+	// compiles its subqueries first, as alasql.exec does for a statement at the top (#2666)
+	function prepare(statement, databaseid, params) {
+		if (!statement.compile) alasql.precompile(statement, databaseid, params);
+	}
+
 	yy.While = function (params) {
 		return Object.assign(this, params);
 	};
@@ -67,8 +73,9 @@ export default function install(alasql) {
 		var self = this;
 		var res = [];
 		//	console.log(this.expression.toJS());
-		var fn = new Function('params,alasql,p', 'var y;return ' + this.expression.toJS());
-		//	console.log('cb',!!cb);
+		// Bound to the WHILE, as a subquery in the condition reads this.queriesfn (#2666)
+		var fn = new Function('params,alasql,p', 'var y;return ' + this.expression.toJS()).bind(this);
+		prepare(self.loopstat, databaseid, params);
 		if (cb) {
 			var lastYield = Date.now();
 			var running = false;
@@ -180,6 +187,7 @@ export default function install(alasql) {
 			var idx = 0;
 			runone();
 			function runone() {
+				prepare(self.statements[idx], databaseid, params);
 				self.statements[idx].execute(databaseid, params, function (data) {
 					res.push(data);
 					idx++;
@@ -190,6 +198,7 @@ export default function install(alasql) {
 		} else {
 			// Synchronous execution
 			for (var i = 0; i < self.statements.length; i++) {
+				prepare(self.statements[i], databaseid, params);
 				var res1 = self.statements[i].execute(databaseid, params);
 				res.push(res1);
 			}

@@ -9,7 +9,6 @@ let testId = '2666'; // Each SELECT has its own list of subqueries
 // also placed inside EXISTS, a subquery in FROM, a UNION branch, a view, the WITH part and the
 // main SELECT of a WITH, and three levels deep. Every subquery is correlated to the SELECT it is
 // written in, by a qualified name.
-// Every subquery is correlated to the SELECT it is written in, by a qualified name.
 const kinds = {
 	scalar: {
 		p: al => '(SELECT MAX(z.zn) FROM z WHERE z.zg = ' + al + '.g) > 20',
@@ -891,5 +890,43 @@ describe(`Test ${testId} - each SELECT has its own subqueries`, function () {
 			],
 			[3, 1, 1, 1, [{x: 12}], [{a: 11}, {a: 12}, {a: 5}]]
 		);
+	});
+	it('L) A subquery in the condition of a nested IF, of WHILE and of IF around BEGIN ... END', function () {
+		alasql('CREATE TABLE wla (a INT); INSERT INTO wla VALUES (1), (2), (3)');
+		assert.deepStrictEqual(
+			[
+				alasql('IF EXISTS (SELECT 1 FROM z) IF (SELECT MIN(zn) FROM z) = 5 SELECT 1 AS a'),
+				alasql(
+					'IF EXISTS (SELECT 1 FROM z WHERE zn > 99) SELECT 0 AS a ELSE IF (SELECT MAX(zn) FROM z) = 99 SELECT 2 AS a'
+				),
+				alasql(
+					'SET @i = 0; WHILE @i < (SELECT COUNT(*) FROM p) SET @i = @i + 1; SELECT @i AS i'
+				)[2],
+				alasql(
+					'WHILE EXISTS (SELECT 1 FROM wla) DELETE FROM wla WHERE a = (SELECT MIN(a) FROM wla); SELECT COUNT(*) AS n FROM wla'
+				)[1],
+				alasql(
+					'IF (SELECT COUNT(*) FROM p) = 4 BEGIN INSERT INTO wla SELECT k FROM p WHERE k IN (SELECT zg FROM z); SET @m = (SELECT MAX(zn) FROM z) END; SELECT @m AS m, (SELECT COUNT(*) FROM wla) AS n'
+				)[1],
+				alasql(
+					'SET @i = 0; SET @s = 0; WHILE @i < (SELECT COUNT(*) FROM p) BEGIN SET @i = @i + 1; IF EXISTS (SELECT 1 FROM z WHERE zg = @i) SET @s = @s + (SELECT MAX(zn) FROM z WHERE zg = @i) END; SELECT @s AS s'
+				)[3],
+			],
+			[[{a: 1}], [{a: 2}], [{i: 4}], [{n: 0}], [{m: 99, n: 3}], [{s: 70}]]
+		);
+	});
+
+	it('M) The same with a callback', function (done) {
+		alasql('SET @j = 0; WHILE @j < (SELECT COUNT(*) FROM p) SET @j = @j + 1', [], function () {
+			assert.deepStrictEqual(alasql('SELECT @j AS j'), [{j: 4}]);
+			alasql(
+				'IF EXISTS (SELECT 1 FROM z) IF (SELECT MIN(zn) FROM z) = 5 SELECT 1 AS a',
+				[],
+				function (res) {
+					assert.deepStrictEqual(res, [{a: 1}]);
+					done();
+				}
+			);
+		});
 	});
 });

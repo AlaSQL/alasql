@@ -409,8 +409,8 @@ AStatement
 		{
 			$$ = $1;
 			// A SELECT has its own list of subqueries. The list left over holds the subqueries
-			// outside any SELECT, which belong to the statement. Inside IF and WHILE that list
-			// also holds the condition's subqueries, so a SELECT leaves it to the IF (#2666)
+			// outside any SELECT, which belong to the statement. A SELECT leaves that list alone,
+			// as inside IF and WHILE it can hold the subqueries of the condition (#2666)
 			if(!($1 instanceof yy.Select)) {
 				if($$ && yy.queries && yy.queries.length) $$.queries = yy.queries;
 				delete yy.queries;
@@ -2760,17 +2760,24 @@ Restore
 	;
 */
 
+// IF and WHILE keep the list that the subqueries of their condition go onto. The statement
+// in them can take that list over, or be a BEGIN ... END whose statements share it (#2666)
 If
-	: IF Expression AStatement ElseStatement
+	: IfStart Expression AStatement ElseStatement
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4});
-			yy.takeQueries($$, [$3, $4]);
+			yy.keepQueries($$, $1);
 		}
 
-	| IF Expression AStatement
+	| IfStart Expression AStatement
 		{
 			$$ = new yy.If({expression:$2,thenstat:$3});
-			yy.takeQueries($$, [$3]);
+			yy.keepQueries($$, $1);
 		}
+	;
+
+IfStart
+	: IF
+		{ $$ = yy.markQueries(); }
 	;
 
 ElseStatement
@@ -2779,10 +2786,15 @@ ElseStatement
 	;
 
 While
-	: WHILE Expression AStatement
+	: WhileStart Expression AStatement
 		{ $$ = new yy.While({expression:$2,loopstat:$3});
-			yy.takeQueries($$, [$3]);
+			yy.keepQueries($$, $1);
 		}
+	;
+
+WhileStart
+	: WHILE
+		{ $$ = yy.markQueries(); }
 	;
 
 Continue

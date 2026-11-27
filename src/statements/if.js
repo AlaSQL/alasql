@@ -8,6 +8,13 @@ export default function install(alasql) {
 //
 */
 
+	// A statement in IF that is not compiled (IF, WHILE, BEGIN ... END, SET) compiles its
+	// subqueries first, as alasql.exec does for a statement at the top (#2666)
+	function run(statement, databaseid, params, cb) {
+		if (!statement.compile) alasql.precompile(statement, databaseid, params);
+		return statement.execute(databaseid, params, cb);
+	}
+
 	yy.If = function (params) {
 		return Object.assign(this, params);
 	};
@@ -31,9 +38,9 @@ export default function install(alasql) {
 			'var y;return ' + this.expression.toJS('({})', '', null)
 		).bind(this);
 		//	 var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
-		if (fn(params, alasql)) res = this.thenstat.execute(databaseid, params, cb);
+		if (fn(params, alasql)) res = run(this.thenstat, databaseid, params, cb);
 		else {
-			if (this.elsestat) res = this.elsestat.execute(databaseid, params, cb);
+			if (this.elsestat) res = run(this.elsestat, databaseid, params, cb);
 			else {
 				if (cb) res = cb(res);
 			}

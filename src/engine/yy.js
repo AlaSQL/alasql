@@ -79,7 +79,8 @@ export default function install(alasql) {
 		this.queriesfn[queriesidx].
 
 		A subquery outside any SELECT (UPDATE, DELETE, INSERT VALUES, SET, IF, WHILE, PRINT) goes
-		onto the list at the bottom, which AStatement gives to the statement.
+		onto the list at the bottom, which AStatement gives to the statement. IF and WHILE mark
+		that list before their condition and keep it, as the statement in them can take it over.
 
 		The parser calls these on its own copy of yy for each parse, so they keep the lists on
 		this and not on yy.
@@ -121,8 +122,21 @@ export default function install(alasql) {
 			});
 		},
 
-		// IF, WHILE and CREATE TRIGGER share the list of the statement in them, unless that is a
-		// SELECT, whose list is its own
+		// Before the condition of IF or WHILE: the list its subqueries go onto, and its length
+		markQueries() {
+			if (!this.queries) this.queries = [];
+			return {list: this.queries, length: this.queries.length};
+		},
+
+		// After IF or WHILE: it keeps the list of its condition when the condition put a
+		// subquery on it. The list can also hold the subqueries of the statement in it, which
+		// then shares it, with the same positions.
+		keepQueries(statement, mark) {
+			if (mark.list.length > mark.length) statement.queries = mark.list;
+		},
+
+		// CREATE TRIGGER shares the list of the statement in it, unless that is a SELECT, whose
+		// list is its own
 		takeQueries(statement, inner) {
 			for (var i = 0; i < inner.length; i++) {
 				var s = inner[i];
