@@ -69,7 +69,7 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `run.js`: `record <label> [--ref [<version>|<commit>] | --dist <dir>]` and `compare <a> <b> [--allow-differences]`. Recordings are in `recordings/`, the downloaded or built references in `.ref/`; both are ignored by git.
 - `silent-files.txt`: the test files allowed to run tests without a statement, each with its reason.
 - `unstable-statements.txt`: statements the engine answers differently run by run; only their code is compared.
-- `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed. A list of plain values is one path, so one line covers it.
+- `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed. A list of plain values is one path, so one line covers it. A method of a class is a path of its own (`alasql.yy.Select.prototype.compile`), so a line for the class does not cover it.
 - `record.js`: the recorder, loaded by `bun test --preload`. It hooks `alasql.dexec`, `alasql.compile` and `globalThis.Function`.
 - `dialect-corpus.js`: runs the dialect cases through alasql under the recorder.
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.

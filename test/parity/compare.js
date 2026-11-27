@@ -128,7 +128,8 @@ function unstable(A, B) {
 }
 
 // API paths allowed to differ between the builds, with the reason (api-allowed.txt). A listed
-// path covers its prototype and constructor too.
+// function covers its prototype object and the constructor on it. A method on the prototype is
+// a path of its own, so that a method added to or removed from a listed class still shows (#3181)
 function allowedApi() {
 	const file = path.join(__dirname, 'api-allowed.txt');
 	const allowed = new Set();
@@ -403,7 +404,7 @@ function report(A, B, labelA, labelB, opts) {
 		// paths that may differ, each with its reason (api-allowed.txt)
 		const allowed = allowedApi();
 		const isAllowed = k =>
-			allowed.has(k) || allowed.has(k.replace(/\.(prototype|constructor)(\..*)?$/, ''));
+			allowed.has(k) || allowed.has(k.replace(/\.prototype(\.constructor)?$/, ''));
 		const onlyA = r.onlyA.filter(k => !isAllowed(k));
 		const onlyB = r.onlyB.filter(k => !isAllowed(k));
 		const changed = r.changed.filter(([k]) => !isAllowed(k));

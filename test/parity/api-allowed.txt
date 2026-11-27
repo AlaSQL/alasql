@@ -1,7 +1,8 @@
 # API paths allowed to differ from the reference build, one per line, with the reason after #.
-# compare.js reports them as allowed instead of failing; a path covers its prototype and
-# constructor. Every change to the alasql object made on purpose goes here, so that the API
-# snapshot keeps catching what was not on purpose.
+# compare.js reports them as allowed instead of failing. A function covers its prototype object
+# and the constructor on it, and a method of a class is a path of its own, as
+# alasql.yy.Select.prototype.compile. Every change to the alasql object made on purpose goes
+# here, so that the API snapshot keeps catching what was not on purpose.
 alasql.utils.hash           # stateless helpers are module exports now; as exports they have a .name, which a function assigned to utils.x did not have
 alasql.utils.deepEqual      # as above
 alasql.utils.arrayUnionDeep # as above
