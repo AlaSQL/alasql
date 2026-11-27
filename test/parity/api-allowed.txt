@@ -101,3 +101,5 @@ alasql.yy.closeQueries # helper of the parser
 alasql.yy.addQuery # helper of the parser
 alasql.yy.moveQueries # helper of the parser
 alasql.yy.takeQueries # helper of the parser
+alasql.yy.markQueries # helper of the parser
+alasql.yy.keepQueries # helper of the parser
