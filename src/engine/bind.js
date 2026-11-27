@@ -10,10 +10,11 @@
 	order of FROM and JOIN, each with its columns when they are known, and a link to the scope
 	of the SELECT around it. bind.column() says which source and which column a Column refers
 	to in a scope, bind.read() applies the 4.x rule of the place, and bind.write() writes the
-	code of the read. The scope is also what the rest of the compiler asks about the columns
-	of the sources (owner, has, aliases). It replaced a dictionary of default columns that
-	every SELECT built, and it is passed to every toJS as the third argument, still named
-	defcols there.
+	code of the read. The read of a name that is decided per row is written only by
+	bind.anyJS(), which today's lookup in Column.lookupJS and the select list use too (#2680).
+	The scope is also what the rest of the compiler asks about the columns of the sources
+	(owner, has, aliases). It replaced a dictionary of default columns that every SELECT built,
+	and it is passed to every toJS as the third argument, still named defcols there.
 
 	The rules of bind.column() are the rules of 4.x where 4.x made a choice:
 	  - a name found in the column definitions of exactly one source is that source's column
@@ -299,43 +300,46 @@ export default function install(alasql, internal) {
 	function write(ref, sc, context, col) {
 		const columnid = ref.column;
 		if (ref.scope !== 0 || ref.ambiguous || columnid === '_') return;
-		if (ref.rule === 'firstWithColumn') {
-			// The select list of a query without grouping: the sources without column definitions
-			// before the first table that has the name are asked per row, and then that table
-			// is read, with `?.` as its row can be missing in an outer join (#2680, #2873)
-			const list = ref.any || [ref.source];
-			const last = list.length - 1;
-			return perRowJS(
-				list,
-				context,
-				columnid,
-				last,
-				`${context}['${list[last]}']?.['${columnid}']`
-			);
-		}
-		if (ref.any) return perRowJS(ref.any, context, columnid, ref.any.length, 'undefined');
+		// The select list of a query without grouping: the sources without column definitions
+		// before the first table that has the name are asked per row, and then that table is
+		// read (#2873)
+		if (ref.rule === 'firstWithColumn')
+			return anyJS(sc, ref.any || [ref.source], context, columnid);
+		if (ref.any) return anyJS(sc, ref.any, context, columnid);
 		const source = ref.source;
-		if (!(ref.rule || col.tableid || sc.sources.length === 1)) {
-			// A bare name that only a source without column definitions can have. Beside other
-			// sources its row is asked for the key, as 4.x does (#832).
-			const sources = sc.sources;
-			for (let i = 0; i < sources.length; i++) {
-				if (sources[i].alias === source) {
-					if (sources[i].columns === null)
-						return perRowJS([source], context, columnid, 1, 'undefined');
-					break;
-				}
-			}
+		// A bare name that only a source without column definitions can have. Beside other
+		// sources its row is asked for the key, as 4.x does (#832).
+		if (
+			!(ref.rule || col.tableid || sc.sources.length === 1) &&
+			has(sc, source, columnid) === undefined
+		) {
+			return anyJS(sc, [source], context, columnid);
 		}
 		return `${context}['${source}']['${columnid}']`;
 	}
 
-	// Asked per row: the first of the first count sources whose row has the key, and else rest
-	function perRowJS(aliases, context, columnid, count, rest) {
-		let js = rest;
-		for (let i = count - 1; i >= 0; i--) {
+	/**
+	 * The JavaScript that reads a bare name from the first of some sources that has it, even
+	 * when the value there is null (#2680, #2873)
+	 * @param {object} sc The scope of the SELECT
+	 * @param {string[]} aliases The sources to ask, in order
+	 * @param {string} context The JavaScript of the row object, which has one key per source
+	 * @param {string} columnid The name
+	 * @returns {string} For each source in order: one whose column definitions have the name is
+	 *   read, with `?.` as its row can be missing in an outer join, and ends the list; one whose
+	 *   definitions lack it is skipped; one without definitions is asked per row whether its row
+	 *   has the key. The code is 'undefined' when no source can have it.
+	 */
+	function anyJS(sc, aliases, context, columnid) {
+		let js = 'undefined';
+		for (let i = aliases.length - 1; i >= 0; i--) {
 			const row = `${context}['${aliases[i]}']`;
-			js = `('${columnid}' in Object(${row}) ? ${row}['${columnid}'] : ${js})`;
+			const defined = has(sc, aliases[i], columnid);
+			if (defined === undefined) {
+				js = `('${columnid}' in Object(${row}) ? ${row}['${columnid}'] : ${js})`;
+			} else if (defined) {
+				js = `${row}?.['${columnid}']`;
+			}
 		}
 		return js;
 	}
@@ -346,6 +350,7 @@ export default function install(alasql, internal) {
 		column,
 		read,
 		write,
+		anyJS,
 		owner,
 		has,
 		aliases,

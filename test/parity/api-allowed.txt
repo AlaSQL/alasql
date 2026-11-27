@@ -91,3 +91,6 @@ alasql.yy.UniOp.children # declared parts, as above
 alasql.yy.UniOp.fields # declared parts, as above
 alasql.yy.VarValue.fields # declared parts, as above
 alasql.yy.View.fields # declared parts, as above
+
+# The per-row read of a bare name is written only by internal.bind.anyJS (#2680)
+alasql.yy.Column.fromAnySource # removed, internal helper of the compiler

@@ -680,20 +680,6 @@ export default function install(alasql, internal) {
 				return id;
 			}
 
-			// Value of an unqualified column from the first source that has it, even when it is null (#2873).
-			// A table with column definitions is decided here, as its rows leave out columns that were
-			// not inserted; any other source is decided per row by whether the row has the key.
-			// sc is the scope of the SELECT (bind.scope), which knows the column definitions
-			static fromAnySource(context, aliases, columnid, sc) {
-				return aliases.reduceRight((rest, alias) => {
-					const has = internal.bind.has(sc, alias, columnid);
-					if (has !== undefined) {
-						return has ? `${context}['${alias}']?.['${columnid}']` : rest;
-					}
-					return `('${columnid}' in Object(${context}['${alias}']) ? ${context}['${alias}']['${columnid}'] : ${rest})`;
-				}, 'undefined');
-			}
-
 			toString() {
 				const colNeedsBrackets = Column.needsBrackets(this.columnid);
 				let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
@@ -772,6 +758,8 @@ export default function install(alasql, internal) {
 
 			// defcols is the scope of the SELECT (bind.scope) when the caller has one. The name is
 			// from the time it was a dictionary of default columns, and every toJS passes it on.
+			// A bare name that no table here defines is read per row by bind.anyJS, the code that
+			// the binding writes too (#2680).
 			lookupJS(context, tableid, defcols, firstTableIfAmbiguous) {
 				// SEARCH compiles against x, the current value, so the VALUE keyword stays that value there
 				if (this.valueKeyword && context === 'x') {
@@ -818,11 +806,11 @@ export default function install(alasql, internal) {
 					} else if (this.columnid !== '_' && internal.bind.aliases(defcols).length > 1) {
 						// Not a column of any table here, so it comes from a subquery, parameter
 						// or table without column definitions (#832)
-						return Column.fromAnySource(
-							context,
+						return internal.bind.anyJS(
+							defcols,
 							internal.bind.aliases(defcols),
-							this.columnid,
-							defcols
+							context,
+							this.columnid
 						);
 					} else {
 						return this.columnid !== '_'

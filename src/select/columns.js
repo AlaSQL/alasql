@@ -346,25 +346,13 @@ export default function install(alasql, internal) {
 								// the column of one source
 								var lookup;
 								if (needsRuntimeResolution) {
-									// An APPLY source has no entry in query.aliases and was not asked, so
-									// its bare column came out undefined (#3115). With one in the query
-									// every source is asked, in the order of FROM and JOIN.
-									var askAliases = Object.keys(query.aliases);
-									if (
-										query.sources.some(function (src) {
-											return src.applyselect;
-										})
-									) {
-										askAliases = query.sources.map(function (src) {
-											return src.alias;
-										});
-									}
+									// Every source is asked, APPLY too (#3115), in the order of FROM and JOIN
 									lookup = function () {
-										return yy.Column.fromAnySource(
+										return internal.bind.anyJS(
+											query.columnScope,
+											internal.bind.aliases(query.columnScope),
 											'p',
-											askAliases,
-											col.columnid,
-											query.columnScope
+											col.columnid
 										);
 									};
 								} else {
@@ -384,7 +372,10 @@ export default function install(alasql, internal) {
 								);
 								fromBinding = true;
 								if (needsRuntimeResolution) {
-									// Only check it against the default table if no other source can have it
+									// Only check it against the default table if no other source can have it.
+									// This reads query.sources and not the scope: the scope does not know the
+									// columns of a subquery or an APPLY source, and a name that none of them has
+									// stays the error "Column does not exist" (test2680 C).
 									var inOtherSource = query.sources.some(
 										src =>
 											src.alias !== tbid &&
