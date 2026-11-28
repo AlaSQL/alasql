@@ -39,6 +39,15 @@ export default function install(alasql, internal) {
 		compile(databaseid) {
 			var dbid = databaseid;
 
+			// A subquery in a selector (WHERE, EX, RETURN...) reads this.queriesfn, as in DELETE (#3180)
+			if (this.queries) {
+				this.queriesfn = this.queries.map(function (q) {
+					var nq = q.compile(dbid);
+					nq.query.modifier = 'RECORDSET';
+					return nq;
+				});
+			}
+
 			var statement = (params, cb) => {
 				var res;
 				this.#doSearch(dbid, params, function (data) {
@@ -57,6 +66,8 @@ export default function install(alasql, internal) {
 			var stope = {};
 			var fromdata;
 			var selectors = cloneDeep(this.selectors);
+			// What the expressions of the selectors read as this, for the subqueries in them
+			var scope = {queriesfn: this.queriesfn, params: params};
 
 			function processSelector(selectors, sidx, value) {
 				//		var val;
@@ -589,7 +600,7 @@ export default function install(alasql, internal) {
 						throw new Error('Wrong selector ' + sel.selid);
 					}
 				} else if (sel.srchid) {
-					var r = alasql.srch[sel.srchid.toUpperCase()](value, sel.args, stope, params);
+					var r = alasql.srch[sel.srchid.toUpperCase()].call(scope, value, sel.args, stope, params);
 					//			console.log(sel.srchid,r);
 				} else {
 					throw new Error('Selector not found');
@@ -784,7 +795,7 @@ export default function install(alasql, internal) {
 		EQ(val, args, stope, params) {
 			var exprs = args[0].toJS('x', '');
 			var exprfn = new Function('x,alasql,params', 'return ' + exprs);
-			if (val === exprfn(val, alasql, params)) {
+			if (val === exprfn.call(this, val, alasql, params)) {
 				return {status: 1, values: [val]};
 			} else {
 				return {status: -1, values: []};
@@ -801,7 +812,8 @@ export default function install(alasql, internal) {
 					.match(
 						new RegExp(
 							'^' +
-								exprfn(val, alasql, params)
+								exprfn
+									.call(this, val, alasql, params)
 									.toUpperCase()
 									.replace(/%/g, '.*')
 									.replace(/\?|_/g, '.') +
@@ -901,7 +913,7 @@ export default function install(alasql, internal) {
 		WHERE(val, args, stope, params) {
 			var exprs = args[0].toJS('x', '');
 			var exprfn = new Function('x,alasql,params', 'return ' + exprs);
-			if (exprfn(val, alasql, params)) {
+			if (exprfn.call(this, val, alasql, params)) {
 				return {status: 1, values: [val]};
 			} else {
 				return {status: -1, values: []};
@@ -958,20 +970,20 @@ export default function install(alasql, internal) {
 		EX(val, args, stope, params) {
 			var exprs = args[0].toJS('x', '');
 			var exprfn = new Function('x,alasql,params', 'return ' + exprs);
-			return {status: 1, values: [exprfn(val, alasql, params)]};
+			return {status: 1, values: [exprfn.call(this, val, alasql, params)]};
 		},
 
 		// Transform expression
 		RETURN(val, args, stope, params) {
 			var res = {};
 			if (args && args.length > 0) {
-				args.forEach(function (arg) {
+				args.forEach(arg => {
 					var exprs = arg.toJS('x', '');
 					var exprfn = new Function('x,alasql,params', 'return ' + exprs);
 					if (typeof arg.as === 'undefined') {
 						arg.as = arg.toString();
 					}
-					res[arg.as] = exprfn(val, alasql, params);
+					res[arg.as] = exprfn.call(this, val, alasql, params);
 				});
 			}
 			return {status: 1, values: [res]};
@@ -1082,7 +1094,7 @@ export default function install(alasql, internal) {
 				.join(';');
 			var setfn = new Function('x,params,alasql', s);
 
-			setfn(val, params, alasql);
+			setfn.call(this, val, params, alasql);
 
 			return {status: 1, values: [val]};
 		},
@@ -1092,7 +1104,7 @@ export default function install(alasql, internal) {
 			s += args.map(arg => arg.toJS('x', '')).join(',');
 			s += ']';
 			var setfn = new Function('x,params,alasql', s);
-			var rv = setfn(val, params, alasql);
+			var rv = setfn.call(this, val, params, alasql);
 
 			return {status: 1, values: [rv]};
 		},
