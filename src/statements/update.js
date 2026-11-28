@@ -53,15 +53,16 @@ export default function install(alasql, internal) {
 		databaseid = internal.bind.table(this.table, databaseid).databaseid;
 		var tableid = this.table.tableid;
 
-		if (this.where) {
-			if (this.queries) {
-				this.queriesfn = this.queries.map(function (q) {
-					var nq = q.compile(databaseid);
-					nq.query.modifier = 'RECORDSET';
-					return nq;
-				});
-			}
+		// A subquery can be in SET as well as in WHERE (#3140)
+		if (this.queries) {
+			this.queriesfn = this.queries.map(function (q) {
+				var nq = q.compile(databaseid);
+				nq.query.modifier = 'RECORDSET';
+				return nq;
+			});
+		}
 
+		if (this.where) {
 			// console.log(73625, this.where.toJS('r', ''));
 			var wherefn = new Function(
 				'r,params,alasql',
@@ -81,7 +82,8 @@ export default function install(alasql, internal) {
 			s += "r['" + col.column.columnid + "']=" + value + ';';
 		});
 		// console.log(423623, s);
-		var assignfn = new Function('r,params,alasql', 'var y;' + s);
+		// Bound to the UPDATE, as a subquery in SET reads this.queriesfn (#3140)
+		var assignfn = new Function('r,params,alasql', 'var y;' + s).bind(this);
 
 		var statement = function (params, cb) {
 			var db = alasql.databases[databaseid];
