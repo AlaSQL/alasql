@@ -778,6 +778,11 @@ export default function install(alasql, internal) {
 					// This handles cases like: SELECT a.id + 1 FROM ... GROUP BY a.id
 					// where the column in the expression doesn't have nick set, but the group stores it by columnid
 					const nickToUse = this.nick || this.columnid;
+					// The outer row is on the scope of the run. Without one, read the group (#3178)
+					if (this.maybeOuter && this.columnid !== '_') {
+						const outer = `this.scope['${this.tableid}']`;
+						return `(${outer} ? ${outer}['${this.columnid}'] : g['${nickToUse}'])`;
+					}
 					return `g['${nickToUse}']`;
 				}
 
