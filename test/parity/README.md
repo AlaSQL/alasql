@@ -7,19 +7,19 @@ yarn test-parity          # record the merge base with main, record the current 
 yarn test-parity-smoke    # the smokes, including --pack, on the node in PATH
 ```
 
-`yarn test-parity` builds `dist/` and runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). Run the suite per commit and the parity check on the tip of a piece of work; when the tip fails, `git bisect run` finds the commit. For the last check, record without `--once`: the second run finds statements whose result changes from run to run. Run the three by hand to use another reference (below):
+`yarn test-parity` builds `dist/` and runs these three, with two savings: it records the reference only when no recording of it exists (`--if-missing`), and it records the current build with a single suite run (`--once`). Run the suite per commit and the parity check on the tip of a piece of work; when the tip fails, `git bisect run` finds the commit. For the last check, record without `--once`: the second run finds statements whose result changes from run to run. Run the three by hand to choose the reference yourself (below):
 
 ```sh
-bun test/parity/run.js record ref --ref      # the published 4.21.0 in dist/, recorded, then dist/ rebuilt
-bun test/parity/run.js record new            # the current dist/
-bun test/parity/run.js compare ref new       # exit code 1 on any difference
+bun test/parity/run.js record ref --ref $(git merge-base origin/main HEAD)   # the commit the branch starts from
+bun test/parity/run.js record new                                            # the current dist/
+bun test/parity/run.js compare ref new                                       # exit code 1 on any difference
 ```
 
 Record the build before a change and the build after it, and compare. When a change claims "no behaviour change", the compare says so or shows the statement that changed.
 
 ## The reference
 
-The reference is the build the change starts from. `--ref <version>` downloads a published version (`--ref` alone: 4.21.0); `--ref <commit>` takes a sha, a branch or a tag, extracts it with `git archive` under `.ref/` and builds it there once with its own build. Pick a reference with the same behaviour as the base of the change: a published version older than a merged fix shows that fix as a difference. `yarn test-parity` uses the merge base of `HEAD` with `origin/main`, the commit the branch starts from, so run `git fetch` first. The published tarball is not always the build of its tag: 4.20.1 on npm carries a dist built from `develop-a98910ff` that calls itself 4.20.0 (fixed by #2731 for later releases); the recording's `meta` line shows what was really recorded.
+The reference is the build the change starts from, which for a pull request is its merge base with `main`. There is no need to compare with a published version. `--ref <commit>` takes a sha, a branch or a tag, extracts it with `git archive` under `.ref/` and builds it there once with its own build. `--ref <version>` downloads a published version instead (`--ref` alone gives 4.21.0). Pick a reference with the same behaviour as the base of the change: a published version older than a merged fix shows that fix as a difference. `yarn test-parity` uses the merge base of `HEAD` with `origin/main`, the commit the branch starts from, so run `git fetch` first. The published tarball is not always the build of its tag: 4.20.1 on npm carries a dist built from `develop-a98910ff` that calls itself 4.20.0 (fixed by #2731 for later releases); the recording's `meta` line shows what was really recorded.
 
 After a recording against another dist, `dist/` is rebuilt with the project's `build-only` script, so a new build script is used as soon as it exists.
 
@@ -32,7 +32,7 @@ A pull request that fixes something differs from its base on purpose. So the job
 - a recording crashes: the build of the base fails, the suite run is killed, the dialect cases or the API snapshot fail;
 - a file diverged (no common statement within 200 records), because the rest of that file is not compared;
 - a file ran tests and recorded no statement and is not in `silent-files.txt`;
-- the API differs in a path that is not in `api-allowed.txt`.
+- the API differs from the merge base in a path that is not in `api-allowed.txt`. A pull request that changes the API on purpose adds a line there for each path it changes.
 
 The last line of the report, `verdict`, gives these counts. Run the same compare by hand with `yarn test-parity --allow-differences`.
 
@@ -69,7 +69,7 @@ If the compare of two recordings of one build is not clean, fix the recorder or 
 - `run.js`: `record <label> [--ref [<version>|<commit>] | --dist <dir>]` and `compare <a> <b> [--allow-differences]`. Recordings are in `recordings/`, the downloaded or built references in `.ref/`; both are ignored by git.
 - `silent-files.txt`: the test files allowed to run tests without a statement, each with its reason.
 - `unstable-statements.txt`: statements the engine answers differently run by run; only their code is compared.
-- `api-allowed.txt`: API paths changed on purpose, each with its reason; the compare reports them as allowed. A list of plain values is one path, so one line covers it. A method of a class is a path of its own (`alasql.yy.Select.prototype.compile`), so a line for the class does not cover it.
+- `api-allowed.txt`: the API paths that pull requests changed on purpose, each with its reason. The compare with the merge base reports them as allowed. A list of plain values is one path, so one line covers it. A method of a class is a path of its own (`alasql.yy.Select.prototype.compile`), so a line for the class does not cover it. The list is not kept in step with any published version.
 - `record.js`: the recorder, loaded by `bun test --preload`. It hooks `alasql.dexec`, `alasql.compile` and `globalThis.Function`.
 - `dialect-corpus.js`: runs the dialect cases through alasql under the recorder.
 - `compare.js`: aligns and compares two recordings, the API snapshots and the sizes.

@@ -1,8 +1,10 @@
-# API paths allowed to differ from the reference build, one per line, with the reason after #.
-# compare.js reports them as allowed instead of failing. A function covers its prototype object
-# and the constructor on it, and a method of a class is a path of its own, as
-# alasql.yy.Select.prototype.compile. Every change to the alasql object made on purpose goes
-# here, so that the API snapshot keeps catching what was not on purpose.
+# API paths that a pull request changes on purpose, one per line, with the reason after #.
+# The parity check compares a pull request with the commit it starts from, its merge base with
+# main. Every API path that differs there must have a line here, or the check fails. So a pull
+# request that adds, removes or changes a path on purpose adds a line for it.
+# A function covers its prototype object and the constructor on it. A method of a class is a path
+# of its own, as alasql.yy.Select.prototype.compile, and needs its own line.
+# The list is not kept in step with any published version, and lines of earlier pull requests can stay.
 alasql.utils.hash           # stateless helpers are module exports now; as exports they have a .name, which a function assigned to utils.x did not have
 alasql.utils.deepEqual      # as above
 alasql.utils.arrayUnionDeep # as above
