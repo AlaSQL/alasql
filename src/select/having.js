@@ -8,6 +8,9 @@ export default function install(alasql, internal) {
 		if (!node || typeof node !== 'object') return;
 		if (node instanceof yy.Select || node instanceof yy.AggrValue) return;
 		if (node instanceof yy.Column) {
+			// A table that is not in FROM here can be one of the SELECT around this one (#3178)
+			node.maybeOuter =
+				!!node.tableid && internal.bind.aliases(query.columnScope).indexOf(node.tableid) === -1;
 			var nick = query.groupColumns[node.columnid];
 			if (
 				!node.tableid &&

@@ -707,7 +707,7 @@ export default function install(alasql, internal) {
 					return false;
 				};
 
-				return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
+				return [subquery.where, subquery.columns, subquery.having].some(referencesExternal);
 			};
 
 			// Compile each subquery once. A subquery compiles the subqueries written in it, as
